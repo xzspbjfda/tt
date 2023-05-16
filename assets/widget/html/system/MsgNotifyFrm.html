@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>消息通知</title>
+		<link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+		<link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+		<link rel="stylesheet" href="../../script/app/css/app.css">
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	</head>
+	<style>
+		body {
+			background-color: #FFFFFF;
+		}
+		#wrap {
+			height: 100%;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-flex-flow: column;
+			flex-flow: column;
+		}
+		.miantime {
+			width: 60%;
+			height: 40px;
+			line-height: 40px;
+			float: right;
+			margin-right: 10px;
+		}
+		.cj-l-date {
+			display: block;
+			position: absolute;
+			right: 5px;
+			text-align: right;
+			vertical-align: middle;
+		}
+	</style>
+	<body>
+		<div class="aui-content" id="wrap" style="overflow:auto;">
+			<li class="aui-list-view-cell aui-switch-body">
+				<div class="aui-switch-title">
+					免打扰开关
+				</div>
+				<input id="isOpen" name="isOpen" type="checkbox"  class="aui-switch aui-pull-right" value="N" onchange="openDoor()">
+			</li>
+			<li class="aui-list-view-cell">
+				<div class="aui-pull-left aui-col-xs-4" style="height:40px;line-height:40px;">
+					免打扰时间段
+				</div>
+				<div class="cj-l-date">
+					<input type="time" id="startTime" name="startTime"  style="height:40px;line-height:40px;border-radius:5px;width:40%;margin-bottom:0px;" onchange="getStartTime()" />
+					<span>-</span>
+					<input type="time" id="endTime"   style="height:40px;line-height:40px;border-radius:5px;width:40%;margin-bottom:0px;" onchange="getEndTime()"/>
+				</div>
+			</li>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/jpush-api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../bill/script/billForm.js"></script>
+	<script>
+		var timer;
+		var jpush = null;
+		apiready = function() {
+			jpush = api.require('jpushVip');
+			var isOpen = $api.getStorage('isOpen');
+			var startTime1 = $api.getStorage('startTime');
+			var endTime1 = $api.getStorage('endTime');
+			//		alert("开始时间："+startTime1);
+			//初始化开关
+			if ('Y' == isOpen) {
+				$api.byId('isOpen').checked = true;
+				$api.byId('startTime').disabled = false;
+				$api.byId('endTime').disabled = false;
+				$api.byId('startTime').style.backgroundColor = "";
+				$api.byId('endTime').style.backgroundColor = "";
+			} else {
+				$api.byId('isOpen').checked = false;
+				$api.byId('startTime').disabled = true;
+				$api.byId('endTime').disabled = true;
+				$api.byId('startTime').style.backgroundColor = "#F0F0F0";
+				$api.byId('endTime').style.backgroundColor = "#F0F0F0";
+			}
+			//初始化时间
+			if (startTime1 != null && startTime1 != "") {
+				$api.byId('startTime').value = startTime1;
+			} else {
+				$api.byId('startTime').value = "00:00:00";
+				$api.setStorage('startTime', "00:00:00");
+			}
+			if (endTime1 != null && endTime1 != "") {
+				$api.byId('endTime').value = endTime1;
+			} else {
+				$api.byId('endTime').value = "06:00:00";
+				$api.setStorage('endTime', "06:00:00");
+			}
+		};
+		function openDoor() {
+			
+			if ($('#isOpen').is(':checked')) {
+				$api.setStorage("isOpen", "Y");
+				$api.byId('startTime').disabled = false;
+				$api.byId('endTime').disabled = false;
+				$api.byId('startTime').style.backgroundColor = "";
+				$api.byId('endTime').style.backgroundColor = "";
+				//		alert("当前选择："+	$api.getStorage("isOpen"));
+			} else {
+				$api.setStorage("isOpen", "N");
+				$api.byId('startTime').disabled = true;
+				$api.byId('endTime').disabled = true;
+				$api.byId('startTime').style.backgroundColor = "#F0F0F0";
+				$api.byId('endTime').style.backgroundColor = "#F0F0F0";
+				//		alert("当前选择："+	$api.getStorage("isOpen"));
+			}
+//			$api.byId('saveBtn').style.display = "";
+			 api.execScript({
+                    name : 'MsgNotifyWin',
+                    script : 'showSaveBtn();'
+                });
+		}
+
+		function getStartTime() {
+			var startTime = $('#startTime').val();
+			$api.setStorage('startTime', startTime);
+			api.execScript({
+                    name : 'MsgNotifyWin',
+                    script : 'showSaveBtn();'
+                });
+		}
+
+		function getEndTime() {
+			var endTime = $('#endTime').val();
+			$api.setStorage('endTime', endTime);
+			api.execScript({
+                    name : 'MsgNotifyWin',
+                    script : 'showSaveBtn();'
+                });
+		}
+	</script>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>图片裁剪</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<link rel="stylesheet" type="text/css" href="../bill/css/supportDefineDetail.css" />
+    <style>
+    	.zknight-h5imgcut-main-pad{
+			padding:18px;
+		}
+
+		.zknight-h5imgcut-bg-white{background: #fff;}
+		.zknight-h5imgcut-border-radius{border-radius: 8px;}
+		.zknight-h5imgcut-pad10{padding:10px;}
+		.zknight-h5imgcut-pad15{padding:15px;}
+		.zknight-h5imgcut-margin-t10{margin-top: 10px;}
+		.zknight-h5imgcut-margin-t30{margin-top: 30px;}
+		.zknight-h5imgcut-margin-t50{margin-top: 50px;}
+		.zknight-h5imgcut-margin-lr20{margin-left:15px;margin-right:15px;}
+		.zknight-h5imgcut-margin-lr20{margin-left:20px;margin-right:20px;}
+		
+		.zknight-h5imgcut-btn-80{display: block;width:80%;margin:0px auto;}
+    	.zknight-h5imgcut-button-default{background: blue;color: #FFF;border-radius:30px;font-size:16px;font-weight:bold; }
+    	.zknight-h5imgcut-button-defaultFalse{background: rgb(58, 58, 58);color: #FFF;border-radius:30px;font-size:16px;font-weight:bold; }
+		.zknight-h5imgcut-button-default:hover{color:#FFF;}		
+    	.zknight-h5imgcut-button-gray{background: #ccc;color: #FFF;border-radius:30px;font-size:16px;font-weight:bold; }
+		.zknight-h5imgcut-button-gray:hover{color:#FFF;}
+		
+		.zknight-h5imgcut-font-size16{font-size: 16px !important;}
+		
+		
+		.face-check-lodding{
+			position:absolute;
+			top:50%;
+			left:50%;
+			transform:translate(-50%,-50%);
+			-webkit-transform:translate(-50%,-50%);
+			-moz-transform:translate(-50%,-50%);
+			display: none;
+		}
+
+		.imgFace {
+			position: absolute;
+			top: 100px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 200px;
+			height: 200px;
+			margin: 0 auto;
+			color: #69ca62;
+			box-shadow: inset 0 0 0 1px rgba(105, 202, 98, 0.5);
+			padding:15px;
+			border-radius: 8px;
+			background: #fff;
+		}
+		.border::after {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			content: '';
+			margin: -2%;
+			box-shadow: inset 0 0 0 2px;
+			animation: clipMe 5s linear infinite;
+		}
+		.border::before {
+			animation-delay: -4s;
+		}
+		@keyframes clipMe {
+			0%,
+			100% {
+			clip: rect(0px, 220.0px, 2px, 0px);
+			}
+			25% {
+			clip: rect(0px, 2px, 220.0px, 0px);
+			}
+			50% {
+			clip: rect(218.0px, 220.0px, 220.0px, 0px);
+			}
+			75% {
+			clip: rect(0px, 220.0px, 220.0px, 218.0px);
+			}
+		}
+
+		.uploadFaceMsg{
+			text-align: center;
+			margin-top: 240px;
+			height: 60px;
+		}
+		.uploadFaceButton{
+			margin-top: 20px;
+		}
+    </style>
+</head>
+<body>
+<div id="wrap">
+	<div id="sddDivId" style="overflow:auto;margin-bottom:0px;">
+		<div  id="transferLabelDivId" class="selectLabelDiv" style="margin-top: 10px;" >
+			<div id="user_name" style="font-size:16px;color:#adadad;">
+				接收人
+			</div>
+		</div>
+		<div  id="telId" class="selectLabelDiv" style="margin-top: 10px;" >
+			<div id="contactTelTextId" style="font-size:16px;color:#adadad;">
+				联系电话
+			</div>
+		</div>
+	</div>
+</div>
+<div id="imgFace" class="imgFace ">	
+	<center class="zknight-h5imgcut-pad10">
+		<img id="head_img" src="../../image/imgcut_default.jpeg" style="width: 100%;"/>		
+	</center>
+</div>
+<ul class="uploadFaceMsg">
+	<li id="mianbushibie">请上传头像进行身份识别</li>
+	<li id="xinxicaiji"></li>
+	<li id="menjindakai"></li>
+</ul>
+<div class="uploadFaceButton">
+	<a id="takingPictures" class="zknight-h5imgcut-button-default zknight-h5imgcut-yellow-linear aui-btn zknight-h5imgcut-btn-80 zknight-h5imgcut-font-size16"  href="javascript:void(0)" onclick="zknightH5ImgcutUpImg()">
+		拍照上传头像进行身份识别
+	</a>
+	<a  class="checkFaceOk zknight-h5imgcut-button-gray zknight-h5imgcut-yellow-linear aui-btn zknight-h5imgcut-btn-80 zknight-h5imgcut-font-size16"  href="javascript:void(0)" onclick="faceCheckOk()">
+		强制通过身份认证环节
+	</a>
+	<a  class="opeDoor zknight-h5imgcut-button-gray zknight-h5imgcut-yellow-linear aui-btn zknight-h5imgcut-btn-80 zknight-h5imgcut-font-size16"  href="javascript:void(0)" onclick="getDoorsLists()">
+		重新调用远程开门
+	</a>
+	<a id="checkFaceOk" class="opeDoor zknight-h5imgcut-button-gray zknight-h5imgcut-yellow-linear aui-btn zknight-h5imgcut-btn-80 zknight-h5imgcut-font-size16"  href="javascript:void(0)" onclick="openDoorOk()">
+		强制通过开门环节
+	</a>
+	<a class="backBill zknight-h5imgcut-button-gray zknight-h5imgcut-yellow-linear aui-btn zknight-h5imgcut-btn-80 zknight-h5imgcut-font-size16"  href="javascript:void(0)" onclick="backBill()">
+		返回工单详情
+	</a>
+</div>
+
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<script type="text/javascript" src="script/zknight_h5imgcut_common.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script type="text/javascript" src="../../script/getStationData.js"></script>
+<script type="text/javascript">
+
+	var firstDate = new Date();
+	var status="2";
+	// var takingPicturesFlg = false;
+	apiready = function(){
+		$(".checkFaceOk").hide();
+		$(".opeDoor").hide();
+		$(".backBill").hide();
+		request.faceCheck = function (opts,callback) {
+			service({
+				url: "/enterStationBill/faceCheck.do",
+				data: opts
+			},callback)
+		}
+		request.openDoor = function (opts,callback) {
+			service({
+				url: "/enterStationBill/openDoor.do",
+				data: opts
+			},callback)
+		}
+		request.getAlarmNumber = function (opts,callback) {
+			service({
+				url: "/enterStationBill/getAlarmNumber.do",
+				data: opts
+			},callback)
+		}
+		var user = $api.getStorage('user');
+		$api.byId('user_name').innerHTML = "操作人：" + user.username;
+		$api.byId('contactTelTextId').innerHTML = "联系电话：" +  user.mobilephone;
+		//裁剪完毕后，页面接受参数并保存
+		api.addEventListener({
+	        name:'zknight_img_cut_event'
+        },function(ret,err){
+        	var img = ret.value.cutOutImg;
+			console.log("------------面部识别-图片裁剪完成----------------");
+			console.log("图片地址："+img);
+        	//裁剪完成
+        	if(img){
+				// // 拍照按钮上锁
+				// $("#takingPictures").removeClass("zknight-h5imgcut-button-default")
+				// $("#takingPictures").addClass("zknight-h5imgcut-button-defaultFalse")
+				// console.log("拍照按钮上锁前："+takingPicturesFlg)
+				// takingPicturesFlg = true;
+				// console.log("拍照按钮上锁后："+takingPicturesFlg)
+	        	$('#head_img').attr('src', img);
+				//上传图片到服务器并返回面部识别结果
+				$("#imgFace").addClass("border");
+				var billModel = $api.getStorage('standBillModel');
+				user = $api.getStorage('user');
+				var opts = {
+					userid : user.userid,//'2355840'
+					imgpath :img
+				};
+				console.log("------------面部识别-上传图片并进行识别开始----------------");
+				console.log("上传参数：",JSON.stringify(opts));
+				$api.byId("mianbushibie").innerHTML="身份确认中...";
+				$client.uploadFaceImage(opts,img,function(ret,err){
+					console.log("------------面部识别-上传图片并进行识别完成----------------");
+					console.log("返回结果：",JSON.stringify(ret));
+					status="";
+					if(ret.data_info=='ok'){
+						status="1";//识别成功
+					}else{
+						status="2";//识别失败
+						if(ret==null || ret==""){
+							$api.byId("mianbushibie").innerHTML="身份确认失败！调用接口超时！";
+						}else{
+							$api.byId("mianbushibie").innerHTML="身份确认失败！"+ret.data_info;
+						}
+						$("#imgFace").removeClass("border");
+						//$(".checkFaceOk").show();
+						$(".opeDoor").hide();
+						$(".backBill").show();
+						// return;
+					}
+					var opts={
+						id:billModel.id,
+						stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+						billSn:billModel.billSn,
+						userId:user.userid,//'2355840'
+						userName:user.username,
+						status:status,
+						faceCheckMsg:ret.data_info,
+						img:ret.img,
+						imgsize:ret.imgsize
+					}
+					console.log("============面部识别结果保存开始================")
+					console.log("上传参数：",JSON.stringify(opts));
+					
+					// 计算操作时长
+					var endDate=new Date(); 
+					opts.operatingCost = (endDate.getTime()-firstDate.getTime())/1000; 
+					request.faceCheck(opts,function(ret, err){
+						console.log("============面部识别结果保存完成================")
+						console.log(JSON.stringify(ret));
+						console.log("返回结果：",JSON.stringify(ret));
+						// //拍照按钮解锁
+						// $("#takingPictures").removeClass("zknight-h5imgcut-button-defaultFalse")
+						// $("#takingPictures").addClass("zknight-h5imgcut-button-default")
+						// console.log("拍照按钮解锁前："+takingPicturesFlg)
+						// takingPicturesFlg = false;
+						// console.log("拍照按钮解锁前："+takingPicturesFlg)
+						if (ret) {
+							if (ret.success) {
+								if(status=='1'){
+									$api.byId("mianbushibie").innerHTML="身份确认成功！";
+									/*api.toast({
+										msg: '身份认证通过,正在远程开门',
+										duration: 2000,
+										location: 'bottom'
+									});*/
+									//总直流负载电流采集
+									$api.byId("xinxicaiji").innerHTML="信息采集中...";
+									var stationId=$api.getStorage('st_code')
+									console.log("============总直流负载电流采集开始================")
+									console.log("上传参数：areaId=",stationId);
+									getStationData(stationId,function(ret){
+										console.log("============总直流负载电流采集完成================")
+										console.log("返回结果：",JSON.stringify(ret));
+										if (ret.success) {
+											var measuredValCount=ret.measuredValCount;
+											$api.byId("xinxicaiji").innerHTML="信息采集成功！";
+
+											var opts={
+												saveType:"enter",//上站enter，离开leave
+												id:billModel.id,
+												stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+												billSn:billModel.billSn,
+												userId:user.userid,//'2355840'
+												userName:user.username,
+												measuredValCount:measuredValCount
+											}
+											//总直流负载电流采集以及告警数量入库
+											console.log("============总直流负载电流以及告警数量入库开始================")
+											console.log("上传参数",JSON.stringify(opts));
+											request.getAlarmNumber(opts,function(ret, err){
+												console.log("============总直流负载电流以及告警数量入库完成================")
+												if (ret) {
+													if (ret.success) {
+														$api.byId("xinxicaiji").innerHTML="信息采集成功！";
+														var OpenWay = $api.getStorage('OpenWay')
+														//开始远程开门
+														if(OpenWay==0){
+															getDoorsLists();
+														}else{
+															$api.byId("menjindakai").innerHTML="请返回详情页面";
+														}
+													}else{
+														$api.byId("xinxicaiji").innerHTML="信息采集失败！";
+														$("#imgFace").removeClass("border");
+													}
+												}else{
+													("#xinxicaiji").innerHTML="信息采集失败！";
+													$("#imgFace").removeClass("border");
+												}
+											});
+										}else{
+											$api.byId("xinxicaiji").innerHTML="信息采集失败！";
+											$("#imgFace").removeClass("border");
+										}
+									});
+								}else {
+									//$api.byId("xinxicaiji").innerHTML="信息采集失败！";
+									$("#imgFace").removeClass("border");
+									/*api.toast({
+										msg: opts.faceCheckMsg,
+										duration: 4000,
+										location: 'bottom'
+									});*/
+								}
+							} else {
+								$api.byId("mianbushibie").innerHTML="身份确认失败！请重新上传头像。";
+								$("#imgFace").removeClass("border");
+								//$(".checkFaceOk").show();
+								$(".opeDoor").hide();
+								$(".backBill").show();
+							}
+						} else {
+							$api.byId("mianbushibie").innerHTML="身份确认失败！请重新上传头像。";
+							$("#imgFace").removeClass("border");
+							//$(".checkFaceOk").show();
+							$(".opeDoor").hide();
+							$(".backBill").show();
+						}
+					});
+				});
+        	}
+        });
+	};
+	
+	/**
+	 * 打开图片选择弹框 
+	 */
+    function zknightH5ImgcutUpImg(){
+		// //拍照按钮是否锁死
+		// if(takingPicturesFlg){
+		// 	return
+		// }
+		if($api.byId("mianbushibie").innerHTML == "身份确认中..."||$api.byId("xinxicaiji").innerHTML == "信息采集中..."||$api.byId("menjindakai").innerHTML == "门禁打开中..."){
+			api.toast({
+				msg: "处理中，请稍后点击",
+				duration: 2000,
+				location: 'bottom'
+			});
+			return;
+		}
+		$api.byId("mianbushibie").innerHTML="";
+		$api.byId("xinxicaiji").innerHTML="";
+		$api.byId("menjindakai").innerHTML="";
+		zknightH5ImgcutGetPicture(1);
+        /*api.actionSheet({
+            //title: '上传图片',
+            cancelTitle: '取消',
+            buttons: ['拍照','相册']
+        }, function(ret, err) {
+            if (ret) {
+                zknightH5ImgcutGetPicture(ret.buttonIndex);
+            }
+        });*/
+    }
+
+	//远程开门
+	function getDoorsLists() {
+    	var firstDate2 = new Date();
+		var billModel = $api.getStorage('standBillModel');
+		var user = $api.getStorage('user');
+		$api.byId("menjindakai").innerHTML="门禁打开中...";
+		var opts = {
+			StationId : $api.getStorage('st_code'),
+			UserName : $api.getStorage('UserName'),
+			UserUnit : $api.getStorage('UserUnit'),
+			UserMobile : $api.getStorage('UserMobile'),
+			OpenReason : $api.getStorage('OpenReason'),
+			UserId :  $api.getStorage('user').userid
+		};
+		console.log("身份认证后传入远程开门的数据---》"+JSON.stringify(opts));
+		$client.getStationOpenDoor(opts, function(ret, err) {
+			console.log("身份认证后远程开门返回数据---》"+JSON.stringify(ret));
+			$("#imgFace").removeClass("border");
+			var optsDoorStatus='2';//1成功 2失败
+			var msg="";//出错消息
+			//远程开门
+			if (ret) {
+				if(ret.success==true){
+					if(ret.value == null || ret.value == ""){
+						msg="门禁打开成功！";
+						optsDoorStatus="1";//开门成功
+					}else{
+						msg="门禁打开失败！"+ret.value;
+						$(".checkFaceOk").hide();
+						$(".backBill").show();
+					}
+				}else{
+					msg="门禁打开失败！"+ret.data_info;
+					$(".checkFaceOk").hide();
+					$(".backBill").show();
+				}
+			} else {
+				msg="门禁打开失败！请返回详情页面，重新远程开门。";
+				$(".checkFaceOk").hide();	
+				$(".backBill").show();
+			}
+			console.log("============身份认证后远程开门返回数据保存开始===============")
+			var billModel = $api.getStorage('standBillModel');
+			var optsDoor={
+				id:billModel.id,
+				stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+				billSn:billModel.billSn,
+				status:optsDoorStatus
+			}
+			// 计算操作时长
+			var endDate2=new Date(); 
+			optsDoor.operatingCost = (endDate2.getTime()-firstDate2.getTime())/1000; 
+			console.log(JSON.stringify(optsDoor))
+			request.openDoor(optsDoor,function(ret, err){
+				console.log("============身份认证后远程开门返回数据保存完成===============")
+				console.log(JSON.stringify(ret));
+				$api.byId("menjindakai").innerHTML=msg;
+				//();//返回工单详情
+			});
+		});
+	}
+
+	//强行认证通过
+	function faceCheckOk(){		
+		var billModel = $api.getStorage('standBillModel');
+		var user = $api.getStorage('user');
+		status="1";
+		var opts={
+			id:billModel.id,
+			stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+			billSn:billModel.billSn,
+			userId:user.userid,//'2355840'
+			userName:user.username,
+			status:status,
+			faceCheckMsg:"强行认证通过"
+		}
+		console.log("============面部识别结果保存开始================")
+		console.log("上传参数：",JSON.stringify(opts));
+		// 计算操作时长
+		var endDate3=new Date(); 
+		opts.operatingCost = (endDate3.getTime()-firstDate.getTime())/1000; 
+		request.faceCheck(opts,function(ret, err){
+			console.log("============面部识别结果保存完成================"+status)
+			console.log(JSON.stringify(ret));
+			if (ret) {
+				if (ret.success) {
+					if(status=='1'){
+						$api.byId("mianbushibie").innerHTML="身份确认成功！";
+						/*api.toast({
+							msg: '身份认证通过,正在远程开门',
+							duration: 2000,
+							location: 'bottom'
+						});*/
+						//总直流负载电流采集入库
+						var opts={
+							saveType:"enter",//上站enter，离开leave
+							id:billModel.id,
+							stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+							billSn:billModel.billSn,
+							userId:user.userid,//'2355840'
+							userName:user.username,
+							measuredValCount:'0'
+						}
+						//总直流负载电流采集以及告警数量入库
+						console.log("============总直流负载电流以及告警数量入库开始================")
+						console.log("上传参数",JSON.stringify(opts));
+						request.getAlarmNumber(opts,function(ret, err){
+							console.log("============总直流负载电流以及告警数量入库完成================")
+							console.log("返回结果：",JSON.stringify(ret));
+							if (ret) {
+								if (ret.success) {
+									$api.byId("xinxicaiji").innerHTML="信息采集成功！";
+									var OpenWay = $api.getStorage('OpenWay')
+									//开始远程开门
+									if(OpenWay==0){
+										getDoorsLists();
+									}else{
+										$api.byId("menjindakai").innerHTML="请返回详情页面";
+									}
+								}else{
+									$api.byId("xinxicaiji").innerHTML="信息采集失败！";
+									$("#imgFace").removeClass("border");
+								}
+							}else{
+								("#xinxicaiji").innerHTML="信息采集失败！";
+								$("#imgFace").removeClass("border");
+							}
+						});
+					}else {
+						//$api.byId("xinxicaiji").innerHTML="信息采集失败！";
+						$("#imgFace").removeClass("border");
+						/*api.toast({
+							msg: opts.faceCheckMsg,
+							duration: 4000,
+							location: 'bottom'
+						});*/
+					}
+				} else {
+					$api.byId("mianbushibie").innerHTML="身份确认失败！请重新上传头像。";
+					$("#imgFace").removeClass("border");
+					/*api.toast({
+						msg : ret.msg,
+						location : 'bottom'
+					});*/
+				}
+			} else {
+				$api.byId("mianbushibie").innerHTML="身份确认失败！请重新上传头像。";
+				$("#imgFace").removeClass("border");
+				/*api.toast({
+					msg : '接口访问失败',
+					location : 'bottom'
+				});*/
+			}
+		});
+	}
+
+	//强制开门成功
+	function openDoorOk(){
+		var billModel = $api.getStorage('standBillModel');
+		var optsDoor={
+			id:billModel.id,
+			stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+			billSn:billModel.billSn,
+			status:"1"
+		}
+		request.openDoor(optsDoor,function(ret, err){
+			console.log("============远程开门返回数据保存完成===============")
+			console.log(JSON.stringify(ret));
+			$api.byId("menjindakai").innerHTML= "门禁打开成功！";
+			backBill();//返回工单详情
+		});
+	}
+
+
+	//返回工单详情页面
+	function backBill(){
+		api.toast({
+			msg: '正在返回工单详情页面',
+			duration: 2000,
+			location: 'bottom'
+		});
+		window.setTimeout(function() {
+			api.closeToWin({
+				name: 'mainStandBillDetail',
+				frameName: 'standBillDetail_frm'
+			});
+			api.execScript({
+					name: 'mainStandBillDetail',
+				frameName: 'standBillDetail_frm',
+				script: 'refreshFrame();'
+			});
+		}, 1000);
+	}
+	
+</script>
+</html>

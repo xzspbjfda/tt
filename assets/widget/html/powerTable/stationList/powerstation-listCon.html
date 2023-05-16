@@ -1,0 +1,551 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>api</title>
+        <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+        <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+        <!-- <link rel="stylesheet" type="text/css" href="../../../html/alarm/css/alarm-listCon.css" /> -->
+
+        <style>
+            body.active {
+                background: url(../../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .ccssoft_list {
+                margin-top: 0px;
+            }
+
+
+            .cj-l-title {
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 8px 70px 8px 10px;
+                position: relative;
+            }
+            .cj-l-title span {
+                display: block;
+                width: 80px;
+                height: 20px;
+                line-height: 20px;
+                /*    color: #666;*/
+                text-align: right;
+                position: absolute;
+                top: 5px;
+                right: 0;
+                font-size: 12px;
+                font-weight: normal;
+            }
+
+
+            .ccssoft_list .cj-green .cj-l-title:before {
+                background: #1ac36b;
+            }
+            .ccssoft_list .cj-red .cj-l-title:before {
+                background: #ff3333;
+            }
+            .cj-l-title .subType {
+                display: block;
+                width: 100px;
+                height: 20px;
+                line-height: 20px;
+                color: #666;
+                text-align: right;
+                position: absolute;
+                top: 5px;
+                right: 0;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .cj-l-into {
+                font-size: 12px;
+                color: #666;
+                line-height: 20px;
+                padding: 3px 0;
+                position: relative;
+                /*   padding-right: 210px;*/
+            }
+            .cj-l-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 140px;
+                text-align: right;
+            }
+            .cj-l-date span {
+                margin-left: 7px;
+            }
+
+            /**/
+            .colorBtn{
+              padding: 0px 4px;
+              background-color: #db4537;
+              color: #fff;
+              border-radius: 5px;
+            }
+            .colorBtn2{
+              padding: 0px 4px;
+              background-color: #00a0e9;
+              color: #fff;
+              border-radius: 5px;
+            }
+            .list_li{
+              background: url(../../../image/bt_icon.png) no-repeat 6px 10px;
+              background-color: #fff;
+              background-size: 14px 14px;
+              padding-left: 30px;
+              list-style: none;
+              overflow: hidden;
+              border-bottom: 1px solid #e3e2e2;
+              padding-bottom: 6px;
+            }
+            .list_top{
+              margin-top: 6px;
+            }
+            .red{
+              color: #db4537
+            }
+            .blue{
+              color:#00a0e9;
+            }
+            .list_time{
+              font-size: 14px;
+              color: #747474;
+              margin-top: 4px;
+            }
+            .listText{
+              display: inline-block;
+              width: 100px;
+              font-weight: 900;
+            }
+            .colorBtnBox{
+              font-size: 14px;
+            }
+
+            .powerSelect{
+              height: 36px;
+              line-height: 21px;
+              padding: 0 6px;
+              font-size: 14px;
+            }
+            .aui-list-view-cell{
+              height: 44px!important;
+            }
+
+            .selectBox{
+              border-bottom: 1px solid #e3e2e2;
+              padding-bottom: 8px;
+              background-color: #fff;
+            }
+            .cj-l-into2 {
+                font-size: 12px;
+                color: #666;
+                line-height: 20px;
+                padding: 3px 0;
+                position: relative;
+                margin-left: 10px;
+                /*   padding-right: 210px;*/
+            }
+            .cj-l-date2 {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 150px;
+                text-align: right;
+            }
+            .cj-l-date2 span {
+                margin-left: 7px;
+            }
+            .cj-l-date2:after {
+                content: "";
+                display: block;
+                width: 1px;
+                height: 12px;
+                background: #ddd;
+                position: absolute;
+                top: 4px;
+                left: 2px;
+            }
+            .cj-l-date2 i {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+            .ccssoft_list_li {
+                list-style: none;
+                padding: 8px;
+                border-bottom: 1px solid #e3e2e2;
+                background: #fff;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .green-bg{
+              background-color: green;
+            }
+            .blue-bg{
+              background-color: blue;
+            }
+            .yellow-bg{
+              background-color: yellow;
+            }
+            .orange-bg{
+              background-color: orange;
+            }
+            .red-bg{
+              background-color: red;
+            }
+            .timed{
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              display: inline-block;
+            }
+        </style>
+    </head>
+    <body class="">
+        <div id="main">
+          <script id="listView-template2" type="text/x-dot-template">
+              {{ for(var i=0, len=it.length; i < len; i++) {
+              var model = it[i];
+              var lev = model.alarmlevel;
+              var levName="";
+              var levColor = "";
+              if(lev == "1"){
+              levName = "一级";
+              levColor = "#FF3333";
+              }else if(lev == "2"){
+              levName = "二级";
+              levColor = "#FFCC33";
+              }else if(lev == "3"){
+              levName = "三级";
+              levColor = "#3300FF";
+              }else if(lev == "4"){
+              levName = "四级";
+              levColor = "#00FF00";
+              }
+              }}
+              <li class="ccssoft_list_li" tapmode="active"  onclick="openAlarmDetail('{{=model.id}}','{{=model.alarmlevel}}','{{=model.stationid}}','{{=model.faultid}}');">
+              <div class="cj-l-title">{{=model.objname}}<span style="color:{{=levColor}}">{{=levName}}</span></div>
+              <div class="cj-l-into2">告警次数:{{=model.times}}</div>
+              <div class="cj-l-into2">原因:{{=model.cause}}<div class="cj-l-date2"><span>{{=model.firstalarmtime}}</span></div></div>
+              </li>
+              {{  } }}
+          </script>
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                var model = it[i];
+                var warn_info_class;
+                if(model.warn_info==5){
+                  warn_info_class='green-bg'
+                }else if (model.warn_info==4) {
+                  warn_info_class='blue-bg'
+                }else if (model.warn_info==3) {
+                  warn_info_class='yellow-bg'
+                }else if (model.warn_info==2) {
+                  warn_info_class='orange-bg'
+                }else if (model.warn_info==1) {
+                  warn_info_class='red-bg'
+                }
+                }}
+                <li tapmode="active" class="list_li" onclick="openStationDetail('{{=model.station_id}}','{{=model.station_name}}');">
+                <div class="list_top">
+                  {{=model.station_name != null?model.station_name:''}}
+                </div>
+                <div class="cj-l-into">
+                  运维ID:{{=model.station_code != null?model.station_code:''}}
+                  <div class="colorBtnBox">
+                  <span class="colorBtn">电压:</span>
+                  <span class="listText">&nbsp;&nbsp;&nbsp;&nbsp;{{=model.powerrealdata != null?model.powerrealdata:''}}</span>
+                  <span class="colorBtn2">电流:</span>
+                  <span class="listText">&nbsp;&nbsp;&nbsp;&nbsp;{{=model.poweracdata != null?model.poweracdata:''}}</span>
+                  </div>
+                  <div class="list_time">
+                      剩余续航时长:
+                      <div class='{{=warn_info_class}} timed'></div>
+                      <br>
+                      停电时间:&nbsp;&nbsp;&nbsp;&nbsp;{{=model.poweroff_start != null?model.poweroff_start:''}}<br>
+                      断站时间:&nbsp;&nbsp;&nbsp;&nbsp;{{=model.broke_start != null?model.broke_start:''}}<br>
+                      发电时间:&nbsp;&nbsp;&nbsp;&nbsp;{{=model.operate_begin_time != null?model.operate_begin_time:''}}
+                  </div>
+                </div>
+                </li>
+                {{  } }}
+            </script>
+            <!--下拉列表-->
+        		<script id="dict-template" type="text/x-dot-template">
+        			{{ for(var i=0, len=it.length; i < len; i++) {}}
+        			<option value="{{=it[i].orgid}}">{{=it[i].orgname}}</option>
+        			{{ } }}
+        		</script>
+            <div class="selectBox">
+              <div class="aui-list-view-cell provinceCause" style="display:none;">
+                <div class="aui-col-xs-2 aui-pull-left" style="line-height:36px;">地市：</div>
+                <select class="powerSelect aui-col-xs-10 aui-pull-right" id="provinceCause"  onchange="areaSelect(this)" value="">
+                  <option value="">请选择</option>
+                </select>
+              </div>
+              <div class="aui-list-view-cell areaCause" style="display:none;">
+                <div class="aui-col-xs-2 aui-pull-left" style="line-height:36px;">区县：</div>
+                <select class="powerSelect aui-col-xs-10 aui-pull-right" id="areaCause"  onchange="RenderingProvince(this)" value="">
+                  <option value="">请选择</option>
+                </select>
+              </div>
+
+              <div class="aui-list-view-cell areaCause" id="paixu">
+                <div class="aui-col-xs-2 aui-pull-left" style="line-height:36px;">排序：</div>
+                <select class="powerSelect aui-col-xs-10 aui-pull-right" onchange="sortFun(this)" value="">
+                  <option value="">请选择</option>
+                  <option value="1">电压升序</option>
+                  <option value="2">停电时间升序</option>
+                  <option value="3">剩余续航时长升序</option>
+                </select>
+              </div>
+
+            </div>
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../../script/api.js"></script>
+    <script type="text/javascript" src="../../../script/constant.js"></script>
+    <script type="text/javascript" src="../../../script/debug.js"></script>
+    <script type="text/javascript" src="../../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../../script/common.js"></script>
+    <script type="text/javascript" src="../../../script/config.js"></script>
+    <script type="text/javascript" src="../../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../../script/aui-alert.js"></script>
+    <script>
+        var listView;
+        var sortFunData;
+        /**
+         *打开工单详情模块
+         */
+        function openStationDetail(stationId, stationName) {
+
+            var params = {
+                stationId : stationId,
+                stationName : stationName
+            }
+            api.openWin({
+                name : 'mainStationDetail',
+                url : '../../station/mainStationDetail.html',
+                opaque : true,
+                bounces : false,
+                reload : true,
+                pageParam : params,
+                vScrollBarEnabled : false
+            });
+
+        }
+
+        /**
+         *从查询条件跳转过来的信息
+         */
+        function cb_queryStationList(opts) {
+            listView.setQueryOptions(opts);
+            listView.refresh();
+        }
+
+        apiready = function() {
+
+          if(api.pageParam.pageParam.accounttype==0){
+            $('.provinceCause').show(0);
+          }else if (api.pageParam.pageParam.accounttype==1) {
+            $('.areaCause').show(0);
+          }
+          // 全部渲染
+          if(api.pageParam.type==1){
+            sortFunData=api.pageParam.pageParam.orderList;
+            renderTemp('listView', 'listView-template', sortFunData);
+          }else if (api.pageParam.type==2) {
+            sortFunData=api.pageParam.pageParam.orderingList;
+            renderTemp('listView', 'listView-template', sortFunData);
+          }else {
+            $('#paixu').hide();
+            sortFunData=api.pageParam.pageParam.falueList;
+            renderTemp('listView', 'listView-template2', sortFunData);
+          }
+          console.log(JSON.stringify(api.pageParam.pageParam));
+          console.log(JSON.stringify(sortFunData));
+          if(sortFunData.length>0){
+              $('body').removeClass('active');
+          }else {
+              $('body').addClass('active');
+          }
+          $client.FdManagerOrgSelect({
+              parentorgid:api.pageParam.pageParam.parentorgid
+      			}, function(ret, err) {
+      				if (ret) {
+      					if (ret.success) {
+                  if(api.pageParam.pageParam.accounttype==0){
+                    $('#provinceCause').empty();
+                    $('<option>').text('全部').val('').appendTo('#provinceCause');
+        						renderTemp('provinceCause', 'dict-template', ret.fdManagerOrgList,true);
+                  }else if (api.pageParam.pageParam.accounttype==1) {
+                    $('#areaCause').empty();
+                    $('<option>').text('全部').val('').appendTo('#areaCause');
+                    renderTemp('areaCause', 'dict-template', ret.fdManagerOrgList,true);
+                  }
+
+      					} else {
+      						showToast(ret.data_info);
+      					}
+      				} else {
+      					showToast(err.msg);
+      				}
+      			});
+        }
+
+        // 渲染区县
+        function areaSelect(area){
+          $client.FdManagerOrgSelect({
+              parentorgid:$(area).val()
+            }, function(ret, err) {
+              if (ret) {
+                if (ret.success) {
+                  $('#areaCause').empty();
+                  $('<option>').text('全部').val('').appendTo('#areaCause');
+                  renderTemp('areaCause', 'dict-template', ret.fdManagerOrgList,true);
+                  if($(area).val()==''){
+                    $('.areaCause').hide(0);
+                    if(api.pageParam.type==1){
+                      sortFunData=api.pageParam.pageParam.orderList;
+                    }else if (api.pageParam.type==2) {
+                      sortFunData=api.pageParam.pageParam.orderingList;
+                    }else {
+                      sortFunData=api.pageParam.pageParam.falueList;
+                    }
+                    renderTemp('listView', 'listView-template', sortFunData);
+                    if(sortFunData.length>0){
+                        $('body').removeClass('active');
+                    }else {
+                        $('body').addClass('active');
+                    }
+                  }else {
+                    $('.areaCause').show(0);
+                    var date;
+                    if(api.pageParam.type==1){
+                      date=api.pageParam.pageParam.orderList;
+                    }else if (api.pageParam.type==2) {
+                      date=api.pageParam.pageParam.orderingList;
+                    }else {
+                      date=api.pageParam.pageParam.falueList;
+                    }
+                    var Province=[];
+                    for (var i = 0; i < date.length; i++) {
+                      if(ret.fdManagerOrgList[0].orgid==date[i].countyid){
+                        Province.push(date[i]);
+                      }
+                    }
+                    sortFunData=Province;
+                    renderTemp('listView', 'listView-template', Province);
+                    if(Province.length>0){
+                        $('body').removeClass('active');
+                    }else {
+                        $('body').addClass('active');
+                    }
+                  }
+                } else {
+                  showToast(ret.data_info);
+                }
+              } else {
+                showToast(err.msg);
+              }
+            });
+
+
+        }
+
+        // 重新渲染数据
+        function RenderingProvince(e){
+          var countyid=$(e).val();
+          if(countyid==''){
+            if(api.pageParam.type==1){
+              sortFunData=api.pageParam.pageParam.orderList;
+            }else if (api.pageParam.type==2) {
+              sortFunData=api.pageParam.pageParam.orderingList;
+            }else {
+              sortFunData=api.pageParam.pageParam.falueList;
+            }
+            renderTemp('listView', 'listView-template', sortFunData);
+            if(sortFunData.length>0){
+                $('body').removeClass('active');
+            }else {
+                $('body').addClass('active');
+            }
+          }else{
+            var date;
+            if(api.pageParam.type==1){
+              date=api.pageParam.pageParam.orderList;
+            }else if (api.pageParam.type==2) {
+              date=api.pageParam.pageParam.orderingList;
+            }else {
+              date=api.pageParam.pageParam.falueList;
+            }
+            var Province=[];
+            for (var i = 0; i < date.length; i++) {
+              if(countyid==date[i].countyid){
+                Province.push(date[i]);
+              }
+            }
+            sortFunData=Province;
+            renderTemp('listView', 'listView-template', Province);
+            if(Province.length>0){
+                $('body').removeClass('active');
+            }else {
+                $('body').addClass('active');
+            }
+          }
+        }
+
+        //排序升序
+        function sortFun(e){
+          if($(e).val()=='1'){
+            colId="powerrealdata";
+          }else if ($(e).val()=='2') {
+            colId="poweroff_start";
+          }else if ($(e).val()=='3') {
+            colId="warn_info";
+          }
+          sortFunData.sort(asc);
+          renderTemp('listView', 'listView-template', sortFunData);
+          console.log(JSON.stringify(sortFunData));
+        }
+        function openAlarmDetail(alarmId, alarmlevel, stationId, faultId) {
+        	var pageParm ={
+        	alarmlevel:alarmlevel,
+        	alarmId:alarmId,
+        	stationId:stationId
+        	};
+        //  api.pageParam.alarmlevel = alarmlevel;
+        //  api.pageParam.alarmId = alarmId;
+        //  api.pageParam.stationId = stationId;
+            if (faultId != null && faultId != "" && faultId != "null" && faultId != "undefined") {
+                pageParm.faultid = faultId;
+            } else {
+                pageParm.faultid = null;
+            }
+            api.openWin({
+                name : 'mainAlarmDetail_win',
+                url : '../../alarm/mainAlarmDetail_win.html',
+                opaque : true,
+                bounces : false,
+                reload : true,
+                pageParam : pageParm,
+                vScrollBarEnabled : false
+            });
+        }
+    </script>
+</html>

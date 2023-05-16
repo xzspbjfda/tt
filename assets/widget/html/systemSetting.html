@@ -1,0 +1,84 @@
+<!-- HTML5文件 -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<title>Agile Lite</title>
+		<link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+		<link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../script/easydialog/easydialog.css" />
+		<style>
+		body{
+			background-color: #FCFCFC;
+		}
+		.left{
+			background:url(../image/navbtn_back.png) no-repeat center;
+    		-webkit-background-size: 12px 20px;
+		}
+		.uInfo{
+			height:60px;
+			width:100%;
+			line-height:60px;
+			border-top:solid 1px #E0E0E0;						
+		}
+		.uInfoLabel{
+			color:#000;
+			font-size:18px;
+			padding-left:10px;
+			text-align:left;
+		}
+		.uInfoContent{
+			color:#4f4f4f;
+			font-size:16px;
+			float:right;
+			padding-right:10px;
+		}
+		.uInfo-hov{
+			color:red;
+			background-color:#adadad;
+		}
+	</style>
+	</head>
+	<body>
+		<header id="header">
+			<div class="titlebar">
+				<a class="left" onclick="api.closeWin();"></a>
+				<h1>系统设置</h1>
+			</div>
+		</header>
+		<div id="section_container">
+			<section id="form_section" data-role="section" class="active">				
+				<article data-role="article" id="normal_article" data-scroll="verticle" class="active" style="top:44px;bottom:0px;">
+					<div class="uInfo" >
+						<span class="uInfoLabel">加载图片</span>
+						<div class="toggle" data-role="toggle" data-on="是" data-on-value="1" data-off="否" data-off-value="0" style="margin-top:15px;float:right;margin-right:20px;"></div>
+					</div>
+					<div class="uInfo">
+						<span class="uInfoLabel">消息通知</span>
+						<div class="toggle" data-role="toggle" data-on="是" data-on-value="1" data-off="否" data-off-value="0" style="margin-top:15px;float:right;margin-right:20px;"></div>
+					</div>
+					<div class="uInfo" tapmode="uInfo-hov" onclick="openWin('clearCache')">
+						<span class="uInfoLabel">清理缓存</span>
+						<span id="cacheId" class="uInfoContent"></span>
+					</div>					
+				</article>				
+			</section>
+		</div>
+	<script src="../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/easydialog/easydialog.js"></script>
+	<script src="../script/third/jquery/jquery.mobile.custom.min.js"></script>
+	<script type="text/javascript" src="../script/systemSetting.js"></script>
+	<!--- third --->
+	<script src="../script/third/iscroll/iscroll-probe.js"></script>
+	<!-- agile -->
+	<script type="text/javascript" src="../script/agile/js/agile.js"></script>		
+	<!-- app -->
+	<script type="text/javascript" src="../script/app/js/app.js"></script>
+		
+	</body>
+</html>

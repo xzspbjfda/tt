@@ -1,0 +1,256 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>进站派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+    <link rel="stylesheet" href="../../css/lightForBillMenu.css">
+    <link rel="stylesheet" href="../../css/darkForBillMenu.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../css/billMenu.css" /> -->
+    <style type="text/css">
+        .winDiv {
+            background-color: #f2f2f2;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        .winTitleDiv {
+            text-align: center;
+            font-size: 20px;
+            color: #FFFFFF;
+            background-color: #DB4537;
+            height: 35px;
+            line-height: 35px;
+            -webkit-border-radius: 10px 10px 0 0;
+            -moz-border-radius: 10px 10px 0 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .winButtonDiv {
+            background-color: #e0e0e0;
+            height: 50px;
+            width: 300px;
+            -webkit-border-radius: 0 0 10px 10px;
+            -moz-border-radius: 0 0 10px 10px;
+            border-radius: 0 0 10px 10px;
+            margin-left: 20%;
+        }
+
+        .winOkBtn {
+            width: 130px;
+            height: 40px;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #DB4537;
+            float: right;
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+
+        .winCancelBtn {
+            width: 130px;
+            height: 40px;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #3779d0;
+            float: left;
+            margin-left: 5px;
+            margin-top: 5px;
+        }
+
+        .labelDiv {
+            text-align: center;
+            font-size: 16px;
+            color: #3498DB;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="url"],
+        input[type="number"],
+        input[type="week"],
+        input[type="month"],
+        input[type="time"],
+        input[type="date"],
+        input[type="datetime"],
+        input[type="datetime-local"],
+        input[type="search"],
+        input[type="file"],
+        input[type="color"],
+        select,
+        textarea {
+            outline: none;
+        }
+
+        html,
+        body,
+        #wrap,
+        #header {
+            background: transparent;
+            overflow: hidden;
+        }
+
+        #header {
+            height: 58px;
+            margin-top: 10%;
+        }
+
+        .shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            opacity: 0.6;
+            filter: alpha(opacity=60);
+        }
+        #leaveStation{
+            margin-top: 50%;
+            overflow: hidden;
+        }
+        .aui-flex-item-8 {
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>、
+    <div id="auditForm" class="winDiv">
+        <div class="winTitleDiv">
+           上站审核
+        </div>
+        <div id="opinionLabelDiv1" class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+            <div class="aui-flex-item-3 "
+                style="margin-left:2px; height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+                操作人:
+            </div>
+            <div class="aui-flex-item-8 " id="operationUserName">
+            </div>
+        </div>
+        <div id="opinionLabelDiv2" class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+            <div class="aui-flex-item-3 "
+                style="margin-left:2px; height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+                操作时间:
+            </div>
+            <div class="aui-flex-item-8" id="currentTime">
+            </div>
+        </div>
+        <div id="opinionLabelDiv3" class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+            <div class="aui-flex-item-3 "
+                style="margin-left:2px; height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+                退回原因
+            </div>
+            <div class="aui-flex-item-8 ">
+                <textarea id="dealComment" form-param class="dealInfo" rows="5" cols="10"></textarea>
+            </div>
+        </div>
+        <div class="winButtonDiv">
+            <button class="winCancelBtn" onclick="closeFrame()">
+                取消
+            </button>
+            <button class="winOkBtn" onclick="audit()">
+                确定
+            </button>
+        </div>
+    </div>
+
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/theme.js"></script>
+<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+
+<script>
+
+    request.auditReject = function(data,callback){
+        service({
+            url: "/enterStationBill/auditBill.do",
+            data: $.extend(data,{agree:false})
+        },callback)
+    }
+
+    var user;
+    apiready = function () {
+        user = $api.getStorage("user");
+        $("#currentTime").text(new Date().pattern("yyyy-MM-dd HH:mm:ss"));
+        $("#operationUserName").text(user.username);
+    };
+
+    function back() {
+        openWinList('churuzhan/newStandBillListWin','出入站审核','NEW_STATION_BILL_WAITLIST',false);
+    }
+    function closeFrame(name) {
+            if (name == null || name == '' || name == 'undefined') {
+                api.closeFrame();
+            } else {
+                api.closeFrame({
+                    name: name
+                });
+            }
+        }
+    function closeWin() {
+        api.closeWin({
+            name: 'checkStandBill'
+        });
+    }
+
+    function audit(){
+        var json = request.serialization("#auditForm");
+        if (!json.dealComment) {
+            return api.toast({msg: "请填写退回理由", duration: 1000, location: 'middle'});
+        }
+        json.id = api.pageParam.id;
+        api.showProgress({title: '请求中', modal: false});
+        request.auditReject(json, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    api.toast({msg: "退回完成！", duration: 800, location: 'middle'});
+                    window.setTimeout(function() {
+                        // api.sendEvent({name: 'churuzhanBillAudit', extra: {state: 'auditOver'}});
+                        // api.sendEvent({name: 'wait_task_list_frm', extra: {state: 'auditOver'}});
+                        api.hideProgress();
+                        api.sendEvent({name: 'churuzhanBillAudit', extra: {state: 'auditOver'}});
+                        api.closeWin({name : 'mainStandBillDetail'});
+                        api.closeWin();
+                    },3000);
+                    return;
+                } else {
+                    api.toast({msg: ret.msg, location: 'middle'});
+                }
+            } else {
+                api.toast({msg: err.msg, location: 'middle'});
+            }
+            api.hideProgress();
+        });
+    }
+</script>
+
+</html>

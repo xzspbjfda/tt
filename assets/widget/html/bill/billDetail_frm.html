@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    </head>
+    <style>
+    .aui-content-wxx{
+      width: 100%;
+      margin: 0;
+    }
+    .aui-content-wxx ul{
+      background-color: #fff;
+      border-radius: 0;
+      overflow: hidden;
+      margin-bottom: 10px;
+      padding: 0 3%;
+    }
+      .aui-list-view{
+        margin-bottom: 0;
+      }
+    </style>
+    <body>
+        <script id="img-template" type="text/x-dot-template">
+            <li class="aui-list-view-cell aui-img aui-col-xs-4">
+            <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="openImg('{{=it.imgpath}}')">
+            </li>
+        </script>
+        <!--*工单详情模板*-->
+        <script id="listView-template" type="text/x-dot-template">
+            <ul class="aui-list-view">
+            <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>工单信息</h2></div>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red">• 工单编号</div>
+            <div class="aui-col-xs-12 aui-pull-right">{{=it.billsn != null ? it.billsn:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red">• 工单状态</div>
+            <div class="aui-col-xs-12 aui-pull-right">{{=it.billstatusname != null ? it.billstatusname:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red">• 工单类型</div>
+            <div class="aui-col-xs-12 aui-pull-right">{{=it.businesstype != null ? it.businesstype:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red">• 故障来源</div>
+            <div class="aui-col-xs-12 aui-pull-right">{{=it.faultsrc != null ? it.faultsrc:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red">• 工单内容</div>
+            <div class="aui-col-xs-12 aui-pull-right">{{=it.billtitle != null ? it.billtitle:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 派单时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.dispatchtime != null ? it.dispatchtime:''}}</div>
+            </li>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red">• 站址名</div>
+            <div class="aui-col-xs-12 aui-pull-right">{{=it.st_name != null ? it.st_name:''}}</div>
+            </li>
+
+            <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-12 aui-pull-left red">• 备注</div>
+                <div class="aui-col-xs-12 aui-pull-right">{{=it.st_remark != null ? it.st_remark:''}}</div>
+                </li>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-4 aui-pull-left red">• 距上次反馈历时</div>
+            <div class="aui-col-xs-7 aui-pull-right" id='lastTime' style='color:#db4537'></div>
+            </li>
+
+            </ul>
+
+
+
+            {{? (it.faulttype == "GENERELEC" && it.istemperature == "Y")
+            ||(it.faulttype =="2005"&&(it.businesstype.indexOf('运营商工单')!=-1||it.businesstype.indexOf('千寻公司工单')!=-1))
+            || (it.faulttype =="2005"&&(it.rev_is_empty_run=='0'||it.rev_is_empty_run=='1'||it.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==it.billstatus||'ELECTRIC_END'==it.billstatus)||'ELECTRIC_JUDGE'==it.billstatus)}}
+                <ul class="aui-list-view">
+                <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>发电信息</h2></div>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 电池组数</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.backuppowernum != null ? it.backuppowernum:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 油机编码</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.oil_code != null ? it.oil_code:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 从驻点上站时长</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.onstation_time  != null ? it.onstation_time :''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 发电接口位置</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.powerinterface != null ? it.powerinterface:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 业主姓名</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.contact != null ? it.contact:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 联系方式</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.contact_tele != null ? it.contact_tele:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 直流总负载</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.dcload != null ? it.dcload:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 是否有固定油机</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.configoilmachine != null ? it.configoilmachine:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 蓄电池续航时间</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.capacity_battery != null ? it.capacity_battery:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">• 站点所在电力线路</div>
+                <div class="aui-col-xs-7 aui-pull-right">{{=it.linename != null ? it.linename:''}}</div>
+                </li>
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-12 aui-pull-left red" style="color:#8470FF;" onclick="openFSU()">• 电流电压历史曲线图</div>
+                </li>
+            {{?}}
+
+            {{? it.businesstype == '设备告警工单' }}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 告警是否恢复</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.alarm_isrecovery=='Y'?'已恢复':'未恢复'}}</div>
+            </li>
+            {{?}}
+            {{? it.fault_recover_time != null }}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 恢复时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.fault_recover_time != null ? it.fault_recover_time:''}}</div>
+            </li>
+            {{?}}
+            {{? it.recovery_time != null }}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 告警恢复时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.recovery_time != null ? it.recovery_time:''}}</div>
+            </li>
+            {{?}}
+
+             {{? it.businesstype.indexOf('运营商工单')!=-1}}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 运营商异常是否已恢复</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.isrecovery != null ? it.isrecovery:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 异常恢复时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.recovery_time != null ? it.recovery_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 运营商判定是否可以归档</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.canfiled != null ? it.canfiled:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 申请延时的时间（小时）</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.delay_hour != null ? it.delay_hour:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 申请延时原因分类</div>
+            <div class="aui-col-xs-7 aui-pull-right">
+            {{? it.delay_type == '1' }}
+            设备故障
+            {{?}}
+            {{? it.delay_type == '2' }}
+            物业矛盾
+            {{?}}
+            {{? it.delay_type == '3' }}
+           市政拆迁
+            {{?}}
+            {{? it.delay_type == '4' }}
+            其他
+            {{?}}
+
+            </div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 申请延时原因描述</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.delay_comment != null ? it.delay_comment:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 延时成功或失败</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.delay_success != null ? it.delay_success:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 延时失败原因</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.delay_fail_reason != null ? it.delay_fail_reason:''}}</div>
+            </li>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 是否抑制工单</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.is_restrain_bill == 'Y' ? '是':'否'}}</div>
+            </li>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 抑制原因</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.restrain_reason != null ? it.restrain_reason:''}}</div>
+            </li>
+            {{?}}
+
+
+             {{? it.ms_id != null }}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 重保等级</div>
+            <div class="aui-col-xs-7 aui-pull-right" style="color:#FCD209">
+          {{? it.ms_sitelevel == 'GD' }}
+            高等级
+            {{?? it.ms_sitelevel == 'DD' }}
+            低等级
+            {{?}}
+            </div>
+            </li>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 重保开始时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.ms_starttime != null ? it.ms_starttime:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 重保内容</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.ms_remark != null ? it.ms_remark:''}}</div>
+            </li>
+             {{?}}
+            </ul>
+
+            {{
+            var yys=it.st_operators;
+            if(yys!=null&&yys!=''){
+              if(yys.indexOf('，')>-1){
+                var yysArr=yys.split("，");
+                var yysArrNum=yysArr.length;
+              }else {
+                var yysArrNum=1;
+              }
+            }
+            }}
+
+            <ul class="aui-list-view" >
+            <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>受理信息</h2></div>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 申告人</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.declare_person != null?it.declare_person:'系统'}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 申告电话</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.declare_telepho != null?it.declare_telepho:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 申告时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.dispatchtime != null?it.dispatchtime:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 联系人</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.contact != null?it.contact:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 联系人电话</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.contactmode != null?it.contactmode:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 受理人</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.createopen != null?it.createopen:'系统'}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 受理人电话</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.createlinkinfo != null?it.createlinkinfo:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 受理时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.createtime != null?it.createtime:''}}</div>
+            </li>
+            </ul>
+            <!--室分故障定位信息-->
+            {{? it.faulttype == '4001' && (it.billstatus == 'REVERT' ||it.billstatus == 'REVERTED' || it.billstatus == 'SUPPORTCONFIRM' )}}
+            <ul class="aui-list-view" >
+            <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>室分故障定位信息</h2></div>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 确认时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.define_confirm_time != null ? it.define_confirm_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 铁塔确认人</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.define_itower_confirm_people != null ? it.define_itower_confirm_people:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 运营商确认人</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.define_carrier_confirm_people != null ? it.define_carrier_confirm_people:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障责任方</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.define_fault_duty != null ? it.define_fault_duty:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障级别</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.define_fault_level != null ? it.define_fault_level:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 备注</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.define_deal_result != null ? it.define_deal_result:''}}</div>
+            </li>
+            </ul>
+            {{?}}
+            {{? it.billstatus == 'REVERTED' || it.billstatus == 'SUPPORTCONFIRM'  }}
+            <ul class="aui-list-view" >
+            <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>回单信息</h2></div>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 回单人</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.last_deal_object_name != null?it.last_deal_object_name:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 回单时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.reverttime != null?it.reverttime:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障类型</div>
+            <div class="aui-col-xs-7 aui-pull-right">
+            {{? it.faulttype == 'GENERELEC' }}
+            发电
+			{{?? it.faulttype == 'GENERELEC_FAULT' }}
+            停电
+            {{?? it.faulttype == '2001' }}
+            开关电源设备故障
+            {{?? it.faulttype == '2002' }}
+            蓄电池设备故障
+            {{?? it.faulttype == '2003' }}
+            机房环境设备故障
+            {{?? it.faulttype == '2004' }}
+            空调设备故障
+            {{?? it.faulttype == '2005' }}
+            断站退服
+            {{?? it.faulttype == 'NOSIGNAL' }}
+            无信号(已停用)
+            {{?? it.faulttype == '4001' }}
+            室分故障
+            {{?? it.faulttype == 'OTHER' }}
+            其它
+            {{?}}
+            </div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障修复时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.fault_recover_time != null?it.fault_recover_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障发生省</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.nativenetid != null?it.nativenetid:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障原因</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.fault_case != null?it.fault_case:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 处理措施</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.deal_result != null?it.deal_result:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 处理结果</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.alarm_isrecovery == 'Y'?'已恢复':'处理中'}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 是否验证</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.billstatus == 'REVERTED'?'是':'否'}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 验证方式</div>
+            <div class="aui-col-xs-7 aui-pull-right">人工</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 是否上站</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_isup_station == 'Y'?'是':'否'}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 故障免责类型</div>
+            <div class="aui-col-xs-7 aui-pull-right">
+            {{? it.rev_disclaimer_itmes == '1' }}
+            免责条款1-不可抗力
+            {{?}}
+            {{? it.rev_disclaimer_itmes == '2' }}
+            免责条款2-夜间免责
+            {{?}}
+            {{? it.rev_disclaimer_itmes == '3' }}
+            免责条款3-客户原因
+            {{?}}
+            {{? it.rev_disclaimer_itmes == '4' }}
+            免责条款4-免责站址
+            {{?}}
+            {{? it.rev_disclaimer_itmes == '5' }}
+            免责条款5-其他免责
+            {{?}}
+            </div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 免责原因说明</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_disclaimer_reson != null?it.rev_disclaimer_reson:''}}</div>
+            </li>
+            </ul>
+            {{?}}
+            <!--如果故障类型为“停电”则显示下面两个信息 tangsj 2015-09-18-->
+            {{? it.faulttype == 'GENERELEC' && (it.billstatus == 'REVERT' || it.billstatus == 'REVERTED' || it.billstatus == 'SUPPORTCONFIRM')}}
+            <ul class="aui-list-view" >
+            <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>发电信息</h2></div>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 是否具备发电条件</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.st_ifgenelec != null?it.st_ifgenelec:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 预设发电等待时长(分钟)</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.st_waittime != null?it.st_waittime:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 外市电恢复时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_outer_recover_time != null?it.rev_outer_recover_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 挂起等待开始时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.suspend_begin_time != null?it.suspend_begin_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 解除挂起时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.suspend_end_time != null?it.suspend_end_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 运营商是否购买发电服务</div>
+            {{? it.st_ifbuyeletric == 'Y' }}
+            <div class="aui-col-xs-7 aui-pull-right" style="color:#4EFD1D"> 是</div>
+            {{?}}
+            {{? it.st_ifbuyeletric != 'Y' }}
+            <div class="aui-col-xs-7 aui-pull-right" style="color:#D1261E">否</div>
+            {{?}}
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 实设发电等待时长(分钟)</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.indemnify_time != null?it.indemnify_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 汽油单价</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.payorder != null?it.payorder:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 是否需要现场发电</div>
+            <div class="aui-col-xs-7 aui-pull-right">
+            {{? it.istemperature == 'Y' }}
+            是
+            {{??}}
+            否
+            {{?}}
+            </div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 运营商是否同意发电</div>
+            <div class="aui-col-xs-7 aui-pull-right">
+            {{? it.whether_the_power == 'Y' }}
+            是
+            {{?}}
+            {{? it.whether_the_power == 'N' }}
+            否
+            {{?}}
+            </div>
+            </li>
+            {{? it.istemperature == 'Y'}}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 油机型号</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_board_type != null?it.rev_board_type:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 功率</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_work_rate != null?it.rev_work_rate:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 发电人员到达时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_arrive_time != null?it.rev_arrive_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 发电开始时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_elec_begin_time != null?it.rev_elec_begin_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 发电结束时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_elec_end_time != null?it.rev_elec_end_time:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 发电时长（分钟）</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_distance != null?it.rev_distance:''}}</div>
+            </li>
+            {{?}}
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 断电原因发电时长(分钟)</div>
+            <div class="aui-col-xs-7 aui-pull-right">
+            {{? it.rev_electricity_causes == '1' }}
+            市电停电
+            {{?}}
+            {{? it.rev_electricity_causes == '2' }}
+            空开跳闸
+            {{?}}
+            {{? it.rev_electricity_causes == '3' }}
+            外电缺相
+            {{?}}
+            {{? it.rev_electricity_causes == '4' }}
+            电缆挖断
+            {{?}}
+            {{? it.rev_electricity_causes == '5' }}
+            业主拉电
+            {{?}}
+            {{? it.rev_electricity_causes == '6' }}
+            其它
+            {{?}}
+            </div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 发电里程（公里）</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.rev_vehicle_mileage != null?it.rev_vehicle_mileage:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 实时电压监测</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.test_param != null?it.test_param:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-12 aui-pull-left red" style="color:#8470FF;" onclick="openFSU()">• 电流电压历史曲线图</div>
+            </li>
+            </ul>
+            {{?}}
+            {{? it.issign == 'Y'}}
+            <ul id="list-view"  style="height:auto;" class="aui-list-view">
+            <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>签到信息</h2></div>
+
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 签到人员</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.signusername != null?it.signusername:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 签到时间</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.signdate != null?it.signdate:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 签到经度</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.signlon != null?it.signlon:''}}</div>
+            </li>
+            <li class="aui-list-view-cell border_b" >
+            <div class="aui-col-xs-3 aui-pull-left red">• 签到纬度</div>
+            <div class="aui-col-xs-7 aui-pull-right">{{=it.signlat != null?it.signlat:''}}</div>
+            </li>
+            </ul>
+            {{?}}
+
+            <ul class="aui-list-view" >
+                <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>照片情况</h2></div>   
+                {{? it.imglistshow }} 
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">故障照片</div>
+                <div class="aui-col-xs-7 aui-pull-right">
+                    <ul class="aui-list-view aui-grid-view">
+                        {{? it.imglist != null && it.imglist.length>0 }}
+                            {{ for(var i=0, len=it.imglist.length; i < len; i++) {}}
+                                <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                    <img class="aui-img-object" src="{{=it.imglist[i].file_path}}"  onclick="openImg('{{=it.imglist[i].file_path}}');">
+                                </li>
+                            {{ } }}
+                        {{? }}
+                    </ul>
+                </div>
+                </li>
+                {{?}}   
+                {{? it.imglist1show }} 
+                <li class="aui-list-view-cell border_b" >
+                <div class="aui-col-xs-3 aui-pull-left red">派单照片</div>
+                <div class="aui-col-xs-7 aui-pull-right">
+                    <ul class="aui-list-view aui-grid-view">
+                        {{? it.imglist1 != null && it.imglist1.length>0 }}
+                            {{ for(var i=0, len=it.imglist1.length; i < len; i++) {}}
+                                <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                    <img class="aui-img-object" src="{{=it.imglist1[i].file_path}}"  onclick="openImg('{{=it.imglist1[i].file_path}}');">
+                                </li>
+                            {{ } }}
+                        {{? }}
+                        <li id="addPic1" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic('imglist1')">
+                            <img class="aui-img-object" src="../../image/icons/png/blzp.png">
+                        </li>
+                    </ul>
+                </div>
+                </li>
+                {{?}}
+                {{? it.imglist2show }}
+                <li class="aui-list-view-cell border_b" >
+                    <div class="aui-col-xs-3 aui-pull-left red">接单照片</div>
+                    <div class="aui-col-xs-7 aui-pull-right">
+                        <ul class="aui-list-view aui-grid-view">
+                            {{? it.imglist2 != null && it.imglist2.length>0 }}
+                                {{ for(var i=0, len=it.imglist2.length; i < len; i++) {}}
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                        <img class="aui-img-object" src="{{=it.imglist2[i].file_path}}"  onclick="openImg('{{=it.imglist2[i].file_path}}');">
+                                    </li>
+                                {{ } }}
+                            {{? }}
+                            <li id="addPic2" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic('imglist2')">
+                                <img class="aui-img-object" src="../../image/icons/png/blzp.png">
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {{?}}
+                {{? it.imglist3show }}
+                <li class="aui-list-view-cell border_b" >
+                    <div class="aui-col-xs-3 aui-pull-left red">发电判断</div>
+                    <div class="aui-col-xs-7 aui-pull-right">
+                        <ul class="aui-list-view aui-grid-view">
+                            {{? it.imglist3 != null && it.imglist3.length>0 }}
+                                {{ for(var i=0, len=it.imglist3.length; i < len; i++) {}}
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                        <img class="aui-img-object" src="{{=it.imglist3[i].file_path}}"  onclick="openImg('{{=it.imglist3[i].file_path}}');">
+                                    </li>
+                                {{ } }}
+                            {{? }}
+                            <li id="addPic3" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic('imglist3')">
+                                <img class="aui-img-object" src="../../image/icons/png/blzp.png">
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {{?}}
+                {{? it.imglist4show }}
+                {{? it.billstatus == 'REVERT' || it.billstatus == 'ELECTRIC_END' || it.billstatus == 'ELECTRIC_BEGIN'}}
+                <li class="aui-list-view-cell border_b" >
+                    <div class="aui-col-xs-3 aui-pull-left red">开始发电</div>
+                    <div class="aui-col-xs-7 aui-pull-right">
+                        <ul class="aui-list-view aui-grid-view">
+                            {{? it.imglist4 != null && it.imglist4.length>0 }}
+                                {{ for(var i=0, len=it.imglist4.length; i < len; i++) {}}
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                        <img class="aui-img-object" src="{{=it.imglist4[i].file_path}}"  onclick="openImg('{{=it.imglist4[i].file_path}}');">
+                                    </li>
+                                {{ } }}
+                            {{? }}
+                            <li id="addPic4" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic('imglist4')">
+                                <img class="aui-img-object" src="../../image/icons/png/blzp.png">
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {{?}}
+                {{?}}
+                {{? it.imglist5show }}
+                {{? it.billstatus == 'REVERT' || it.billstatus == 'ELECTRIC_END'}}
+                <li class="aui-list-view-cell border_b" >
+                    <div class="aui-col-xs-3 aui-pull-left red">结束发电</div>
+                    <div class="aui-col-xs-7 aui-pull-right">
+                        <ul class="aui-list-view aui-grid-view">
+                            {{? it.imglist5 != null && it.imglist5.length>0 }}
+                                {{ for(var i=0, len=it.imglist5.length; i < len; i++) {}}
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                        <img class="aui-img-object" src="{{=it.imglist5[i].file_path}}"  onclick="openImg('{{=it.imglist5[i].file_path}}');">
+                                    </li>
+                                {{ } }}
+                            {{? }}
+                            <li id="addPic5" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic('imglist5')">
+                                <img class="aui-img-object" src="../../image/icons/png/blzp.png">
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {{?}}
+                {{?}}
+                {{? it.imglist6show }}
+                {{? it.billstatus == 'REVERT'}}
+                <li class="aui-list-view-cell border_b" >
+                    <div class="aui-col-xs-3 aui-pull-left red">回单照片</div>
+                    <div class="aui-col-xs-7 aui-pull-right">
+                        <ul class="aui-list-view aui-grid-view">
+                            {{? it.imglist6 != null && it.imglist6.length>0 }}
+                                {{ for(var i=0, len=it.imglist6.length; i < len; i++) {}}
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4">
+                                        <img class="aui-img-object" src="{{=it.imglist6[i].file_path}}"  onclick="openImg('{{=it.imglist6[i].file_path}}');">
+                                    </li>
+                                {{ } }}
+                            {{? }}
+                            <li id="addPic6" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic('imglist6')">
+                                <img class="aui-img-object" src="../../image/icons/png/blzp.png">
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {{?}}
+                {{?}}
+            </ul>
+            
+
+
+            <!--   <div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>图片信息</h2></div>
+
+            <div class="classify clearfix"  tapmode="" style="height:auto;">
+            <ul id="list-view" class="info" style="height:auto;">-->
+            <!-- <li id="li" class="" onclick="openImg('{{=it.imgPath}}');" style="height:70px;">
+            <div class="left">
+            <p style="width:70px;height:70px;display: table-cell;vertical-align: middle;">
+            <img class="left" src="../../image/arrow.png" style="vertical-align:middle;">
+            </p>
+            </div>
+            <div class="left">
+            2015-09-13 12:13:14
+            <p>
+            经度:2,纬度:3
+            </p>
+            </div>
+            {{ if(it.deleteFlag=="Y"){}}
+            <div class="right" style="display:inline-block height: 60px;line-height: 60px;">
+            <button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgPath}}');">X</button>
+            </div>
+            {{}}}
+            </li>
+            </ul>
+            </div>-->
+            <div id="workingBottom" class="fixed_bottom" style="display: none;width:70%;margin:0 auto;">
+            <button class="outline left aui-btn aui-btn-info" onclick="addPicture();">
+            添加图片
+            </button>
+            <button class="right aui-btn aui-btn-danger" onclick="uploadResult();">
+            提交结果
+            </button>
+            </div>
+        </script>
+        <div class="aui-content aui-content-wxx" id="listView"></div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <!--<script type="text/javascript" src="../../script/xunjian_db.js"></script>-->
+    <script src="../../script/echarts/build/dist/echarts.js"></script>
+    <script>
+        var billDetailInfo;
+
+        var pageParam = {};
+        function datetimeFormat(longTypeDate){
+ var dateTypeDate = "";
+ var date = new Date();
+ date.setTime(longTypeDate);
+ // dateTypeDate += date.getFullYear(); //年
+ // dateTypeDate += "-" + getMonth(date); //月
+ // dateTypeDate += "-" + getDay(date); //日
+ dateTypeDate += " " + getHours(date); //时
+ dateTypeDate += ":" + getMinutes(date);  //分
+ // dateTypeDate += ":" + getSeconds(date);  //秒
+ return dateTypeDate;
+}
+/*
+ * 时间格式化工具
+ * 把Long类型的1527672756454日期还原yyyy-MM-dd格式日期
+ */
+function dateFormat(longTypeDate){
+ var dateTypeDate = "";
+ var date = new Date();
+ date.setTime(longTypeDate);
+ dateTypeDate += date.getFullYear(); //年
+ dateTypeDate += "-" + getMonth(date); //月
+ dateTypeDate += "-" + getDay(date); //日
+ return dateTypeDate;
+}
+//返回 01-12 的月份值
+function getMonth(date){
+ var month = "";
+ month = date.getMonth() + 1; //getMonth()得到的月份是0-11
+ if(month<10){
+  month = "0" + month;
+ }
+ return month;
+}
+//返回01-30的日期
+function getDay(date){
+ var day = "";
+ day = date.getDate();
+ if(day<10){
+  day = "0" + day;
+ }
+ return day;
+}
+//小时
+function getHours(date){
+ var hours = "";
+ hours = date.getHours();
+ if(hours<10){
+  hours = "0" + hours;
+ }
+ return hours;
+}
+//分
+function getMinutes(date){
+ var minute = "";
+ minute = date.getMinutes();
+ if(minute<10){
+  minute = "0" + minute;
+ }
+ return minute;
+}
+//秒
+function getSeconds(date){
+ var second = "";
+ second = date.getSeconds();
+ if(second<10){
+  second = "0" + second;
+ }
+ return second;
+}
+        apiready = function() {
+          var fsuid=api.pageParam.fsuid;//通过fsuid获取电压电流信息  dingxb
+            api.showProgress({
+                title : '加载中..',
+                text : '工单详情'
+            });
+            billDetailInfo = $api.getStorage('billDetailInfo');
+            var actionList=$api.getStorage('actionList');
+
+            billDetailInfo.list.Fsu=fsuid;
+            if (billDetailInfo) {
+                if (billDetailInfo.list) {
+                    pageParam.businessid = billDetailInfo.list.businessid;
+                    pageParam.stationname = billDetailInfo.list.st_name || '';
+                    renderTemp('listView', 'listView-template', billDetailInfo.list);
+                    console.log(getObj(billDetailInfo.list));
+                    console.log("--------------");
+                    console.log(JSON.stringify(billDetailInfo.list.imglist2));
+                    console.log("--------------");
+                    var parolData={};
+                    parolData.stationname=billDetailInfo.list.st_name;
+                    parolData.stationcode=billDetailInfo.list.st_code;
+                    $api.setStorage('parolData', parolData);
+                    console.log(JSON.stringify(actionList));
+                    var actionListJsonnum=actionList.length;
+
+                    // 工单历时自动刷新
+                    setInterval(function(){
+                        var timestart=actionList[actionListJsonnum-1].operate_end_time;
+
+                        var longTime2 = getDateLong(timestart);
+                        $('#lastTime').html(longTime2);
+                    },1000);
+                } else {
+                    api.toast({
+                        msg : '获取工单详情失败',
+                        location : 'bottom'
+                    });
+                }
+            } else {
+                api.toast({
+                    msg : '无工单详情信息',
+                    location : 'bottom'
+                });
+            }
+
+
+
+            api.hideProgress();
+            showMsg();
+        };
+        
+        //刷新页面
+        function refreshImageList(data){
+            console.log("=========refreshImageList====================");
+            console.log(JSON.stringify(data));            
+            var billStatus=data.billStatus;
+            var imageArray=data.imageArray;
+            if(billStatus=="ARTIFICIAL_ACCEPTANCE_PC"){//派单
+                appendpic($('#addPic1'),imageArray);
+            }else if(billStatus=="ACCEPT"){//接单
+                appendpic($('#addPic2'),imageArray);
+            }else if(billStatus=="ELECTRIC_JUDGE"){//是否发电
+                appendpic($('#addPic3'),imageArray);
+            }else if(billStatus=="ELECTRIC_BEGIN"){//开始发电
+                appendpic($('#addPic4'),imageArray);
+            }else if(billStatus=="ELECTRIC_END"){//结束发电
+                appendpic($('#addPic5'),imageArray);
+            }else if(billStatus=="REVERT"){//回单
+                appendpic($('#addPic6'),imageArray);
+            }
+        }
+
+        function appendpic(object,imageArray){
+            console.log("33333333333333333333333333333333333333333");
+            console.log(JSON.stringify(imageArray));
+            for(i=0;i<imageArray.length;i++){
+                var data=imageArray[i];
+                var tpl = $api.byId('img-template').text;
+                var tempFn = doT.template(tpl);
+                object.before(tempFn(data));
+                $new = object.prev();
+                $new.css('height', $new.css('width'));
+            }
+        }
+
+
+        function performanceQuery() {
+            var opts = {
+                billsn : billDetailInfo.list.billsn,
+                billid : billDetailInfo.list.billid,
+                taskid : billDetailInfo.list.taskid,
+                deviceid : billDetailInfo.list.deviceid
+            };
+            var stationDetailInfo = $api.getStorage('stationDetailInfo');
+            if (isExist(stationDetailInfo)) {
+                var stationId = stationDetailInfo.list.st_id;
+                $api.setStorage('stationModel', stationDetailInfo.list);
+                pageParam.stationId = stationId;
+            }
+            var queryOpts = $api.jsonToStr(opts);
+            pageParam.queryOpts = queryOpts;
+            pageParam.test_param = billDetailInfo.list.test_param;
+            pageParam.businessid = billDetailInfo.list.businessid;
+            api.showProgress({
+                title : '加载中...'
+            });
+            $client.getBillFsuInfo(opts, function(ret, err) {
+                if (ret) {
+                    if (ret.status === 'OK') {
+                        var fsuInfo = {
+                            fsu : ret.fsu,
+                            devicelist : ret.devicelist,
+                            signallist : ret.signallist
+                        }
+                        $api.setStorage('fsuInfo', fsuInfo);
+                        //                      pageParam.fsuInfo = $api.jsonToStr(fsuInfo);
+                        api.openWin({
+                            name : 'signalRealData_win',
+                            url : 'detail/signalRealData_win.html',
+                            reload : true,
+                            bounces : false,
+                            vScrollBarEnabled:false,
+                            pageParam : pageParam
+                        });
+                    } else {
+                        api.toast({
+                            msg : ret.data_info,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : '该工单的FSU信息不存在',
+                        location : 'bottom'
+                    });
+                }
+            });
+            api.hideProgress();
+        }
+
+        function cb_openBillPicDetail() {
+            pageParam.billId = api.pageParam.billId;
+            pageParam.billSn = api.pageParam.billSn;
+            pageParam.billStatus = api.pageParam.billStatus;
+            api.openFrame({
+                name : 'billPicDetail_frm',
+                url : 'detail/billPicDetail_win.html',
+                bounces : false,
+                pageParam : pageParam
+            });
+        }
+        function cb_openBillFJDetail() {
+            pageParam.billId = api.pageParam.billId;
+            pageParam.billSn = api.pageParam.billSn;
+            api.openFrame({
+                name : 'billFjDetail_frm',
+                url : 'detail/billFjDetail_win.html',
+                bounces : false,
+                pageParam : pageParam
+            });
+        }
+
+        function cb_getBillDetail(ret, err) {
+            $('div.title').each(function() {
+                var text = $(this).text();
+                if ($(this).text().length > 7) {
+                    var text = $(this).parent()
+                    $(this).parent().addClass('big');
+                }
+            });
+            if (ret) {
+                billDetailInfo = ret.model;
+            }
+        }
+
+        function showMsg() {
+            var warning = api.pageParam.warning;
+            if (warning && warning != 'null') {
+                api.toast({
+                    msg : warning,
+                    duration : '5000'
+                });
+            }
+        }
+        function getDateLong(date1){
+        //  var date1= '2016/10/25 08:00:00';  //开始时间
+        	date1=date1.replaceAll("-", "/");
+            var date2 = new Date();    //结束时间
+            var date3 = date2.getTime() - new Date(date1).getTime();   //时间差的毫秒数
+
+        //	console.log("date1"+date1+"  date3:"+date3);
+            //------------------------------
+
+            //计算出相差天数
+            var days=Math.floor(date3/(24*3600*1000));
+        //	console.log('天数：'+days+"原数值："+date3/(24*3600*1000));
+            //计算出小时数
+
+            var leave1=date3%(24*3600*1000) ;   //计算天数后剩余的毫秒数
+            var hours=Math.floor(leave1/(3600*1000))  ;
+            //计算相差分钟数
+            var leave2=leave1%(3600*1000)  ;      //计算小时数后剩余的毫秒数
+            var minutes=Math.floor(leave2/(60*1000))  ;
+            //计算相差秒数
+            var leave3=leave2%(60*1000) ;     //计算分钟数后剩余的毫秒数
+            var seconds=Math.round(leave3/1000)  ;
+        //  alert(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
+        	var allTime=(hours+days*24)+"小时 "+minutes+" 分钟"+seconds+" 秒";
+        	return allTime;
+        }
+        // 打开曲线图
+        function openFSU(){
+          api.openWin({
+              name: "FSU-QX_win",
+              url: "FSU-QX_win.html",
+              bounces: false,
+              vScrollBarEnabled: true,
+              reload: true,
+              slidBackEnabled: true,
+              pageParam: api.pageParam,
+              animation: {
+                  type: "push",
+                  subType: "from_right",
+                  duration: 300
+              }
+          });
+        }
+        // 打开添加图片
+        function addPic(imglistName){
+            var pageParam=api.pageParam;
+            if(imglistName=="imglist1"){
+                pageParam.billStatus="ARTIFICIAL_ACCEPTANCE_PC";
+            }else if(imglistName=="imglist2"){//接单
+                pageParam.billStatus="ACCEPT";
+            }else if(imglistName=="imglist3"){
+                pageParam.billStatus="ELECTRIC_JUDGE";//是否发电
+            }else if(imglistName=="imglist4"){
+                pageParam.billStatus="ELECTRIC_BEGIN";//开始发电
+            }else if(imglistName=="imglist5"){
+                pageParam.billStatus="ELECTRIC_END";//结束发电
+            }else if(imglistName=="imglist6"){
+                pageParam.billStatus="REVERT";//回单
+            }
+            pageParam.billStatus = api.pageParam.billStatus;
+            pageParam.pageFrom="billDetail_frm"
+            api.openFrame({
+                name : 'billPicDetail_frm',
+                url : 'detail/billPicDetail_win.html',
+                bounces : false,
+                pageParam : pageParam
+            });
+        }
+
+        /**
+         *打开图片
+         */
+		 function openImg(imgPath) {
+            window.event.stopPropagation();
+            showlog("openImg:" + imgPath);
+            // var module = api.require('imageBrowser');
+            // module.openImages({
+            //     imageUrls : [imgPath],
+            //     showList : false
+            // });
+            var pageParam = {
+                images: [imgPath]
+            };
+            api.openWin({
+                name: 'imageViewer',
+                url:'../photoViewer/mainFrame.html',
+                pageParam : pageParam
+            })
+
+        }
+    </script>
+</html>

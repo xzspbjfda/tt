@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<title>全部分类</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+	<style>
+		.subtitleCon{
+			height: 35px;
+		    font-size: 15px;
+		    line-height: 35px;
+		    color: #666;
+		    float: right;
+		    width: 60%;
+		    white-space: nowrap;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		}
+	</style>
+</head>
+<body>
+		<script id="devDetail-template" type="text/x-dot-template">
+		    <div class="classify"  tapmode="">
+                <div class="info">
+                    <div class="title">运维ID</div>
+                    <div class="subtitleCon">{{=it.devicecode != null?it.devicecode:''}}</div>
+                </div>
+            </div>
+            <div class="classify"  tapmode="">
+                <div class="info">
+                    <div class="title">站址编码</div>
+                    <div class="subtitleCon">{{=it.deviceid != null?it.deviceid:''}}</div>
+                </div>
+            </div>
+		    <div class="classify"  tapmode="">
+                <div class="info">
+                    <div class="title">设备名称</div>
+                    <div class="subtitleCon">{{=it.name != null?it.name:''}}</div>
+                </div>
+            </div>
+		    <div class="classify"  tapmode="">
+                <div class="info">
+                    <div class="title">入网状态</div>
+                    <div class="subtitleCon">
+					{{
+						var userstatusname='未知';
+						if(it.userstatus=='init'){
+							userstatusname='初始录入';
+						}else if(it.userstatus =='fail'){
+							userstatusname='稽核不成功';
+						}else if(it.userstatus =='on'){
+							userstatusname='在网';
+						}else if(it.userstatus =='back'){
+							userstatusname='退网';
+						}
+					}}
+					{{=userstatusname}}
+					</div>
+                </div>
+            </div>
+		
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">资产编码</div>
+					<div class="subtitleCon">{{=it.nature == null?'':it.nature}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">所属省</div>
+					<div class="subtitleCon">{{=it.province_name != null?it.province_name:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">所属市</div>
+					<div class="subtitleCon">{{=it.city_name != null?it.city_name:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">所属区县</div>
+					<div class="subtitleCon">{{=it.county_name != null?it.county_name:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">站址名称</div>
+					<div class="subtitleCon">{{=it.area_name != null?it.area_name:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">站址ID</div>
+					<div class="subtitleCon">{{=it.areaid != null?it.areaid:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">所属机房</div>
+					<div class="subtitleCon">{{=it.room_name != null?it.room_name:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">设备数</div>
+					<div class="subtitleCon">{{=it.devcount != null?it.devcount:''}}</div>
+				</div>
+			</div>
+			
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">设备ID</div>
+					<div class="subtitleCon">{{=it.deviceid != null?it.deviceid:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">厂家</div>
+					<div class="subtitleCon">{{=it.factory != null?it.factory:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">型号</div>
+					<div class="subtitleCon">{{=it.model != null?it.model:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">开始使用时间</div>
+					<div class="subtitleCon">{{=it.startusetime != null?it.startusetime:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">类型</div>
+					<div class="subtitleCon">{{=it.type != null?it.type:''}}</div>
+				</div>
+			</div>
+			<div class="classify"  tapmode="">
+				<div class="info">
+					<div class="title">代维公司</div>
+					<div class="subtitleCon">{{=it.uygur != null?it.uygur:''}}</div>
+				</div>
+			</div>
+			
+	    </script>
+	    <div id="devDetail"></div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+
+<script>
+	apiready = function(){
+	    api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+		var user = $api.getStorage('user');
+		var userid = user.userid;
+		var deviceCode = "";
+		var fsuId = "";
+		if(api.pageParam.deviceCode != null){
+			deviceCode = api.pageParam.deviceCode;
+		}
+		if(api.pageParam.fsuId != null){
+			fsuId = api.pageParam.fsuId;
+		}
+		$client.getDevDetail(userid,deviceCode,fsuId,  function(ret, err) {
+			if (ret) {
+			console.log(JSON.stringify(ret.model))
+				//var strs = $api.jsonToStr(ret);
+				//alert(strs);
+				if (ret.success) {
+					var content = $api.byId('devDetail');
+		            var tpl = $api.byId('devDetail-template').text;
+		            var tempFn = doT.template(tpl);
+		            content.innerHTML = tempFn(ret.model);
+		            api.parseTapmode();
+				} else {
+					api.toast({msg: ret.data_info, location: 'middle'});
+				}
+			} else {
+	            api.toast({msg: err.msg, location: 'middle'});
+	        }
+	        api.hideProgress();
+		});
+	};
+</script>
+</html>

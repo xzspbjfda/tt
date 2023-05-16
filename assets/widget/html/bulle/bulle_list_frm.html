@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>公告列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <style>
+            .list {
+                padding: 0px 0px 5px;
+            }
+            .list li {
+                position: relative;
+                overflow: hidden;
+                border-bottom: 1px solid #d9d9d9;
+                 display: block;
+                padding: 10px;
+            }
+
+            .list li.active {
+                background-color: #d9e4e9;
+            }
+            .list img {
+                float: left;
+                width: 60px;
+                height: 60px;
+                border-radius: 4px;
+            }
+            .list h3, ul .list .info {
+                margin-left: 0px;
+            }
+            .list h3 {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 70%;
+                margin-bottom: 5px;
+                position: relative;
+            }
+            .list h3:after {
+                content: "";
+                display: inline-block;
+                width: 14px;
+                height: 17px;
+                margin-left: 10px;
+                vertical-align: middle;
+                -webkit-background-size: contain;
+                background-size: contain;
+            }
+
+            .list .info span {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 95%;
+                margin-top: 5px;
+                margin-bottom: 2px;
+
+                position: relative;
+            }
+
+            .list .user-info {
+               font-size: 12px;
+                color: #666;
+                line-height: 20px;
+
+                position: relative;
+            }
+
+             .list .user-info .cj-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 140px;
+                text-align: right;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="aui-content">
+            <ul class="list" id="listView"></ul>
+        </div>
+    </body>
+    <script id="listView-template" type="text/x-dot-template">
+        {{for(var i=0, len=it.length; i < len; i++) {
+          if(it[i].readed){
+            var color='#999';
+          }else {
+            var color='red'
+          }
+
+
+          it[i].title = js2string(it[i].title);
+
+          it[i].summary = js2string(it[i].summary);
+        }}
+        <li tapmode="active" noticeId="{{=it[i].id}}" onclick="showDetail('{{=it[i].id}}')">
+
+        <h3 style="color:{{=color}}">{{=it[i].title}}</h3>
+        <div class="info clearfix">
+        <span>{{=it[i].summary}}</span>
+         </div>
+         <div class="user-info">{{=it[i].publishername}}<div class="cj-date">{{=it[i].publishtime}}</div></div>
+
+        </li>
+        {{ } }}
+    </script>
+    <!-- third -->
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        function showDetail(id) {
+            //  C.alert("提示",url);
+            openPage_bulleDetail(id);
+        }
+
+
+        var listView;
+        apiready = function() {
+          var bulleList=$api.getStorage('bulleList');
+          api.showProgress({
+    				title : '加载中'
+    			});
+
+            var opts={
+              start:1,
+              limit:20000
+            }
+            $client.getBulleList(opts,function(ret,err){
+              if (ret.success) {
+                if(bulleList){
+                    var bulleListid=[];
+                    for (var j = 0; j < bulleList.length; j++) {
+                      bulleListid.push(bulleList[j].id);
+                    }
+                    for (var i = 0; i < ret.bulleList.length; i++) {
+                      if(bulleListid.indexOf(ret.bulleList[i].id)<0){
+                        bulleList.push(ret.bulleList[i]);
+                      }
+                    }
+                    $api.setStorage('bulleList', bulleList);
+                    renderTemp('listView', 'listView-template', bulleList);
+                }else {
+                  $api.setStorage('bulleList', ret.bulleList);
+                  renderTemp('listView', 'listView-template',  ret.bulleList);
+                }
+                api.parseTapmode();
+              } else {
+                api.toast({
+                    msg : ret.data_info,
+                    location : 'bottom'
+                });
+              }
+              api.hideProgress();
+            });
+
+
+        };
+
+        function shuaxin(){
+            var bulleList=$api.getStorage('bulleList');
+            renderTemp('listView', 'listView-template', bulleList);
+        }
+
+        function js2string(str){
+            str = str.replace(/<script>/g, '&lt;script&gt;');
+            str = str.replace(/<\/script>/g, '&lt;/script&gt;');
+
+            for(var i = 0 ; i < 1; i++){
+
+                var index = str.indexOf("<script");
+                if(index != -1){
+                    var str_front = "";
+                    var str_behind = "";
+                    str_front = str.substring(0, index);
+                    str_behind = str.substring(index);
+                    str_behind = str_behind.replace('<script', '&lt;cript');
+                    str_behind = str_behind.replace('>','&gt;');
+                    str = str_front + str_behind;
+
+                    i = -1;
+                }else{
+                    i = 1;
+                }
+
+
+            }
+
+            return str;
+        }
+    </script>
+</html>

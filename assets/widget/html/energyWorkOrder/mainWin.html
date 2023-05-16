@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title> 能源工单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <style>
+        #header{
+            background: linear-gradient(to right,#2888b3, #40b7c7) !important;
+        }
+        #back{
+            background: #2888b3!important;
+        }
+    </style>
+</head>
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" tapmode="" onclick="closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        <!-- <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="showPopup()"><span class="aui-iconfont aui-icon-search"></span> </a> -->
+        <div class="aui-title">
+            能源工单
+        </div>
+    </header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+    <script>
+        var energyLoginInfo,energyUserInfo;
+        apiready = function(){
+            try {
+                energyLoginInfo = $api.getStorage('energyUserInfo')
+                energyUserInfo = energyLoginInfo.energyLoginInfo
+            // console.log( $api.getStorage('energyUserInfo').energyLoginInfo )
+            // console.log(typeof $api.getStorage('energyUserInfo').energyLoginInfo )
+                energyUserInfo = JSON.parse(energyUserInfo)
+            var userId = energyUserInfo.userId;
+            var loginName = energyUserInfo.loginName;
+            var userType = energyUserInfo.userType;
+            var mobilePhone = energyUserInfo.mobilePhone;
+            var unitId = energyUserInfo.unitId;
+            var unitIds = energyUserInfo.unitIds;
+            var roleId = energyUserInfo.roleId;
+            var token = energyUserInfo.token;
+            } catch (error) {
+
+            }
+        //
+            // 测试
+            // var uri = "http://180.153.49.157:8090/app/A6179887290058/html/daiban/daiban_frm.html";
+            // 验收
+            // var uri = "http://120.52.136.2:8090/app/A6179887290058/html/daiban/daiban_frm.html";
+            // 准生产
+            var uri = env.energyOrderHref;//"http://49.4.50.96:8090/app/A6179887290058/html/daiban/daiban_frm.html";
+        // var url = 'http://180.153.49.157:8090/app/A6179887290058/html/daiban/daiban_frm.html'+'?userId=243584ffcdc54cd893f90241f53ca35d&userType=I&loginName=uuu&unitId=0160952&mobilePhone=17611489886&roleId=0160952&token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyNDM1ODRmZmNkYzU0Y2Q4OTNmOTAyNDFmNTNjYTM1ZCIsInN1YiI6InV1dSIsImlhdCI6MTYyNjk0MTIzNSwiZXhwIjoxNjI3NTQ2MDM1fQ.kSs77x1t4fERS6AYThydEkiJqsGUvZPJftsNfHczWdM'
+            var url = uri + ''+'?userId=' + userId +'&loginName='+ loginName + '&userType='+ userType + '&mobilePhone='+ mobilePhone + '&unitId='+ unitId + '&roleId='+ roleId + '&unitIds='+ unitIds+ '&token='+token
+            console.log("能源工单跳转",url);
+            api.openFrame({
+                rect: {
+                    x: 0,
+                    y: 50,
+                    w: 'auto',
+                    h: 'auto'
+                },
+                name: 'energyWorkOrder',
+                url: url,
+                bounces:false
+            });
+        }
+        function closeWin(){
+            if(energyLoginInfo.localLoginSuccess == "true"){
+                return api.closeWin();
+            }
+
+            api.confirm({
+                title: '退出应用',
+                msg: '是否确认退出当前应用',
+                buttons: ['确定', '取消']
+            }, function(ret, err) {
+                var index = ret.buttonIndex;
+                index == 1 ? api.closeWin(): ''
+            });
+            // var energyUserInfo = $api.getStorage('energyUserInfo').energyLoginInfo
+            // energyUserInfo.energyLoginSuccess && energyUserInfo.energyLoginSuccess? api.closeWin() : confirm()
+        }
+        function confirm(){
+            api.confirm(function(ret){
+                api.closeWin()
+            })
+        }
+    </script>
+</body>
+</html>

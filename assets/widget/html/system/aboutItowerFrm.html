@@ -1,0 +1,249 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>关于中国铁塔</title>
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+        <link rel="stylesheet" href="../../script/app/css/app.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <style>
+            body {
+                background-color:#FFFFFF;
+            }
+            #wrap{
+			    height: 100%;
+			    display: -webkit-box;
+			    display: -webkit-flex;
+			    display: flex;
+			    -webkit-box-orient: vertical;
+			    -webkit-flex-flow: column;
+			           flex-flow: column;
+			}
+			ul,li,dl,dt,dd {
+				margin:0;padding:0;list-style:none;
+			}
+			a {
+			  background: transparent;
+			  text-decoration:none;
+			}
+			.picCenter {
+                height: 150px;
+                width:100%;
+               	background-color:#FFFFFF;
+            }
+            .blankDiv {
+                height: 40px;
+                width: 100%;
+            }
+            .picBox {
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-box-flex: 1;
+                -webkit-box-align: center;
+                -webkit-box-pack: center;
+                height: 50px;
+                width: 100%;
+            }
+            .picShow {
+                height: 50px;
+                width: 50px;
+                background: url(../../icon/icon150x150.png);
+                -moz-border-radius: 15px;
+                -webkit-border-radius: 15px;
+                border-radius: 15px;
+                -webkit-background-size: 50px 50px;
+            }
+            #versionId {
+                text-align: center;
+                height: 30px;
+                line-height: 30px;
+                width: 100%;
+                font-size: 16px;
+                font-weight:bold;
+                color:#D0D0D0;
+            }
+            #uInfo {
+                height: 50px;
+                width: 100%;
+                line-height: 50px;
+                border-top: solid 1px #ADADAD;
+                text-align: left;
+            }
+            .uInfoLabel {
+                color: #BEBEBE;
+                font-size: 18px;
+            }
+            .uInfoContent {
+                color: #000;
+                font-size: 16px;
+                margin-left: 10px;
+            }
+            .phoneIconDiv {
+                width: 20px;
+                height: 30px;
+                line-height: 30px;
+                margin-top: 10px;
+                margin-right: 20px;
+                float: right;
+            }
+            .phoneIconA {
+                width: 20px;
+                height: 30px;
+                line-height: 30px;
+                background: url(../../image/personalCenter/title_call_icon.png);
+                -webkit-background-size: 20px 30px;
+            }
+            .noPadding-cell {
+                padding: 0px !important;
+            }
+            #newVersionId{
+            	border-top:1px solid #f0f0f0;
+            	height:40px;
+            	line-height:40px;
+            	width:94%;
+            	margin-left:3%;
+            	font-weight:bold;
+            	text-align:left;
+            	font-size:14px;
+            }
+            #opinionFeedId{
+            	border-bottom:1px solid #f0f0f0;
+            	height:40px;
+            	line-height:40px;
+            	width:94%;
+            	margin-left:3%;
+            	font-weight:bold;
+            	text-align:left;
+            	font-size:14px;
+            }
+            #giveScoreId{
+            	height:40px;
+            	line-height:40px;
+            	width:94%;
+            	margin-left:3%;
+            	font-weight:bold;
+            	text-align:left;
+            	font-size:14px;
+            }
+            .aboutCls{
+            	width:45%;
+            	height:16px;
+            	line-height:16px;
+            	border-right:1px solid black;
+            	color:#007AFF;
+            	float:left;
+            	font-size:12px;
+            	text-align:right;
+            	padding-right:10px;
+            }
+            .moreCls{
+            	width:45%;
+            	height:16px;
+            	line-height:16px;
+            	text-align:left;
+            	color:#007AFF;
+            	float:left;
+            	font-size:12px;
+            	padding-left:10px;
+            }
+            .nameapp{
+              font-size: 16px;
+              font-weight: bold;
+              text-align: center;
+              margin-top: 10px;
+            }
+        </style>
+    <body>
+		<div id="wrap" style="overflow:auto;margin-bottom:1px;">
+			<div id="picCenterId" class="picCenter">
+	            <div class="blankDiv"></div>
+	            <div class="picBox">
+	                <div class="picShow"></div>
+	            </div>
+              <div class="nameapp">
+                掌上运维
+              </div>
+	            <div id="versionId"></div>
+	        </div>
+			<div style="width:100%;">
+				<div id="newVersionId" onclick="check()">
+				版本更新
+				</div>
+				<div style="height:20px;width:100%;">
+
+				</div>
+	
+			</div>
+		</div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+
+
+    <script>
+        var verifyHost = $api.getStorage('ip');
+        apiready = function() {
+        	$("#versionId").text("v"+$api.getStorage('appVersion'));
+          $('#opinionFeedId').hide();
+          $('#giveScoreId').hide();
+        };
+
+        function check(){
+          $client.versionUpdate(function(ret, err) {
+              console.log(getObj(ret));
+              if (ret) {
+                  if (ret.success) {
+                      var v = api.appVersion;
+                      var version = v.substring(v.lastIndexOf('.') - 1, v.length).replace('.', '');
+                      if (ret.model.versionid > Number(version)) {
+                          api.confirm({
+                              title: '升级提示',
+                              msg: ret.model.versiondesc,
+                              buttons: ['确定', '取消']
+                          }, function(ret) {
+                              if (ret.buttonIndex == 1) {
+                                if (api.systemType == 'ios') {
+                                    api.openApp({
+                                        iosUrl: 'http://' + verifyHost + '/itower/mobile/clientapi' //打开微信的，其中weixin为微信的URL Scheme
+                                    });
+                                } else {
+                                    api.openApp({
+                                        androidPkg: 'android.intent.action.VIEW',
+                                        uri: 'http://' + verifyHost + '/itower/mobile/clientapi'
+                                    }, function(ret, err) {
+
+                                    });
+                                }
+                              }
+                          });
+                      } else {
+                        api.alert({
+                            title: '升级提示',
+                            msg: '当前版本已为最新版！'
+                        }, function(ret) {
+
+                        })
+                      }
+                  }
+              } else {
+                  api.toast({
+                      msg: '服务异常，请重试',
+                      location: 'bottom'
+                  });
+              }
+          });
+        }
+    </script>
+</html>

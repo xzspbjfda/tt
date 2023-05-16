@@ -1,0 +1,78 @@
+﻿﻿<!doctype html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<title>首页侧滑栏</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="./css/home_fixed.css" />
+	<style>
+
+	</style>
+	</head>
+	<body>
+		<div style="width:100%;height:auto;padding-top:30px;">
+			<ul class="menu">
+	            <li style="color:white;text-align:center;padding:8px 0;">
+	                <div class="box box-center">
+	                    <div class="photo"></div>
+	                </div>
+	                <p id="disp_username" style="width:75%;display:block;color:white;font-size:18px;margin:8px;">
+
+	                </p>
+	                <p id="disp_loginname" style="width:75%;opacity:0.7;color:white;margin:8px;">
+
+	                </p>
+	            </li>
+				<!--
+							<li class="side-list" onclick="openWin('modifyPassword');">
+	                <div class="side-list-round"><img src="../../image/icons/png/Mail.png"/>
+	                </div><span>修改密码</span></a>
+	            </li>-->
+						
+							<li class="side-list" onclick="openWin('clearCache');">
+	                <div class="side-list-round"><img src="../../image/icons/png/Mail.png"/>
+	                </div><span>清理缓存</span></a>
+									<span id="cacheId" class="uInfoContent" style="color:#007AFF;"></span>
+	            </li>
+							<li class="side-list" onclick="pushsetting();">
+	                <div class="side-list-round"><img src="../../image/icons/png/Mail.png"/>
+	                </div><span>推送勿扰设置</span></a>
+	            </li>
+	        </ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/swipe.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/jpush-api.js"></script>
+	<script type="text/javascript" src="./script/home_fixed.js"></script>
+	<script type="text/javascript" src="../system/setting2.js"></script>
+	<script>
+		function pushsetting(){
+			api.openWin({
+				name : "personalPushSetting_win",
+				url : "../personalPushSetting/personalPushSetting_win.html",
+				bounces : false,
+				vScrollBarEnabled : true,
+				reload : true,
+				slidBackEnabled : true,
+				pageParam : api.pageParam,
+				animation : {
+					type : "push",
+					subType : "from_right",
+					duration : 300
+				}
+			});
+		}
+	</script>
+</html>

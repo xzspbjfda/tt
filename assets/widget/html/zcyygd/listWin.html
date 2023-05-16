@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>资产运营工单待办</title>
+<!--        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />-->
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">
+                资产运营工单待办
+            </div>
+        </header>
+        <div class="aui-tab">
+            <ul id="tabBox" class="aui-tab-nav">
+                <li class="active">待接单</li>
+                <li>待回单</li>
+                <li>待审核</li>
+            </ul>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        var refreshFrame = function(){
+			var header = initHeader();
+            var headerPos = $api.offset(header);
+            var body_h = $api.offset($api.dom('body')).h;
+
+
+            api.openFrameGroup({
+                name : 'zcyygd_header_tab',
+                rect : frameRect(),
+                preload : 0,
+                frames : [{
+                    name : 'listFrm1',
+                    url : 'listFrm.html',
+                    pageParam : {type : '5',},
+                    bounces : false
+                }, {
+                    name : 'listFrm2',
+                    url : 'listFrm.html',
+                    pageParam : {type : '6',},
+                    bounces : false
+                } ,{
+                    name : 'listFrm3',
+                    url : 'listFrm.html',
+                    pageParam : {type : '14',},
+                    bounces : false
+                }]
+            }, function(ret, err) {
+                if (ret) {
+                    $('#tabBox li:eq(' + ret.index+ ')').addClass('active').siblings().removeClass('active');
+                    $api.setStorage("num",ret.index);
+                }
+            });
+
+            // api.setFrameGroupIndex({
+            //     name : 'bill_header_tab',
+            //     index : 0,
+            //     scroll : false,
+            //     reload : true
+            // });
+            $('#tabBox li').click(function() {
+                $(this).addClass('active').siblings().removeClass('active');
+                api.setFrameGroupIndex({
+                    name : 'zcyygd_header_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+            });
+
+
+
+            // api.openFrame({
+            //     name : 'listFrm',
+            //     url : 'listFrm.html',
+            //     bounces : false,
+            //     pageParam : api.pageParam,
+            //     reload : true,
+            //     rect : {
+            //         x : 0,
+            //         y : headerPos.h,
+            //         w : headerPos.w,
+            //         h : 'auto'
+            //     }
+            // });
+		}
+    	apiready = function() {
+            refreshFrame();
+            $api.addEvt($api.byId('back'), 'click', function() {
+                api.closeWin();
+            });
+        };	  
+    </script>
+</html>

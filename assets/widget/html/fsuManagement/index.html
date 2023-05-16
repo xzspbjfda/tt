@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+	<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" href="./css/index.css" />
+	<link rel="stylesheet" href="./css/base.css" />
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_2217904_rvcq68ks6rd.css" />
+</head>
+<style>
+	.iconfont {
+		font-size: 40px;
+		color: #3498db;
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		position: relative;
+	}
+
+	label div {
+		font-size: 12px;
+		margin-bottom: 5px
+	}
+
+	.wrapper {
+		display: none;
+	}
+</style>
+
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+				class="aui-iconfont aui-icon-left"></span></a>
+		<div class="aui-title" style="color: white">
+			FSU应用
+		</div>
+	</header>
+	<div class="wrapper">
+		<div class="box-cpn" id="overview" style="display: none">
+			<h4>
+				<div class="title title-red"></div>运维概览
+			</h4>
+			<ul class="clearfix">
+				<!-- <li>
+					<label onclick="openPage('fsuManagement/test','FSU概览','')">
+						<i class="iconfont icon-duibifenxibiaoanalysis"></i>
+						<div>test</div>iconfont
+					</label>
+				</li> -->
+				<li id="FSU_OVERVIEW">
+					<label onclick="openPage('fsuManagement/overview/fsu-overview','FSU概览','')">
+						<i class="iconfont icon-duibifenxibiaoanalysis"></i>
+						<div>FSU概览</div>
+					</label>
+				</li>
+				<li id="ALARM_OVERVIEW">
+					<label onclick="openPage('fsuManagement/overview/alarm-overview','告警概览','')">
+						<i class="iconfont icon-GSPjilugsp"></i>
+						<div>告警概览</div>
+					</label>
+				</li>
+				<li id="ALARM_LIST">
+					<label onclick="openPage('fsuManagement/overview/alarm-list','告警查询','')">
+						<i class="iconfont icon-yujingzhongxinwarning"></i>
+						<div>告警查询</div>
+					</label>
+				</li>
+			</ul>
+		</div>
+		<div class="box-cpn" id="fsuDetection" style="display: none">
+			<h4>
+				<div class="title title-red"></div>FSU监测
+			</h4>
+			<ul class="clearfix">
+				<li id="FSU_LIST">
+					<label onclick="openPage('fsuManagement/fsuDetection/fsu-list','FSU查询','')">
+						<i class="iconfont icon-mobantemplate"></i>
+						<div>FSU查询</div>
+					</label>
+				</li>
+				<li id="EQUIP_LIST">
+					<label onclick="openPage('fsuManagement/fsuDetection/equip-list','设备查询','')">
+						<i class="iconfont icon-jichushezhibasics"></i>
+						<div>设备查询</div>
+					</label>
+				</li>
+			</ul>
+		</div>
+		<div class="box-cpn" id="remoteControl" style="display: none">
+			<h4>
+				<div class="title title-red"></div>FSU远程控制
+			</h4>
+			<ul class="clearfix">
+				<li id="FSU_RESTART_LIST">
+					<label onclick="openPage('fsuManagement/remoteControl/fsu-restart-list','远程重启','')">
+						<i class="iconfont icon-chushihuainitialization"></i>
+						<div>远程重启</div>
+					</label>
+				</li>
+				<li id="FSU_UPGRADE_LIST">
+					<!-- <label onclick="openPage('fsuManagement/remoteControl/fsu-upgrade-list','远程升级','')"> -->
+					<label onclick="develop()">
+						<i class="iconfont icon-qingdoujiluclear"></i>
+						<div>远程升级</div>
+					</label>
+				</li>
+				<li id="EQUIP_ISSU_LIST">
+					<label onclick="openPage('fsuManagement/remoteControl/equip-issu-list','阈值下发','')">
+						<i class="iconfont icon-tiaojiaadjust"></i>
+						<div>阈值下发</div>
+					</label>
+				</li>
+				<li id="EQUIP_CONTROL_LIST">
+					<label onclick="openPage('fsuManagement/remoteControl/equip-control-list','远程控制','')">
+						<i class="iconfont icon-quanjushezhioverall"></i>
+						<div>远程控制</div>
+					</label>
+				</li>
+				<li id="REMOTE_ADJUSTMENT_LIST">
+					<label onclick="openPage('fsuManagement/remoteControl/remote-adjustment-list','远程调整','')">
+						<i class="iconfont icon-yuancheng"></i>
+						<div>远程调整</div>
+					</label>
+				</li>
+			</ul>
+		</div>
+		<div class="box-cpn" id="configurationChanges" style="display: none">
+			<h4>
+				<div class="title title-red"></div>配置变更
+			</h4>
+			<ul class="clearfix">
+				<li id="SETTING_LIST">
+					<label onclick="openPage('fsuManagement/configurationChanges/configuration-query-list','配置查询','')">
+						<i class="iconfont icon-jianchaxiangmuinspect"></i>
+						<div>配置查询</div>
+					</label>
+				</li>
+				<!-- <li id="SETTING_APPLY">
+					<label onclick="develop()">
+						<i class="iconfont icon-zizhixiaoqiqualification"></i>
+						<div>配置任务申请</div>
+					</label>
+				</li>
+				<li id="SETTING_APPROVE">
+					<label onclick="develop()">
+						<i class="iconfont icon-yanshouacceptance"></i>
+						<div>配置任务审核</div>
+					</label>
+				</li> -->
+			</ul>
+		</div>
+	</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./module/script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="./js/fsu-common.js"></script>
+<script type="text/javascript">
+	apiready = function () {
+		api.showProgress({
+			title: '加载中…',
+			modal: false
+		})
+		getAreaInfo()
+		return menus.isShow()
+	}
+
+	// 开发中
+	function develop() {
+		alert('功能开发中…')
+	}
+
+	// 查询用户区域
+	function getAreaInfo() {
+		var userData = $api.getStorage('user');
+		var user = userData;
+		console.log(JSON.stringify(user));
+		user.province = userData.provinceid;
+		user.city = userData.cityid;
+		user.country = userData.countyid;
+		// request({
+		// 	url: '/app/user/area',
+		// 	type: 'post',
+		// 	data: {
+		// 		loginName: $api.getStorage('LOGIN_USERNAME')
+		// 	},
+		// 	success: res => {
+
+		// 		console.log(JSON.stringify(res))
+		// 		user.province = res.data.province
+		// 		user.city = res.data.city
+		// 		user.country = res.data.country
+		// 	},
+		// 	catch: res => api.hideProgress()
+		// })
+	}
+
+	// 根据权限列表展示菜单
+	const menus = {
+		ids: {
+			overview: ['FSU_OVERVIEW', 'ALARM_OVERVIEW', 'ALARM_LIST'],
+			fsuDetection: ['FSU_LIST', 'EQUIP_LIST'],
+			remoteControl: ['FSU_RESTART_LIST', 'FSU_UPGRADE_LIST', 'EQUIP_ISSU_LIST', 'EQUIP_CONTROL_LIST'],
+			configurationChanges: ['SETTING_LIST', 'SETTING_APPLY', 'SETTING_APPROVE']
+		},
+		isShow: function () {
+			console.log('user.menu' + JSON.stringify(user.menu))
+			if (user.menu.length > 0) {
+				// if (user.menu.some(i => i === 'all')) {
+				// if (user.menu.some(i => i === 'IDM_FSU_MANAGE')) {
+				if ($api.getStorage('user').provinceid == '0001931') {
+					for (let i in this.ids) {
+						this.ids[i].forEach(o => {
+							$(`#${o}`).show()
+						})
+						$(`#${i}`).show()
+					}
+				} else {
+					for (let item in this.ids) {
+						let flag = false
+						this.ids[item].forEach(i => {
+							if (user.menu.some(o => o == i || o == ('IDM_' + i))) {
+								$(`#${i}`).show()
+								flag = true
+							}
+						})
+						flag ? $(`#${item}`).show() : ''
+					}
+				}
+			}
+			$('.wrapper').show()
+			return api.hideProgress()
+		}
+	}
+
+	// ids: {
+	// 		overview: ['fsu-overview', 'alarm-overview', 'alarm-list'],
+	// 		fsuDetection: ['fsu-list', 'equip-list'],
+	// 		remoteControl: ['fsu-restart-list', 'fsu-upgrade-list', 'equip-issu-list', 'equip-control-list'],
+	// 		configurationChanges: ['setting-list', 'setting-apply', 'setting-approve']
+	// 	},
+</script>
+
+</html>

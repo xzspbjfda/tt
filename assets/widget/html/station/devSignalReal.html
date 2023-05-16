@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>信号性能</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <style>
+        body {
+            background-color: #eff1f0;
+        }
+        .aui-flex-col {
+            padding: 5px 0;
+        }
+    </style>
+    <body>
+            <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header" style="position:fixed;top:0;left:0;z-index: 99">
+                <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" tapmode="" onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+                <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="active" onclick="refresh()"><span class="aui-iconfont aui-icon-refresh"></span></a>
+                <div class="aui-title">
+                    信号性能
+                </div>
+            </header>
+      <div id="wrap">
+            <!--<div class="aui-content" style="background-color:#fff;padding: 15px 0;">
+            <div class="aui-content-padded">
+            <div class="aui-flex-col">
+            <div class="aui-flex-item-4">
+            站址名称：
+            </div>
+            <div id="stationNameId" class="aui-flex-item-8"></div>
+            </div>
+            <div class="aui-flex-col">
+            <div class="aui-flex-item-4">
+            设备名称：
+            </div>
+            <div id="devNameId" class="aui-flex-item-8"></div>
+            </div>
+            <div class="aui-flex-col" data-win="list-image">
+            <div class="aui-flex-item-4">
+            信号名称：
+            </div>
+            <div id="signalNameId" class="aui-flex-item-8"></div>
+            </div>
+            <div class="aui-flex-col" data-win="list-image">
+            <div class="aui-flex-item-4">
+            信号性能值：
+            </div>
+            <div id="midValueId" class="aui-flex-item-8"></div>
+            </div>
+            </div>
+            </div>-->
+            <div class="aui-content" id="contentid">
+                <ul class="aui-list-view">
+                    <li class="aui-list-view-cell">
+                        <p class="aui-pull-left">
+                            站址名称:
+                        </p><p id = "stationNameId" class="aui-pull-right"></p>
+                    </li>
+                    <li class="aui-list-view-cell">
+                        <p class="aui-pull-left">
+                            设备名称:
+                        </p><p id = "devNameId" class="aui-pull-right"></p>
+                    </li>
+                    <li class="aui-list-view-cell">
+                        <p class="aui-pull-left">
+                            信号名称:
+                        </p><p id = "signalNameId" class="aui-pull-right"></p>
+                    </li>
+                    <li class="aui-list-view-cell">
+                        <p class="aui-pull-left">
+                            信号性能值:
+                        </p><p id = "midValueId" class="aui-pull-right"></p>
+                    </li>
+                </ul>
+            </div>
+            <div id="graphBox" style="display: none;margin-top:50px">
+                <div id="graphTitle" class="aui-text-center">
+                    实时性能动态走势图--10秒
+                </div>
+                <div id="container" style="width:100%;height:300px;margin:0 auto;"></div>
+            </div>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/echarts.js"></script>
+    <script type="text/javascript">
+        var interval = null;
+        var dateArr = [];
+        var valArr = [];
+        apiready = function() {
+            initHeader();
+            var $header = $('header.aui-bar-nav');
+            if ($header.length) {
+                var h=parseInt($header.outerHeight());
+                $api.byId('contentid').style.marginTop=h+'px';
+            }
+            var stationModel = $api.getStorage('stationModel');
+            $api.byId('devNameId').innerHTML = api.pageParam.deviceName;
+            $api.byId('midValueId').innerHTML = api.pageParam.measureval;
+            $api.byId('signalNameId').innerHTML = api.pageParam.semaphorename;
+            $api.byId('stationNameId').innerHTML = stationModel.st_name;
+            var x = (new Date()).pattern("mm:ss");
+            var y = parseFloat(api.pageParam.measureval);
+            //设置显示点数为9
+            for (var i = 0; i < 9; i++) {
+                dateArr.push(0);
+                valArr.push(0);
+            }
+            $('#graphBox').show();
+            //openLineChart();
+            refreshMultMidValue();
+        };
+        openLineChart = function() {
+            // 路径配置
+            require.config({
+                paths : {
+                    echarts : '../../script/echarts/build/dist'
+                }
+            });
+            require(['echarts', 'echarts/chart/line'], function(ec) {
+                var myChart = ec.init(document.getElementById('container'));
+                var option = {
+                    tooltip : {
+                        trigger : 'axis'
+                    },
+                    legend : {
+                        data : ['性能值']
+                    },
+                    toolbox : {
+                        show : false,
+                        feature : {
+                            mark : {
+                                show : true
+                            },
+                            magicType : {
+                                show : true,
+                                type : ['line', 'bar']
+                            },
+                            restore : {
+                                show : true
+                            }
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [{
+                        type : 'category',
+                        boundaryGap : true,
+                        axisLabel : {
+                            formatter : function(value) {
+                                return value;
+                            }
+                        },
+                        data : dateArr
+                    }],
+                    yAxis : [{
+                        type : 'value',
+                        axisLabel : {
+                            formatter : '{value} '
+                        }
+                    }],
+                    series : [{
+                        name : '性能值',
+                        type : 'line',
+                        smooth : true,
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : valArr,
+                    }]
+                };
+                //为echarts对象加载数据
+                myChart.setOption(option);
+            });
+        };
+        refreshMultMidValue = function() {
+            console.log("=======refreshMultMidValue========")
+            showlog("refreshMultMidValue---------------");
+            console.log("=======refreshMultMidValue1========")
+            var deviceId = api.pageParam.deviceCode;
+            console.log("=======refreshMultMidValue2========")
+            var fsuId = api.pageParam.devFsuId;
+            var semaphoreId = api.pageParam.semaphoreId;
+            console.log("=======refreshMultMidValue3========")
+            // alert(semaphoreId)
+            var semaphoreIdArr = semaphoreId.split("_");
+            var mid = semaphoreIdArr[semaphoreIdArr.length - 1];
+            // alert(mid)
+            var opts = {
+                fsuId : fsuId,
+                deviceId : deviceId,
+                semaphoreId : mid
+            };
+            console.log("=======refreshMultMidValue4========")
+            var x = (new Date()).pattern("HH:mm:ss");
+            // current time
+            api.showProgress({
+                msg : '刷新中...'
+            });
+            console.log("=======refreshMultMidValue5========")
+            console.log(JSON.stringify(opts))
+            $client.getMidRealData(opts, function(ret, err) {
+            console.log("=======refreshMultMidValue6========")
+            console.log(JSON.stringify(ret))
+                if (ret) {
+                    if (ret.success) {
+                        var y = parseFloat(ret.model.measuredval);
+                        $api.byId('midValueId').innerHTML = ret.model.measuredval;
+                        for (var i = 0; i < dateArr.length - 1; i++) {
+                            dateArr[i] = dateArr[i + 1];
+                        }
+                        for (var i = 0; i < valArr.length - 1; i++) {
+                            valArr[i] = valArr[i + 1];
+                        }
+                        dateArr[8] = x;
+                        valArr[8] = y;
+                        //openLineChart();
+                        initCharts();
+                    } else {
+                        api.toast({
+                            msg : ret.data_info,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : '无法获取信号值！',
+                        location : 'bottom'
+                    });
+                }
+                api.hideProgress();
+            });
+        };
+        var preDateTime=new Date();
+        function refresh() {
+            var curDateTime = new Date();
+            var times=curDateTime.getTime()-preDateTime.getTime()
+            if(times<10000){
+                var lastTimes=10-Math.floor(times/1000); 
+                api.toast({
+                    msg : "刷新太频繁，请间隔"+lastTimes+"秒后再刷新",
+                    location : 'middle'
+                });
+            }else{
+                //刷新图表
+                refreshMultMidValue();
+                preDateTime=new Date();
+            }
+        }
+        /*setTimeout(function(){
+            refreshMultMidValue();
+        },10000)*/
+
+        function initCharts(){
+            // 基于准备好的dom，初始化echarts实例
+            var myChart11 = echarts.init(document.getElementById('container'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                    tooltip : {
+                        trigger : 'axis'
+                    },
+                    legend : {
+                        data : ['性能值']
+                    },
+                    toolbox : {
+                        show : false,
+                        feature : {
+                            mark : {
+                                show : true
+                            },
+                            magicType : {
+                                show : true,
+                                type : ['line', 'bar']
+                            },
+                            restore : {
+                                show : true
+                            }
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [{
+                        type : 'category',
+                        boundaryGap : true,
+                        axisLabel : {
+                            formatter : function(value) {
+                                return value;
+                            }
+                        },
+                        data : dateArr
+                    }],
+                    yAxis : [{
+                        type : 'value',
+                        axisLabel : {
+                            formatter : '{value} '
+                        }
+                    }],
+                    series : [{
+                        name : '性能值',
+                        type : 'line',
+                        smooth : true,
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : valArr,
+                    }]
+                };
+            // 使用刚指定的配置项和数据显示图表。
+            myChart11.setOption(option);
+        }
+    </script>
+</html>

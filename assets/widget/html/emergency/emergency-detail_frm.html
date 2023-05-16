@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>物资详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	</head>
+	<style>
+		.ziyiframe {
+			width: 100%;
+			min-height: 340px;
+		}
+		.red{
+			color: red;
+		}
+
+		.aui-list-view-cell:after{
+			border: none!important;
+		}
+		.emergency-select{
+			margin: 0px;
+			padding:0;
+			font-size: 14px;
+			padding-left:10px;
+		}
+		#list-view input,#list-view select{
+			font-size: 14px;
+		}
+		.picFJ{
+			display: none;
+		}
+		.oilBox{
+			display: none;
+		}
+	</style>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].hiddencontent}}">{{=it[i].hiddencontent}}</option>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<form enctype = "multipart/form-data">
+				<ul id="list-view" class="aui-list-view"></ul>
+			</form>
+		</div>
+
+		<!--项目详情-->
+		<script id="parol-template" type="text/html">
+			{{
+				if(it.level=='0'){
+					isdisabled=false;
+				}else{
+					isdisabled=true;
+				}
+			}}
+			<input  name="id" type="hidden"  class="textareaborder change" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.id?it.id:''}}" />
+			<input id='surfacePhoto'  name="surfacePhoto" type="hidden"  class="textareaborder change" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.surfacePhoto?it.surfacePhoto:''}}" />
+			<input id='gpsnumPhoto' name="gpsnumPhoto" type="hidden"  class="textareaborder change" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.gpsnumPhoto?it.gpsnumPhoto:''}}" />
+			<input id='oilnumPhoto' name="oilnumPhoto" type="hidden"  class="textareaborder change" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.oilnumPhoto?it.oilnumPhoto:''}}" />
+			<input id="userName" name="userName" type="hidden"  class="textareaborder change" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.userName?it.userName:''}}" />
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider" style="border-bottom:1px solid #c8c7cc">
+			应急物资详情
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			物资编码<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input id="emergencyNum" name="sn" type="text"  class="textareaborder change" disabled="true" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.sn?it.sn:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			物资类型<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="type" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.type?it.type:''}}" onchange="changeName(this)" >
+					<option value="应急通信保障物资">应急通信保障物资</option>
+					<option value="应急信息传报类物资">应急信息传报类物资</option>
+					<option value="应急辅助物资">应急辅助物资</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.type?it.type:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				物资名称<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select id="materialName" name="name" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="越野车" onchange="changeNameType(this)">
+					<option value="应急发电车">应急发电车</option>
+					<option value="越野车">越野车</option>
+					<option value="皮卡车">皮卡车</option>
+					<option value="应急油机(5KW及以上)(代维产权)">应急油机(5KW及以上)(代维产权)</option>
+					<option value="应急油机(5KW及以下)(代维产权)">应急油机(5KW及以下)(代维产权)</option>
+					<option value="应急油机(5KW及以上)(铁塔产权)">应急油机(5KW及以上)(铁塔产权)</option>
+					<option value="应急油机(5KW及以下)(铁塔产权)">应急油机(5KW及以下)(铁塔产权)</option>
+					<option value="应急油机(5KW及以上)(代维产权)">应急油机(5KW及以上)(其他第三方产权)</option>
+					<option value="应急油机(5KW及以下)(代维产权)">应急油机(5KW及以下)(其他第三方产权)</option>
+					<option value="一体化柜(含电源、蓄电池等配套)">一体化柜(含电源、蓄电池等配套)</option>
+					<option value="锂电池包">锂电池包</option>
+					<option value="便携塔">便携塔</option>
+				</select>
+				{{??}}
+				<input id="materialName" type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.name?it.name:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				设备型号:
+			</div>
+			<div class="item-right">
+				<input  name="model" type="text"  class="textareaborder change" {{=isdisabled?'disabled=true':''}}  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.model?it.model:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				生产厂家:
+			</div>
+			<div class="item-right">
+				<input  name="vender" type="text"  class="textareaborder change" {{=isdisabled?'disabled=true':''}}  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.vender?it.vender:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				单位<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="unit" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.unit?it.unit:''}}" >
+					<option value="部">部</option>
+					<option value="顶">顶</option>
+					<option value="个">个</option>
+					<option value="辆">辆</option>
+					<option value="艘">艘</option>
+					<option value="台">台</option>
+					<option value="套">套</option>
+					<option value="条">条</option>
+					<option value="座">座</option>
+					<option value="张">张</option>
+					<option value="把">把</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unit?it.unit:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				设备工况<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="workStatus" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.workStatus?it.workStatus:''}}" >
+					<option value="性能良好">性能良好</option>
+					<option value="正常可用">正常可用</option>
+					<option value="基本可用">基本可用</option>
+					<option value="无法正常工作">无法正常工作</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.workStatus?it.workStatus:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				维护周期<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="maintainCycle" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.maintainCycle?it.maintainCycle:''}}" >
+					<option value="月">月</option>
+					<option value="季度">季度</option>
+					<option value="半年">半年</option>
+					<option value="年">年</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.maintainCycle?it.maintainCycle:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				所属省份<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="province" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.province?it.province:''}}" >
+					<option value="安徽分公司">安徽分公司</option>
+					<option value="北京分公司">北京分公司</option>
+					<option value="重庆分公司">重庆分公司</option>
+					<option value="福建分公司">福建分公司</option>
+					<option value="广东分公司">广东分公司</option>
+					<option value="甘肃分公司">甘肃分公司</option>
+					<option value="广西分公司">广西分公司</option>
+					<option value="贵州分公司">贵州分公司</option>
+					<option value="湖北分公司">湖北分公司</option>
+					<option value="河北分公司">河北分公司</option>
+					<option value="黑龙江分公司">黑龙江分公司</option>
+					<option value="湖南分公司">湖南分公司</option>
+					<option value="海南分公司">海南分公司</option>
+					<option value="河南分公司">河南分公司</option>
+					<option value="吉林分公司">吉林分公司</option>
+					<option value="江苏分公司">江苏分公司</option>
+					<option value="江西分公司">江西分公司</option>
+					<option value="辽宁分公司">辽宁分公司</option>
+					<option value="内蒙古分公司">内蒙古分公司</option>
+					<option value="宁夏分公司">宁夏分公司</option>
+					<option value="青海分公司">青海分公司</option>
+					<option value="四川分公司">四川分公司</option>
+					<option value="山东分公司">山东分公司</option>
+					<option value="上海分公司">上海分公司</option>
+					<option value="山西分公司">山西分公司</option>
+					<option value="陕西分公司">陕西分公司</option>
+					<option value="天津分公司">天津分公司</option>
+					<option value="西藏分公司">西藏分公司</option>
+					<option value="新疆分公司">新疆分公司</option>
+					<option value="云南分公司">云南分公司</option>
+					<option value="浙江分公司">浙江分公司</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.province?it.province:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				生产日期:
+			</div>
+			<div class="item-right">
+				<input  name="productionDate" type="date"  class="textareaborder change" {{=isdisabled?'disabled=true':''}}  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.productionDate?it.productionDate:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				库存状态<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="status" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.status?it.status:''}}" >
+					<option value="在库">在库</option>
+					<option value="领用出库">领用出库</option>
+					<option value="调度出库">调度出库</option>
+					<option value="维护出库">维护出库</option>
+					<option value="维修出库">维修出库</option>
+					<option value="消耗">消耗</option>
+					<option value="遗失">遗失</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.status?it.status:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				责任人<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  name="contactPerson" type="text" class="textareaborder change required" {{=isdisabled?'disabled=true':''}} data-valid="required" data-error="责任人必填！" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.contactPerson?it.contactPerson:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				联系方式<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input id="phoneNum" name="contactPersonTelephone" type="text" placeholder="请输入正确的电话号码。" data-error="请输入正确的电话号码"  class="textareaborder change required" {{=isdisabled?'disabled=true':''}} data-valid="required" data-error="联系方式必填！"  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.contactPersonTelephone?it.contactPersonTelephone:''}}" />
+			</div>
+			</li>
+			<div class="picFJ">
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				油机编号<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  name="oilNum" type="text"  class="textareaborder change  picFJdiv" {{=isdisabled?'disabled=true':''}}  data-valid="required" data-error="油机编号必填！" style="width:100%;margin: 0px;padding : 0px,3%;"   value="{{=it.oilNum?it.oilNum:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				油机产权<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="oilRight" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.oilRight?it.oilRight:''}}" >
+					<option value="物资储备中心">物资储备中心</option>
+					<option value="省分自有">省分自有</option>
+					<option value="代维自有">代维自有</option>
+					<option value="代维租用">代维租用</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.oilRight?it.oilRight:''}}" />
+				{{?}}
+			</div>
+			</li>
+			</div>
+			<div class="oilBox">
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				GPS编号:
+			</div>
+			<div class="item-right">
+				<input  name="gpsNum" type="text"  class="textareaborder change" {{=isdisabled?'disabled=true':''}}  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.gpsNum?it.gpsNum:''}}" />
+			</div>
+			</li>
+			</div>
+			<div class="picFJ">
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				燃油类别<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="fuelCategory" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.fuelCategory?it.fuelCategory:''}}" >
+					<option value="汽油机">汽油机</option>
+					<option value="燃油机">燃油机</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.fuelCategory?it.fuelCategory:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				油机功率<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="oilPower" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.oilPower?it.oilPower:''}}" >
+					<option value="5w">5w</option>
+					<option value="8w">8w</option>
+					<option value="10w">10w</option>
+					<option value="20w">20w</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.oilPower?it.oilPower:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				油耗<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  name="oilWear" type="text"  class="textareaborder change  picFJdiv" {{=isdisabled?'disabled=true':''}}  data-valid="required" data-error="油耗必填！" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.oilWear?it.oilWear:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				相别<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				{{? !isdisabled}}
+				<select name="phase" {{=isdisabled?'disabled=true':''}} class="textareaborder emergency-select"  value="{{=it.phase?it.phase:''}}" >
+					<option value="三相">三相</option>
+					<option value="单相">单相</option>
+				</select>
+				{{??}}
+				<input  type="text"  class="textareaborder change" disabled='true'  style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.phase?it.phase:''}}" />
+				{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				终端手机号<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input id="phoneNum2" name="terminalPhone" type="text" placeholder="请输入正确的电话号码。" data-error="请输入正确的电话号码" class="textareaborder change picFJdiv" {{=isdisabled?'disabled=true':''}} data-valid="required" data-error="终端手机号必填！" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.terminalPhone?it.terminalPhone:''}}" />
+			</div>
+			</li>
+		</div>
+
+			{{? isdisabled}}
+			<div class="oilBox">
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div>
+					外观照片:
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell picBox" data-win="list-image" >
+			<img id="showImg1" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" />
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div>
+					GPS编号照片:
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell picBox" data-win="list-image">
+			<img id="showImg2" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" />
+			</li>
+			</div>
+			<div class="picFJ">
+
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div>
+					油机编号照片:
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell picBox" data-win="list-image">
+			<img id="showImg3" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" />
+			</li>
+		</div>
+			{{??}}
+			<div class="oilBox">
+
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div>
+					上传外观照片:
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell picBox" data-win="list-image" >
+			<div id="mainid" name="mainname"></div>
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50"  onclick="addPic(this,0)"/>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div>
+					上传GPS编号照片:
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell picBox" data-win="list-image">
+			<div id="mainid2" name="mainname"></div>
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50"  onclick="addPic(this,1)"/>
+			</li>
+			</div>
+			<div class="picFJ">
+
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div>
+					上传油机编号照片:
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell picBox" data-win="list-image">
+			<div id="mainid3" name="mainname"></div>
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50"  onclick="addPic(this,2)"/>
+			</li>
+		</div>
+			{{?}}
+
+
+			<li class="isshow" data-win="list-image" style="padding:5px 15px;">
+				备注:
+			<textarea name="remark" placeholder='请填写备注（选填）' {{=isdisabled?'disabled=true':''}} style="width:100%;height:100px; margin-bottom:0px;margin-top:6px;">{{=it.remark?it.remark:''}}</textarea>
+			</li>
+		</script>
+
+		<!--图片模板-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col" style="padding:0;">
+			<div class=" aui-flex-item-2">
+			<img class="aui-img-object aui-pull-left" style='width:50px;height:50px;' src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">X</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+	</body>
+	<!-- third -->
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/template-native.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script src="../../script/GPS.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil0.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+	<script>
+		// 物资类型 物资名称 联动
+		function changeName(e){
+			var materialType=$(e).val();
+			var materialNameList;
+			if(materialType=="应急通信保障物资"){
+				materialNameList=[
+					'应急发电车',
+					'越野车',
+					'皮卡车',
+					'应急油机(5KW及以上)(代维产权)',
+					'应急油机(5KW及以下)(代维产权)',
+					'应急油机(5KW及以上)(铁塔产权)',
+					'应急油机(5KW及以下)(铁塔产权)',
+					'应急油机(5KW及以上)(其他第三方产权)',
+					'应急油机(5KW及以下)(其他第三方产权)',
+					'一体化柜(含电源、蓄电池等配套)',
+					'锂电池包',
+					'便携塔'
+				]
+			}else if (materialType=="应急信息传报类物资") {
+				materialNameList=[
+					'卫星电话(带数据传送)',
+					'卫星电话(仅语音功能)',
+					'应急智能手机'
+				]
+			}else if (materialType=="应急辅助物资") {
+				materialNameList=[
+					'冲锋舟',
+					'皮划艇',
+					'潜水泵',
+					'抽水机',
+					'无人机',
+					'对讲机',
+					'便携式扩音器',
+					'大功率探照灯',
+					'广告帐篷',
+					'抗震帐篷',
+					'防汛沙袋沙包',
+					'油机并发器',
+					'汽车防滑链',
+					'应急电源灯',
+					'应急保障桌子',
+					'应急保障椅子'
+				]
+			}
+			$('#materialName').empty();
+			if (materialNameList != null && materialNameList.length > 0) {
+				for (var i = 0; i < materialNameList.length; i++) {
+					$('<option>').text(materialNameList[i]).val(materialNameList[i]).appendTo('#materialName');
+				}
+			}
+		}
+
+		// 物资名称控制附件显示
+		function changeNameType(e){
+			var changeType=$(e).val();
+
+			if(changeType.indexOf('应急油机')>-1){
+				$('.picFJ').show();
+				$('.picFJdiv').addClass('required');
+				$('.oilBox').show();
+			}else if (changeType=='锂电池包') {
+				$('.picFJ').hide();
+				$('.picFJdiv').removeClass('required');
+				$('.oilBox').show();
+			}else {
+				$('.picFJ').hide();
+				$('.picFJdiv').removeClass('required');
+				$('.oilBox').hide();
+			}
+		}
+		var taskid, projectid, projectname, isFinish, isMonitor, objtype, devname, taskstate,modularid;
+		var imageUtil;
+		var user;
+		var isExist = 0;
+		var jsonArray = new Array();
+		var modelType = $api.getStorage("modelType");
+		var lastLocation;
+		var submission = 'ONLY_SUBMIT_TEXT';
+		var hiddenList;
+		var model;
+
+		apiready = function() {
+			initHeader();
+			imageUtil.init({
+				uploadFn : $client.uploadEmergencyImage
+			});
+
+			formUtil.init({
+				rules : {
+					actualfill : function(value, errorMsg, el) {
+						if (model.filltype == '1' || model.filltype == '2') {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					},
+					isStander : function(value, errorMsg, el) {
+						if (model.filltype == '3') {
+							var isStander = $('input[id=isStanderid]').is(':checked');
+							if (!($('input[id=isStanderid]').is(':checked'))) {
+								if (value == '') {
+									if (!formUtil.getHasError()) {
+										formUtil.setHasError(true);
+										return errorMsg;
+									}
+								}
+							}
+						}
+					},
+					isShidden : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					},
+					hasImage : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (!imageUtil.getImageArray().length) {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					}
+				}
+			});
+			/**
+			 *加载巡检项目详情
+			 */
+			renderTemp('list-view', 'parol-template', api.pageParam, false);
+			// 获取附件信息
+			var opt;
+			// var http='http://101.227.247.207:8989/em/';//测试环境
+			var http='http://180.153.49.95:58080/em/';//正式环境
+			console.log(getObj(api.pageParam));
+			if(api.pageParam.surfacePhoto){
+				opt={
+					attachmentId:api.pageParam.surfacePhoto
+				}
+
+				$client.getEmergencyImg(opt,function(ret,err){
+					var str = ret[0].storePath;
+					var imgsrc=str.split("../../")[1];
+					$('#showImg1').attr({
+						src:http+imgsrc,
+						onclick:"imageUtil.show('"+http+imgsrc+"');"
+					})
+				})
+			}
+			if (api.pageParam.gpsnumPhoto) {
+				opt={
+					attachmentId:api.pageParam.gpsnumPhoto
+				}
+
+				$client.getEmergencyImg(opt,function(ret,err){
+					var str = ret[0].storePath;
+					var imgsrc=str.split("../../")[1];
+					$('#showImg2').attr({
+						src:http+imgsrc,
+						onclick:"imageUtil.show('"+http+imgsrc+"');"
+					})
+				})
+			}
+			if (api.pageParam.oilnumPhoto) {
+				opt={
+					attachmentId:api.pageParam.oilnumPhoto
+				}
+
+				$client.getEmergencyImg(opt,function(ret,err){
+					var str = ret[0].storePath;
+					var imgsrc=str.split("../../")[1];
+					$('#showImg3').attr({
+						src:http+imgsrc,
+						onclick:"imageUtil.show('"+http+imgsrc+"');"
+					})
+				})
+			}
+
+			// 控制附件是否显示
+			var materName=$('#materialName').val();
+
+			if(materName.indexOf('应急油机')>-1){
+				$('.picFJ').show();
+				$('.oilBox').show();
+			}else if (materName=='锂电池包') {
+				$('.picFJ').hide();
+				$('.oilBox').show();
+			}else {
+				$('.picFJ').hide();
+				$('.oilBox').hide();
+			}
+
+
+			// 获取工单编号
+			var isdisabledVal=api.pageParam.level;
+			if(isdisabledVal!=undefined){
+				var opts={};
+				$client.getEmergencyNum(opts,function(ret,err){
+					$('#emergencyNum').val(ret.sn);
+				})
+			}
+		};
+		/**
+			*重新刷新详情页使可编辑
+			*/
+		function refreshDetail(){
+			api.pageParam.level=0;
+			renderTemp('list-view', 'parol-template', api.pageParam, false);
+		}
+		/**
+		 * 生成一个用不重复的ID
+		 */
+		function GenNonDuplicateID(randomLength){
+		  return Number(Math.random().toString().substr(3,randomLength) + Date.now()).toString(36)
+		}
+
+		/**
+		 * 添加图片
+		 */
+		function addPic(e,num) {
+			var randomID=GenNonDuplicateID();
+			imageUtil.add('library', function(ret, err) {
+
+				console.log(randomID);
+				var imageInfo={};
+				if (0 == num) {
+					$('#surfacePhoto').val(randomID);
+				} else if (2 == num) {
+					$('#oilnumPhoto').val(randomID);
+				} else if (1 == num) {
+					$('#gpsnumPhoto').val(randomID);
+				}
+				imageInfo.attachmentId=randomID;
+				imageInfo.imgpath = ret.data;
+
+				imageUtil.getImageArray().push(imageInfo);
+				showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+				var tpl = $api.byId('img-template').text;
+				var tempFn = doT.template(tpl);
+
+					setTimeout(function(){
+						if (0 == num) {
+							var picid = $('#mainid');
+						} else if (1 == num) {
+							var picid = $('#mainid2');
+						} else if (2 == num) {
+							var picid = $('#mainid3');
+						}
+						$(picid).append(tempFn(imageInfo));
+						api.parseTapmode();
+						$(e).hide();
+				  }, 2400);
+
+			},e);
+		}
+
+		/*
+		 * 下载图片
+		 */
+		function downloadPic() {
+			imageUtil.download(function(imageData, ret, err) {
+				console.log(getObj(ret));
+				if (ret) {
+					if (ret.status) {
+						console.log("图片路径：" + ret.url);
+						var imageInfo = {
+							imgpath : ret.url,
+							lon : imageData.lon,
+							lat : imageData.lat,
+							phototime : imageData.phototime,
+							photoaddress : imageData.photoaddress,
+							isDel : false
+						};
+						imageUtil.getImageArray().push(imageInfo);
+						for (var i = 0; i < model.length; i++) {
+							if (model[i].id == imageData.ownerid) {
+								var down = $('#mainid');
+								var tpl = $api.byId('img-template').text;
+								var tempFn = doT.template(tpl);
+								if (true) {
+									$(down).append(tempFn(imageInfo));
+									api.parseTapmode();
+									return;
+								}
+								$(down).empty().append(tempFn(imageInfo));
+								api.parseTapmode();
+							}
+						}
+					} else {
+						api.toast({
+							msg : '加载图片失败！'
+						});
+					}
+				} else {
+					api.toast({
+						msg : '缓存图片失败！'
+					});
+				}
+			});
+		}
+
+		/**
+		 *删除图片
+		 */
+		function removeImg(imgPath) {
+			var imageArray = imageUtil.getImageArray();
+			var size = imageArray.length;
+			for (var i = 0; i < size; i++) {
+				var data = imageArray[i];
+				if (data.imgpath == imgPath) {
+					imageArray.remove(i);
+					break;
+				}
+			}
+			$(event.target).parents('.picBox').find('#add').show();
+			$(event.target).parents('li.aui-img').remove();
+		}
+
+		/**
+		 *获取当前时间
+		 */
+		function CurentTime(){
+				var now = new Date();
+
+				var year = now.getFullYear();       //年
+				var month = now.getMonth() + 1;     //月
+				var day = now.getDate();            //日
+
+				var hh = now.getHours();            //时
+				var mm = now.getMinutes();          //分
+				var ss = now.getSeconds();           //秒
+
+				var clock = year + "-";
+
+				if(month < 10)
+						clock += "0";
+
+				clock += month + "-";
+
+				if(day < 10)
+						clock += "0";
+
+				clock += day + " ";
+
+				if(hh < 10)
+						clock += "0";
+
+				clock += hh + ":";
+				if (mm < 10) clock += '0';
+				clock += mm + ":";
+
+				if (ss < 10) clock += '0';
+				clock += ss;
+				return(clock);
+		}
+		// 验证手机号
+		function isPoneAvailable(str) {
+					var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+					if (!myreg.test(str)) {
+							return false;
+					} else {
+							return true;
+					}
+			}
+
+// 提交接口
+		function uploadData(opt) {
+			// if(isPoneAvailable($("#phoneNum").val())&&isPoneAvailable($("#phoneNum2").val())){
+				showMask("提交中…");
+				var connectionType = api.connectionType;
+				$client.addEmergency(opt, function(ret, err) {
+					hideMask();
+					if (err) {
+							api.toast({
+								msg : err.body
+							});
+
+					
+							if (imageUtil.getImageArray().length) {
+								imageUtil.upload(function(count) {
+									api.execScript({
+										name : 'emergency-list_win',
+										frameName : 'emergency-list_frm',
+										script : 'refreshList();'
+									});
+									setTimeout(function() {
+										api.closeWin();
+									}, 1000);
+								});
+							} else {
+								api.toast({
+									msg : '提交成功!'
+								});
+								api.execScript({
+									name : 'emergency-list_win',
+									frameName : 'emergency-list_frm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									api.hideProgress();
+									api.closeWin();
+								}, 1100);
+							}
+
+					} else {
+						api.toast({
+							msg : ret.data_info
+						});
+					}
+				});
+			// }else {
+			// 	api.toast({
+			// 		msg : '请输入正确的电话号码'
+			// 	});
+			// }
+		}
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		function call_validate() {
+			var user = $api.getStorage('user');
+			$('#userName').val(user.loginname);
+			if (formUtil.validate()) {
+				var opts={};
+				$('form').find("[name]:visible,input[type=hidden]").each(function() {
+            var name = $(this).attr('name');
+            var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+            if ($(this).attr('type') == 'datetime-local') {
+                val = val.replace(/T/, " ").replace(/\.\d+/, "");
+                //如果出现不带有秒数的时间字符串，补充
+                if (!(/\d{2}:\d{2}:\d{2}/.test(val))) {
+                    val += ':00';
+                }
+            }
+
+            if($(this).attr('type')=='radio'){
+            val=$("input[type='radio']:checked").val();
+
+            }
+            opts[name] = val;
+
+        });
+				console.log("ppppppppppppppppppppppppppppppppp");
+				console.log(JSON.stringify(opts));
+				// 这里
+				uploadData(opts);
+			}
+		}
+
+// 删除接口
+
+		function emergencyRemoveDetail(){
+			var ida = api.pageParam.id;
+			var opts={
+				prefix: 'materialInfo',
+				ids:ida
+			}
+			api.confirm({
+			    title: '提示',
+			    msg: '是否删除此工单？',
+			    buttons: ['确定', '取消']
+			}, function(ret, err) {
+			    var index = ret.buttonIndex;
+					if(index==1){
+						$client.removeEmergency(opts,function(ret,err){
+							if(err.statusCode==200){
+								api.toast({
+									msg : '删除成功!'
+								});
+								api.execScript({
+									name : 'emergency-list_win',
+									frameName : 'emergency-list_frm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									api.closeWin();
+								}, 1000);
+							}else {
+								api.toast({
+									msg : '删除失败!'
+								});
+							}
+						})
+					}
+			});
+
+		}
+
+
+	</script>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>api</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/main-bill-detail.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+	<link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+	<style>
+	#wrap{
+	    height: 100%;
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: vertical;
+	    -webkit-flex-flow: column;
+	           flex-flow: column;
+	}
+	#queryBill{
+	    -webkit-box-flex: 1; 
+	    -webkit-flex: 1;
+	    flex: 1;
+	}
+	#nav {
+		text-align: center;
+		background-color: #f2f2f2;
+	}
+	#nav ul{
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    -webkit-flex-direction: row;
+	    flex-direction: row;
+	}
+	#nav ul li{
+	    -webkit-box-flex: 1; 
+	    -webkit-flex: 1;
+	    flex: 1;
+	}
+	#header .header{
+	    display: none;
+	}
+	#header .active{
+	    display: block;
+	}
+	#header .signalList .submenu, #header .bugFlow .submenu{
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    -webkit-flex-direction: row;
+	    flex-direction: row;
+	    background-color: #fff; 
+	}
+	#header .signalList .submenu li, #header .bugFlow .submenu li{
+	    -webkit-box-flex: 1; 
+	    -webkit-flex: 1;
+	    flex: 1;
+	}
+	
+	#header .scan{
+		display:inline-block; position:absolute; bottom: 2px; right: 20px;
+	    width: 40px; height: 40px; text-indent: -9999px;
+	    background: url(../image/scan.png) no-repeat center center;
+	    background-size: 24px;
+	    -webkit-background-size: 24px;
+	}
+
+	
+	</style>
+</head>
+<body>
+    <div id="wrap">
+        <header id="header">
+            <div class="queryBill header active titlebar">
+	        	<a class="back-icon" tapmode="" onclick="api.closeWin()"></a>
+	            <h1>查询</h1>
+	            
+	        </div>
+        </header>
+        <div id="queryBill">
+            <table width="100%">
+            	<tr width="100%" style="height:50px;">
+            		<td width="30%" style="text-align:right;">
+            			<h3>站址编码：</h3>
+            		</td>
+            		<td width="70%">
+            			<input id="staCodeId" type="text" value=""/>
+            		</td>
+            	</tr>
+            	<tr width="100%" style="height:50px;">
+            		<td width="30%" style="text-align:right;">
+            			<h3>站址名称：</h3>
+            		</td>
+            		<td width="70%">
+            			<input id="staNameId" type="text" style="width:100%;height:45px;" value=""/>
+            		</td>
+            	</tr>
+            	<tr width="100%" style="height:50px;">
+            		<td width="30%" style="text-align:right;">
+            			<h3>时间期限：</h3>
+            		</td>
+            		<td width="70%">
+            			<select id="dateSelectId" style="width:100%;height:45px;" value="">
+            				<option value="">全部</option>
+            				<option value="0">今天</option>
+            				<option value="1">昨天</option>
+            				<option value="2">三天前</option>
+            				<option value="3">一个星期前</option>
+            				<option value="4">一个月前</option>
+            			</select>
+            		</td>
+            	</tr>
+            	<tr width="100%" style="height:50px;text-align:center;">
+					<td colspan="2">
+						<input type="button" style="width:100%;height:50px; background-color: red; font-size: 18px;color:white;" value="查询" onclick="queryBillList()"/>
+					</td>
+				</tr>
+            </table>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script> 
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+apiready = function(){
+    var header = $api.byId('header');
+    $api.fixIos7Bar(header);
+    //status bar style
+    api.setStatusBarStyle({
+        style: 'light'
+    });
+    api.pageParam.queryBill = true;
+    
+
+};
+function queryBillList(){
+	var stationCode = $api.byId('staCodeId').value;
+	var stationName = $api.byId('staNameId').value;
+	var beginTimeType = $api.byId('dateSelectId').value;
+	api.pageParam.stationCode = stationCode;
+	api.pageParam.stationName = stationName;
+	api.pageParam.beginTimeType = beginTimeType;
+    api.openWin({
+        name: 'bill-list',
+        url: 'bill-list.html',
+        bounces: false,
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        reload: true,
+        pageParam: api.pageParam
+        
+    });
+}
+function closeWinDow(){
+	api.closeWin({name:"queryBill"});
+}
+
+</script>
+</html>

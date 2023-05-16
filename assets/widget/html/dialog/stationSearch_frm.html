@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>title</title>
+        <link rel="stylesheet" href="../../css/api.css"/>
+        <link rel="stylesheet" href="../../css/common.css" />
+        <link rel="stylesheet" href="../../css/query.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/aui.css"/>
+        <style>
+          #searchHistory p{
+            text-align: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #efefef;
+          }
+          div.cj-l-intos {
+              font-size: 12px;
+              color: #666;
+              line-height: 20px;
+              padding: 0.5px 0;
+              position: relative;
+              margin-left: 12px;
+              width:500px;
+              white-space:nowrap;
+              width:30em;
+              overflow:hidden;
+          }
+        </style>
+    </head>
+    <style>
+        html, body {
+            height: auto;
+        }
+    </style>
+    <body>
+      <div id="searchHistory" style="width:100%;background-color:#fff;display:none;">
+
+      </div>
+        <div id="main">
+            <ul  id="listView" class="ccssoft_list"></ul>
+        </div>
+        <script id="listView-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <li onclick="stationClick('{{=it[i].name != null ? it[i].name:""}}','{{=it[i].code != null ? it[i].code:""}}');" >
+            <div class="cj-l-title">{{=it[i].name != null ? it[i].name:""}}</div>
+            <div class="cj-l-into">{{=it[i].st_provinceid}} - {{=it[i].st_cityid}} - {{=it[i].st_countyid}} </div>
+			      <div class="cj-l-intos" style="text-overflow:ellipsis;">备注:&nbsp;&nbsp;{{=it[i].remarknew !=null ? it[i].remarknew:""}}</div>
+            </li>
+            {{}}}
+        </script>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script src="../../script/common.js"></script>
+    <script src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript">
+        apiready = function() {
+            initHeader();
+            listView = new C.ApiListView({
+                fn : $client.searchBaseStation,
+                listName : 'list'
+            });
+            history()
+        };
+        /**
+         *站址点击事件
+         */
+        function stationClick(stationname, stationcode) {
+            saveSearchContent(stationname);
+            var script = "onStationSelect('" + stationname + "','" + stationcode + "');";
+            var winName = api.pageParam.winName;
+            var frameName = api.pageParam.frameName;
+             if(isExist(api.pageParam.frameName)&&api.pageParam.frameName=='monitorTaskListFrm'){
+            var callback = api.pageParam.callback;
+            var formData = {
+            stationcode:stationcode
+            }
+            transferObj(formData, {
+                winName : winName,
+                frameName : frameName
+            }, callback);
+            }
+           else if (isExist(api.pageParam.frameName)) {
+                api.execScript({
+                    name : winName,
+                    frameName : frameName,
+                    script : script
+                });
+            }else {
+                api.execScript({
+                    name : api.pageParam.name,
+                    script : script
+                });
+            }
+            api.closeWin();
+        }
+
+        /**
+         *查询关键字
+         */
+        function call_queryKey(searchKey) {
+            if (searchKey == "") {
+                $('#listView').empty().removeClass('alert-bg-empty');
+                return;
+            }
+            var opts = {
+                name : searchKey,
+            };
+            api.showProgress({
+                title : '查询中...'
+            });
+            listView.setQueryOptions(opts);
+            listView.refresh();
+        }
+        // 设置历史查询
+        function history(){
+          console.log(JSON.stringify(histArr));
+          var divHistory = document.getElementById('searchHistory');
+          var PHtml='';
+          for(var i = 0; i < histArr.length; i++){
+            PHtml+="<p onclick='value(this)'>"+histArr[i]+"</p>"
+          }
+          console.log(PHtml);
+          divHistory.innerHTML =PHtml;
+        }
+
+        //给搜索框赋值
+        function value(e){
+          // $('#keyInput').val(searchHis);
+          api.execScript({
+              name : 'stationSearch_win',
+              script : 'searchVal("' + $(e).html() + '");'
+          });
+          $('#searchHistory').hide(0);
+        }
+
+
+        //  添加存储定量搜索历史功能
+        var histArr;
+        var hisArrStorage=$api.getStorage('hisArrStorage');
+        if(hisArrStorage){
+          histArr=hisArrStorage;
+        }else {
+          histArr=[];
+        }
+        function saveSearchContent(searchKey){
+
+          if(searchKey){
+
+            if(histArr.length>=10){
+                histArr.splice(histArr.length-1,1);
+            }
+            if(histArr.indexOf(searchKey)==-1){
+              histArr.unshift(searchKey);
+            }
+            $api.setStorage('hisArrStorage', histArr);
+          }
+
+        }
+
+        function showSearch(){
+          $('#searchHistory').show(0);
+        }
+        function searchHide(){
+          $('#searchHistory').hide(0);
+        };
+    </script>
+</html>

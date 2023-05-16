@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+		<meta content="yes" name="apple-mobile-web-app-capable" />
+		<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+		<meta content="telephone=no" name="format-detection"
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<link rel="stylesheet" href="css/tieta.css" type="text/css">
+    <link rel="stylesheet" href="css/tieta.css" type="text/css">
+	</head>
+	<body>
+		<div class="tieta_contentwrap">
+			<div class="tieta_content">
+				<div class="tieta_ordersx">
+					<dl>
+						<dt>站址名称</dt>
+						<dd data-type="text" id="stationName"><input class="ttinput w" type="text" placeholder="请输入站址名称"></dd>
+					</dl>
+					<dl>
+						<dt>工单名称</dt>
+						<dd data-type="text" id="taskName"><input class="ttinput w" data-type="text" placeholder="请输入工单名称"></dd>
+					</dl>
+					<dl>
+						<dt>时间范围</dt>
+						<dd id="begintimetype" class ="sc_member_recharge_form" data-type="radio">
+							<span data-value="0">全部</span><span data-value="1" id="time1">昨天</span><span data-value="2" id="time0">今天</span><span data-value="3" id="time2">本周</span><span data-value="4" id="time3">上周</span><span data-value="5" id="time4">本月</span><span data-value="6" id="time4">上月</span></dd>
+					</dl>
+					<dl>
+						<dt>时间区间</dt>
+						<dd>
+							<div class="timeinput"><input class="ttinput w45" type="datetime-local" id="alarmtimestartId" value="" placeholder=""><em>—</em><input class="ttinput w45" type="datetime-local" value="" id="alarmtimeendId" placeholder=""></div>
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+		<div class="tieta_btm">
+			<div class="tieta_btn"><span class="linered" onclick="resert()">重置</span><span onclick="querySubmit()">确认</span></div>
+		</div>
+	</body>
+  <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+	<script type="text/javascript" src="script/standBillMenu.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script src="script/effects.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../script/component.js"></script>
+	<script>
+	var winName;
+	var frameName;
+	var callback;
+
+		function querySubmit(){
+				var info=serializeAll();
+				var jsonData = JSON.stringify(info);// 转成JSON格式
+				var param = $.parseJSON(jsonData);// 转成JSON对象
+				// var script = 'cb_queryDwList('+JSON.stringify(opts)+')';
+				var alarmtimestartId = $api.byId('alarmtimestartId').value;
+				var alarmtimestart =	alarmtimestartId.replace(/T/, " ");
+				var alarmtimeendId =$api.byId('alarmtimeendId').value;
+				var alarmtimeend =	alarmtimeendId.replace(/T/, " ");
+					//携带参数到主页面加载
+					var opts = {
+					stationname : param.stationName,
+	 				taskname : param.taskName, //工单名称
+	 				begintimetype : param.begintimetype, //时间范围
+	 				dwcreattime : param.dwcreatTime, //派单时间
+	 				dwworktimelimit : param.dwworkTimeLimit, //工单完成时间
+	 				busiType : $api.getStorage('type'),
+	 				busiTypeName : $api.getStorage('typeName'),
+					alarmtimestart : alarmtimestart,
+					alarmtimeend : alarmtimeend
+	 			}
+				api.sendEvent({      //携带参数刷新页面
+					name: 'queryDwList',
+					extra: {
+							key: opts,
+					}
+				});
+				 api.closeWin();
+			}
+
+	//判断dd标签的类型拿去对应的值
+			function serializeAll() {
+					var opts = {};
+					$('dl>dd[id]:visible').each(function() {
+							var type = $(this).attr('data-type');
+							var value = '';
+							var id = null;
+							switch(type) {
+									case 'text':
+											var inputList = $(this).find('input');
+											for (var i = 0, size = inputList.length; i < size; i++) {
+													value = $(inputList[i]).val();
+													id = $(this).attr('id');
+													if (id != null && value != null) {
+															opts[id] = value;
+													}
+											}
+											break;
+									case 'radio' :
+											value = $(this).find('span.current').attr('data-value');
+											id = $(this).attr('id');
+											opts[id] = value;
+											break;
+							}
+
+					});
+					return opts;
+			}
+
+			//按钮重置
+			function resert(){
+				  window.location.reload();
+			}
+
+	</script>
+
+</html>

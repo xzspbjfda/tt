@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html >
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>重保详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+	</head>
+	<body style="width: 100%">
+		<script id="billDetail-template" type="text/x-dot-template">
+			<div class="darktitle titleinfo" ><h2>受理信息</h2></div>
+			<ul class="aui-list-view">
+				<li class="aui-list-view-cell" >
+				<div class="aui-col-xs-4 aui-pull-left">站址名称</div>
+				<div class="aui-col-xs-7 aui-pull-right">
+				{{? it.objtype == '1' }}
+				铁塔
+				{{?? it.objtype == '2'}}
+				动力及配套
+				{{?? it.objtype == '3'}}
+				机房及配套
+				{{?}}
+				</div>
+				</li>
+				<li class="aui-list-view-cell" >
+				<div class="aui-col-xs-4 aui-pull-left">运维ID</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.stationcode != null ? it.stationcode:''}}</div>
+				</li>
+			</ul>
+		</script>
+		<div class="aui-content" id="standBillDetail">
+						<div class="darktitle titleinfo" ><h2>受理信息</h2></div>
+						<ul class="aui-list-view">
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">重保编号</div>
+								<div class="aui-col-xs-7 aui-pull-right">ZB-20180315-002</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">重保名称</div>
+								<div class="aui-col-xs-7 aui-pull-right">测试重保</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">紧急程度</div>
+								<div class="aui-col-xs-7 aui-pull-right">一般</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">保障类型</div>
+								<div class="aui-col-xs-7 aui-pull-right">重要会议</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">保障开始时间</div>
+								<div class="aui-col-xs-7 aui-pull-right">2018-03-18 17:22:07</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">保障结束时间</div>
+								<div class="aui-col-xs-7 aui-pull-right">2018-03-19 17:22:07</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">地市</div>
+								<div class="aui-col-xs-7 aui-pull-right">银川分公司</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">保障地点</div>
+								<div class="aui-col-xs-7 aui-pull-right">宁夏回族自治区银川市金凤区</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">发起人</div>
+								<div class="aui-col-xs-7 aui-pull-right">郭彦斌</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">发起人联系方式</div>
+								<div class="aui-col-xs-7 aui-pull-right">15378976252</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">发起日期</div>
+								<div class="aui-col-xs-7 aui-pull-right">2018-03-15 17:07:05</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">保障原因</div>
+								<div class="aui-col-xs-7 aui-pull-right"></div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">审批意见</div>
+								<div class="aui-col-xs-7 aui-pull-right"></div>
+							</li>
+							<div class="darktitle titleinfo"><h2>资源信息</h2></div>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">出动人员数量(人)*:</div>
+								<div class="aui-col-xs-7 aui-pull-right">
+									<input>
+								</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">出动油机数量(台)*:</div>
+								<div class="aui-col-xs-7 aui-pull-right">
+									<input>
+								</div>
+							</li>
+							<li class="aui-list-view-cell" >
+								<div class="aui-col-xs-4 aui-pull-left">出动车辆数量(辆)*:</div>
+								<div class="aui-col-xs-7 aui-pull-right">
+									<input>
+								</div>
+							</li>
+						</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script>
+		var opts = {};
+		apiready = function() {
+			var billsn = api.pageParam.billsn;
+			opts.billsn = billsn;
+			api.showProgress({
+				title : '加载中',
+				modal : false
+			});
+			// wxx
+			$client.getRepairBillDetail(opts, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+						// wxx
+						console.log("--------------------------------------")
+						console.log(getObj(ret));
+						console.log("--------------------------------------")
+						for (var i = 0; i < ret.dwlist.length; i++) {
+							console.log(getObj(ret.dwlist[i]));
+						}
+						console.log("--------------------------------------")
+						console.log(ret.contractList1);
+
+						renderTemp('standBillDetail', 'billDetail-template', ret.model);
+
+					} else {
+						api.toast({
+							msg : ret.data_info,
+							location : 'middle'
+						});
+					}
+				} else {
+					api.toast({
+						msg : err.msg,
+						location : 'middle'
+					});
+				}
+				api.hideProgress();
+			});
+		};
+
+		//获取区域经理
+		function getAreaman(ret, billModel) {
+			var userNameList = new Array;
+			var userIdList = new Array;
+			$client.getAreaManagers({
+				siteid : billModel.stationid
+			}, function(ret1, err) {
+
+			});
+		}
+	</script>
+</html>

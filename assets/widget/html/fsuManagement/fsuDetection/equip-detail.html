@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>equip-detail</title>
+    <link rel="stylesheet" href="../module/css/aui.css" />
+    <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+                class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="location.reload()"><span
+                class="aui-iconfont aui-icon-refresh"></span>
+        </a>
+        <div class="aui-title">
+            设备信息
+        </div>
+    </header>
+    <div class="wrapper">
+        <div id="content">
+            <div class="box-cpn">
+                <h4 class="border-b" style="margin-bottom: 0">
+                    <strong class="text-blue margin-r-10">设备信息</strong>
+                    <strong class="text" id="name"></strong>
+                </h4>
+                <div class="padding-10 text">
+                    <div id="devType">设备类型: </div>
+                    <div id="deviceName">设备名称: </div>
+                    <div id="deviceId">设备ID: </div>
+                    <div id="midName">信号名称: </div>
+                    <div id="fsuId">所属FSUID: </div>
+                    <div id="innerip">ip: </div>
+                </div>
+            </div>
+            <div class="box-cpn">
+                <h4 class="">
+                    <strong class="text-blue margin-r-10">位置信息</strong>
+                </h4>
+                <div class="padding-10 text">
+                    <div id="provinceName">省分: </div>
+                    <div id="cityName">地市: </div>
+                    <div id="countryName">区县: </div>
+                    <div id="stationName">站址名称: </div>
+                    <div id="stationCode">站址编码: </div>
+                </div>
+            </div>
+            <div class="box-cpn">
+                <h4 class="">
+                    <strong class="text-blue margin-r-10">信号信息</strong>
+                </h4>
+                <div class="padding-10 text">
+                    <div id="mid">信号ID: </div>
+                    <div id="signalType">信号类型: </div>
+                    <div id="thValue">信号值: </div>
+                    <div id="dataTime">采集时间: </div>
+                    <div class="hidden-btn" style="text-align: center;margin-bottom: 10px">
+                        <!-- <div class="aui-btn aui-btn-danger aui-margin-r-5" onclick="open.performance()">实时性能</div> -->
+                        <div class="aui-btn aui-btn-danger aui-margin-r-5" onclick="openAlarm()">告警信息</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../../../script/navigate.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../module/script/aui-dialog.js"></script>
+<script type="text/javascript">
+    const cacheName = 'equip-list-detail'
+    apiready = function () {
+        api.parseTapmode()
+        realInfo()
+    }
+
+    // 初始化页面
+    const param = JSON.parse(handleLocalStorage('get', cacheName))
+    const dialog = new auiDialog()
+    // 填充数据
+    let data = JSON.parse(param.data)
+    let realData
+    // 查询最新数据
+    function realInfo() {
+        api.showProgress({
+            title: '加载中',
+            modal: false
+        })
+        // 对比缓存数据 确定是否需要查询接口
+        const cache = JSON.parse(handleLocalStorage('get', cacheName + '-real'))
+        if (data.fsuid == cache.fsuId && data.mid == cache.mid && data.deviceId == cache.deviceId) {
+            realData = cache
+            setDatas(resove(realData))
+        } else {
+            request({
+                url: '/app/signal/list',
+                type: 'post',
+                data: {
+                    pageNum: 1,
+                    pageSize: 1,
+                    fsuId: data.fsuid || cache.fsuId,
+                    mid: data.mid || cache.mid,
+                    deviceId: data.deviceId || cache.deviceId,
+                },
+                success: res => {
+                    realData = res.data.resultList[0] || {}
+                    // 填充数据
+                    setDatas(resove(realData))
+                    // 存缓存 避免返回时刷新
+                    handleLocalStorage('remove', cacheName + '-real')
+                    handleLocalStorage('set', cacheName + '-real', JSON.stringify(realData))
+                    return api.hideProgress()
+                },
+                catch: res => api.hideProgress()
+            })
+        }
+    }
+
+    // const open = {
+    //     setParam: function (name) {
+    //         handleLocalStorage('remove', `equip-${name}-list`)
+    //         handleLocalStorage('set', `equip-${name}-list`, JSON.stringify(realData))
+    //     },
+    //     alarm: function () {
+    //         this.setParam('alarm')
+    //         return openPage('fsuManagement/fsuDetection/equip-alarm-list', '设备告警', '')
+    //     },
+    //     performance: function () {
+    //         this.setParam('performance')
+    //         return openPage('fsuManagement/fsuDetection/equip-performance-list', '设备性能', '')
+    //     }
+    // }
+
+    function openAlarm() {
+        handleLocalStorage('remove', `equip-alarm-list`)
+        handleLocalStorage('set', `equip-alarm-list`, JSON.stringify(realData))
+        return openPage('fsuManagement/fsuDetection/equip-alarm-list', '设备告警', '')
+    }
+</script>
+
+</html>

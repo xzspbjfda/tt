@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>巡检已办</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+    <style>
+        body.active{
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+    </style>
+</head>
+<body>
+
+    <script id="listView-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {
+          var model=it[i];
+       		var time=model.date==null?model.inspecttime:model.date;
+       		var starttime= model.starttime;
+       		var endtime= model.endtime;
+       		if(time!=null&&time!=''){
+       		time=time.substring(0,time.lastIndexOf('-')).replace('-','年')+'月';
+       		}else{
+       		time='';
+       		}
+
+       		if(starttime!=null&&starttime!=''){
+       		starttime=starttime.substring(0,starttime.lastIndexOf(':'));
+       		}else{
+       		starttime='';
+       		}
+
+       		if(endtime!=null&&endtime!=''){
+       	endtime=endtime.substring(0,endtime.lastIndexOf(':'));
+       		}else{
+       		endtime='';
+       		}
+        }}
+        <li tapmode="active" onclick="openWaitTask('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}','{{=it[i].taskstatus != null ? it[i].taskstatus:""}}',
+        '{{=it[i].stationname != null ? it[i].stationname:""}}','{{=it[i].stationcode != null ? it[i].stationcode:""}}','{{=it[i].stationid != null ? it[i].stationid:""}}','{{=it[i].operators != null ? it[i].operators:""}}',
+        '{{=it[i].countyname != null ? it[i].countyname:""}}', '{{=it[i].taskstate != null ? it[i].taskstate:""}}', '{{=it[i].deviceid != null ? it[i].deviceid:""}}', '{{=it[i].allusername != null ? it[i].allusername:""}}');">
+        <div class="liTop">
+            <div class="liTopFinishTitle">{{=it[i].stationname != null ? it[i].stationname:""}}{{=it[i].checkresut != null ? "("+it[i].checkresut+")":""}}</div>
+            <div class="liTopFinishTotal">项目：{{=it[i].projectcount != null ? it[i].projectcount:""}}</div>
+        </div>
+        <div class="liFinishMiddle">
+          <div class="liDownPerson" style="border-right: transparent;width: 50%">巡检人:{{=it[i].allusername != null ? it[i].allusername:""}}</div>
+          <div class="liDownBegin" style="float: right;width: 45%">执行时间:{{=time}}</div>
+        </div
+        <div class="liFinishMiddle">
+          <div class="liDownFinishBegin">实际开始:{{=starttime}}</div>
+          <div class="liDownFinishEnd" style="float: right;text-align: right">实际结束:{{=endtime}}</div>
+        </div>
+        <div class="liFinishDown">
+          <div class="liDownPerson" style="border-right: transparent;width: 50%;margin-top:0;">专业:{{=it[i].applymajor != null ? it[i].applymajor:""}}</div>
+        </div>
+		</li>
+        {{ } }}
+    </script>
+    <div id="" class="aui-content">
+    	<ul class="ccssoft_list" id="listView">
+
+    	</ul>
+    </div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+	var listView = null;
+    /**
+     *打开待办任务的详情
+     * readyStartTime 计划开始时间
+     */
+    function openWaitTask(readyStartTime, taskId, starttime, taskstatus,stationname,stationcode,stationid,operators,countyname,taskstate,deviceid,allusername) {
+				var fromNotifition = "N";
+        var user= $api.getStorage("user");
+        openPage_taskProjectList(taskId, starttime, fromNotifition, taskstatus, readyStartTime,api.pageParam.start_status,"",taskstate,"","",stationname,stationcode,stationid,operators,countyname,'2',deviceid,"","","","",allusername);
+
+    }
+
+    apiready = function() {
+      listView = new C.ApiListView({
+						listName:'taskInfoList',
+						fn : $client.getHistoryXunjian
+				});
+				listView.refresh();
+    };
+
+    function cb_queryWaitTaskList(opts) {
+    	 listView.setQueryOptions(opts);
+
+         listView.refresh();
+    }
+
+
+</script>
+</html>

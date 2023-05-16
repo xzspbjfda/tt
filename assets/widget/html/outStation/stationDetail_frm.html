@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>站址详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<style>
+		.aui-content-wxx{
+			width: 100%;
+			margin: 0;
+		}
+		.aui-content-wxx ul{
+			background-color: #fff;
+			border-radius: 0;
+			overflow: hidden;
+			margin-bottom: 10px;
+			padding: 0 3%;
+		}
+			.lonLatCon {
+				color: #666;
+				float: left;
+				width: 35%;
+				padding-left: 20px;
+			}
+			.lonLatBtn {
+				color: #666;
+				float: left;
+				width: 30%;
+			}
+
+			.showMap {
+				color: #fff;
+				display: inline-block;
+				padding: 2px 8px;
+				background-color: #89baf9;
+				font-size: 12px;
+			}
+			.personWin {
+				width: 300px;
+				text-align: center;
+				background-color: #f2f2f2;
+			}
+			.personTitle {
+				background-color: #DB4537;
+				height: 40px;
+				line-height: 40px;
+				width: 100%;
+			}
+			.personButtom {
+				background-color: #F2F2F2;
+				height: 50px;
+				line-height: 50px;
+				width: 100%;
+				border-top: 1px solid #ADADAD;
+			}
+			.btnCls {
+				font-size: 20px;
+				background-color: #007AFF;
+				color: white;
+				width: 100%;
+				height: 40px;
+				line-height: 40px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+			.userList {
+				height: 40px;
+				line-height: 40px;
+				font-size: 16px;
+				width: 280px;
+				margin-left: 10px;
+			}
+			.equipment{
+				border-bottom: 1px dashed #00a0c8;
+			}
+			.equipment:last-child{
+				border: none;
+			}
+			div.weatherc{
+					position:absolute;
+			left:0%;
+			top:0px;
+			z-index:999999;
+			height:45px;
+			width:81px;
+			margin-top:70px;
+			margin-left:0%;
+				}
+				div.weatherc2{
+					position:absolute;
+			left:0%;
+			top:0px;
+			z-index:999999;
+			height:43px;
+			width:80px;
+			margin-right:0%;
+				}
+
+					* {
+							margin: 0;
+							padding: 0;
+							-webkit-box-sizing: border-box;
+							-moz-box-sizing: border-box;
+							box-sizing: border-box;
+					}
+					/*清除浮动*/
+					.clearfix:before, .clearfix:after {
+							display: table;
+							content: " ";
+					}
+					.clearfix:after {
+							clear: both;
+					}
+					.clearfix {
+							zoom: 1;
+					}
+					.wrapper h4{
+								padding: 0px 0 0px 15px;
+					margin: 8px 0 8px 15px;
+					border-left:4px solid #db4537;
+					}
+					.dz-table{
+						width:94%;
+						margin: 10px auto;
+						font-size: 14px;
+					}
+					.dz-table>thead{
+						background:#db4537;
+						color:#fff;
+					}
+					.dz-table>thead td{
+						padding:5px;
+						text-align: center;
+					}
+					.dz-table>tbody td{
+						padding:5px;
+						text-align: center;
+						border-bottom: 2px solid #fff;
+						font-size: 12px;
+					}
+					.dz-table>tbody tr{
+						background:#F7F7F7;
+					}
+					.dz-table>tbody tr:hover{
+						background:#ffdfdd;
+					}
+					.dian_bg{
+						width: 20px;
+						height: 20px;
+						border-radius: 50%;
+						background-color: #db4537;
+						color: #fff;
+						display: inline-block;
+					}
+					.red{
+						color: #db4537;
+					}
+
+					.today_data_w {
+	width: 120px !important;
+
+}
+.tqshow {
+	width: 120px !important;
+
+}
+.show{
+display: block;;
+}
+.Hide{
+display: none;
+}
+.icon_box{
+	background-color: #fff;
+	display: flex;
+	justify-content: space-around;
+	text-align: center;
+	padding: 10px 0;
+}
+.icon{
+	width: 110px;
+	padding: 14px 0 10px 0;
+	background-color: #f9f9f9;
+	box-shadow:  1px 0 3px #afafaf;
+}
+.icon.active{
+	width: 110px;
+	padding: 14px 0 10px 0;
+	background-color: #e9544e;
+	box-shadow:  3px 2px 9px #e9544e;
+	color: #fff;
+}
+.icon_img{
+	width: 30px;
+	height: 30px;
+	background-size: cover;
+	display: inline-block;
+	background-image: url('../../image/orders_icon_crd_nor.png');
+}
+.active .icon_img{
+	width: 30px;
+	height: 30px;
+	background-image: url('../../image/orders_icon_crd_click.png');
+	background-size: cover;
+	display: inline-block;
+}
+.icon_img2{
+	width: 30px;
+	height: 30px;
+	background-size: cover;
+	display: inline-block;
+	background-image: url('../../image/orders_icon_gzd_nor.png');
+}
+.active .icon_img2{
+	width: 60px;
+	height: 30px;
+	background-image: url('../../image/orders_icon_gzd_click.png');
+	background-size: cover;
+	display: inline-block;
+}
+.icon_img3{
+	width: 30px;
+	height: 30px;
+	background-size: cover;
+	display: inline-block;
+	background-image: url('../../image/orders_icon_wxd_nor.png');
+}
+.active .icon_img3{
+	width: 30px;
+	height: 30px;
+	background-image: url('../../image/orders_icon_wxd_click.png');
+	background-size: cover;
+	display: inline-block;
+}
+.icon_img4{
+	width: 30px;
+	height: 30px;
+	background-size: cover;
+	display: inline-block;
+	background-image: url('../../image/orders_icon_wxd_gener.png');
+}
+.submitBtn{
+	width: 96%;
+	height: 40px;
+	background-color: #e9544e;
+	border-radius: 30px;
+	text-align: center;
+	color: #fff;
+	line-height: 40px;
+	margin: 20px auto;
+}
+		</style>
+	</head>
+	<body>
+
+		<script id="stationDetail-template" type="text/x-dot-template">
+		<ul class="aui-list-view">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>站址基本信息</h2></div>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 站址编码</div>
+			<div class="aui-col-xs-12 marginTOP4" >{{=it.st_deviceid != null?it.st_deviceid:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 站址名称</div>
+			<div class="aui-col-xs-12 marginTOP4">{{=it.st_name != null?it.st_name:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 运维ID</div>
+			<div class="aui-col-xs-12 marginTOP4" id="basestationcode">{{=it.st_code != null?it.st_code:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 基站类型</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_type != null?it.st_type:'-'}}</div>
+			<div class="aui-col-xs-3 aui-pull-left red">• FSU状态</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_status != null?it.st_status:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 所属省</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_provinceid != null?it.st_provinceid:'-'}}</div>
+			<div class="aui-col-xs-3 aui-pull-left red">• 所属市</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_cityid != null?it.st_cityid:'-'}}</div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 所属区县</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_countyid != null?it.st_countyid:'-'}}</div>
+			</li>
+			</ul>
+		</script>
+
+		<div class="aui-content">
+			<div class="aui-content aui-content-wxx" id="listView"></div>
+			<div class="icon_box">
+				<div id="newStation" class="icon active" style="display:none;">
+					<div class="icon_img"></div>
+					<div class="">
+						新出入站单
+					</div>
+				</div>
+				<div class="icon">
+					<div class="icon_img"></div>
+					<div class="">
+						出入站单
+					</div>
+				</div>
+				<div class="icon">
+					<div class="icon_img2"></div>
+					<div class="">
+						故障单
+					</div>
+				</div>
+				<div class="icon">
+					<div class="icon_img3"></div>
+					<div class="">
+						维修隐患录入
+					</div>
+				</div>
+				<div class="icon">
+					<div class="icon_img4"></div>
+					<div class="">
+						代维调度
+					</div>
+				</div>
+			</div>
+			<div class="submitBtn" onclick="openNew()">
+				确定
+			</div>
+		</div>
+		<div id="personDiv" style="display:none;background-color: white;width:300px;"></div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<!--	<script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.9.1/vconsole.min.js"></script>-->
+<!--	<script >-->
+<!--		var vConsole = new VConsole();-->
+<!--	</script>-->
+	<script>
+		var stationInfo = null;
+		apiready = function() {
+			
+    		//新上站待办权限
+    		var user = $api.getStorage('user');
+			console.log("=========新上站待办权限=========================="+user.loginname)
+    		console.log(JSON.stringify(user));
+			var elementList = $api.getStorage('elementList');
+    		if (elementList != null) {
+				for (var i = 0; i < elementList.length; i++) {
+					if (elementList[i] == "IDM_PHONE_NEWSTAND_CREATE") {
+						$("#newStation").show();
+						break;
+					}
+				}
+			}
+
+			initHeader();
+			api.showProgress({
+				title : '加载中'
+			});
+			var stationId = api.pageParam.stationId;
+			if (stationId != null) {
+				$client.getStationDetail({
+					id : stationId
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.success) {
+							console.log(JSON.stringify(ret));
+							$api.setStorage('st_st_provinceid', 'value');
+							stationInfo = ret.model;
+							api.pageParam.stationInfo = stationInfo;
+							renderTemp('listView', 'stationDetail-template', ret.model);
+						} else {
+							api.toast({
+								msg : ret.data_info,
+								location : 'bottom'
+							});
+						}
+					} else {
+						api.toast({
+							msg : err.msg,
+							location : 'middle'
+						});
+					}
+					api.hideProgress();
+				});
+			}
+			$('.icon').click(function(){
+				$('.icon').removeClass('active');
+				$(this).addClass('active');
+			})
+		};
+
+		function openNew(){
+			var index=$('.icon.active').index();
+			console.log(index);
+			// index++;
+			if(index == 0) {
+				api.openWin({
+								name : "newCreateStandBill",
+								url : "../newCreateStandBill.html",
+								opaque : true,
+								bounces : false,
+								reload : true,
+								vScrollBarEnabled : false,
+								pageParam : api.pageParam,
+								delay : 300,
+								animation : {
+									type : "push",
+									subType : "from_right",
+									duration : 300
+								}
+							});
+			}else if(index==1){
+							api.openWin({
+								name : "createStandBill",
+								url : "../createStandBill.html",
+								opaque : true,
+								bounces : false,
+								reload : true,
+								vScrollBarEnabled : false,
+								pageParam : api.pageParam,
+								delay : 300,
+								animation : {
+									type : "push",
+									subType : "from_right",
+									duration : 300
+								}
+							});
+
+			}else if (index==2) {
+							api.openWin({
+								name : "createBill",
+								url : "../createBill.html",
+								opaque : true,
+								bounces : false,
+								reload : true,
+								vScrollBarEnabled : false,
+								pageParam : api.pageParam,
+								delay : 300,
+								animation : {
+									type : "push",
+									subType : "from_right",
+									duration : 300
+								}
+							});
+			}else if (index==3) {
+							api.openWin({
+								name : "createRepair",
+								url : "../createRepair.html",
+								opaque : true,
+								bounces : false,
+								reload : true,
+								vScrollBarEnabled : false,
+								pageParam : api.pageParam,
+								delay : 300,
+								animation : {
+									type : "push",
+									subType : "from_right",
+									duration : 300
+								}
+							});
+			}else if(index==4){
+				api.openWin({
+					name : "generation",
+					url : "../createGeneration.html",
+					opaque : true,
+					bounces : false,
+					reload : true,
+					vScrollBarEnabled : false,
+					pageParam : api.pageParam,
+					delay : 300,
+					animation : {
+						type : "push",
+						subType : "from_right",
+						duration : 300
+					}
+				});
+			}
+		}
+
+	</script>
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>出入站回单</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/standBillRevertDetail.css" />
+        <style>
+            .textareaCls {
+                background-color: white;
+                border: solid 1px #c8c7cc;
+                width: 100%;
+                height: 100%;
+            }
+            .cardCon1 {
+                font-size: 14px;
+                width: 90%;
+                /*width:90%;*/
+                height: 45px;
+                float: right;
+                border-radius: 4px;
+                overflow: hidden;
+                margin-right: 4px;
+                /*margin-left:82px;*/
+            }
+            .cardLabel1 {
+                font-size: 14px;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+    
+    		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+		
+	    {{ } }}
+	</script>
+	
+        <div id="wrap">
+            <form>
+                <div style="overflow:auto;margin-bottom:55px;margin-top:5px;">
+                    <div class="aui-cotent">
+                        <div class="aui-form">
+                            <div class="aui-input-row" >
+                                <span class="aui-input-addon" >上站完成时间：</span>
+                                <div class="cardCon1">
+                                    <input name="finishstanddate" type="datetime-local" class="required" data-valid="required" data-error="请选择上站完成时间"  style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+                                </div>
+                            </div>
+                            <div class="aui-input-row" >
+                                <span class="aui-input-addon" >
+                                    <div class="cardLabel1">
+                                        运营商上站目标
+                                    </div>
+                                    <div class="cardLabel1">
+                                        是否达到：
+                                    </div> </span>
+                                <div class="cardCon1">
+                                    <select name="isfinishstand" class="required" data-valid="required" data-error="请选择运营商上站目标是否达到" style="background-color:#FFFFFF;width:100%;height:100%;" value="">
+                                        <option value="Y">是</option>
+                                        <option value="N">否</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="aui-input-row" >
+                                <span class="aui-input-addon" >
+                                    <div class="cardLabel1">
+                                        上站配合事宜	 &nbsp;&nbsp;
+                                    </div>
+                                    <div class="cardLabel1">
+                                        简述：
+                                    </div> </span>
+                                <div class="cardCon1">
+                                    <textarea name="standmero" rows="2"  class="textareaCls required" data-valid="required" data-error="请填写上站配合事宜简述"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="aui-input-row" >
+                                <span class="aui-input-addon" >上站原因：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <div class="cardCon1">
+                                    <select id="standCause" name="standCause" class="required" data-valid="required" data-error="请选择上站原因" style="background-color:#FFFFFF;width:100%;height:100%;" value="">
+                                        <option value="">请选择</option>
+                                        <option value="1">配合运营商上站</option>
+                                        <option value="2">自由人员上站</option>
+                                        <option value="3">配合第三方上站</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer style="height:50px;">
+                        <div class="cardButtonDiv" style="width: 100%;">
+                            <button class="okBtn" style="width: 100%;color:#fff;">
+                                确定
+                            </button>
+                        </div>
+                    </footer>
+                </div>
+                <input type="hidden" name="applyId" value="" />
+                <input type="hidden" name="portType" value="STATION_BILL_REVERT" />
+            </form>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/jquery-validate.js"></script>
+    <script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+    <script>
+        var standBillModel;
+        apiready = function() {
+            //设置标记，等页面回单list时，关闭revert窗口
+            api.pageParam.standBillRevert = true;
+            standBillModel = $api.getStorage('standBillModel');
+            $('form input[name=applyId]').val(standBillModel.applyid);
+            initHeader();
+            initDict();
+            formUtil.init({
+                submitFn : $client.standDeal,
+                btnObj : $('button.okBtn'),
+                
+                callback : function(ret, err) {
+                    //用来表示来之上站待办还是上站已办
+                    var fromPage = api.pageParam.fromPage;
+                    showlog('fromPage = ' + fromPage);
+                    //如果字段为空或未定义，这默认赋值为上站待办
+                    if (fromPage == null || fromPage == '' || fromPage == 'undefined') {
+                        fromPage = "standBillListWin";
+                    }
+                    if (ret) {
+                        if (ret.success) {
+                            api.toast({
+                                msg : "回单成功",
+                                duration : 1000,
+                                location : 'middle'
+                            });
+                            window.setTimeout(function() {
+                                //刷新页面的list
+                                if (fromPage == 'standFinishBillListWin') {
+                                    api.execScript({
+                                        name : 'standFinishBillListWin',
+                                        script : 'refreshFrame();'
+                                    });
+                                }
+                                if (fromPage == 'standBillListWin') {
+                                    api.execScript({
+                                        name : 'standBillListWin',
+                                        script : 'refreshFrame();'
+                                    });
+                                }
+                                api.closeWin({
+                                    name : 'mainStandBillDetail'
+                                });
+                                api.closeWin();
+                                //此时最顶层win为工单详情
+                            }, 1000);
+                        } else {
+                            api.toast({
+                                msg : ret.data_info,
+                                location : 'middle'
+                            });
+                        }
+                    } else {
+                        api.toast({
+                            msg : err.msg,
+                            location : 'middle'
+                        });
+                    }
+                    api.hideProgress();
+                }
+            });
+        };
+        
+        function initDict(){
+       var standCauseList= $api.getStorage("standCauseList");
+       if(standCauseList!=null&&standCauseList.length>0){
+//     alert("集合数："+standCauseList.length);
+      	 $('#standCause').empty();
+        $('<option>').text('请选择').val('').appendTo('#standCause');
+		renderTemp('standCause', 'dict-template', standCauseList, true);
+		 }
+        }
+       
+        function closeWin(name) {
+            if (name == null || name == '' || name == 'undefined') {
+                api.closeWin();
+            } else {
+                api.closeWin({
+                    name : name
+                });
+            }
+        }
+    </script>
+</html>

@@ -1,0 +1,162 @@
+/*!
+ *  * calendar v1.0.0
+ *  * (c) 2019-2019
+ *  * Released under the MIT License.
+ */
+
+* {
+    margin: 0;
+    padding: 0
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    background: #f6f6f6
+}
+
+.clearfix:after {
+    content: " ";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0
+}
+
+li {
+    list-style: none
+}
+
+.calendar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 0
+}
+
+.calendar.on {
+
+}
+
+.calendar .calendar-bottom {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    transition: all .3s;
+    z-index: 100;
+}
+
+.calendar .calendar-bottom.on {
+    transform: translateY(0)
+}
+
+.calendar .calendar-bottom .calendar-header {
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    background-color: #f5f5f5;
+    color: #333
+}
+
+.calendar .calendar-bottom .calendar-header .calendar-cancel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    text-align: center;
+    color: #f55;
+    font-size: 14px
+}
+
+.calendar .calendar-bottom .calendar-weakday {
+    background-color: #f5f5f5;
+    color:#333;
+}
+
+.calendar .calendar-bottom .calendar-weakday li {
+    line-height: 30px;
+    width: 14.28%;
+    float: left;
+    padding: 3px 0;
+    text-align: center
+}
+
+.calendar .calendar-bottom .calendar-weakday li:first-child, .calendar .calendar-bottom .calendar-weakday li:last-child {
+    color: #f55
+}
+
+.calendar .calendar-bottom .calendar-body {
+    background: #fff;
+    height: 240px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-month {
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    line-height: 40px
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date {
+    text-align: center
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li {
+    float: left;
+    height: 40px;
+    width: 14.28%;
+    padding: 4px 0;
+    color: #333;
+    font-weight: 400;
+    vertical-align: middle
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li.calendar-special {
+    color: #f55
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li.calendar-on {
+    background: #4289ff;
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li .calendar-day {
+    line-height: 21px;
+    font-size: 14px
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li .calendar-note {
+    line-height: 18px;
+    font-size: 12px
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li:nth-of-type(7n), .calendar .calendar-bottom .calendar-body .calendar-date li:nth-of-type(7n+1) {
+    color: #f55
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li:nth-of-type(7n).calendar-on, .calendar .calendar-bottom .calendar-body .calendar-date li:nth-of-type(7n+1).calendar-on {
+    color: #fff
+}
+
+.calendar .calendar-bottom .calendar-body .calendar-date li.calendar-date-invalid {
+    color: #b2b2b2
+}
+.calendar .calendar-bottom .calendar-body .calendar-date li.calendar-date-current p {
+    color: #43acfe;
+}
+.calendar .calendar-bottom .calendar-body .calendar-date li.calendar-on p{
+    color: #fff;
+}
+
+.calendar .calendar-modal {
+    background: rgba(0, 0, 0, .5);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+    transition: all .3s
+}

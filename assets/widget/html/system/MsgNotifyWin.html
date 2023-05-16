@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>消息通知</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title">
+				消息通知
+			</div>
+			<a  class="aui-pull-right" id="saveBtn" style="font-size:12px;display:none;" tapmode onclick="initTime()"> <span >保存</span> </a>
+		</header>
+		<script src="../../script/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/debug.js"></script>
+		<script type="text/javascript">
+			var jpush = null;
+			apiready = function() {
+				jpush = api.require('jpushVip');
+				var header = $api.byId('header');
+				$api.fixIos7Bar(header);
+				var headerPos = $api.offset(header);
+				var body_h = $api.offset($api.dom('body')).h;
+				api.openFrame({
+					name : 'MsgNotifyFrm',
+					url : 'MsgNotifyFrm.html',
+					bounces : false,
+					pageParam : api.pageParam,
+					rect : {
+						x : 0,
+						y : headerPos.h,
+						w : headerPos.w,
+						h : 'auto'
+					}
+				});
+				$api.addEvt($api.byId('back'), 'click', function() {
+					initTime();
+				});
+				api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+					//operation
+					initTime();
+				});
+			};
+			function showSaveBtn() {
+				$api.byId('saveBtn').style.display = "";
+			}
+
+			function initTime() {
+				var isOpen = $api.getStorage("isOpen");
+				//				alert("开关：" + isOpen);
+				if ("Y" == isOpen) {
+					//					alert("开关：" + ("Y" == isOpen));
+					var startTime = $api.getStorage("startTime");
+					var endTime = $api.getStorage("endTime");
+					if (startTime != null && startTime != "") {
+						var strb = startTime.split(":");
+						sh = strb[0];
+						sm = strb[1];
+					} else {
+						sh = 00;
+						sm = 00;
+					}
+					if (endTime != null && endTime != "") {
+						var stre = endTime.split(":");
+						eh = stre[0];
+						em = stre[1];
+						//			alert("结束时间：" + em);
+					} else {
+						eh = 06;
+						em = 00;
+						//		alert("结束时间：" + em);
+					}
+					//设置免干扰时间
+					var params = {};
+					params.startHour = sh;
+					params.startMinute = sm;
+					params.endHour = eh;
+					params.endMinute = em;
+					if (jpush != null) {
+						jpush.setSilenceTime(params, function(ret) {
+							if (ret && ret.status) {
+								//success
+								console.log("setPushTime:" + ret.status);
+							}
+						});
+					}
+				} else {
+					//设置免干扰时间
+					var params = {};
+					params.startHour = 0;
+					params.startMinute = 0;
+					params.endHour = 0;
+					params.endMinute = 0;
+					if (jpush != null) {
+						jpush.setSilenceTime(params, function(ret) {
+							if (ret && ret.status) {
+								//success
+								console.log("setPushTime:" + ret.status);
+							}
+						});
+					}
+				}
+				api.toast({
+					msg : '保存成功',
+					location : 'bottom'
+				});
+				
+				timer = setTimeout(function() {
+					api.closeWin();
+				}, 1000);
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,359 @@
+.hotel-p-s-filter {
+    position: fixed;
+    z-index: 300;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #efefef;
+    border-width: 1px 0 0;
+    border-style: solid;
+    border-color: #ddd;
+}
+
+.hotel-p-s-filter, .f-layer-after, .hotel-lc-date {
+    -webkit-animation: top-move 550ms ease-in-out, opacity 550ms ease-in-out;
+    animation: top-move 550ms ease-in-out, opacity 550ms ease-in-out;
+}
+
+.hotel-p-s-filter dt {
+    font-size: 14px;
+    padding-bottom: 5px;
+    clear: left;
+}
+
+dt {
+    display: block;
+}
+
+.hotel-p-s-filter dd.current {
+    background: #099fde;
+    color: #fff;
+    position: relative;
+    z-index: 10;
+    border-style: solid;
+}
+
+.hotel-p-s-filter dd {
+    float: left;
+    background: #fff;
+    width: 20%;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-left: -2px;
+    font-size: 11px;
+    white-space: nowrap;
+    letter-spacing: -1px;
+    border-style: solid;
+    border-color: #ddd;
+}
+
+.hotel-p-s-filter dd input {
+    width: 100%;
+    height: 100%;
+    line-height:90%;
+    display: block;
+    border:none;
+    float: left;
+}
+
+.hotel-p-s-filter .close{
+    float:right;
+    margin:7px;
+    display: none;
+}
+
+.active .close{
+    display:block;
+}
+
+dd.active  input {
+    width:80%;
+}
+
+.hotel-p-s-filter dd, .hotel-hyd-tag span, .hotel-border {
+    border-width: 1px;
+    border: 1px solid #dbdbdb;
+}
+
+.hotel-p-s-filter dd.js_price_h {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+}
+
+dd {
+    display: block;
+    -webkit-margin-start: 40px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.hotel-p-s-filter .g_btn_s {
+    clear: left;
+}
+
+.g_btn_s {
+    color: #FFF;
+    font-size: 18px;
+    width: 100%;
+    height: 44px;
+    display: block;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #db4537;
+    -webkit-tap-highlight-color: #db4537;
+}
+
+body, button {
+    font: 400 14px/1.5 Arial, "Lucida Grande", Verdana, "Microsoft YaHei", hei;
+}
+
+.js_kw_cell_item span {
+    font-size: 12px;
+    color: #898989;
+    padding-right: 10px;
+    float: left;
+    display: inline-block;
+}
+
+.popup-mask.active {
+    background: #000;
+    opacity: .4;
+}
+.popup-mask {
+    background-color: transparent;
+    position: absolute;
+    z-index: 90;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+/*查询页面*/
+.h100 {
+    height: 100%;
+}
+
+article {
+    display: block;
+}
+
+.hotel-headfixed {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    -webkit-transition: all .5s ease 0;
+    -ms-transition: all .5s ease 0;
+    transition: all .5s ease 0;
+}
+
+.hotel-headfixed.cui-citys-hd {
+    top: 0;
+}
+
+.cui-citys-hd {
+    /*background: #e6f1f7;*/
+    background: #db4537;
+    padding: 8px 10px;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.cui-citys-hd.cui-input-focus .icon-back {
+    width: 10%;
+    float: left;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+}
+
+address, cite, dfn, em, var, i {
+    font-style: normal;
+    font-weight: 400;
+}
+
+.cui-citys-hd.cui-input-focus .icon-back + .cui-input-bd {
+    width: 72%;
+}
+
+.cui-citys-hd.cui-input-focus .cui-input-bd {
+    width: 80%;
+    float: left;
+}
+
+.cui-citys-hd .cui-input-bd {
+    position: relative;
+}
+.cui-citys-hd .cui-input-box {
+    padding-right: 20px;
+    font-size: 13px;
+}
+
+.cui-citys-hd .cui-input-box {
+    width: 100%;
+    height: 28px;
+    line-height: normal;
+    display: inline-block;
+    padding: 0 60px 0 28px;
+    background-color: #FFF;
+    border-radius: 20px;
+}
+
+input {
+    width: 100%;
+    height: 42px;
+    line-height: 42px;
+    font-size: 14px;
+    border: 0;
+    padding: 0 5px;
+    background: transparent;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    outline: 0;
+}
+
+.cui-pro-radius {
+    width: 18px;
+    height: 18px;
+    border-left: #c5c5c5 1px solid;
+    display: block;
+    border-bottom: #c5c5c5 1px solid;
+    border-radius: 50%;
+}
+
+.cui-pro-logo {
+    width: 12px;
+    height: 13px;
+    display: block;
+    margin: -16px 0 0 3px;
+    background-position: -74px -58px;
+}
+
+.cui-i, .cui-i:before {
+    background: url(http://pic.c-ctrip.com/h5/common/cui_img.png);
+    background-size: 200px 71px;
+}
+
+.cui-focus-close {
+    z-index: 1000;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin-top: -14px;
+    font-size: 18px;
+}
+.cui-focus-close {
+    color: #999;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin: -17px 0 0 0;
+    width: 40px;
+    height: 34px;
+    line-height: 30px;
+    text-align: center;
+    font: 700 22px/1.7 sans-serif;
+}
+.cui-focus-close {
+    color: #999;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin: -17px 0 0 0;
+    width: 40px;
+    height: 34px;
+    line-height: 30px;
+    text-align: center;
+    font: 700 22px/1.7 sans-serif;
+}
+
+.cui-citys-hd.cui-input-focus .cui-btn-cancle {
+    float: right;
+}
+
+.cui-citys-hd.cui-input-focus .cui-btn-cancle {
+    width: 10%;
+    float: left;
+    line-height: 28px;
+    text-align: center;
+    font-size: 16px;
+    color: #fff;
+    background: rgba(0,0,0,0);
+    border: 0;
+    display: block;
+}
+
+.cui-pro-load {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 38px;
+    top: 50%;
+    margin-top: -9px;
+}
+
+.cui-pro-radius {
+    width: 18px;
+    height: 18px;
+    border-left: #c5c5c5 1px solid;
+    display: block;
+    border-bottom: #c5c5c5 1px solid;
+    border-radius: 50%;
+}
+
+.cui-w-loading, .cui-pro-radius {
+    -webkit-animation: cui-loading 1.58s linear infinite;
+    -moz-animation: cui-loading 1.58s linear infinite;
+    -ms-animation: cui-loading 1.58s linear infinite;
+    animation: cui-loading 1.58s linear infinite;
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    opacity: 0;
+}
+
+.cui-city-novalue {
+    color: #cdcdcd;
+    text-align: center;
+    font-size: 15px;
+    padding: 20px;
+    line-height: 20px;
+}
+
+.icon-back::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    vertical-align: middle;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.back-icon {
+    display: inline-block;
+    width: 10%;
+    height: 28px;
+    background: url(../image/icon_arrow.png) no-repeat center center;
+    -webkit-background-size: 14px 18px;
+    background-size: 36px 36px;
+    float: left;
+}
+

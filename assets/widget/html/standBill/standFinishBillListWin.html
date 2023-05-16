@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>出入站已办列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            #header .queryIcon {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                background: url(../../image/icon_query.png) no-repeat center center;
+                -webkit-background-size: 14px 18px;
+                background-size: 30px 30px;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">
+                上站已办
+            </div>
+            <a id="popupId" class="queryIcon" style="display:none;" tapmode="" onclick="showPopup()"></a>
+        </header>
+        <div id="tabHeaderId">
+            <ul class="aui-tab-nav">
+                <li id="tabbar1" class="active" tapmode onclick="randomSwitchBtn(this,0)">
+                    已办工单
+                </li>
+                <li id="tabbar2" tapmode onclick="randomSwitchBtn(this,1)">
+                    历史工单
+                </li>
+            </ul>
+        </div>
+        <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../../script/api.js"></script>
+        <script type="text/javascript" src="../../script/constant.js"></script>
+        <script type="text/javascript" src="../../script/debug.js"></script>
+        <script type="text/javascript" src="../../script/doT.min.js"></script>
+        <script type="text/javascript" src="../../script/common.js"></script>
+        <script type="text/javascript" src="../../script/config.js"></script>
+        <script type="text/javascript" src="../../script/client.api.js"></script>
+        <script type="text/javascript" src="../../script/aui-alert.js"></script>
+        <script type="text/javascript">
+            //刷新frame
+            function refreshFrame() {
+                api.setFrameGroupIndex({
+                    name : 'standBill_header_tab',
+                    index : 0,
+                    reload : true
+                });
+            }
+
+            apiready = function() {
+//              api.addEventListener({
+//                  name : 'viewappear'
+//              }, function(ret, err) {
+//              		showlog("finishBillwin="+ getObj(api.pageParam));
+//                  if (api.pageParam.mainStandBillDetail) {
+//                      api.pageParam.mainStandBillDetail = false;
+//                      api.closeWin({
+//                          name : "mainStandBillDetail"
+//                      });
+//                  }
+//                  if (api.pageParam.standBillRevert) {
+//                      api.pageParam.standBillRevert = false;
+//                      api.closeWin({
+//                          name : "standBillRevert"
+//                      });
+//                  }
+//              });
+
+                
+                var header = $api.byId('header');
+                var tabHeader = $api.byId('tabHeaderId');
+                $api.fixIos7Bar(header);
+                var headerPos = $api.offset(header);
+                var tabHeaderPos = $api.offset(tabHeader);
+                var body_h = $api.offset($api.dom('body')).h;
+                
+                 api.openFrameGroup ({
+		            name: 'standBill_header_tab',
+		            scrollEnabled:true,
+		            rect:{x:0, y:headerPos.h+tabHeaderPos.h, w:'auto', h:body_h - headerPos.h - tabHeaderPos.h},
+		            index:0,
+		            preload:0,           
+		            frames:
+		            [{
+		                name: 'standFinishBillList_frm', 
+		                url: 'standFinishBillList_frm.html', 
+		                bounces:false
+		            },{
+		                name: 'standHistoryList_frm', 
+		                url: 'standHistoryList_frm.html',
+		                bounces:false
+		            }]
+		        }, function(ret, err){
+		            var tabHeader = $api.byId('tabHeaderId');
+		            var tabHeaderAct = $api.dom(tabHeader, '.aui-bar-nav li.active');
+		            $api.removeCls(tabHeaderAct, 'active');
+		            var name = ret.name;
+		            var index = ret.index;
+		            if(index==0){
+		            	$api.removeCls($api.byId('tabbar2'), 'active');
+		                $api.addCls($api.byId('tabbar1'), 'active');
+		                $('#popupId').hide();	        	
+		            }else if(index==1){
+		            	$api.removeCls($api.byId('tabbar1'), 'active');
+		                $api.addCls($api.byId('tabbar2'), 'active');
+		                $('#popupId').show();        	
+		            }
+		        });          
+		        //因为ios中不知道什么原因，在回到这个页面之前，调用execscript不生效，而在Android上是生效的，所以这里如果是ios再执行一次
+		        if(api.systemType=='ios'){
+		        	refreshFrame();
+		        }
+            };
+            function showPopup() {
+                var query_setting = {
+                    daytype : true,
+                    winName : api.winName,
+                    frameName : 'standHistoryList_frm',
+                    callback : 'cb_queryStandHistoryList'
+                };
+                api.openFrame({
+                    name : 'popup_query_frm',
+                    url : '../dialog/popup_query.html',
+                    rect : {
+                        x : 0,
+                        y : 0,
+                        w : 'auto',
+                        h : 'auto'
+                    },
+                    bounces : false,
+                    reload : false,
+                    pageParam : query_setting
+                });
+            }
+
+            function randomSwitchBtn(obj, index) {
+                if (index == 0) {
+                    $('#popupId').hide();
+                } else {
+                    $('#popupId').show();
+                }
+                $(obj).addClass('active').siblings().removeClass('active');
+                api.setFrameGroupIndex({
+                    name : 'standBill_header_tab',
+                    index : index,
+                    scroll : true
+                });
+            }
+        </script>
+    </body>
+</html>

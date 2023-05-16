@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>离线上传</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <!--<link rel="stylesheet" type="text/css" href="../../css/common.css" />-->
+        <link rel="stylesheet" type="text/css" href="./picOfflineUploadDetail.css" />
+        <style>
+            p.aui-ellipsis-2 {
+                white-space: nowrap !important;
+                text-overflow: ellipsis;
+                display: block;
+            }
+            button {
+                width: 90%;
+            }
+            input {
+                right: 0;
+                z-index: 999;
+            }
+            #buttonGroup {
+                width: 100%;
+                position: fixed;
+                bottom: 5px;
+                text-align: center;
+            }
+            .aui-content {
+                margin-top: 2px;
+            }
+            .aui-list-view-cell div.active {
+                float: left;
+                width: 60%;
+            }
+            .delModel-left {
+                content: '取消'
+            }
+            .delModel-left span {
+                display: none
+            }
+            .delModel-left {
+                content: '全选'
+            }
+            .aui-content {
+                height: 80%;
+            }
+            .alert-bg-noresult {
+                background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            b {
+                margin-left: 5px;
+            }
+            .checkboxChoice{
+              margin: 14px 10px 0 0;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header" style="position: fixed;top:0;z-index: 100;">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="back()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="operator">删除</a>
+            <div class="aui-title" style="color:white;">
+                图片上传
+            </div>
+        </header>
+        <div class="aui-tab" style="position:fixed;z-index: 100;">
+            <ul id="nav" class="aui-tab-nav">
+                <li class="active">
+                    巡检
+                </li>
+                <li>
+                    故障单
+                </li>
+                <li>
+                    上站单
+                </li>
+
+                <li>
+                    现场检查
+                </li>
+                <li>
+                    资源核准
+                </li>
+                  <li>
+                    维修单
+                </li>
+                <li>
+                  代维调度
+              </li>
+            </ul>
+        </div>
+        <div id="wrap" style="height: 80%;">
+            <div class="aui-content" data-tab="巡检" style="margin-top:100px;">
+                <ul id="picListUl" class="aui-list-view"></ul>
+            </div>
+            <div class="aui-content" data-tab="工单" style="display: none;margin-top:100px;">
+                <ul id="picBillListUl" class="aui-list-view"></ul>
+            </div>
+            <div class="aui-content" data-tab="出入站" style="display: none;margin-top:100px;">
+                <ul id="picStandBillListUl" class="aui-list-view"></ul>
+            </div>
+             <div class="aui-content" data-tab="现场检查" style="display: none;margin-top:100px;">
+                <ul id="picCheckListUl" class="aui-list-view"></ul>
+            </div>
+            <div class="aui-content" data-tab="资源核准" style="display: none;margin-top:100px;">
+                <ul id="picResCheckListUl" class="aui-list-view"></ul>
+            </div>
+            <div class="aui-content" data-tab="维修单" style="display: none;margin-top:100px;">
+                <ul id="picRepairBillListUl" class="aui-list-view"></ul>
+            </div>
+            <div class="aui-content" data-tab="代维调度" style="display: none;margin-top:100px;">
+                <ul id="picGenerationListUl" class="aui-list-view"></ul>
+            </div>
+        </div>
+        <div id="buttonGroup">
+            <div id="uploadBtn" style="width:90%;margin:0 auto;overflow:hidden;">
+              <button  class="aui-btn aui-btn-success aui-pull-left" style="width:48%;" onclick="batch()">
+                  批量选择
+              </button>
+              <button  class="aui-btn aui-btn-success aui-pull-right" style="width:48%;" onclick="upload()">
+                  一键上传<span class="aui-badge aui-badge-info">0</span>
+              </button>
+            </div>
+
+            <button id="delBtn" class="aui-btn aui-btn-warning" style="display: none" onclick="delImageItems()">
+                删除图片<span class="aui-badge aui-badge-info">0</span>
+            </button>
+        </div>
+        <!--巡检-->
+        <script id="picListId-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <li class="aui-list-view-cell aui-img" pid="{{=it[i].id}}" projectId="{{=it[i].projectid}}" imgpath="{{=it[i].imgpath}}">
+            <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+            <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+            <div class="aui-img-body">
+            <p class='aui-ellipsis-2'>
+            <b>名称</b>:{{=it[i].photoaddress}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>时间</b>:{{=it[i].phototime}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+            </p>
+            </div>
+            <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+            </li>
+            {{ } }}
+        </script>
+                 <!--维修单-->
+        <script id="resRepairId-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {
+             var time="";
+                if(it[i].phototime!=''){
+                    time=it[i].phototime;
+                }
+            }}
+            <li class="aui-list-view-cell aui-img" pid="{{=it[i].id}}" imgpath="{{=it[i].imgpath}}">
+            <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+            <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+            <div class="aui-img-body">
+            <p class='aui-ellipsis-2'>
+            <b>名称</b>:{{=it[i].billsn}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>时间</b>:{{=time}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+            </p>
+            </div>
+            <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+            </li>
+            {{ } }}
+        </script>
+
+         <!--资源核准-->
+        <script id="resCheckId-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <li class="aui-list-view-cell aui-img" pid="{{=it[i].id}}" projectId="{{=it[i].projectid}}" imgpath="{{=it[i].imgpath}}">
+            <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+            <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+            <div class="aui-img-body">
+            <p class='aui-ellipsis-2'>
+            <b>名称</b>:{{=it[i].stationname}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>时间</b>:{{=it[i].phototime}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+            </p>
+            </div>
+            <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+            </li>
+            {{ } }}
+        </script>
+        <!--现场检查-->
+           <script id="checkId-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <li class="aui-list-view-cell aui-img" pid="{{=it[i].id}}" projectId="{{=it[i].projectid}}" imgpath="{{=it[i].imgpath}}">
+            <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+            <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+            <div class="aui-img-body">
+            <p class='aui-ellipsis-2'>
+            <b>名称</b>:{{=it[i].itemname}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>时间</b>:{{=it[i].phototime}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+            </p>
+            </div>
+            <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+            </li>
+            {{ } }}
+        </script>
+        <!--故障工单-->
+        <script id="billPicListId-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {
+         var time= it[i].phototime.substring(it[i].phototime.indexOf(':')+1);
+
+            }}
+            <li class="aui-list-view-cell aui-img"  pid="{{=it[i].id}}" billid="{{=it[i].billid}}">
+            <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+            <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+            <div class="aui-img-body" aui-checkbox-warning>
+            <p class='aui-ellipsis-2'>
+            <b>工单编号</b>:{{=it[i].billsn}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>站址名称</b>:{{=it[i].stationname}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>拍照时间</b>:{{=time}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+            </p>
+            </div>
+            <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+            </li>
+            {{ } }}
+        </script>
+
+        <!--上站单-->
+           <script id="standBillListId-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <li class="aui-list-view-cell aui-img"  pid="{{=it[i].id}}" billid="{{=it[i].billid}}">
+            <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+            <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+            <div class="aui-img-body" aui-checkbox-warning>
+            <p class='aui-ellipsis-2'>
+            <b>工单编号</b>:{{=it[i].applyid}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>站址名称</b>:{{=it[i].stationname}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>拍照时间</b>:{{=it[i].phototime}}
+            </p>
+            <p class='aui-ellipsis-2'>
+            <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+            </p>
+            </div>
+            <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+            </li>
+            {{ } }}
+        </script>
+
+      <!--代维调度单-->
+        <script id="standBillListId-template2" type="text/x-dot-template">
+         {{ for(var i=0, len=it.length; i < len; i++) {}}
+         <li class="aui-list-view-cell aui-img"  pid="{{=it[i].id}}" billid="{{=it[i].billid}}">
+         <input class="aui-pull-left aui-checkbox checkboxChoice" type="checkbox" >
+         <img class="aui-img-object aui-pull-left" src="{{=it[i].imgpath}}" onclick="imageUtil.show('{{=it[i].imgpath}}');">
+         <div class="aui-img-body" aui-checkbox-warning>
+         <p class='aui-ellipsis-2'>
+         <b>站址名称</b>:{{=it[i].stationname}}
+         </p>
+         <p class='aui-ellipsis-2'>
+         <b>拍照时间</b>:{{=it[i].phototime}}
+         </p>
+         <p class='aui-ellipsis-2'>
+         <b>经度</b>:{{=it[i].lon}} <b>纬度</b>:{{=it[i].lat}}
+         </p>
+         </div>
+         <input class="aui-pull-right aui-checkbox checkboxdel" type="checkbox" style="display: none">
+         </li>
+         {{ } }}
+     </script>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/aui.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/xunjian_db.js"></script>
+    <script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+    <script type="text/javascript">
+        var user;
+        var billImgs = [];
+        var standBillImgs = [];
+        var checkImgs = [];
+        var resCheckImgs = [];
+        var repairImgs = [];
+        var patrolImgs = [];
+        var generationImgs=[];
+        var currentImgs=[];
+        apiready = function() {
+            initHeader();
+            var outerHeight = parseInt($('header').outerHeight());
+            $('.aui-tab').css('top', outerHeight);
+            $('.aui-content').css('margin-top', outerHeight + 55);
+            init();
+            imageUtil.init({
+                imageArray : patrolImgs,
+                uploadFn : $client.uploadProjectImage,
+                delFn : db_removeXunjianPic
+            });
+
+//          $('#nav li:last').after("<li >测试</li>");
+
+            user = $api.getStorage('user');
+            //jquery事件:切换tab
+            $('.aui-tab li').click(function() {
+                if ($('#operator').text() == '取消') {
+                    $('#operator').click();
+                }
+                $(this).addClass('active').siblings().removeClass('active');
+                $('.aui-content:eq(' + $(this).index() + ')').show().siblings('.aui-content').hide();
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                $(".aui-content:visible .checkboxChoice:not(:checked)").attr("disabled",false);
+                $('#uploadBtn span').text('0');
+                $('.aui-content .checkboxChoice:checked').attr('checked', false);
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                //切换数组和上传接口
+                console.log("下标："+$(this).index());
+                if ($(this).index()=="1"||$(this).index()==1) {//故障单
+                  currentImgs=billImgs;
+                   imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadBillImage,
+                        delFn : db_removeBillPic
+                    });
+                    if (!billImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                } else if($(this).index()=="2"||$(this).index()==2){//出入站
+                  currentImgs=standBillImgs;
+                    imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadStandBillImage,
+                        delFn : db_removeStandBillPic
+                    });
+                    if (!standBillImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                }
+                else if($(this).index()=="3"||$(this).index()==3){//现场检查
+                  currentImgs=checkImgs;
+                    imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadCheckImage,
+                        delFn : db_removeCheckPic
+                    });
+                    if (!checkImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                }
+                 else if($(this).index()=="4"||$(this).index()==4){//现场检查
+                   currentImgs=resCheckImgs;
+                    imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadResCheckImage,
+                        delFn : db_removeResCheckPic
+                    });
+                    if (!resCheckImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                } else if($(this).index()=="5"||$(this).index()==5){//维修单
+                  currentImgs=repairImgs;
+                    imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadRepairImage,
+                        delFn : db_removeRepairPic
+                    });
+                    if (!repairImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                }else if($(this).index()=="6"||$(this).index()==6){//代维调度
+                  currentImgs=generationImgs;
+                    imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadGetGenerationImage,
+                        delFn : db_removeGeneraPic
+                    });
+                    if (!generationImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                }
+                else {
+                  currentImgs=patrolImgs;
+                    imageUtil.setOption({
+                        imageArray : [],
+                        uploadFn : $client.uploadProjectImage,
+                        delFn : db_removeXunjianPic
+                    });
+                    if (!patrolImgs.length) {
+                        $('#operator').hide();
+                    } else {
+                        $('#operator').show();
+                    }
+                }
+            });
+            /*jQuery事件: 删除按钮点击*/
+            $('#operator').click(function() {
+                $('.aui-img-body').toggleClass('active');
+                $('.aui-content:visible .checkboxdel').toggle();
+                $('.aui-content:visible .checkboxChoice').toggle();
+                //切换底部按钮
+                $('#delBtn,#uploadBtn').toggle();
+                if ($(this).text() == '删除') {
+                    $(this).text('取消');
+                } else {
+                    $(this).text('删除');
+                    $('#delBtn span').text('0');
+                    $('.aui-content:visible .checkboxdel:checked').attr('checked', false);
+                }
+            });
+            /*jQuery事件: checkbox计数*/
+            $('.aui-content').on('change', '.checkboxdel', function() {
+                $('#delBtn span').text($('.aui-content:visible .checkboxdel:checked').size());
+            });
+            /*jQuery事件: checkbox计数，选择照片上传--start--王晓星*/
+
+            $('.aui-content').on('change', '.checkboxChoice', function() {
+              var choiceNum=$('.aui-content:visible .checkboxChoice:checked').size()
+                $('#uploadBtn span').text(choiceNum);
+                if(choiceNum>=20){
+                  $(".aui-content:visible .checkboxChoice:not(:checked)").attr("disabled",true);
+                  showToast("每次上传数量不得大于20张！");
+                }else {
+                  $(".aui-content:visible .checkboxChoice:not(:checked)").attr("disabled",false);
+                }
+                var choiceImageArr=[];
+                $('.aui-content:visible .checkboxChoice:checked').each(function(index) {
+                    var choiceid=$(this).parent().attr('pid')
+                    for (var i = 0; i < currentImgs.length; i++) {
+                      if(choiceid==currentImgs[i].id){
+                        choiceImageArr.push(currentImgs[i]);
+                      }
+                    }
+                });
+                console.log(JSON.stringify(choiceImageArr));
+                imageUtil.setImageArray(choiceImageArr);
+            });
+            /*jQuery事件: checkbox计数，选择照片上传--end--王晓星*/
+        };
+        function init() {
+            db_init(function(ret, err) {
+                if (ret) {
+                    //获取巡检图片
+                    db_getXunjianPic(user.userid, "", function(ret1, err) {
+                        if (ret1 && ret1 != "undefined") {
+                            //判断是否有未上传的图片
+                            if (ret1.length) {
+                                renderTemp('picListUl', 'picListId-template', ret1, true);
+                                patrolImgs = ret1;
+                                currentImgs=patrolImgs;
+                                console.log(JSON.stringify(ret1));
+                                imageUtil.setImageArray(patrolImgs);
+                                imageUtil.setUploadFn($client.uploadProjectImage);
+                            } else {
+                                $('#picListUl').parent().addClass('alert-bg-noresult');
+                                $('#operator').hide();
+                            }
+                        } else {
+                            $('#picListUl').parent().addClass('alert-bg-noresult');
+                            $('#operator').hide();
+                            showToast("数据加载失败！");
+                        }
+                        hideMask();
+                    });
+                    //获取故障工单图片
+                    db_getBillPic(user.userid, "", function(ret1, err) {
+//                      hideMask();
+                        if (ret1 && ret1 != "undefined") {
+                            //判断是否有未上传的图片
+                            if (ret1.length) {
+                                renderTemp('picBillListUl', 'billPicListId-template', ret1, true);
+                                billImgs = ret1;
+                            } else {
+                                $('#picBillListUl').parent().addClass('alert-bg-noresult');
+                            }
+                        } else {
+                            $('#picBillListUl').parent().addClass('alert-bg-noresult');
+                            showToast("数据加载失败！");
+                        }
+                    });
+                            //获取出入站工单图片
+                    db_getStandBillPic(user.userid, "", function(ret1, err) {
+                        hideMask();
+                        if (ret1 && ret1 != "undefined") {
+                            //判断是否有未上传的图片
+                            if (ret1.length) {
+                                renderTemp('picStandBillListUl', 'standBillListId-template', ret1, true);
+                                standBillImgs = ret1;
+                            } else {
+                                $('#picStandBillListUl').parent().addClass('alert-bg-noresult');
+                            }
+                        } else {
+                            $('#picStandBillListUl').parent().addClass('alert-bg-noresult');
+                            showToast("数据加载失败！");
+                        }
+                    });
+
+                            //获取现场检查图片
+                    db_getCheckPic(user.userid, function(ret1, err) {
+                        hideMask();
+                        if (ret1 && ret1 != "undefined") {
+                            //判断是否有未上传的图片
+                            if (ret1.length) {
+                                renderTemp('picCheckListUl', 'checkId-template', ret1, true);
+                                checkImgs = ret1;
+                            } else {
+                                $('#picCheckListUl').parent().addClass('alert-bg-noresult');
+                            }
+                        } else {
+                            $('#picCheckListUl').parent().addClass('alert-bg-noresult');
+                            showToast("数据加载失败！");
+                        }
+                    });
+
+                            //获取资源核准图片
+                    db_getResCheckPic(user.userid,"", function(ret1, err) {
+                        hideMask();
+                        if (ret1 && ret1 != "undefined") {
+                            //判断是否有未上传的图片
+                            if (ret1.length) {
+                                renderTemp('picResCheckListUl', 'resCheckId-template', ret1, true);
+                                resCheckImgs = ret1;
+                            } else {
+                                $('#picResCheckListUl').parent().addClass('alert-bg-noresult');
+                            }
+                        } else {
+                            $('#picResCheckListUl').parent().addClass('alert-bg-noresult');
+                            showToast("数据加载失败！");
+                        }
+                    });
+                    	//获取维修单信息
+                        db_getRepairPic(user.userid,"", function(ret1, err) {
+                        hideMask();
+                        console.log("ret1:"+JSON.stringify(ret1))
+                        if (ret1 && ret1 != "undefined") {
+                            //判断是否有未上传的图片
+                            if (ret1.length) {
+                                renderTemp('picRepairBillListUl', 'resRepairId-template', ret1, true);
+                                repairImgs = ret1;
+                            } else {
+                                $('#picRepairBillListUl').parent().addClass('alert-bg-noresult');
+                            }
+                        } else {
+                            $('#picRepairBillListUl').parent().addClass('alert-bg-noresult');
+                            showToast("数据加载失败！");
+                        }
+                    });
+                    //获取代为调度
+                      db_getGeneraPic(user.userid,"", function(ret1, err) {
+                      hideMask();
+                      if (ret1 && ret1 != "undefined") {
+                          //判断是否有未上传的图片
+                          if (ret1.length) {
+                              renderTemp('picGenerationListUl', 'standBillListId-template2', ret1, true);
+                              generationImgs = ret1;
+                          } else {
+                              $('#picGenerationListUl').parent().addClass('alert-bg-noresult');
+                          }
+                      } else {
+                          $('#picGenerationListUl').parent().addClass('alert-bg-noresult');
+                          showToast("数据加载失败！");
+                      }
+                  });
+                } else {
+                    hideMask();
+                    showToast("数据库初始化失败！");
+                }
+            });
+        }
+
+        /*
+         * 上传图片
+         */
+        function upload() {
+            var $content = $('.aui-content:visible');
+            imageUtil.upload(function(ret) {
+              if(ret){
+                refreshNav();
+                var getImageArrayArr=imageUtil.getImageArray();
+                  $(".aui-content:visible .checkboxChoice:not(:checked)").attr("disabled",false);
+                for (var i = 0; i < getImageArrayArr.length; i++) {
+                  $content.find('[pid=' + getImageArrayArr[i].id + ']').remove();
+                }
+
+                if (!$content.find('ul li').size()) {
+                    $content.addClass('alert-bg-noresult');
+                }
+              }
+
+            });
+        }
+
+        /**
+         *删除图片
+         */
+        function remove(pid) {
+            imageUtil.del(pid, function(status) {
+                if (status) {
+                    $content = $('.aui-content:visible');
+                    $content.find('[pid=' + pid + ']').remove();
+                    if (!$content.find('ul li').size()) {
+                        $content.addClass('alert-bg-noresult');
+                    }
+                    return true;
+                } else {
+                    api.toast({
+                        msg : '删除失败',
+                        location : 'bottom'
+                    });
+                }
+            })
+        }
+
+        function delImageItems() {
+            api.confirm({
+                title : '确定删除指定图片?',
+                buttons : ['确定', '取消']
+            }, function(ret, err) {
+                if (ret && ret.buttonIndex == 1) {
+                    $content = $('.aui-content:visible');
+                    $('.aui-content:visible .checkboxdel:checked').each(function(index) {
+                        remove($(this).parent().attr('pid'));
+                    });
+                    $('#operator').click();
+                    refreshNav();
+                    api.toast({
+                        msg : '删除成功!',
+                        location : 'middle'
+                    });
+                }
+            });
+        }
+
+        /*
+         * 刷新首页的图片上传模块头标
+         */
+        function refreshUploadCount() {
+            api.execScript({
+                name : 'home_win',
+                frameName : 'footer_tab_1',
+                script : 'setofflineUploadCount();'
+            });
+        }
+
+        function refreshNav() {
+            var length = currentImgs.length;
+            if (length) {
+                $('#operator').show();
+            } else {
+                $('#operator').hide();
+            }
+        }
+
+        function back() {
+            refreshUploadCount();
+            api.closeWin();
+        }
+        // 批量选择照片
+        function batch(){
+          $('.aui-content:visible .checkboxChoice').attr('checked', false);
+          // 循环选中前20个照片
+          $('.aui-content:visible .checkboxChoice').each(function(index) {
+            if(index<20){
+                $(this).click()
+            }
+          })
+
+          var choiceNum=$('.aui-content:visible .checkboxChoice:checked').size()
+            $('#uploadBtn span').text(choiceNum);
+            if(choiceNum>=20){
+              $(".aui-content:visible .checkboxChoice:not(:checked)").attr("disabled",true);
+              showToast("每次上传数量不得大于20张！");
+            }
+            // 将选中照片插入上次数组对象
+            var choiceImageArr=[];
+            $('.aui-content:visible .checkboxChoice:checked').each(function(index) {
+                var choiceid=$(this).parent().attr('pid')
+                for (var i = 0; i < currentImgs.length; i++) {
+                  if(choiceid==currentImgs[i].id){
+                    choiceImageArr.push(currentImgs[i]);
+                  }
+                }
+            });
+            console.log(JSON.stringify(choiceImageArr));
+            imageUtil.setImageArray(choiceImageArr);
+        }
+    </script>
+</html>

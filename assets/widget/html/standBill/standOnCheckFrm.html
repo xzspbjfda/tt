@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+        .aui-flex-col:first-child {
+          height: 30px;
+          line-height: 30px;
+          border-bottom: 1px solid #999;
+        }
+        .aui-flex-col {
+          height: 30px;
+          line-height: 30px;
+          position: relative;
+        }
+        .ccssoft_list {
+          background-color: #eff1f0;
+          override: hidden;
+        }
+        .ccssoft_list {
+          margin-top: 15px;
+        }
+        .ccssoft_list li {
+          list-style: none;
+          border-bottom: 1px solid #e3e2e2;
+          background: #fff;
+          overflow: hidden;
+          margin-bottom: 10px;
+        }
+        .ccssoft_list li:hover {
+          background: #f9e9df;
+        }
+        .ccssoft_list li.acitve {
+          background: #f9e9df;
+        }
+        .aui-text-rights {
+          float: left;
+          width: 100%;
+          text-align: right !important;
+          position: absolute;
+        }
+        </style>
+    </head>
+    <body>
+      <script id="listView-template" type="text/x-dot-template">
+  			{{ for(var i=0, len=it.length; i < len; i++) {
+  			var processflag = it[i].status;
+  			var processflagName = "";
+  			var pcolor = "";
+  			if(processflag=="1"){
+  			processflagName = "接单";
+  			pcolor = "#22AADD";
+      }else if(processflag=="2"){
+  			processflagName = "是否上站";
+  			pcolor = "#1cc472";
+      }else if(processflag=="3"){
+  			processflagName = "待签到";
+  			pcolor = "#9fbe3b";
+      }else if(processflag=="4"){
+  			processflagName = "回单";
+  			pcolor = "#B372F6";
+  		}
+  			}}
+  			<li class="aui-content" style="padding:8px;" tapmode="active" wo_id="{{=it[i].wo_id}}"   wo_sn="{{=it[i].wo_sn}}" stationId="{{=it[i].site_id}}" st_name="{{=it[i].st_name}}" status="{{=it[i].status}}" onclick="openStandcheckDetail(this)">
+  			<div class="aui-flex-col" style="border-bottom: 1px dashed #00a0c8;">
+  			<div class="aui-flex-item-6" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"> {{=it[i].st_name ? it[i].st_name : '&nbsp;'}}</div>
+        	<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        	<div class="aui-text-rights" style="color:{{=pcolor}};white-space:nowrap;position:absoulte">{{=processflagName}}</div>
+  			</div>
+  			<div class="aui-flex-col" style="font-size:12px;">
+  			<div class="aui-flex-item-7"> {{=it[i].wo_sn}}</div>
+  			</div>
+  			<div class="aui-flex-col" style="font-size:12px;">
+  			<div class="aui-flex-item-9">申请上站时间：{{=it[i].createtime != null ? it[i].createtime:''}}</div>
+  			<div class="aui-flex-item-3 aui-text-right">{{=it[i].dispatch_operator != null ? it[i].dispatch_operator:''}}</div>
+  			</div>
+  			</li>
+  			{{ } }}
+  		</script>
+  		<div class="aui-content">
+  			<ul class="ccssoft_list" id="listView"></ul>
+  		</div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+  	<script src="../../script/api.js"></script>
+  	<script src="../../script/debug.js"></script>
+  	<script src="../../script/doT.min.js"></script>
+  	<script src="../../script/constant.js"></script>
+  	<script src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/aui.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript">
+    var listView;
+    apiready = function() {
+      var state = api.pageParam.state;
+      if(state == "1"){
+        var opts ={
+          status : state
+        }
+        listView = new C.ApiListView({
+          fn : $client.getstandCheckList,
+          listName : 'ordercheckList',
+          limit:5
+        });
+        listView.setQueryOptions(opts);
+      }else if(state == "2"){
+        var opts ={
+          status : state
+        }
+        listView = new C.ApiListView({
+          fn : $client.getstandCheckList,
+          listName : 'ordercheckList',
+          limit:5
+        });
+        listView.setQueryOptions(opts);
+      }else if(state == "3"){
+        var opts ={
+          status : state
+        }
+        listView = new C.ApiListView({
+          fn : $client.getstandCheckList,
+          listName : 'ordercheckList',
+          limit:5
+        });
+        listView.setQueryOptions(opts);
+      }
+     	 listView.refresh();
+      		//页面回调刷新
+		      api.addEventListener({
+		           name: 'standOnCheckFrm'
+		        }, function(ret, err) {
+		            if (ret.value.state == 'no') {
+		                 refresh();
+		            }
+		      });
+    }
+	    //刷新当前页面
+	    function refresh() {
+	         window.location.reload();
+	    };
+
+
+    //查看上站核实工大详情与站址信息
+    function openStandcheckDetail(el) {
+			showlog("wo_id=" + $api.attr(el, 'wo_id') + '， wo_sn' + $api.attr(el, 'wo_sn'));
+			var wo_id = $api.attr(el, 'wo_id');
+			var wo_sn = $api.attr(el, 'wo_sn');
+			var stationId = $api.attr(el, 'stationId');
+      var st_name = $api.attr(el, 'st_name');
+			var pageParam = {};
+			pageParam.wo_id = wo_id;
+			pageParam.wo_sn = wo_sn;
+			pageParam.stationId = stationId;
+      pageParam.st_name = st_name;
+      pageParam.status = status;
+			//页面来源，这里表示从上站待办跳过来
+			pageParam.fromPage = "standOnCheckWin";
+			api.openWin({
+				name : 'mainStandcheckDetail',
+				url : 'mainStandcheckDetail.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+
+
+
+    // 下拉刷新
+    // api.setRefreshHeaderInfo({
+    //   visible : true,
+    //   bgColor : '#f2f2f2',
+    //   textColor : '#4d4d4d',
+    //   textDown : '下拉刷新...',
+    //   textUp : '松开刷新...',
+    //   showTime : true
+    // }, function(ret, err) {
+
+    //     //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+    //      setTimeout('api.refreshHeaderLoadDone()', '500');
+    //      api.hideProgress();
+    //      $('#wxx_select_name').html('工单查询');
+    // });
+  </script>
+</html>

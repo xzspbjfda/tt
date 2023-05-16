@@ -1,0 +1,832 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>监控</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<style>
+			body {
+				background-color: #E0E0E0;
+			}
+			footer {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				background: #fff;
+				border-top: 1px solid #ccc;
+			}
+			.red {
+				color: red;
+				font-size: 26px;
+			}
+			.MyD{
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				display: inline-block;
+				background-color: red;
+				position: absolute;
+				left: 50px;
+				top:8px;
+				display: none;
+			}
+			.MyDBox{
+				position: relative;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<div class="aui-title" id="aui-title"></div>
+			<a id="shouli" class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="showPopup()" style="display: none"><span class="aui-iconfont aui-icon-search"></span> </a>
+			<a id="daiban" class="aui-btn ccssoft-aui-bar-theme aui-pull-left" tapmode="" onclick="goScan()" style="display: none"><span class="aui-iconfont aui-icon-scan"></span> </a>
+			<!-- <a id="ziyuanapp" class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="goRes()" style="display: none"><span class="aui-iconfont aui-icon-forward"></span> </a> -->
+			<!-- <a id="settings" class="aui-btn ccssoft-aui-bar-theme aui-pull-right slidPane" style="display: none" tapmode onclick="api.openSlidPane({type:'left'});"><span class="aui-iconfont aui-icon-settings"></span> </a> -->
+
+			<!-- <a id="goAll" class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" style="display: none" onclick="goAll()"><span class="aui-iconfont aui-icon-home"></span> </a> -->
+		</header>
+		<footer class="aui-nav" id="aui-footer">
+			<ul id="isfour" class="aui-bar-tab" style="display: none">
+				<li tapmode class="active-warning" id="tabbar1" onclick="randomSwitchBtn(this,'我的待办',0)">
+					<span class="aui-iconfont aui-icon-favor"></span>
+					<p>
+						我的待办
+					</p>
+				</li>
+				<li tapmode id="tabbar2" onclick="randomSwitchBtn(this,'综合管理',1)">
+					<span class="aui-iconfont aui-icon-mark"></span>
+					<p>
+						综合管理
+					</p>
+				</li>
+				<li tapmode id="tabbar3" onclick="randomSwitchBtn(this,'业务受理',2)">
+					<span class="aui-iconfont aui-icon-like"></span>
+					<p>
+						业务受理
+					</p>
+				</li>
+				<li tapmode class="MyDBox" id="tabbar4" onclick="randomSwitchBtn(this,'我的',3)">
+					<span class="MyD"></span>
+					<span class="aui-iconfont aui-icon-my"></span>
+					<p>
+						我的
+					</p>
+				</li>
+			</ul>
+			<ul id="isthree" class="aui-bar-tab" style="display: none">
+				<li class="active-warning" id="tab1" onclick="randomSwitchBtn(this,'我的待办',0)">
+					<span class="aui-iconfont aui-icon-favor"></span>
+					<p>
+						我的待办
+					</p>
+				</li>
+				<li id="tab2" onclick="randomSwitchBtn(this,'综合管理',1)">
+					<span class="aui-iconfont aui-icon-mark"></span>
+					<p>
+						综合管理
+					</p>
+				</li>
+				<!--<li id="tabbar3" onclick="randomSwitchBtn(this,'受理',2)">
+				<span class="aui-iconfont aui-icon-like"></span>
+				<p>
+				受理
+				</p>
+				</li>-->
+				<li class="MyDBox" id="tab4" onclick="randomSwitchBtn(this,'我的',2)">
+					<span class="MyD"></span>
+					<span class="aui-iconfont aui-icon-my"></span>
+					<p>
+						我的
+					</p>
+				</li>
+			</ul>
+		</footer>
+		<script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+		<script type="text/javascript" src="../../script/jpush-api.js"></script>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/constant.js"></script>
+		<script type="text/javascript" src="../../script/debug.js"></script>
+		<script type="text/javascript" src="../../script/config.js"></script>
+		<script type="text/javascript" src="../../script/common.js"></script>
+		<script type="text/javascript" src="../../script/navigate.js"></script>
+		<script type="text/javascript" src="../../script/doT.min.js"></script>
+		<script type="text/javascript" src="../../script/client.api.js"></script>
+		<script type="text/javascript" src="../../script/aui-alert.js"></script>
+		<script type="text/javascript" src="../../script/GPS.js"></script>
+		<!--<script type="text/javascript" src="../../script/home_frm.js"></script>-->
+		<script type="text/javascript" src="../../script/swipe.js"></script>
+		<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+		<!--<script type="text/javascript" src="./script/home_win.js"></script>-->
+		<script type="text/javascript">
+			var userId;
+			var billList = new Array();
+			var _baiduModule;
+
+			var alecodecount =0;
+			apiready = function() {
+				//打开gps
+				openGps();
+				api.parseTapmode();
+				var user = $api.getStorage('user');
+				var elementList = $api.getStorage('elementList');
+				userId = user.userid;
+				//启动极光推送
+				$push.start(userId);
+				var header = $api.byId('header');
+				$api.fixIos7Bar(header);
+				$api.fixTabBar($api.byId('aui-footer'));
+				var headerPos = $api.offset(header);
+				var body_h = $api.offset($api.dom('body')).h;
+				var footer_h = $api.offset($api.byId('aui-footer')).h;
+				if (elementList != null) {
+					for (var i = 0; i < elementList.length; i++) {
+						if (elementList[i] == "IDM_CREATE_FAULT_BILL") {
+							billList.push("FAULTBILL");
+						} else if (elementList[i] == "IDM_PHONE_STAND_CREATE") {
+							billList.push("STANDBILL");
+						//资源跳转按钮权限控制
+						}else if(elementList[i] == "IDM_BETA_STANDARD"){
+							$('#ziyuanapp').show();
+
+						}
+					}
+					$api.setStorage("billList", billList);
+				}
+				if ($.inArray('FAULTBILL', billList) == -1 && $.inArray('STANDBILL', billList) == -1) {
+					$('#isfour').hide();
+					$('#isthree').show();
+					api.openFrameGroup({
+						name : 'footer_tab_demo',
+						scrollEnabled : true,
+						rect : {
+							x : 0,
+							y : headerPos.h,
+							w : 'auto',
+							h : body_h - headerPos.h - footer_h
+						},
+						index : 0,
+						preload : 3,
+						frames : [{
+							name : 'footer_tab_1',
+							url : '../daiban/daiban_frm.html',
+							bounces : false
+						}, {
+							name : 'footer_tab_2',
+							url : 'home_frm.html',
+							bounces : false
+						},
+						//					{
+						//						name : 'footer_tab_3',
+						//						url : '../outStation/createBillSelStation_frm.html',
+						//						bounces : false
+						//					},
+						{
+							name : 'footer_tab_4',
+							url : '../personal/personal_frm.html',
+							bounces : false
+						}]
+					}, function(ret, err) {
+						var footer = $api.byId('aui-footer');
+						var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+						$api.removeCls(footerAct, 'active-warning');
+						var name = ret.name;
+						var index = ret.index;
+						if (index == 0) {
+							$api.text($api.byId('aui-title'), '我的待办');
+							$api.addCls($api.byId('tab1'), 'active-warning');
+							$api.css($api.byId('shouli'), 'display:none');
+							$api.css($api.byId('settings'), 'display:none');
+							$api.css($api.byId('goAll'), 'display:block');
+
+							$api.css($api.byId('daiban'), 'display:block');
+//							$api.css($api.byId('ziyuanapp'), 'display:block');
+						} else if (index == 1) {
+							$api.addCls($api.byId('tab2'), 'active-warning');
+							$api.css($api.byId('shouli'), 'display:none');
+							$api.css($api.byId('settings'), 'display:none');
+							$api.css($api.byId('goAll'), 'display:none');
+
+							$api.css($api.byId('daiban'), 'display:none');
+							$api.css($api.byId('ziyuanapp'), 'display:none');
+						}
+						// else if (index == 2) {
+						//						$api.text($api.byId('aui-title'), '受理');
+						//						$api.addCls($api.byId('tabbar3'), 'active-warning');
+						//						$api.css($api.byId('shouli'), 'display:block');
+						//						$api.css($api.byId('settings'), 'display:none');
+						//					}
+						else if (index == 2) {
+							$api.addCls($api.byId('tab4'), 'active-warning');
+							$api.css($api.byId('shouli'), 'display:none');
+							$api.css($api.byId('settings'), 'display:block');
+							$api.css($api.byId('goAll'), 'display:none');
+
+							$api.css($api.byId('daiban'), 'display:none');
+							$api.css($api.byId('ziyuanapp'), 'display:none');
+						}
+					});
+				} else {
+					$('#isfour').show();
+					$('#isthree').hide();
+					api.openFrameGroup({
+						name : 'footer_tab_demo',
+						scrollEnabled : true,
+						rect : {
+							x : 0,
+							y : headerPos.h,
+							w : 'auto',
+							h : body_h - headerPos.h - footer_h
+						},
+						index : 0,
+						preload : 3,
+						frames : [{
+							name : 'footer_tab_1',
+							url : '../daiban/daiban_frm.html',
+							bounces : false
+						}, {
+							name : 'footer_tab_2',
+							url : 'home_frm.html',
+							bounces : false
+						}, {
+							name : 'footer_tab_3',
+							url : '../outStation/createBillSelStation_frm.html',
+							bounces : false
+						}, {
+							name : 'footer_tab_4',
+							url : '../personal/personal_frm.html',
+							bounces : false
+						}]
+					}, function(ret, err) {
+						var footer = $api.byId('aui-footer');
+						var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+						$api.removeCls(footerAct, 'active-warning');
+						var name = ret.name;
+						var index = ret.index;
+						if (index == 0) {
+							$api.text($api.byId('aui-title'), '我的待办');
+							$api.addCls($api.byId('tabbar1'), 'active-warning');
+							$api.css($api.byId('shouli'), 'display:none');
+							$api.css($api.byId('settings'), 'display:none');
+							$api.css($api.byId('daiban'), 'display:block');
+							$api.css($api.byId('goAll'), 'display:block');
+
+//							$api.css($api.byId('ziyuanapp'), 'display:block');
+						} else if (index == 1) {
+							$api.text($api.byId('aui-title'), '综合管理');
+							$api.addCls($api.byId('tabbar2'), 'active-warning');
+							$api.css($api.byId('goAll'), 'display:none');
+							$api.css($api.byId('shouli'), 'display:none');
+							$api.css($api.byId('settings'), 'display:none');
+							$api.css($api.byId('daiban'), 'display:none');
+							$api.css($api.byId('ziyuanapp'), 'display:none');
+						} else if (index == 2) {
+							$api.text($api.byId('aui-title'), '业务受理');
+							$api.addCls($api.byId('tabbar3'), 'active-warning');
+							$api.css($api.byId('shouli'), 'display:block');
+							$api.css($api.byId('settings'), 'display:none');
+							$api.css($api.byId('daiban'), 'display:none');
+							$api.css($api.byId('goAll'), 'display:none');
+							$api.css($api.byId('ziyuanapp'), 'display:none');
+						} else if (index == 3) {
+							$api.text($api.byId('aui-title'), '我的');
+							$api.addCls($api.byId('tabbar4'), 'active-warning');
+							$api.css($api.byId('shouli'), 'display:none');
+							$api.css($api.byId('settings'), 'display:block');
+							$api.css($api.byId('goAll'), 'display:none');
+							$api.css($api.byId('daiban'), 'display:none');
+							$api.css($api.byId('ziyuanapp'), 'display:none');
+						}
+					});
+				}
+				$api.addEvt($api.byId('back'), 'click', function() {
+					api.closeWin();
+				});
+				api.lockSlidPane();
+				//退出应用
+				if (api.systemType == 'android') {
+					exitApp();
+				}
+
+				shuaxinCount();
+
+			};
+			function shuaxinCount(){
+
+				var bulleList=$api.getStorage('bulleList');
+				var count=0;
+
+				if(bulleList){
+					for (var i = 0; i < bulleList.length; i++) {
+						if(bulleList[i].readed!='Y'){
+								count++;
+						}
+					}
+					if(count>0){
+						$('.MyD').show(0);
+					}
+				}
+			}
+			function randomSwitchBtn(obj, name, index) {
+				$api.text($api.byId('aui-title'), name);
+				var footer = $api.byId('aui-footer');
+				var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+				$api.removeCls(footerAct, 'active-warning');
+				$api.addCls(obj, 'active-warning');
+				api.setFrameGroupIndex({
+					name : 'footer_tab_demo',
+					index : index
+				});
+			}
+
+			// 打开查询工单页面
+			function showPopup() {
+				//              api.pageParam.stationNameOpt = true;
+				//              api.pageParam.stationCodeOpt = true;
+				//              api.pageParam.unitOpt = true;
+				//              api.pageParam.isroomfault = true;
+				//              api.pageParam.winName = api.winName;
+				//              api.pageParam.frameName = 'createBillSelStation_frm';
+				//              api.pageParam.callback = 'queryStationList';
+				var createBillSelStation_frm='createBillSelStation_frm.html';
+				var query_setting = {
+					stationNameOpt : true,
+					stationCodeOpt : true,
+					unitOpt : true,
+					status : true,
+					isroomfault : api.pageParam.type == 'createBill' ? true : false,
+					winName : api.winName,
+					frameName : 'footer_tab_3',
+					callback : 'cb_queryStationList'
+				}
+				api.openFrame({
+					name : 'popup_query_frm',
+					url : '../dialog/popup_query.html',
+					rect : {
+						x : 0,
+						y : 0,
+						w : 'auto',
+						h : 'auto'
+					},
+					bounces : false,
+					pageParam : query_setting
+				});
+			}
+
+			/**
+			 *打开GPS模块，提供各种环境调用
+			 */
+			function openGps() {
+				console.log("打开gps");
+				if (_baiduModule == null) {
+					_baiduModule = api.require('bMap');
+				}
+				if (api.systemType == "ios") {//如果是ios，则需要执行初始化sdk
+					_baiduModule.initMapSDK(function(ret) {
+						if (ret.status) {
+							//      alert('地图初始化成功，可以从百度地图服务器检索信息了！');
+						}
+					});
+				}
+				api.openFrame({
+					name : 'gps',
+					url : '../common/gps/gps_native_frm.html',
+					reload : true,
+					rect : {
+						x : 0,
+						y : 0,
+						w : 0,
+						h : 0
+					}
+				});
+			}
+
+			function goScan() {
+				var FNScanner = api.require('FNScanner');
+				FNScanner.openScanner({
+					autorotation : true
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.content != 'undefined' && ret.content != undefined) {
+							var EWM=ret.content;
+							if(EWM.slice(0,1)=="c"){
+								var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+								var oilcode=ret.content.slice(1);
+								var opts={
+									code:oilcode,
+									lon:lastLocation.lon,
+									lat:lastLocation.lat
+								}
+								$client.setBillCar(opts,function(ret,err){
+									console.log(getObj(ret));
+									if (ret.success) {
+										api.toast({
+											msg : '上报车辆经纬度成功！'
+										});
+									} else {
+										api.toast({
+											msg : '上报车辆经纬度失败！'
+										});
+									}
+								})
+
+
+							}else if (EWM.slice(0,1)=="o") {
+								var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+								var oilcode=ret.content.slice(1);
+								var opts={
+									code:oilcode,
+									lon:lastLocation.lon,
+									lat:lastLocation.lat
+								}
+								$client.setBillCar(opts,function(ret,err){
+									console.log(getObj(ret));
+									if (ret.success) {
+										api.toast({
+											msg : '上报油机经纬度成功！'
+										});
+									} else {
+										api.toast({
+											msg : '上报油机经纬度失败！'
+										});
+									}
+								})
+							}else if (EWM.slice(0,1)=="r") {
+								//1.加密
+								var base = new Base64();
+								// var result = base.encode(str);
+
+								//2.解密
+								var result = base.decode(EWM.slice(1));
+								var message=JSON.parse(result);
+
+			          console.log(message.id);
+
+								//异步返回结果：
+								if (api.systemType == "ios") {
+									var loginname = $api.getStorage(constant.LOGIN_LOGINNAME);
+									var password = $api.getStorage(constant.LOGIN_PASSWORD);
+									var user=$api.getStorage('user');
+
+											api.openApp({
+												iosUrl: 'ttwar://',
+												appParam: {
+														username:loginname,
+														userId:user.userid,
+														loginname:user.username,
+														roomId:message.id,
+														isList:false
+												}
+											}, function(ret, err) {
+
+													if (ret) {
+													} else {
+														//应用未安装
+														api.confirm({
+															title : '确认提示',
+															msg : '应用未安装,是否下载安装？'
+														}, function(ret) {
+															if (ret.buttonIndex == 2) {
+																// 应用未安装
+																api.openWin({
+															    name : 'app',
+															    url : '../xiaApp/xiaApp_win.html',
+															    reload : true,
+															    bounces : false,
+															    vScrollBarEnabled : false,
+															    pageParam : {}
+															  });
+															}
+														})
+													}
+											});
+								}else {
+									api.appInstalled({
+											appBundle: 'com.metarnet.IndependentWarSupport'
+									}, function(ret, err) {
+											if (ret.installed) {
+													var loginname = $api.getStorage(constant.LOGIN_LOGINNAME);
+													var password = $api.getStorage(constant.LOGIN_PASSWORD);
+													var user=$api.getStorage('user');
+													console.log(getObj(user));
+													console.log(password);
+													console.log("indepentwar://android/?username="+loginname+"&userId="+user.userid);
+													// indepentwar://android
+													window.location.href = "indepentwar://android/?username="+loginname+"&userId="+user.userid+"&loginname="+user.username+"&roomId="+message.id+"&isList=false";
+											} else {
+												var user=$api.getStorage('user');
+												console.log(getObj(user));
+													//应用未安装
+													api.confirm({
+														title : '确认提示',
+														msg : '应用未安装,是否下载安装？'
+													}, function(ret) {
+														if (ret.buttonIndex == 2) {
+															//Android中的使用方法如下：
+															// window.location.href = 'https://www.pgyer.com/wSIE'
+															api.openApp({
+																						androidPkg : 'android.intent.action.VIEW',
+																						mimeType : 'text/html',
+																						uri : 'https://www.pgyer.com/wSIE'
+																		}, function(ret, err) {
+
+																		});
+														}
+													})
+											}
+									});
+								}
+
+			        }else {
+								$client.getScanInfo({
+									number : ret.content
+								}, function(ret, err) {
+									if (ret) {
+										//          api.hideProgress();
+										if (ret.success) {
+											//						var opt = {'erweima':ret.model}
+											api.openWin({
+												name : 'erweimainfo_win',
+												url : '../../html/erweima/erweimainfo_win.html',
+												reload : true,
+												bounces : false,
+												vScrollBarEnabled : false,
+												pageParam : {
+													'erweima' : ret.model
+												}
+											});
+										} else {
+											api.toast({
+												msg : ret.data_info
+											});
+										}
+									} else {
+										api.toast({
+											msg : '获取信息出错!'
+										});
+									}
+									api.hideProgress();
+								});
+							}
+
+						}
+					} else {
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+
+
+			/**
+			*
+			*  Base64 encode / decode
+			*
+			*  @author haitao.tu
+			*  @date   2010-04-26
+			*  @email  tuhaitao@foxmail.com
+			*
+			*/
+
+			function Base64() {
+
+				// private property
+				_keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+				// public method for encoding
+				this.encode = function (input) {
+					var output = "";
+					var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+					var i = 0;
+					input = _utf8_encode(input);
+					while (i < input.length) {
+						chr1 = input.charCodeAt(i++);
+						chr2 = input.charCodeAt(i++);
+						chr3 = input.charCodeAt(i++);
+						enc1 = chr1 >> 2;
+						enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+						enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+						enc4 = chr3 & 63;
+						if (isNaN(chr2)) {
+							enc3 = enc4 = 64;
+						} else if (isNaN(chr3)) {
+							enc4 = 64;
+						}
+						output = output +
+						_keyStr.charAt(enc1) + _keyStr.charAt(enc2) +
+						_keyStr.charAt(enc3) + _keyStr.charAt(enc4);
+					}
+					return output;
+				}
+
+				// public method for decoding
+				this.decode = function (input) {
+					var output = "";
+					var chr1, chr2, chr3;
+					var enc1, enc2, enc3, enc4;
+					var i = 0;
+					input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+					while (i < input.length) {
+						enc1 = _keyStr.indexOf(input.charAt(i++));
+						enc2 = _keyStr.indexOf(input.charAt(i++));
+						enc3 = _keyStr.indexOf(input.charAt(i++));
+						enc4 = _keyStr.indexOf(input.charAt(i++));
+						chr1 = (enc1 << 2) | (enc2 >> 4);
+						chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+						chr3 = ((enc3 & 3) << 6) | enc4;
+						output = output + String.fromCharCode(chr1);
+						if (enc3 != 64) {
+							output = output + String.fromCharCode(chr2);
+						}
+						if (enc4 != 64) {
+							output = output + String.fromCharCode(chr3);
+						}
+					}
+					output = _utf8_decode(output);
+					return output;
+				}
+
+				// private method for UTF-8 encoding
+				_utf8_encode = function (string) {
+					string = string.replace(/\r\n/g,"\n");
+					var utftext = "";
+					for (var n = 0; n < string.length; n++) {
+						var c = string.charCodeAt(n);
+						if (c < 128) {
+							utftext += String.fromCharCode(c);
+						} else if((c > 127) && (c < 2048)) {
+							utftext += String.fromCharCode((c >> 6) | 192);
+							utftext += String.fromCharCode((c & 63) | 128);
+						} else {
+							utftext += String.fromCharCode((c >> 12) | 224);
+							utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+							utftext += String.fromCharCode((c & 63) | 128);
+						}
+
+					}
+					return utftext;
+				}
+
+				// private method for UTF-8 decoding
+				_utf8_decode = function (utftext) {
+					var string = "";
+					var i = 0;
+					var c = c1 = c2 = 0;
+					while ( i < utftext.length ) {
+						c = utftext.charCodeAt(i);
+						if (c < 128) {
+							string += String.fromCharCode(c);
+							i++;
+						} else if((c > 191) && (c < 224)) {
+							c2 = utftext.charCodeAt(i+1);
+							string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+							i += 2;
+						} else {
+							c2 = utftext.charCodeAt(i+1);
+							c3 = utftext.charCodeAt(i+2);
+							string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+							i += 3;
+						}
+					}
+					return string;
+				}
+			}
+
+
+			//跳转资源app主页面
+			function goRes(){
+				var user= $api.getStorage("user");
+				console.log("keyi");
+				if(api.systemType=='ios'){
+				console.log("keyi2");
+		        	api.openApp({
+                    iosUrl:"ChinaTower://userName="+user.loginname+"&openclassname=CTHomeViewController"
+                }, function(ret, err) {
+//              alert("keyi3");
+				    if (ret) {
+				    console.log("keyi4");
+//				        alert("成功");
+				    } else {
+				        alert("您暂未安装资源应用");
+				    }
+				});
+				console.log("keyi3");
+                }else if(api.systemType=='android'){
+//              	console.log("ChinaTower://userName="+user.loginname+"&siteCode="+deviceid+"&openclassname=CTResStationResultViewController");
+                	api.openApp({
+					    androidPkg:'com.ztesoft.android.tower',
+				        appParam: {
+				            userName: user.loginname
+				        }
+				}, function(ret, err) {
+				    if (ret) {
+//				        alert("成功");
+				    } else {
+				        alert("您暂未安装资源应用");
+				    }
+				});
+//				api.openApp({
+//				    androidPkg:'com.android.activity.CHINATOWER_MAINACTION',
+//			        appParam: {
+//			            userName: user.loginname,
+//			            serviceId: 'serviceId',
+//			            token:'CTResStationResultViewController',
+//			            appAcctid:'1'
+//			        }
+//				}, function(ret, err) {
+//				    if (ret) {
+////				        alert("成功");
+//				    } else {
+//				        alert("您暂未安装资源应用");
+//				    }
+//				});
+
+                }
+			}
+
+			//弹出验证码
+			function aleCode(msgid,userId){
+				alecodecount++;
+				if(alecodecount>1){
+//				alert(""+alecodecount);
+					return;
+
+				}
+				api.prompt({
+					title: '为了您的账号安全请再次验证',
+					msg : msgid,
+				    buttons: ['确定']
+				}, function(ret, err) {
+				    var index = ret.buttonIndex;
+				    var text = ret.text;
+				    if(text!=msgid){
+				    	alert("输入不正确，请重新输入");
+				    	alecodecount--;
+				    	aleCode(msgid,userId);
+				    }else{
+					    $client.userValidate({
+							validate : msgid,
+							userid : userId
+						}, function(ret, err) {
+							if(ret){
+//								 api.toast({
+//								    msg: '验证成功',
+//								    duration: 2000,
+//								    location: 'middle'
+//								});
+							}else{
+
+							}
+						});
+				    }
+				});
+
+
+			}
+
+			//退出应用
+			function exitApp() {
+				api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+					api.toast({
+						msg : '再按一次返回键退出' + api.appName,
+						duration : 3000,
+						location : 'bottom'
+					});
+					api.addEventListener({
+						name : 'keyback'
+					}, function(ret, err) {
+						//退出前先关闭极光推送,并向后台发送退出登录消息
+						$push.stop();
+						//注销时设置islogin为false，表示未登录
+						$api.setStorage('AUTO_LOGIN', false);
+						//注销时提醒后台，改用户已注销
+						$client.userLoginOut(function(ret, err) {
+						});
+						//退出应用
+						api.closeWidget({
+							id : 'A6973002767421',
+							retData : {
+								name : 'closeWidget'
+							},
+							silent : true
+						});
+					});
+					setTimeout(function() {
+						exitApp();
+					}, 3000)
+				});
+			}
+
+			function goAll(){
+				api.execScript({
+						name:'home_win',
+						frameName: 'footer_tab_1',
+						script: 'goAllaction();'
+				});
+			}
+		</script>
+	</body>
+</html>

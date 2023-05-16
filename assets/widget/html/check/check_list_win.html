@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>现场检查列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title">
+                现场检查
+            </div>
+            <a class="aui-pull-right" tapmode onclick="showPopup()"> <span class="aui-iconfont aui-icon-search"></span> </a>
+        </header>
+        <div class="aui-tab">
+            <ul id="tabBox" class="aui-tab-nav">
+                <li tabName = 'unfinishList' class="active" tapmode>
+                    进行中
+                </li>
+                <li tabName = "unstartList" tapmode>
+                    未开始
+                </li>
+                <li tabName = "finishList" tapmode>
+                    已完成
+                </li>
+            </ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        var flag = 0;
+        apiready = function() {
+            initHeader();
+            console.log("类型："+api.pageParam.type);
+            api.openFrameGroup({
+                name : 'check_header_tab',
+                rect : frameRect(),
+                preload : 0,
+
+                frames : [{
+                    name : 'unfinishList',
+                    url : 'check_list_frm.html',
+                    pageParam : {
+                        start_status : '0'
+                    },
+                    bounces : false
+                }, {
+                    name : 'unstartList',
+                    url : 'check_list_frm.html',
+                    pageParam : {
+                        start_status : '1'
+                    },
+                    bounces : false
+                }, {
+                    name : 'finishList',
+                    url : 'check_list_frm.html',
+                     pageParam : {
+                       start_status : '2'
+                    },
+                    bounces : false
+                }],
+
+            }, function(ret, err) {
+                if (ret) {
+                    $('#tabBox li:eq(' + ret.index + ')').addClass('active').siblings().removeClass('active');
+                }
+            });
+            /*jquery事件:tab切换*/
+            $('#tabBox li').click(function() {
+                $(this).addClass('active').siblings().removeClass('active');
+                api.setFrameGroupIndex({
+                    name : 'check_header_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+            });
+        };
+        function showPopup() {
+            var query_setting = {
+                stationNameOpt : true,
+                stationCodeOpt : true,
+//              isOutdate : true,
+                winName : api.winName,
+                frameName : $('#tabBox li.active').attr('tabName'),
+                callback : 'cb_queryWaitTaskList'
+            };
+            api.openFrame({
+                name : 'popup_query_' + $('#tabBox li.active').attr('tabName'),
+                url : '../dialog/popup_query.html',
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                bounces : false,
+                reload : false,
+                pageParam : query_setting
+            });
+        }
+
+		 function refreshCheckList(index) {
+ 			console.log("index"+index);
+            if (!index) {
+                index = $('#tabBox li.active').index();
+            }
+            if(index==0){
+            api.setFrameGroupIndex({
+                name : 'check_header_tab',
+                index : 2,
+                scroll : false,
+                reload : true
+            });
+            api.setFrameGroupIndex({
+                name : 'check_header_tab',
+                index : index,
+                scroll : true,
+                reload : true
+            });
+            }
+        }
+        function refreshList(index) {
+            if (!index) {
+                index = $('#tabBox li.active').index();
+            }
+            api.setFrameGroupIndex({
+                name : 'check_header_tab',
+                index : index,
+                scroll : true,
+                reload : true
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>选项列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css" class="light-style">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css" class="dark-style" disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/bill-list.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+		<link rel="stylesheet" type="text/css" href="../../html/bill/css/billMenu.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body, #wrap, #header {
+				background: transparent;
+			}
+			#header {
+				height: 58px;
+			}
+			.noborder {
+				border: none !important;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="option-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].userid}}">{{=it[i].username}}</option>
+			{{ } }}
+		</script>
+		<script id="billMenu-template" type="text/x-dot-template">
+
+		</script>
+		<div id="wrap">
+			<div id="shadowId" class="shadow" tapmode＝"" onclick="closeFrame('xunjianMenu_frm');"></div>
+			<div id="header"></div>
+			<div id="billMenuMain">
+			<ul id="billMenuUl" class="menu-list">
+				<li class="menuListLi" id="transfertodoman" tapmode="tap-active" onclick="optXunjian('ZHUAN');">转派</li>
+				<li class="menuListLi" id="transfertodoman" tapmode="tap-active" onclick="showDoorDeviceList();">门禁</li>
+			</ul>
+			</div>
+		</div>
+
+		<!--到站签到end-->
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+	<script type="text/javascript" src="script/xunjianMenu.js"></script>
+	<script type="text/javascript">
+	apiready = function() {
+		//------------------dxb-------------------
+		if(api.pageParam.index_id==2||api.pageParam.index_id==1){
+			$('#transfertodoman').hide();
+		}
+		//------------------dxb-------------------
+	}
+
+
+
+	</script>
+</html>

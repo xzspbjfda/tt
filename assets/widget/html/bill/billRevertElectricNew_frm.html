@@ -1,0 +1,1343 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>发电回单详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="css/billRevertDetail.css" />
+</head>
+<style>
+    .saomabtn {
+        width: 100px;
+        text-align: center;
+        font-size: 14px;
+        background-color: #3779d0;
+        border: none;
+        color: #fff;
+        display: inline-block;
+        border-radius: 3px;
+        padding: 5px 0;
+        margin-top: 4px;
+    }
+
+    .cardCon2 {
+        width: 57%;
+        float: left;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-right: 0px;
+        margin-top: 10px;
+    }
+
+    .cardDiv {
+        width: 100%;
+        font-size: 14px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .removebtn {
+        position: absolute;
+        right: 0;
+        top: 10px;
+        width: 20px !important;
+        height: 20px;
+        padding: 0;
+        margin: 0;
+    }
+    input:disabled{
+        background-color : #F5F5F5;
+        color: #ACA899;    
+        border:1px solid #DDD;
+        opacity:1; 
+        -webkit-text-fill-color:#666;
+        -webkit-opacity:1;   
+    }
+    select:disabled {
+        background-color : #F5F5F5;
+        color: #ACA899;    
+        border:1px solid #DDD;
+        opacity:1; 
+        -webkit-text-fill-color:#666;
+        -webkit-opacity:1;   
+    }
+</style>
+
+<body>
+
+    <!--下拉列表-->
+    <script id="m-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+			</script>
+    <!--下拉列表-->
+    <script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemname}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+    <script id="img-template" type="text/x-dot-template">
+        <li class="aui-list-view-cell aui-img aui-col-xs-4">
+        <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+        <button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+        </li>
+    </script>
+
+
+    <div id="wrap" style="display: none;">
+        <form id="electricRevertForm">
+            <!--停电回单begin-->
+            <div id="eleBillRevertDivId" style="overflow:auto;margin-bottom: 50px;">
+                <div class="cardDiv">
+                    <div class="cardLabel">
+                        <font color="red">*</font>是否空跑：
+                    </div>
+                    <div class="cardCon">
+                        <select id="isEmptyRunId" name="isEmptyRun" class="required" data-valid="required"
+                            data-error="请选择是否空跑！" value="" onchange="selectIsEmptyRun(this)">
+                            <!--字典值（到站/未空跑：0、空跑：1、未出发：2）-->
+                            <option value="">请选择</option>
+                            <option value="0">到站发电/未空跑</option>
+                            <option value="1">空跑</option>
+                            <option value="2">未出发</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="isStandStaElecDivId" class="cardDiv">
+                    <div class="cardLabel">
+                        <font color="red">*</font>是否上站：
+                    </div>
+                    <div class="cardCon">
+                        <select id="isStandStaElec" name="isUpStation" class="required" data-valid="required"
+                            data-error="请选择是否上战！|| 上传图片不能为空！" value="" onchange="selectIsupstation(this)">
+                            <option value="Y">是</option>
+                            <option value="N">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>油机类型：
+                    </div>
+                    <div class="cardCon">
+                        <select id="oilTypeId" value="" name="oilType" data-valid="" data-error="请选择油机型号！">
+                            <option value="">------请选择------</option>
+                            <option value="1">交流固定</option>
+                            <option value="2">直流固定</option>
+                            <option value="3">交流移动</option>
+                            <option value="4">直流移动</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>油机型号：
+                    </div>
+                    <div class="cardCon">
+                        <input id="boardTypeId" name="boardType" class="required" data-valid="required"
+                            data-error="请填写油机型号！" type="text" />
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>油机数量&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            (云南必填)(个)：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <input id="oillNumId" type="number" name="oillNum" data-valid=""
+                            data-error="请填写油机数量(云南必填)(个)！" />
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>是否铁塔油机&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            （江苏必填）：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <select id="towerOillId" value="" name="towerOill" data-valid="" data-error="请选择是否铁塔油机(江苏必填)！">
+                            <option value="">------请选择------</option>
+                            <option value="1001">运营商油机</option>
+                            <option value="1002">铁塔油机（含代维）</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>是否自动油机&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            （广东必填）：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <select id="autoOillId" value="" name="autoOill" data-valid="" data-error="请选择是否自动油机（广东必填）！">
+                            <option value="">请选择</option>
+                            <option value="1003">自动油机</option>
+                            <option value="1004">非自动油机</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabelDiv">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>每小时油耗&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            (广东、广西必填)(L)：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <input id="oillHourId" name="oillHour" type="number" data-valid=""
+                            data-error="请填写每小时油耗(广东、广西必填)(L)！" />
+                        <select name="oillHour" style="display: none;" value="" data-valid=""
+                            data-error="请填写每小时油耗(广东、广西必填)(L)！">
+                            <option value="">------请选择------</option>
+                            <option value="2.75">2.75</option>
+                            <option value="4.50">4.50</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none;height:60px;">
+                    <div class="cardLabelDiv">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>每升汽油单价&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown" style="height:40px;">
+                            （北京、内蒙古、河南、云南、广西必填）:
+                        </div>
+                    </div>
+                    <div class="cardCon" style="height:60px;">
+                        <input id="oillPayId" name="oillPay" class="disabled" type="text" disabled="disabled" />
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>功率：
+                    </div>
+                    <div class="cardCon">
+                        <input id="workRateId" name="workRate" class="required" data-valid="required"
+                            data-error="请选择填写功率！" type="number" />
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabelDiv">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>
+                            车辆往返里程&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            （公里）：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <input id="vehicleMileageId" name="mileage" class="required" data-valid="required"
+                            data-error="请填写车辆往返里程(公里)！" type="number" />
+                    </div>
+                </div>
+                <div class="cardDiv">
+                    <div class="cardLabelDiv">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>
+                            发电人员到&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            达时间：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <input id="arriveTimeId" name="arriveTime" class="required"
+                            data-valid="checkElecEndTime||checkArriveime" data-error="请填写发电人员到达时间！||发电人员到达时间必填"
+                            type="datetime-local" style="line-height:40px;" />
+                    </div>
+                </div>
+                <div class="cardDiv">
+                    <div class="cardLabel">
+                        <font color="red">*</font>发电开始时间：
+                    </div>
+                    <div class="cardCon">
+                        <input id="elecBeginTimeId" name="elecBeginTime" disabled="disabled" type="text"
+                            style="line-height:40px;color: #ababab" />
+                    </div>
+                </div>
+                
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>发电结束时间：
+                    </div>
+                    <div class="cardCon">
+                        <input id="elecEndTimeId" name="elecEndTime" class="required"
+                            data-valid="required||checkElecEndTime" disabled="disabled"
+                            data-error="请填写发电结束时间！||发电结束时间错误" type="text" style="line-height:40px;color: #ababab" />
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabelDiv">
+                        <div class="cardLabelTop">
+                            <font color="red">*</font>
+                            外市电恢复&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="cardLabelDown">
+                            时间：
+                        </div>
+                    </div>
+                    <div class="cardCon">
+                        <input id="outerRecoverTimeId" name="outerRecoverTime" class="required"
+                            data-valid="required||checkRecoveryTime" data-error="请填写外市电恢复时间！||外市电恢复时间不能大于当前时间!"
+                            type="datetime-local" style="line-height:40px;" />
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>
+                        断电原因：
+                    </div>
+                    <div class="cardCon">
+                        <select id="electricityCausesId" name="outageCause" value="" data-valid="required"
+                            data-error="请选择断电原因！">
+                            <option value="">请选择</option>
+                            <option value="1">市电停电</option>
+                            <option value="2">空开跳闸</option>
+                            <option value="3">外电缺相</option>
+                            <option value="4">电缆挖断</option>
+                            <option value="5">业主拉电</option>
+                            <option value="6">其它</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>
+                        真实发电运营商：
+                    </div>
+                    <div class="cardCon">
+                        <select id="realElecOperatorId" name="real_elec_operator" value="" data-valid="required"
+                            data-error="请选择真实发电运营商！">
+                            <option value="">请选择</option>
+                            <option value="1001">移动</option>
+                            <option value="1002">联通</option>
+                            <option value="1003">电信</option>
+                            <option value="1001.1002">移动，联通</option>
+                            <option value="1001.1003">移动，电信</option>
+                            <option value="1003.1002">联通，电信</option>
+                            <option value="1001.1002.1003">移动，联通，电信</option>
+                            <option value="1000">无</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>是否免责：
+                    </div>
+                    <div class="cardCon">
+                        <select id="isRefiefElec" name="isRelief" class="required" data-valid="required"
+                            data-error="请选择是否免责！" value="" onchange="onSelRefief(this)">
+                            <option value="">------请选择------</option>
+                            <option value="Y">是</option>
+                            <option value="N">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="reliefTypeElecDivId" class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>免责条款：
+                    </div>
+                    <div class="cardCon">
+                        <select id="refiefTypeId" name="reliefType" class="required" data-valid="isRelief"
+                            data-error="请选择免责条款！" value="">
+                            <option value="">------请选择------</option>
+                            <option value="1">免责条款1-不可抗力</option>
+                            <option value="2">免责条款2-夜间免责</option>
+                            <option value="3">免责条款3-客户原因</option>
+                            <option value="4">免责条款4-免责站址</option>
+                            <option value="5">免责条款5-其他免责</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="reliefDealInfoElecDivId" class="cardTextareaDiv" style="display: none">
+                    <div class="cardTextareaLabel">
+                        <font color="red">*</font>免责具体原因：
+                    </div>
+                    <div class="cardTextareaCon">
+                        <textarea id="reliefCauseId" name="reliefCause" class="required noborder" data-valid="isRelief"
+                            data-error="请填写免责具体原因！" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>故障原因：
+                    </div>
+                    <div class="cardCon">
+                        <select id="stationCauseElecId" name="faultCouse" class="required" data-valid="required"
+                            data-error="请选择故障原因！" value="">
+                            <option value="">------请选择------</option>
+                            <option value="供电公司原因">供电公司原因</option>
+                            <option value="铁塔原因">铁塔原因</option>
+                            <option value="业主原因">业主原因</option>
+                            <option value="其他原因">其他原因</option>
+                        </select>
+                    </div>
+                </div>
+                <div id='isshow' style="display: none">
+                    <div id="reliefTypeDivId" class="cardDiv">
+                        <div class="cardLabel">
+                            <font color="red">*</font>故障名称：
+                        </div>
+                        <div class="cardCon">
+                            <input id="faultId" name="faultname" type="text" value="" disabled="disabled"
+                                style="height:35px; line-height:35px;">
+                        </div>
+                    </div>
+                    <div id="reliefTypeDivId" class="cardDiv">
+                        <div class="cardLabel">
+                            <font color="red">*</font>原因细分：
+                        </div>
+                        <div class="cardCon">
+                            <select id="causeid" name='faultid' class="required" data-valid="required"
+                                data-error="请选择原因细分！" value="" onchange="onSelBigData(this)">
+                                <option value="">------请选择------</option>
+                            </select>
+                            <input id='causetxt_id' type="text" value="暂未细分原因" disabled="disabled"
+                                style="height:35px; line-height:35px;display: none;">
+                        </div>
+                    </div>
+                    <div class="cardTextareaDiv" style="margin-bottom:20px;">
+                        <div class="cardTextareaLabel">
+                            <font color="red">*</font>
+                            推荐方案：
+                        </div>
+                        <div class="cardTextareaCon">
+                            <textarea id='commend_id' rows="8" class="noborder" disabled="disabled"></textarea>
+                        </div>
+                    </div>
+                    <div id="reliefTypeDivId" class="cardDiv">
+                        <div class="cardLabel">
+                            <font color="red">*</font>具体措施：
+                        </div>
+                        <div class="cardCon">
+                            <select id="dealway_id" name='dealid' class="required" data-valid="required"
+                                data-error="请选择具体措施！" value="" onchange="onSelBigDetail(this)">
+                                <option value="">------请选择------</option>
+                            </select>
+                            <input id='dealtxt_id' type="text" value="暂无具体措施" disabled="disabled"
+                                style="height:35px; line-height:35px;display: none;">
+                        </div>
+                    </div>
+                </div>
+                <div class="cardDiv" style="display: none">
+                    <div class="cardLabel">
+                        <font color="red">*</font>修复时间：
+                    </div>
+                    <div class="cardCon">
+                        <input id="elecRecoverTimeId" name="recoveryTime" class="required"
+                            data-valid="required||checkRecoveryTime" data-error="请填写修复时间！||修复时间不能大于当前时间!"
+                            type="datetime-local" style="line-height:40px;" />
+                    </div>
+                </div>
+                <div class="cardTextareaDiv" style="margin-bottom:20px;display: none">
+                    <div class="cardTextareaLabel">
+                        <font color="red">*</font>
+                        处理方法：
+                    </div>
+                    <div class="cardTextareaCon">
+                        <textarea id="causeDealInfoElecId" name="handlerResult" rows="8" class="noborder required"
+                            data-valid="required||checkChineseCount"
+                            data-error="请填写处理方法！||处理方法内容不符合规范，必须包含4个文字 || 上传图片不能为空！"></textarea>
+                    </div>
+                </div>
+                <div class="cardDiv2">
+                    <div class="cardLabel">
+                        油机编码：
+                    </div>
+                    <div class="cardCon2">
+                        <ul class="aui-list-view">
+                            <input id="yjBm" name="yjBm" type="text" value="" style="margin: 0px;width: 80%;" />
+                            <li class="aui-list-view-cell aui-img aui-col-xs-3"
+                                style="float: right;margin-left: -10%;margin-top: -3%;">
+                                <img src="../../image/icons/png/QRCode01.png" style="width: 33px;height: 33px;"
+                                    onclick="goScan()">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- <div class="cardDiv" style="margin-bottom:20px;">
+                    <div class="cardLabel">
+                        油机编码：
+                    </div>
+                    <div class="cardCon">
+                        <div id="yjBm" style="font-size:14px;color:#000;width:100%; white-space:normal; word-break:break-all;word-wrap:break-word; "></div>
+                    </div>
+                </div>
+                <div class="cardDiv" style="margin-bottom:20px;">
+                    <div class="cardLabel">
+                        油机二维码：
+                    </div>
+                    <div class="cardCon">
+                        <a class="saomabtn" tapmode="" onclick="goScan()">
+                            扫描
+                        </a>
+                    </div>
+                </div> -->
+                <div class="cardDiv2">
+                    <div class="cardLabel">
+                        <font color="red" id='redID'>*</font>上传照片：
+                    </div>
+                    <div class="cardCon2">
+                        <ul id="list-view" class="aui-list-view aui-grid-view">
+                            <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+                                <img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+                            </li>
+                            <canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+                            <img class='imgPath' style="display:none;" src='' />
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="hiddenForm" style="display: none">
+                <script id="hiddenParam-template" type="text/x-dot-template">
+                        <input name="billId"  type="hidden" value="{{=it.billid}}"/>
+                        <input name="billSn" id="billSn" type="hidden" value="{{=it.billsn}}"/>
+                        <input name="taskId" type="hidden" value="{{=it.taskid}}"/>
+                        <input name="billStatus" type="hidden" value="1"/>
+                    </script>
+            </div>
+            <!--停电回单end-->
+            <footer class="aui-nav dibu-nav" id="footer" style="border: none;padding-top: 5px;">
+                <div style="background-color:transparent;border: none;">
+                    <button class="billRevertCancelBtn" onclick="api.closeWin()">
+                        取消
+                    </button>
+                    <button id="submitBtn" class="billRevertOkBtn">
+                        确定
+                    </button>
+                </div>
+            </footer>
+        </form>
+    </div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script type="text/javascript" src="../../script/gongdan.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+
+<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- <script type="text/javascript" src="../../script/cache.js"></script> -->
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<script type="text/javascript" src="script/billForm.js"></script>
+<!--<script type="text/javascript" src="script/validate-rules.js"></script>-->
+<script>
+    var billModel;
+    var billForm;
+    var provinceid;
+    var bigData;
+    // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    var imageUtil;
+    // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    apiready = function () {
+       
+        // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        db_init();
+        $api.fixTabBar($api.byId('footer'));
+        imageUtil.init({
+            uploadFn: $client.uploadBillImage,
+            saveFn: db_saveBillPic
+        });
+        // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        api.setStatusBarStyle({
+            style: 'light'
+        });
+        provinceid = $api.getStorage('provinceid');
+        billModel = $api.getStorage('billModel');
+        //		$('#wrap')
+        if (billModel.st_provinceid == '广东分公司' && ("设备告警工单" == billModel.businesstype) && "REVERT" == api.pageParam.billStatus) {
+            $('#isshow').show();
+            getBigData();
+        } else {
+            $('#causeid').removeClass('required');
+            $('#dealway_id').removeClass('required');
+            $('#wrap').show();
+        }
+        initData();
+        initDict();
+        initRelief();
+        initSpecicalUnit();
+        if ("ELECTRIC_BEGIN" == api.pageParam.billStatus) {
+            $('#isStandStaElec').attr({
+                "data-valid": "required||hasImage"
+            })
+            $("#redID").show()
+            billForm = new BillForm($('form'), $('#submitBtn'), $client.genelecBegin, true);
+            billForm.init();
+        } else if ("ELECTRIC_END" == api.pageParam.billStatus) {
+            $('#isStandStaElec').attr({
+                "data-valid": "required||hasImage"
+            })
+            $("#redID").show()
+            billForm = new BillForm($('form'), $('#submitBtn'), $client.genelecEnd, true);
+            billForm.init();
+        } else if ("REVERT" == api.pageParam.billStatus) {
+            $("#redID").hide();
+            billForm = new BillForm($('form'), $('#submitBtn'), $client.genelecRevertBill, true);
+            billForm.init();
+        }
+
+        if ("REVERT" == api.pageParam.billStatus && (billModel.rev_is_empty_run == null || billModel.rev_is_empty_run == ''
+            || billModel.rev_is_empty_run == '1' || billModel.rev_is_empty_run == '2')) {
+            $('#isEmptyRunId').parents('.cardDiv').hide();
+            $('#isEmptyRunId').removeClass('required');
+            //				$('#arriveTimeId').parents('.cardDiv').hide();
+            //				$('#arriveTimeId').removeClass('required');
+            //				$('#elecBeginTimeId').parents('.cardDiv').hide();
+            //				$('#elecBeginTimeId').removeClass('required');
+            //				$('#elecEndTimeId').parents('.cardDiv').hide();
+            //				$('#elecEndTimeId').removeClass('required');
+            //				$('#outerRecoverTimeId').parents('.cardDiv').hide();
+            //				$('#outerRecoverTimeId').removeClass('required');
+
+
+        }
+
+        if ("REVERT" == api.pageParam.billStatus && (billModel.rev_is_empty_run == '1' || billModel.rev_is_empty_run == '2')) {
+            $('#isEmptyRunId').parents('.cardDiv').show();
+            //				$('#isEmptyRunId').removeClass('required');
+            //				$('#arriveTimeId').parents('.cardDiv').hide();
+            //				$('#arriveTimeId').removeClass('required');
+            //				$('#elecBeginTimeId').parents('.cardDiv').hide();
+            //				$('#elecBeginTimeId').removeClass('required');
+            //				$('#elecEndTimeId').parents('.cardDiv').hide();
+            //				$('#elecEndTimeId').removeClass('required');
+            //				$('#outerRecoverTimeId').parents('.cardDiv').hide();
+            //				$('#outerRecoverTimeId').removeClass('required');
+
+
+        }
+
+        renderTemp('hiddenForm', 'hiddenParam-template', billModel);
+        api.pageParam.billRevert = true;
+        //＊修复ios无法显示时间问题
+        $('[name=recoveryTime]').focus(function () {
+            $(this).css('border', 'red');
+        });
+        // 填充本地数据start
+        // doJluSetBill();
+        // setImgArr();
+        // 填充本地数据end
+
+    };
+
+    function getBigData() {
+        api.showProgress({
+            title: '加载中...'
+        });
+        $client.getRevertCauseDetail({
+            billsn: billModel.billsn
+        }, function (ret, err) {
+            if (ret) {
+                //          api.hideProgress();
+                if (ret.success) {
+                    var bigList = ret.list;
+                    //						bigList=[];
+                    if (bigList != null && bigList.length > 0) {
+                        $('#faultId').val(bigList[0].fault_name);
+                        for (var i = 0, size = bigList.length; i < size; i++) {
+                            $('<option>').text(bigList[i].name).val(bigList[i].id).appendTo('#causeid');
+                        }
+                        $('<option>').text('其他').val('-1').appendTo('#causeid');
+                    } else {
+                        $('#causeid').removeClass('required');
+                        $('#dealway_id').removeClass('required');
+                        $('#causeid').hide();
+                        $('#dealway_id').hide();
+                        $('#causetxt_id').show();
+                        $('#dealtxt_id').show();
+                    }
+                    $('#wrap').show();
+                } else {
+                    api.toast({
+                        msg: ret.data_info
+                    });
+                }
+            } else {
+                api.toast({
+                    msg: '获取工单详情出错!'
+                });
+            }
+            api.hideProgress();
+        });
+    }
+
+    function onSelBigData(obj) {
+        var str = '';
+        bigData = $(obj).find("option:selected").text();
+        if ($(obj).val() != -1) {
+            $('#dealway_id').attr('disabled', false);
+            $('#causeDealInfoElecId').val('');
+            $client.getRevertDeailWay({
+                id: $(obj).val()
+            }, function (ret, err) {
+                if (ret) {
+                    //          api.hideProgress();
+                    if (ret.success) {
+                        $('#dealway_id').empty();
+                        var detailList = ret.list;
+                        $('<option>').text('------请选择------').val('').appendTo('#dealway_id');
+                        for (var i = 0, size = detailList.length; i < size; i++) {
+                            var per = "";
+                            $('<option>').text(detailList[i].deal_name).val(detailList[i].id).appendTo('#dealway_id');
+                            if (detailList[i].percent != null && detailList[i].percent != 'null' && detailList[i].percent != '') {
+                                per = "(" + detailList[i].percent + "采纳)";
+                            } else {
+                                per = "";
+                            }
+                            str += (i + 1) + '、' + detailList[i].deal_name + per + "\n"
+                        }
+                        $('<option>').text('其他').val('-1').appendTo('#dealway_id');
+                        $('#commend_id').html(str);
+                    } else {
+                        api.toast({
+                            msg: ret.data_info
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg: '获取工单详情出错!'
+                    });
+                }
+            });
+        } else {
+            $('#dealway_id').empty();
+            $('#dealway_id').attr('disabled', true);
+            $('<option>').text('其他').val('-1').appendTo('#dealway_id');
+            $('#commend_id').html('');
+            $('#causeDealInfoElecId').val('');
+        }
+        //  doJluBill('#wrap')
+    }
+
+    //故障类型选择触发事件
+    function onSelBigDetail(obj) {
+        //		$("#ddlregtype").find("option:selected").text()
+        var val = $(obj).find("option:selected").text();
+        if (val == '其他') {
+            $('#causeDealInfoElecId').val('');
+        } else {
+            $('#causeDealInfoElecId').val('原因细分：' + bigData + '\n具体措施：' + val);
+        }
+        // doJluBill('#wrap')
+    }
+
+    function initData() {
+
+        var hideList = ['#oilTypeId', '#boardTypeId', '#workRateId', '#elecEndTimeId', '#vehicleMileageId', '#electricityCausesId', '#realElecOperatorId', '#oillNumId', '#towerOillId', '#autoOillId', '#oillHourId', '#oillPayId'];
+
+        var isEmptyRun = billModel.rev_is_empty_run;
+        var isUpstation = billModel.rev_isup_station;
+        var realElecOperator = billModel.st_operators;
+        console.log("realElecOperator:" + realElecOperator);
+
+        if ('移动' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1001');
+        } else if ('联通' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1002');
+        } else if ('电信' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1003');
+        } else if ('移动，联通' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1001.1002');
+        } else if ('移动，电信' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1001.1003');
+        } else if ('联通，电信' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1003.1002');
+        } else if ('移动，联通，电信' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1001.1002.1003');
+        } else if ('无' == realElecOperator) {
+            $('[name=real_elec_operator]').val('1000');
+        }
+
+
+        if ('0' == isEmptyRun) {
+            $('[name=isEmptyRun]').val('0');
+            $('[name=isEmptyRun]').attr("style", "color:#ababab");
+            $('[name=isEmptyRun]').attr('disabled', true);
+        } else if ('1' == isEmptyRun) {
+            $('[name=isEmptyRun]').val('1');
+            $('[name=isEmptyRun]').attr("style", "color:#ababab");
+            $('[name=isEmptyRun]').attr('disabled', true);
+        } else if ('2' == isEmptyRun) {
+            $('[name=isEmptyRun]').val('2');
+
+            $('[name=isEmptyRun]').attr("style", "color:#ababab");
+            $('[name=isEmptyRun]').attr('disabled', true);
+        }
+
+
+        if ("Y" == isUpstation) {
+            $('[name=isUpStation]').val('Y');
+            $('[name=isUpStation]').attr("style", "color:#ababab");
+            $('[name=isUpStation]').attr('disabled', true);
+        } else if ("N" == isUpstation) {
+            $('[name=isUpStation]').val('N');
+            $('[name=isUpStation]').attr("style", "color:#ababab");
+            $('[name=isUpStation]').attr('disabled', true);
+        }
+
+
+        if ("ELECTRIC_BEGIN" == api.pageParam.billStatus) {
+            $('#elecBeginTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+        } else if ("ELECTRIC_END" == api.pageParam.billStatus) {
+            document.getElementById("arriveTimeId").type = "text";
+            // 		$('#arriveTimeId').type="text";
+            $('#arriveTimeId').val(billModel.rev_arrive_time);
+            $('#arriveTimeId').attr("style", "color:#ababab");
+            $('#elecBeginTimeId').val(billModel.rev_elec_begin_time);
+            $('#elecEndTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+
+            $('#arriveTimeId').attr('disabled', true);
+            //       $('#elecRecoverTimeId').parents('.cardDiv').show();
+            //       $('#outerRecoverTimeId').parents('.cardDiv').show();
+            //       $('#outerRecoverTimeId').addClass('required');
+            //       $('#elecRecoverTimeId').addClass('required');
+            $('#elecEndTimeId').parents('.cardDiv').show();
+            hideList.push('#isRefiefElec', '#refiefTypeId', '#reliefCauseId', '#stationCauseElecId', '#causeDealInfoElecId', '#elecRecoverTimeId', '#outerRecoverTimeId');
+
+            for (var i = 0, size = hideList.length; i < size; i++) {
+                $(hideList[i]).removeClass('required');
+            }
+
+        } else if ("REVERT" == api.pageParam.billStatus) {
+
+            document.getElementById("arriveTimeId").type = "text";
+            //      document.getElementById("elecRecoverTimeId").type="text";
+            //      document.getElementById("outerRecoverTimeId").type="text";
+            // 		$('#arriveTimeId').type="text";
+
+            $('#elecEndTimeId').val(billModel.rev_elec_end_time);
+            $('#arriveTimeId').val(billModel.rev_arrive_time);
+            $('#elecBeginTimeId').val(billModel.rev_elec_begin_time);
+
+            $('#arriveTimeId').attr("style", "color:#ababab");
+            //       $('#outerRecoverTimeId').attr("style","color:#ababab");
+            //       $('#elecRecoverTimeId').attr("style","color:#ababab");
+            //       $('#outerRecoverTimeId').attr('disabled',true);
+            //     	 $('#elecRecoverTimeId').attr('disabled',true);
+            $('#arriveTimeId').attr('disabled', true);
+
+            $('#elecEndTimeId').parents('.cardDiv').show();
+            $('#elecRecoverTimeId').parents('.cardDiv').show();
+            $('#outerRecoverTimeId').parents('.cardDiv').show();
+            $('#outerRecoverTimeId').addClass('required');
+            if ('0' == isEmptyRun) {
+
+
+                //       $('#elecRecoverTimeId').val(billModel.rev_fault_recover_time);
+                //       $('#outerRecoverTimeId').val(billModel.rev_outer_recover_time);
+                hideList.push('#elecRecoverTimeId', '#elecEndTimeId', '#outerRecoverTimeId', '#isRefiefElec', '#refiefTypeId', '#reliefCauseId', '#stationCauseElecId', '#causeDealInfoElecId');
+                for (var i = 0, size = hideList.length; i < size; i++) {
+                    var $target = $(hideList[i]).removeClass('required');
+                    var valid = $target.attr('data-valid');
+                    if ($target.attr('data-valid') != '' && !$target.attr('disabled')) {
+                        $target.addClass('required');
+                    }
+                    $target.parents('.cardDiv').show();
+                    $target.parents('.cardTextareaDiv').show();
+                }
+                $('#elecEndTimeId,#outerRecoverTimeId,#elecRecoverTimeId').focus(function () {
+                    $(this).css('border', 'red');
+                });
+            } else {
+
+                //		 $('#elecEndTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+                //		  $('#arriveTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+                //		   $('#elecBeginTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+                //       $('#elecRecoverTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+                //       $('#outerRecoverTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+                var hideList1 = ['#isRefiefElec', '#refiefTypeId', '#reliefCauseId', '#stationCauseElecId', '#causeDealInfoElecId'];
+                for (var i = 0, size = hideList1.length; i < size; i++) {
+                    var $target = $(hideList1[i]).removeClass('required');
+                    var valid = $target.attr('data-valid');
+                    if ($target.attr('data-valid') != '' && !$target.attr('disabled')) {
+                        $target.addClass('required');
+                    }
+                    $target.parents('.cardDiv').show();
+                    $target.parents('.cardTextareaDiv').show();
+                }
+
+                for (var i = 0, size = hideList.length; i < size; i++) {
+                    $(hideList[i]).removeClass('required');
+                }
+
+            }
+        }
+
+    }
+
+    function initRelief() {
+        var st_ifrelief = billModel.st_ifrelief;
+        var st_ifnight_mz = billModel.st_ifnight_mz;
+        var recoveryTime = billModel.recovery_time;
+        var isrecovery = billModel.alarm_isrecovery;
+        if (recoveryTime != null) {
+            recoveryTime = recoveryTime.replace(" ", "T");
+        }
+        if (st_ifrelief == "是" || st_ifnight_mz == "是") {
+            $('[name=isRelief]').val("Y");
+            if (st_ifrelief == "是") {
+                $('[name=reliefType]').val('4');
+            } else if (st_ifnight_mz == "是") {
+                $('[name=reliefType]').val('2');
+            }
+        }
+        $('#oillPayId').val(typeof (billModel) != 'undefined' ? billModel.payorder : 0);
+
+        if ("人工受单" != billModel.businesstype && ("REVERT" == api.pageParam.billStatus)) {//故障
+            if (isrecovery != null && isrecovery == 'Y' && recoveryTime != null) {
+                $api.byId('elecRecoverTimeId').value = recoveryTime;
+                $api.byId('outerRecoverTimeId').value = recoveryTime;
+
+            }
+            //				else {
+            //					 $('#elecRecoverTimeId').val((new Date()).pattern("yyyy-MM-ddTHH:mm:ss"));
+            //				}
+        }
+        //			else if("ELECTRIC_END"==api.pageParam.billStatus) {//人工受单
+        //				 $('#elecRecoverTimeId').val((new Date()).pattern("yyyy-MM-ddTHH:mm:ss"));
+        //
+        //			}
+
+    }
+
+    function initDict() {
+        var disclaimerList = $api.getStorage("disclaimerList");	//免责条款
+        var elecCauseList = $api.getStorage("elecCauseList");	//故障原因
+        var oilTypeList = $api.getStorage("oilTypeList");	//油机类型
+        var towerOilList = $api.getStorage("towerOilList");	//油机类型
+        //免责条款
+        if (disclaimerList != null && disclaimerList.length > 0) {
+            $('#refiefTypeId').empty();
+            $('<option>').text('请选择').val('').appendTo('#refiefTypeId');
+            renderTemp('refiefTypeId', 'm-template', disclaimerList, true);
+        }
+
+        if (elecCauseList != null && elecCauseList.length > 0) {
+            $('#stationCauseElecId').empty();
+            $('<option>').text('请选择').val('').appendTo('#stationCauseElecId');
+            renderTemp('stationCauseElecId', 'dict-template', elecCauseList, true);
+        }
+
+        if (oilTypeList != null && oilTypeList.length > 0) {
+            $('#oilTypeId').empty();
+            $('<option>').text('请选择').val('').appendTo('#oilTypeId');
+            renderTemp('oilTypeId', 'm-template', oilTypeList, true);
+        }
+
+        if (towerOilList != null && towerOilList.length > 0) {
+            $('#towerOillId').empty();
+            $('<option>').text('请选择').val('').appendTo('#towerOillId');
+            renderTemp('towerOillId', 'm-template', towerOilList, true);
+        }
+    }
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        var s = date.getSeconds();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        if (hour >= 0 && hour <= 9) {
+            hour = "0" + hour;
+        }
+        if (min >= 0 && min <= 9) {
+            min = "0" + min;
+        }
+        if (s >= 0 && s <= 9) {
+            s = "0" + s;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + "T" + hour + seperator2 + min + seperator2 + s;
+        return currentdate;
+    }
+
+    function selectIsupstation(thx) {
+        var val = $(thx).val();
+        if (val == 'Y') {
+            document.getElementById("arriveTimeId").type = "datetime-local";
+            $('#arriveTimeId').attr('disabled', false);
+            if (parseInt($('#isEmptyRunId').val()) == 1) {
+                $('#elecBeginTimeId').val('');
+            } else {
+                $('#elecBeginTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+            }
+        } else if (val == 'N') {
+            console.log('空炮值：' + $('#isEmptyRunId').val());
+            // if (parseInt($('#isEmptyRunId').val()) == 1) {
+                document.getElementById("arriveTimeId").type = "text";
+                $('#elecBeginTimeId').val('');
+                $('#arriveTimeId').val('');
+                $('#arriveTimeId').attr('disabled', true);
+            // }
+            //			else{
+            //			$('#elecBeginTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+            //           document.getElementById("arriveTimeId").type="datetime-local";
+            //           $('#arriveTimeId').attr('disabled',false);
+            //			}
+        }
+        // doJluBill('#wrap')
+    }
+
+    function selectIsEmptyRun(thx) {
+        var val = parseInt($(thx).val());
+        var hideList = ['#elecEndTimeId', '#outerRecoverTimeId', '#elecRecoverTimeId', '#oilTypeId', '#boardTypeId', '#workRateId', '#vehicleMileageId', '#electricityCausesId', '#realElecOperatorId', '#oillNumId', '#towerOillId', '#autoOillId', '#oillHourId', '#oillPayId', '#isRefiefElec', '#refiefTypeId', '#reliefCauseId', '#stationCauseElecId', '#causeDealInfoElecId'];
+        for (var i = 0, size = hideList.length; i < size; i++) {
+            $(hideList[i]).removeClass('required');
+            //                      var $target = $(hideList[i]).removeClass('required');
+            //                      $target.parents('.cardDiv').hide();
+        }
+
+        // <option value="">请选择</option>
+        //                     <option value="0">到站发电/未空跑</option>
+        //                     <option value="1">空跑</option>
+        //                     <option value="2">未出发</option>
+        switch (val) {
+            case 0:
+                $('#isStandStaElec').val('Y').attr('disabled', true);
+                document.getElementById("arriveTimeId").type = "datetime-local";
+                $('#arriveTimeId').attr('disabled', false);
+                $('#elecBeginTimeId').val((new Date()).pattern("yyyy-MM-dd HH:mm:ss"));
+
+                break;
+            case 1:
+                $('#isStandStaElec').val('Y').attr('disabled', true);
+                document.getElementById("arriveTimeId").type = "datetime-local";
+                $('#arriveTimeId').attr('disabled', false);
+                // document.getElementById("arriveTimeId").type = "text";
+                $('#elecBeginTimeId').val('');
+                // $('#arriveTimeId').val('');
+                // $('#arriveTimeId').attr('disabled', true);
+
+                break;
+            case 2:
+
+                $('#isStandStaElec').val('N').attr('disabled', true);
+
+                document.getElementById("arriveTimeId").type = "text";
+                $('#elecBeginTimeId').val('');
+                // $('#arriveTimeId').val('');
+                // $('#arriveTimeId').attr('disabled', true);
+                $('#arriveTimeId').val('');
+                $('#arriveTimeId').attr('disabled', true);
+
+
+                break;
+            default:
+                //                  $('#isStandStaElec').val('N').attr('disabled', true);
+                //                  $('#isStandStaElec').val('N');
+
+                break;
+        }
+        // doJluBill('#wrap');
+    }
+
+    function initSpecicalUnit() {
+        var userUnitData = $api.getStorage('userUnitData');
+        //以下为测试数据
+        //          var userUnitData = {
+        //              "i" : "0000017",
+        //              "n" : "中国铁塔股份有限公司",
+        //              "l" : 2,
+        //              "c" : [{
+        //                  "i" : "0098356",
+        //                  "n" : "广西分公司",
+        //                  "l" : 3,
+        //                  "c" : [{
+        //                      "i" : "0099939",
+        //                      "n" : "湖南分公司本部",
+        //                      "l" : 4,
+        //                      "c" : []
+        //                  }]
+        //              }]
+        //          };
+        //云南(0098356)，江苏(0001944)，广东(0001934），广西(0098364)，北京(0001935)、内蒙古(0098372)、河南(0090330)
+        var specialUnitList = [{
+            id: '0098356',
+            name: '云南',
+            requiredList: ['oillNum', 'oillPay']
+        }, {
+            id: '0001944',
+            name: '江苏',
+            requiredList: ['towerOill']
+        }, {
+            id: '0001934',
+            name: '广东',
+            requiredList: ['autoOill', 'oillHour']
+        }, {
+            id: '0098364',
+            name: '广西',
+            requiredList: ['oillHour', 'oillPay']
+        }, {
+            id: '0098372',
+            name: '内蒙古',
+            requiredList: ['oillPay']
+        }, {
+            id: '0001935',
+            name: '北京',
+            requiredList: ['oillPay']
+        }, {
+            id: '0090330',
+            name: '河南',
+            requiredList: ['oillPay']
+        }];
+        var prov = userUnitData.c[0];
+        //默认以第一个省为判定条件
+        var provId = prov.i;
+        for (var i = 0, size = specialUnitList.length; i < size; i++) {
+            var specialUnit = specialUnitList[i];
+            if (specialUnitList[i].id == provId) {
+                for (var j = 0; j < specialUnit.requiredList.length; j++) {
+                    if (specialUnit.id == '0098364') {
+                        $('name[' + specialUnit.requiredList[j] + ']:eq(0)').hide().removeClass('required').siblings().show().attr('data-valid', 'isEmptyRun').addClass('required');
+                        continue;
+                    } else {
+                        $('#' + specialUnit.requiredList[j] + 'Id').attr('data-valid', 'isEmptyRun');
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+
+
+    function onSelRefief(self) {
+        var wrapper = $('form [name=reliefType],form [name=reliefCause]').parents('[id^=relief]');
+        $(self).val() == 'Y' ? wrapper.show() : wrapper.hide();
+    }
+    // 扫描油机二维码
+    function goScan() {
+        var permission = 'camera';
+        var resultList = api.hasPermission({
+            list: [permission]
+        });
+        if (resultList[0].granted) {
+            // 已授权，可以继续下一步操作
+        } else {
+            api.confirm({
+                msg: '应用需要您的授权才能访问相机',
+                buttons: ['取消', '去设置']
+            }, function (ret) {
+                if (ret.buttonIndex == 2) {
+                    api.requestPermission({
+                        list: [permission],
+                    }, function (res) {
+                        if (res.list[0].granted) {
+                            // 已授权，可以继续下一步操作
+                        }
+                    });
+                }
+            });
+        }
+        var FNScanner = api.require('FNScanner');
+        FNScanner.openScanner({
+            autorotation: true
+        }, function (ret, err) {
+
+            if (ret) {
+                if (ret.eventType == "success") {
+                    var EWM = ret.content;
+                    if (EWM.slice(0, 1) == "o") {
+                        $client.getBillOilm({
+                            code: EWM
+                        }, function (ret, err) {
+                            console.log(getObj(ret));
+                            if (ret.success) {
+                                var billSnVal = $('#billSn').val();
+                                var oilcode = ret.data;
+                                var oilcodenew = oilcode.substr(3);
+
+                                $('#yjBm').val(oilcodenew);
+
+                                $client.setBillOil({
+                                    billSn: billSnVal,
+                                    oilcode: oilcodenew
+                                }, function (ret, err) {
+                                    if (ret) {
+                                        if (ret.success) {
+                                            api.toast({
+                                                msg: '油机编码绑定工单成功!'
+                                            });
+                                        } else {
+                                            api.toast({
+                                                msg: ret.data_info
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        })
+
+                    } else {
+                        api.toast({
+                            msg: '请扫描油机二维码!'
+                        });
+                    }
+
+                }
+
+            } else {
+                api.toast({
+                    msg: '获取信息出错!'
+                });
+            }
+        });
+    }
+
+    /**
+         * 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+         */
+    function addPic(e) {
+        var permission = 'camera';
+        var resultList = api.hasPermission({
+            list: [permission]
+        });
+        if (resultList[0].granted) {
+            // 已授权，可以继续下一步操作
+        } else {
+            api.confirm({
+                msg: '应用需要您的授权才能访问相机',
+                buttons: ['取消', '去设置']
+            }, function (ret) {
+                if (ret.buttonIndex == 2) {
+                    api.requestPermission({
+                        list: [permission],
+                    }, function (res) {
+                        if (res.list[0].granted) {
+                            // 已授权，可以继续下一步操作
+                        }
+                    });
+                }
+            });
+        }
+        var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+        var lon1 = displaynum(lastLocation.lon);
+        var lat1 = displaynum(lastLocation.lat);
+        if (!lastLocation || !lastLocation.status) {
+            api.toast({
+                msg: '暂未定位\n无法上传照片！'
+            });
+        } else {
+            ////////////////////////////////////////////
+            var curentTime2 = CurentTime2();
+            $api.setStorage('newtime', curentTime2);
+            $api.setStorage('lon1', lon1);
+            $api.setStorage('lat1', lat1);
+            var lon1 = $api.getStorage('lon1');
+            var lat1 = $api.getStorage('lat1');
+            var user = $api.getStorage('user');
+            var newtime = $api.getStorage('newtime');
+            var lon1 = $api.getStorage('lon1');
+            var lat1 = $api.getStorage('lat1');
+            var billModel = $api.getStorage('billModel');
+            ////////////////////////////////////////////
+
+
+            imageUtil.add('camera', function (ret, err) {
+
+                var stationname = api.pageParam.stationname;
+                var billId = api.pageParam.billId;
+                var billSn = api.pageParam.billSn;
+                var businessid = billModel.businesstype;
+
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                // var oldret = ret.data.split(".");
+                // var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+billId+';'+businessid+';'+billSn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+                // console.log(newret);
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                // var filePath = ret.data;
+                var imgModel = {
+                    userid: user.userid,
+                    billid: api.pageParam.billId,
+                    businessid: billModel.businesstype,
+                    beiyong: "",
+                    stationname: api.pageParam.stationname,
+                    billsn: billModel.billsn,
+                    imgpath: ret,
+                    phototime: (new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+                    lon: lon1,
+                    lat: lat1,
+                    photoaddress: lastLocation.photoaddress,
+                    state: api.pageParam.billStatus,
+                    billstatusname: billModel.billstatusname
+
+                };
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                // cacheImgArr(imgModel);
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                console.log(getObj(imgModel));
+                imageUtil.getImageArray().push(imgModel);
+                showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+                var tpl = $api.byId('img-template').text;
+                var tempFn = doT.template(tpl);
+
+                $('#addPic').before(tempFn(imgModel));
+                $new = $('#addPic').prev();
+                $new.css('height', $new.css('width'));
+
+            }, e, true, false);
+        }
+    }
+
+    /**
+     *删除图片
+     */
+    function removeImg(imgPath) {
+        var imageArray = imageUtil.getImageArray();
+        var size = imageArray.length;
+        for (var i = 0; i < size; i++) {
+            var data = imageArray[i];
+            if (data.imgpath == imgPath) {
+                imageArray.remove(i);
+                break;
+            }
+        }
+        $(event.target).parents('.picBox').find('#add').show();
+        $(event.target).parents('li.aui-img').remove();
+        // 删除本地缓存图片其一
+        deleteImgArr(imgPath);
+    }
+
+    			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</script>
+
+</html>

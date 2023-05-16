@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>站址详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<style>
+			.lonLatCon {
+				color: #666;
+				float: left;
+				width: 35%;
+				padding-left: 20px;
+			}
+			.lonLatBtn {
+				color: #666;
+				float: left;
+				width: 30%;
+			}
+			.showMap {
+				color: #007AFF;
+			}
+			.personWin {
+				width: 300px;
+				text-align: center;
+				background-color: #f2f2f2;
+			}
+			.personTitle {
+				background-color: #DB4537;
+				height: 40px;
+				line-height: 40px;
+				width: 100%;
+			}
+			.personButtom {
+				background-color: #F2F2F2;
+				height: 50px;
+				line-height: 50px;
+				width: 100%;
+				border-top: 1px solid #ADADAD;
+			}
+			.btnCls {
+				font-size: 20px;
+				background-color: #007AFF;
+				color: white;
+				width: 100%;
+				height: 40px;
+				line-height: 40px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+			.userList {
+				height: 40px;
+				line-height: 40px;
+				font-size: 16px;
+				width: 280px;
+				margin-left: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="personDiv-template" type="text/x-dot-template">
+			<div class="personWin">
+			<div class="personTitle">
+			<span style="font-size: 20px;color:white;">请选择</span>
+			</div>
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			{{? i<(len-1) }}
+			<div class="userList" style="border-bottom:solid 1px #E0E0E0;" onclick="showUserInfo('{{=it[i].userId}}')">
+			{{=it[i].userName}}
+			</div>
+			{{?}}
+			{{? i>=(len-1) }}
+			<div class="userList" onclick="showUserInfo('{{=it[i].userId}}')">
+			{{=it[i].userName}}
+			</div>
+			{{?}}
+			{{ } }}
+			<div class="personButtom">
+			<div style="margin-left:10px;float:left;width:50px;height:40px;"></div>
+			<div style="width:180px;height:40px;float:left;">
+			<input type="button" class="btnCls" onclick="closeDiv('personDiv')" value="关闭"/>
+			</div>
+			<div style="margin-right:10px;float:left;width:50px;height:40px;"></div>
+			</div>
+			</div>
+		</script>
+		<script id="stationDetail-template" type="text/x-dot-template">
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">站址名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_name != null?it.st_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">站址编码</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_deviceid != null?it.st_deviceid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">运维ID</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_code != null?it.st_code:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">所属省</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_provinceid != null?it.st_provinceid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">所属市</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_cityid != null?it.st_cityid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">所属区县</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_countyid != null?it.st_countyid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">站址来源</div>
+			<div class="aui-col-xs-7 aui-pull-right">
+			{{? it.st_sitesource == '1' }}
+			新建站
+			{{?? it.st_sitesource == '2' }}
+			存量-移动
+			{{?? it.st_sitesource == '3' }}
+			存量-联通
+			{{?? it.st_sitesource == '4' }}
+			存量-电信
+			{{?? it.st_sitesource == '6' }}
+			未填写
+			{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">基站类型</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_type != null?it.st_type:''}}</div>
+			</li>
+			
+	
+			
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">经度</div>
+			<div class="aui-col-xs-7 aui-pull-right">
+			<div class="aui-col-xs-5 aui-pull-left">{{=it.st_lon != null?it.st_lon:''}}</div>
+			<div class="aui-col-xs-5 aui-pull-right"><a class="showMap" onclick="showMap()">查看地图</a></div>
+			</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">纬度</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_lat != null?it.st_lat:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">详细地址</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_address != null?it.st_address:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">验收交付日期</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_deliverdate == null?'':it.st_deliverdate}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">出保时间</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_expireddate != null?it.st_expireddate:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" tapmode="" onclick="openUserInfo('{{=it.st_areamanager}}','{{=it.st_areamanager_name}}')">
+			<div class="aui-col-xs-3 aui-pull-left">区域经理</div>
+			<div class="aui-col-xs-7 aui-pull-right aui-arrow-right">{{=it.st_areamanager_name != null?it.st_areamanager_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" tapmode="" onclick="openUserInfo('{{=it.st_maintenance_roompersonid}}','{{=it.st_maintenance_roomperson}}')">
+			<div class="aui-col-xs-3 aui-pull-left">机房代维人员</div>
+			<div class="aui-col-xs-7 aui-pull-right aui-arrow-right">{{=it.st_maintenance_roomperson != null?it.st_maintenance_roomperson:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" tapmode="" onclick="openUserInfo('{{=it.st_maintenance_personid}}','{{=it.st_maintenance_person}}')">
+			<div class="aui-col-xs-3 aui-pull-left">铁塔代维人员</div>
+			<div class="aui-col-xs-7 aui-pull-right aui-arrow-right">{{=it.st_maintenance_person != null?it.st_maintenance_person:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">机房产权</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_property_right != null?it.st_property_right:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">是否为免责站址</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_ifrelief != null?it.st_ifrelief:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">是否出保</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_ifexpire != null?it.st_ifexpire:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">要求夜间上站</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_night_shift != null?it.st_night_shift:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">供电方式</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_powersupplyway != null?it.st_powersupplyway:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">后备电源组数</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_backuppowernum != null?it.st_backuppowernum:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">是否具备发电条件</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_ifgenelec != null?it.st_ifgenelec:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">物业联系人</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_contact != null?it.st_contact:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">物业联系人电话</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_contact_tele != null?it.st_contact_tele:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">维保厂家</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_maintenance_factory != null?it.st_maintenance_factory:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">运营商名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_operators != null?it.st_operators:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">维护服务等级</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_operators_level != null?it.st_operators_level:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">发电等待时长</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_waittime != null?it.st_waittime:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">基站覆盖场景</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_scene != null?it.st_scene:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">基本备电约定</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_standby_power != null?it.st_standby_power:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">油机配置</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_configoilmachine != null?it.st_configoilmachine:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">电池保障时长</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_cell_security != null?it.st_cell_security:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">直流负载电流</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.predata  != null?it.predata+'(A)':''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left">业主钥匙所属信息</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.proprietor_key  != null?it.proprietor_key:''}}</div>
+			</li>
+		</script>
+		<div class="aui-content">
+			<ul class="aui-list-view" id="stationDetail"></ul>
+		</div>
+		<div id="personDiv" style="display:none;background-color: white;width:300px;"></div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script>
+		apiready = function() {
+			initHeader();
+			api.showProgress({
+				title : '加载中'
+			});
+			var stationId = api.pageParam.stationId;
+			if (stationId != null) {
+				var user = $api.getStorage('user');
+				var userid = user.userid;
+				$client.getStationDetail({
+					id : stationId
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.success) {
+							if (isExist(ret.model)) {
+								getAreaman(ret.model);
+							} else {
+								api.toast({
+									msg : '该工单无相关站址信息',
+									location : 'bottom'
+								});
+							}
+						} else {
+							api.toast({
+								msg : ret.data_info,
+								location : 'bottom'
+							});
+						}
+					} else {
+						api.toast({
+							msg : err.msg,
+							location : 'middle'
+						});
+					}
+					api.hideProgress();
+				});
+			} else {
+				var billModel = $api.getStorage("billModel");
+				if (billModel != null) {
+					var content = $api.byId('stationDetail');
+					var tpl = $api.byId('stationDetail-template').text;
+					var tempFn = doT.template(tpl);
+					content.innerHTML = tempFn(billModel);
+					api.parseTapmode();
+				}
+				api.hideProgress();
+			}
+		};
+		function getAreaman(billModel) {
+			var userNameList = new Array;
+			var userIdList = new Array;
+			$client.getAreaManagers({
+				siteid : billModel.st_id
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+						var areaManagers = ret.list;
+						for (var i = 0, size = areaManagers.length; i < size; i++) {
+							//						$('<option>').text(areaManagers[i].username).val(areaManagers[i].userid).appendTo('#areaManagerId');
+							userNameList.push(areaManagers[i].username);
+							userIdList.push(areaManagers[i].userid);
+						}
+						var userInfoId = listToStr(userIdList);
+						//					alert(userInfoId);
+						billModel.st_areamanager = listToStr(userIdList);
+						billModel.st_areamanager_name = listToStr(userNameList);
+						var content = $api.byId('stationDetail');
+						var tpl = $api.byId('stationDetail-template').text;
+						var tempFn = doT.template(tpl);
+						content.innerHTML = tempFn(billModel);
+						$api.setStorage('stationModel', billModel);
+						$api.setStorage('stationName', billModel.st_name);
+						api.parseTapmode();
+					} else {
+						var content = $api.byId('stationDetail');
+						var tpl = $api.byId('stationDetail-template').text;
+						var tempFn = doT.template(tpl);
+						content.innerHTML = tempFn(billModel);
+						$api.setStorage('stationModel', billModel);
+						$api.setStorage('stationName', billModel.st_name);
+						api.parseTapmode();
+					}
+				} else {
+					var content = $api.byId('stationDetail');
+					var tpl = $api.byId('stationDetail-template').text;
+					var tempFn = doT.template(tpl);
+					content.innerHTML = tempFn(billModel);
+					$api.setStorage('stationModel', billModel);
+					$api.setStorage('stationName', billModel.st_name);
+					api.parseTapmode();
+				}
+			});
+		}
+
+		function listToStr(stringList) {
+			if (stringList == null) {
+				return null;
+			}
+			var result = "";
+			var flag = false;
+			for (var i = 0; i < stringList.length; i++) {
+				var string = stringList[i];
+				if (flag) {
+					//	                result.append(",");
+					result += ",";
+				} else {
+					flag = true;
+				}
+				result += string;
+			}
+			return result.toString();
+		}
+
+		//关闭弹出DIV对话框
+		function closeDiv(divId) {
+			easyDialog.close({
+				container : divId
+			});
+		}
+
+		function openUserInfo(userIdStr, userNameStr) {
+			if (userIdStr != null && userIdStr != "null" && userIdStr != "") {
+				var userIdArr;
+				if (userIdStr.indexOf('.') > 0) {
+					userIdArr = userIdStr.split(".");
+				} else {
+					userIdArr = userIdStr.split(",");
+				}
+				if (userIdArr != null && userIdArr.length > 1) {
+					var userJsonArr = new Array();
+					var userNameArr;
+					if (userNameStr.indexOf('.') > 0) {
+						userNameArr = userNameStr.split(".");
+					} else {
+						userNameArr = userNameStr.split(",");
+					}
+					for (var j = 0; j < userNameArr.length; j++) {
+						var per = {};
+						per.userId = userIdArr[j];
+						per.userName = userNameArr[j];
+						userJsonArr.push(per);
+					}
+					var pageParam = {};
+					pageParam.userJsonArr = $api.jsonToStr(userJsonArr);
+					api.openFrame({
+						name : 'userList',
+						url : '../userList.html',
+						bounces : false,
+						pageParam : pageParam,
+						rect : {
+							x : 0,
+							y : 0,
+							w : 'auto',
+							h : 'auto'
+						},
+						reload : true
+					});
+				} else {
+					showUserInfo(userIdStr);
+				}
+			} else {
+				api.toast({
+					msg : "人员为空，无法查看个人信息！",
+					location : 'middle'
+				});
+			}
+		}
+
+		function showUserInfo(userId) {
+			openPage_person(userId);
+		}
+
+		//打开地图
+		function showMap() {
+			//          var stationId = api.pageParam.stationId;
+			//          var billModel = null;
+			//          var pageParam = api.pageParam;
+			//          if (stationId != null) {
+			//              billModel = $api.getStorage(stationId);
+			//          } else {
+			//              billModel = $api.getStorage("billModel");
+			//          }
+			//          if (billModel != null) {
+			//              pageParam.lon = billModel.st_lon;
+			//              pageParam.lat = billModel.st_lat;
+			//          }
+			api.openWin({
+				name : 'mapHeader',
+				url : '../mapHeader.html',
+				reload : true
+			});
+		}
+	</script>
+</html>

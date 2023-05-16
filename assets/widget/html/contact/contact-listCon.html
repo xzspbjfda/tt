@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>api</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <style>
+    	#main .list{
+		    padding: 0px 0px 20px;
+		}
+		#main .list li{
+		    position: relative; overflow: hidden; 
+		    border-bottom: 1px solid #d9d9d9;
+		}
+		#main .list li a{
+		    display: block; padding: 10px;
+		}
+		#main .list li a.active{
+			background-color: #d9e4e9;
+		}
+		#main .list img{
+		    float: left; width: 30px; height: 30px; border-radius: 4px;
+		}
+		#main .list h3, #main .list .info{
+		    margin-left: 30px; 
+		}
+		#main .list  h3{
+		    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+		    width: 70%; margin-bottom: 5px; position: relative;
+		}
+		#main .list h3:after{
+		    content: ""; display: inline-block; width: 14px; height: 17px;
+		    margin-left: 10px;
+		    vertical-align: middle;
+		    -webkit-background-size: contain;
+		    background-size: contain;
+		}
+		#main .list .info, #main .list .info em, #main .list .info span{
+		    color: #999; font-size: 14px; 
+		}
+		#main .list .info span{
+		    white-space: nowrap; overflow: hidden;
+		}
+		#main .list .info span:nth-child(2){
+		    margin-left: 10px;
+		}
+		#main .list .info em{
+		    float: right; margin-right: 6px;
+		}
+    </style>
+</head>
+<body>
+    <div id="main">
+    
+    	<script id="contactList-template" type="text/x-dot-template">
+	        {{ for(var i=0, len=it.length; i < len; i++) {}}
+	          <li>
+	            <a tapmode="active" telno="{{=it[i].telno}}" onclick="callPerson(this)">
+		            <img src="../image/contactor.png" />
+		            <h3>{{=it[i].name}}</h3>
+		            <div class="info clearfix">
+		                <span><h5>电话：</h5></span><span>{{=it[i].telno != null ? it[i].telno :""}}</span>
+		            </div>
+	            </a>
+	          </li>
+	        {{ } }}
+	    </script>
+    	
+        <ul class="list" id="contactList">
+        	 
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script> 
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script>
+function callPerson(el){
+	var telno = $api.attr(el, 'telno');
+	if(telno != null){
+		api.call({
+	        number:telno
+        });
+	}
+}
+function getContactList() {
+	var user = $api.getStorage('user');
+	var userid = user.userid;
+	api.showProgress({
+		title : '加载中',
+		modal : false
+	});
+	$client.getContactList(userid,1, function(ret, err) {
+		if (ret) {
+			//var strs = $api.jsonToStr(ret);
+			//alert(strs);
+			if (ret.success) {
+				//var strs = $api.jsonToStr(ret);
+				if(ret.list == null || ret.list.length<1){
+					loadDone = true;
+				}else{
+					var content = $api.byId('contactList');
+		            var tpl = $api.byId('contactList-template').text;
+		            var tempFn = doT.template(tpl);
+		            content.innerHTML = tempFn(ret.list) + content.innerHTML;
+		            api.parseTapmode();
+				}
+			} else {
+				api.toast({msg: ret.data_info, location: 'middle'});
+			}
+		} else {
+            api.toast({msg: err.msg, location: 'middle'});
+        }
+        api.refreshHeaderLoadDone();
+		api.parseTapmode();
+        api.hideProgress();
+	});
+	
+}
+
+
+apiready = function () {
+    getContactList();
+	api.setRefreshHeaderInfo({
+        visible: true,
+        bgColor: '#f2f2f2',
+        textColor: '#4d4d4d',
+        textDown: '下拉刷新...',
+        textUp: '松开刷新...',
+        showTime: true
+    }, function (ret, err) {
+    	getContactList();
+    });
+}
+</script>
+</html>

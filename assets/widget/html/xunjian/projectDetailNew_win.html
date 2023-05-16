@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>巡检项目详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="back()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="submit" style="display: none;"> <span class="aui-iconfont" style="font-size:16px">提交</span> </a>
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="rollback" style="display: none;"> <span class="aui-iconfont" style="font-size:16px">重置</span> </a>
+			<div class="aui-title">
+				巡检项目详情
+			</div>
+		</header>
+		<script src="../../script/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/common.js"></script>
+		<script type="text/javascript" src="../../script/debug.js"></script>
+		<script type="text/javascript">
+			apiready = function() {
+				initHeader();
+				//标题栏操作按钮
+//				api.pageParam.ischeck="N";
+				api.openFrame({
+					name : 'projectDetailNew_frm',
+					url : 'projectDetailNew_frm.html',
+					bounces : false,
+					reload : true,
+					pageParam : api.pageParam,
+					rect : frameRect()
+				});
+
+//				initView();
+				/*jQuery事件:提交按钮*/
+				$('#submit').click(function() {
+					api.execScript({
+						frameName : 'projectDetailNew_frm',
+						script : 'call_validate();'
+					});
+				});
+				/*jQuery事件:重置按钮*/
+				$('#rollback').click(function() {
+					api.execScript({
+						frameName : 'projectDetailNew_frm',
+						script : 'call_rollback();'
+					});
+				});
+
+				api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+					if ("Y" == api.pageParam.isrollback) {
+					api.execScript({
+						name : 'xunjian_projectList',
+						frameName : 'projectListFrm',
+						script : 'refreshList();'
+					});
+				}
+						api.closeWin();
+				});
+				api.addEventListener({
+						name: 'keyback'
+				}, function(ret, err) {
+					console.log(getObj(ret));
+					if(ret.keyCode==4){
+						back();
+					}
+				});
+			};
+
+			function initView(ischeck){
+//				var ischeck = api.pageParam.ischeck;
+				var taskstate = api.pageParam.taskstate;
+				var isMonitor = api.pageParam.isMonitor;
+				var start_status = api.pageParam.start_status;
+				var editEnabled = api.pageParam.editEnabled;
+				var isFinish = api.pageParam.isFinish;
+				var taskstatus = api.pageParam.taskstatus;
+				if (start_status && start_status == 'Y' && 'Y' != isMonitor && "1" != taskstate) {
+					if (!editEnabled || (isFinish && isFinish == 'Y')) {
+						if ((!taskstatus || taskstatus !== 'Y') && editEnabled)
+							$('#rollback').show();
+					} else {
+						$('#submit').show();
+					}
+				}
+			}
+			function back() {
+				//刷新首页－图片上传模块头标
+				api.execScript({
+					name : 'home_win',
+					frameName : 'footer_tab_1',
+					script : 'setofflineUploadCount()'
+				});
+				if ("Y" == api.pageParam.isrollback) {
+					api.execScript({
+						name : 'xunjian_projectList',
+						frameName : 'projectListFrm',
+						script : 'refreshList();'
+					});
+				}
+				api.execScript({
+					frameName : 'projectDetailNew_frm',
+					script : 'removeiframe();'
+				});
+				api.closeWin();
+			}
+		</script>
+	</body>
+</html>

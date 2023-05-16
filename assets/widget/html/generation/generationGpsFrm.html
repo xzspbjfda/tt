@@ -1,0 +1,470 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>路径规划</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		.ccssoft_list {
+			background-color: #eff1f0;
+			override: hidden;
+		}
+
+		.ccssoft_list li {
+			list-style: none;
+			border-bottom: 1px solid #e3e2e2;
+			background: #fff;
+			overflow: hidden;
+		}
+
+		.aui-list-li {
+			line-height: 50px;
+			padding: 5px 10px 1px 10px;
+		}
+
+		.cardButtonDiv {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			zoom: 1;
+			width: 100%;
+			padding: 5px 15px 0px 15px;
+			height: 50px;
+			z-index: 3;
+			background-color: #f7f7f7;
+			box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			/*box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+			-webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+		}
+
+		.okBtn {
+			text-align: center;
+			font-size: 16px;
+			transition: all .5s;
+			-webkit-transition: all .5s;
+			background-color: #DB4537;
+		}
+
+		.botton_nav_box {
+			width: 100%;
+			position: absolute;
+			bottom: 59px;
+			display: flex;
+			justify-content: space-around;
+			;
+			border-top: 1px solid #e3e2e2;
+		}
+
+		.botton_nav {
+			width: 50%;
+			padding: 6px 0 6px 0;
+			border-bottom: 1px solid #e3e2e2;
+		}
+
+		.botton_nav.active {
+			color: red;
+			border-bottom: 2px solid red;
+		}
+
+		.botton_nav_tit {
+			font-size: 14px;
+			margin-left: 40px;
+		}
+
+		.botton_nav_jf {
+			margin-left:40px;
+			font-size: 18px;
+		}
+
+		.botton_nav_km {
+			margin-left: 40px;
+			font-size: 12px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="botton_nav_box" id="page_w">
+		<!-- <div class="botton_nav active" onclick="Route(1,this)">
+			<div class="botton_nav_tit">
+				路程最短
+			</div>
+			<div class="botton_nav_jf" id="lcintegral">
+				0积分
+			</div>
+			<div class="botton_nav_km" id="lcdistance">
+				0km
+			</div>
+		</div> -->
+
+		<!-- <div class="botton_nav" onclick="Route(2,this)">
+			<div class="botton_nav_tit">
+				积分优先
+			</div>
+			<div class="botton_nav_jf" id="lcintegral2">
+				0积分
+			</div>
+			<div class="botton_nav_km" id="lcdistance2">
+				0km
+			</div>
+		</div> -->
+	</div>
+
+	<footer style="height:50px;">
+		<div class="cardButtonDiv" style="width: 100%;">
+			<button class="okBtn" onclick="goGPS();" style="width: 100%;color:#fff;">
+            开始驾车导航
+        </button>
+		</div>
+	</footer>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+
+<script>
+	// 获取需填写字段
+	var integralFirstArr = [];
+	var stationMessageArr = [];
+	var stationMessageArrNew = [];
+	// 目的地坐标
+	var destlon;
+	var destlat;
+	var mylon, mylat;
+	var claimedToalNum;
+	
+
+	apiready = function() {
+		var map = api.require('bMap');
+		var user = $api.getStorage('user');
+		var routeStations = $api.getStorage('routeStations');
+		map.getLocation({
+			accuracy: '100m',
+			autoStop: true,
+			filter: 1
+		}, function(ret, err) {
+			if (ret.status) {
+				mylon = ret.lon;
+				mylat = ret.lat;
+				// if(user.loginname == 'chenmutong01' || user.loginname == 'jiangzumin' || user.loginname == 'chenshirong' || user.loginname == 'sa'){
+				// 	mylon = 113.31884991066381;
+				// 	mylat = 23.12907466808557;
+				// }
+				// if(user.loginname == 'dw_linf'){
+				// 	mylon = 113.52220560482787;
+				// 	mylat = 22.273324770842823;
+				// }
+				// if(user.loginname == 'liuzhendong'){
+				// 	mylon = 114.04677991197536;
+				// 	mylat = 22.971941251091657;
+				// }
+				var lastLocation = {
+					lon: mylon,
+					lat: mylat
+				}
+				$api.setStorage('LAST_GPS_LOCATION', lastLocation);
+				var body_h = $api.offset($api.dom('body')).h;
+				var body_w = $('#page_w').width();
+				map.open({
+					rect: {
+						x: 0,
+						y: 0,
+						w: body_w,
+						h: body_h - 50
+					},
+					center: {
+						lon: mylon,
+						lat: mylat
+					},
+					zoomLevel: 13,
+					showUserLocation: true,
+					fixedOn: api.frameName,
+					fixed: true
+				}, function(openRet){
+					api.showProgress({
+						title: '路径规划中'
+					});
+					var stationIds = "";
+					if(routeStations && routeStations.length > 0){
+						for(var i=0; i<routeStations.length; i++){
+							stationIds += routeStations[i] + ",";
+						}
+						stationIds = stationIds.substring(0, stationIds.length-1);
+					}else{
+						stationIds = "-1";
+					}
+					
+					service({
+						url:"/routePlanning/getRouteStations.do",
+						data:{
+							lng: mylon,
+							lat: mylat, 
+							stationIds: stationIds
+						}
+					}, function(res){
+						api.hideProgress();
+						if(res.data && res.data.stations && res.data.stations.length > 0){	
+							console.log("【标点站点列表：】" + JSON.stringify(res.data.stations));					
+							var annotations = [{
+								id: 2, 
+								lon: mylon, 
+								lat: mylat,
+								icon: "widget://image/route/start.png",
+								size: 30
+							}];
+
+							var num = 1;
+							for (var i=0; i<res.data.stations.length; i++) {
+								if(i == 0){
+									destlon = res.data.stations[i].baiduX;
+									destlat = res.data.stations[i].baiduY;
+								}
+								if(i < res.data.stations.length-1){
+									icon = "widget://image/route/" + num + ".png";
+									//处理站点重合
+									if(parseFloat(res.data.stations[i].baiduX) == parseFloat(res.data.stations[i+1].baiduX) && parseFloat(res.data.stations[i].baiduY) == parseFloat(res.data.stations[i+1].baiduY)){
+										icon = "widget://image/clear.png"
+									}else{
+										num ++;
+									}
+									annotations.push({
+										id: i+3, 
+										lon:res.data.stations[i].baiduX, 
+										lat:res.data.stations[i].baiduY,
+										stationId: res.data.stations[i].id,
+										name: res.data.stations[i].name,
+										icon: icon,
+										size: 30
+									});	
+									
+								}else{
+									annotations.push({
+										id: i+3, 
+										lon:res.data.stations[i].baiduX, 
+										lat:res.data.stations[i].baiduY,
+										icon: "widget://image/route/end.png",
+										stationId: res.data.stations[i].id,
+										name: res.data.stations[i].name,
+										size: 30
+									});
+								}								
+							}							
+							//站点显示图标
+							map.addAnnotations({
+								annotations: annotations,
+								icon: "widget://image/clear.png"
+							}, function(ret) {														
+								if (ret) {
+									var stationId;
+									var baiduX;
+									var baiduY;
+									for(var i=0; i<annotations.length; i++){
+										if(annotations[i].id == ret.id){
+											stationId = annotations[i].stationId;
+											baiduX = annotations[i].lon;
+											baiduY = annotations[i].lat;
+										}
+									}										
+									if(stationId){
+										console.log("【标点站点ID】" + stationId);
+										$client.getStationDetail({
+											id : stationId
+										}, function(rets, err) {
+											console.log("【标点点击事件】：" + JSON.stringify(rets));
+											if (rets && rets.success && rets.model) {
+												var stationlistMap = rets.model;
+												stationlistMap.st_baidux = baiduX;
+												stationlistMap.st_baiduy = baiduY;
+												api.closeFrame({
+													name: 'stationInfo'
+												});
+												api.openFrame({
+													name: 'stationInfo',
+													url: 'stationInfo.html',
+													pageParam:{
+														stationlistMap: stationlistMap
+													},
+													rect: {
+														x:0,
+														y:api.winHeight-170,
+														w:api.winWidth,
+														h:170
+													},
+													bounces:false
+												});
+											} 
+										});
+									}
+								}
+							});
+							//地图点事件，用来关闭站点信息弹出
+							map.addEventListener({
+								name: 'click'
+							}, function(ret) {
+								if (ret.status) {
+									api.closeFrame({
+										name: 'stationInfo'
+									});
+								}
+							});
+							var lineData = [];
+							for(var i=0; i<res.data.routeData.result.routes[0].steps.length; i++){
+								lineData.push({
+									lon: Number(res.data.routeData.result.routes[0].steps[i].start_location.lng),
+									lat: Number(res.data.routeData.result.routes[0].steps[i].start_location.lat)
+								});	
+							}							
+							var lineWidth = 10;
+							if(api.systemType == 'ios'){
+								lineWidth = 4;
+							}							
+							map.addLine({
+								id: 999,
+								styles: {
+									borderColor: '#2fc85a',
+									borderWidth: lineWidth
+								},
+								points: lineData
+							});
+							//路径规划
+							// var routeData = {
+							// 	id: 99,
+							// 	type: 'drive',
+							// 	policy: 'ecar_time_first',
+							// 	start: {
+							// 		lon: mylon,
+							// 		lat: mylat
+							// 	},
+							// 	waypoints: points,
+							// 	end: {
+							// 		lon:res.data.stations[res.data.stations.length-1].baiduX,
+							// 		lat:res.data.stations[res.data.stations.length-1].baiduY
+							// 	}
+							// }														
+							// map.searchRoute(routeData, function(ress, err) {						
+							// 	if (ress.status) {
+							// 		if(api.systemType == 'ios'){																																											
+							// 			map.drawRoute({
+							// 				id: 99,
+							// 				styles: {
+							// 					line: {  
+							// 						color:'#2fc85a',
+							// 						width: 5,
+							// 						dash: false
+							// 					}
+							// 				}
+							// 			});
+							// 		}else{
+							// 			map.addLine({
+							// 				id: 999,
+							// 				styles: {
+							// 					borderColor: '#2fc85a',
+							// 					borderWidth: 10
+							// 				},
+							// 				points: ress.plans[0].nodes
+							// 			});
+							// 		}																						
+							// 	}else{
+							// 		console.log("【路径规划失败】" + JSON.stringify(err));													
+							// 	}
+							// });																			
+						}else{
+							api.toast({
+								msg: '没找到附近的工单',
+								location: 'bottom'
+							});
+						}				
+					});
+				});
+			} else {
+				api.toast({
+					msg: '定位失败,请稍后再试',
+					location: 'bottom'
+				}); //定位失败
+			}
+		});		
+	};
+
+	function closeWin(name) {
+		if (name == null || name == '' || name == 'undefined') {
+			api.closeWin();
+		} else {
+			api.closeWin({
+				name: name
+			});
+		}
+	}
+	// 移除折线
+	function removeRoute(){
+		var map = api.require('bMap');
+		map.close();
+	}
+
+	// 开始导航
+	function goGPS() {
+		api.showProgress({
+			title: '加载中'
+		});
+		var baiduNavigation = api.require('baiduNavigation');
+		baiduNavigation.start({
+			start: { // 起点信息.
+				position: { // 经纬度，与address配合可为空
+					lon: mylon, // 经度.
+					lat: mylat // 纬度.
+				},
+				title: "", // 描述信息
+				address: "" // 地址信息，与position配合为空
+			},
+			end: { // 终点信息.
+				position: { // 经纬度，与address配合可为空
+					lon: destlon, // 经度
+					lat: destlat // 纬度
+				},
+				title: "", // 描述信息
+				address: "" // 地址信息，与position配合为空
+			}
+		}, function(ret, err) {
+			api.hideProgress();
+			if (ret.status) {
+
+			} else {
+				var msg = "未知错误";
+				if (1 == err.code) {
+					msg = "获取地理位置失败";
+				}
+				if (2 == err.code) {
+					msg = "定位服务未开启";
+				}
+				if (3 == err.code) {
+					msg = "线路取消";
+				}
+				if (4 == err.code) {
+					msg = "退出导航";
+				}
+				if (5 == err.code) {
+					msg = "退出导航声明页面";
+				}
+				api.toast({
+					msg: msg,
+					location: 'bottom'
+				});
+			}
+		});
+	}
+</script>
+
+</html>

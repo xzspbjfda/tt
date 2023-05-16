@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>巡检任务列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" href="../../script/agile/css/agile.layout.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.component.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.color.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/query-list.css" />
+        <link rel="stylesheet" href="../../css/common.css" />
+        <style>
+            [data-role="slider"] img {
+                display: block;
+            }
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .ccssoft_list li {
+                list-style: none;
+                padding: 8px;
+                border-bottom: 1px solid #e3e2e2;
+                background: #fff;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .ccssoft_list li:hover {
+                background: #f9e9df;
+            }
+            .ccssoft_list li.acitve {
+                background: #f9e9df;
+            }
+            .cj-l-title, .cj-f-title {
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 8px 70px 8px 32px;
+                position: relative;
+            }
+            .cj-f-title {
+                padding: 8px 70px 8px 0px;
+            }
+            .cj-l-title:before {
+                content: ".";
+                display: block;
+                width: 18px;
+                height: 18px;
+                background: #999;
+                border-radius: 20px;
+                position: absolute;
+                top: 10px;
+                left: 5px;
+            }
+            .ccssoft_list .cj-green .cj-l-title:before {
+                background: #1ac36b;
+            }
+            .ccssoft_list .cj-red .cj-l-title:before {
+                background: #ff3333;
+            }
+            .cj-l-title span, .cj-f-title span {
+                display: block;
+                width: 64px;
+                height: 20px;
+                line-height: 20px;
+                color: #666;
+                text-align: right;
+                position: absolute;
+                top: 5px;
+                right: 0;
+                font-size: 12px;
+                font-weight: normal;
+            }
+            .cj-l-into {
+                font-size: 12px;
+                color: #666;
+                line-height: 20px;
+                padding: 3px 0;
+                position: relative;
+                /*   padding-right: 210px;*/
+            }
+            .cj-l-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 200px;
+                text-align: right;
+            }
+            .cj-l-date span {
+                margin-left: 7px;
+            }
+            .cj-l-date:after {
+                content: "";
+                display: block;
+                width: 1px;
+                height: 12px;
+                background: #ddd;
+                position: absolute;
+                top: 4px;
+                left: 2px;
+            }
+            .cj-f-date {
+                color: #009688;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="section_container">
+            <!--弹出查询窗口-->
+            <div id="popupWrapper" style="display: none">
+                <div id="shadeWrapper" class="popup-mask active" style="display: block;"></div>
+                <div id="queryListBox" class="view bottom" >
+                    <div id="options" class="hotel-p-s-filter js_price_star_filter">
+                        <dl>
+                            <div id="opts1" data-type="text">
+                                <dt>
+                                    站址名称
+                                </dt>
+                                <dd class="js_price_h" onclick="openQueryWin()">
+                                    <input id="stationname" type="text"/>
+                                    <img class="close" src="../../image/icons/png/close.png"/>
+                                </dd>
+                            </div>
+                            <div id="opts2" data-type="text">
+                                <dt>
+                                    站址编码
+                                </dt>
+                                <dd class="js_price_h">
+                                    <input id="stationcode" type="text"/>
+                                    <img class="close" src="../../image/icons/png/close.png"/>
+                                </dd>
+                            </div>
+                            <div id="isOutdate" data-type="radio">
+                                <dt>
+                                    是否超期
+                                </dt>
+                                <dd class="js_star_h current" data-value="">
+                                    全部
+                                </dd>
+                                <dd class="js_star_h" data-value="1">
+                                    是
+                                </dd>
+                                <dd class="js_star_h" data-value="0">
+                                    否
+                                </dd>
+                            </div>
+                            <div class="mt10">
+                                <button id="popup_btn" class="g_btn_s js_price_star_filter_ok" onclick="queryTaskList()"></button>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <section id="task_section" data-role="section" class="active">
+                <header id="header">
+                    <div class="titlebar">
+                        <a  onclick="back();"><i class="iconfont iconline-arrow-left"></i></a>
+                        <h1>巡检任务</h1>
+                        <a class="query-icon" tapmode="active" onclick="showPopup()"></a>
+                    </div>
+                    <div id="tabbarOuter" data-scroll="horizontal">
+                        <div class="scroller" style="width:100%;">
+                            <div class="tabbar" style="width:100%;">
+                                <a id="tab1" class="tab active" data-role="tab" href="#page1" data-toggle="page">待办任务</a>
+                                <a id="tab2" class="tab" data-role="tab" href="#page2" data-toggle="page" onclick="">已办任务</a>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <article data-role="article" id="main_article" data-scroll="scroll" class="active" style="top:89px;bottom:0px;overflow:hidden;">
+                    <div id="sliderPage" data-role="slider" class="full">
+                        <div class="scroller">
+                            <div id="page1" class="slide" data-role="page" data-scroll="pulldown">
+                                <div class="scroller">
+                                    <ul class="ccssoft_list" id="waitTaskList"></ul>
+                                </div>
+                            </div>
+                            <div id="page2" class="slide" data-role="page" data-scroll="pulldown">
+                                <div class="scroller">
+                                    <ul class="ccssoft_list" id="finishTaskList"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+        <script id="waitTaskList-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {
+            }}
+            <li tapmode="active" class="{{=it[i].istimeout=="0" ? "cj-green" :"cj-red"}}" onclick="openWaitTask('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}');">
+            <div class="cj-l-title">{{=it[i].taskname != null ? it[i].taskname:""}}<span>进度:{{=it[i].finishcount != null ? it[i].finishcount:""}}/{{=it[i].projectcount != null ? it[i].projectcount:""}}</span></div>
+            <div class="cj-l-into">巡检人:{{=it[i].taskusername != null ? it[i].taskusername:""}}<div class="cj-l-date"><span>开始:{{=it[i].date != null ? it[i].date:""}}</span><span>结束:{{=it[i].inspectendtime != null ? it[i].inspectendtime:""}}</span></div></div>
+            </li>
+            {{ } }}
+        </script>
+        <script id="finishTaskList-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {
+            }}
+            <li tapmode="active" onclick="openWaitTask('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}','{{=it[i].taskstatus != null ? it[i].taskstatus:""}}');">
+            <div class="cj-f-title">{{=it[i].taskname != null ? it[i].taskname:""}}<span>项目:{{=it[i].projectcount != null ? it[i].projectcount:""}}</span></div>
+            <div class="cj-l-into">巡检人:{{=it[i].taskusername != null ? it[i].taskusername:""}}<div class="cj-l-date"><span>开始:{{=it[i].date != null ? it[i].date:""}}</span><span>结束:{{=it[i].inspectendtime != null ? it[i].inspectendtime:""}}</span></div></div>
+            <div class="cj-l-into cj-f-date">开始:{{=it[i].starttime != null ? it[i].starttime:""}}  结束:{{=it[i].endtime != null ? it[i].endtime:""}}</div>
+            </li>
+            {{ } }}
+        </script>
+    </body>
+    <!-- third -->
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script src="../../script/third/jquery/jquery.mobile.custom.min.js"></script>
+    <script src="../../script/third/iscroll/iscroll-probe.js"></script>
+    <script src="../../script/third/arttemplate/template-native.js"></script>
+    <!-- agile -->
+    <script type="text/javascript" src="../../script/agile/js/agile.js"></script>
+    <!-- bridge -->
+    <script type="text/javascript" src="../../script/bridge/exmobi.js"></script>
+    <script type="text/javascript" src="../../script/bridge/agile.exmobi.js"></script>
+    <!-- app -->
+    <script type="text/javascript" src="../../script/app/js/app.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        var start = 0;
+        var limit = 20;
+        var taskType = 'waitTask';
+        var waitTaskListView, finishTaskListView;
+        $('#main_article').on('sectionshow', function() {
+            A.Component.scroll('#tabbarOuter');
+        });
+        A.Slider('#sliderPage', {
+            dots : 'hide'
+        });
+        function refreshList() {
+            waitTaskListView.refresh();
+        }
+
+        /**
+         *打开待办任务的详情
+         * readyStartTime 计划开始时间
+         */
+        function openWaitTask(readyStartTime, taskId, starttime, taskstatus) {
+            var fromNotifition = "N";
+            //是否来自通知栏，默认否
+            waitDuck(function() {
+                openPage_taskProjectList(taskId, starttime, fromNotifition, taskstatus, readyStartTime);
+            });
+
+        }
+
+        function showPopup() {
+            api.pageParam.stationNameOpt = true;
+            api.pageParam.stationCodeOpt = true;
+            api.pageParam.isOutdate = true;
+            api.pageParam.winName = api.winName;
+            api.pageParam.callback = 'queryTaskList';
+            api.openFrame({
+                name : 'popup_query_frm',
+                url : '../dialog/popup_query.html',
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                bounces : false,
+                pageParam : api.pageParam
+            });
+        }
+
+
+        function queryTaskList(opts) {
+            var stationcode = opts.stationCode;
+            var stationname = opts.stationname;
+            var isoutdate = opts.isOutdate;
+            if (taskType == "waitTask") {
+                waitTaskListView.setQueryOptions({
+                    stationcode : stationcode,
+                    isoutdate : isoutdate
+                });
+                waitTaskListView.refresh();
+            } else {
+                finishTaskListView.setQueryOptions({
+                    stationcode : stationcode,
+                    isoutdate : isoutdate
+                });
+                finishTaskListView.refresh();
+            }
+        }
+
+        apiready = function() {
+            initHeader();
+            //  console.log("msg:dddd");
+            //清空选项内容
+            $('#options .close').click(function() {
+                $(this).hide().siblings('input').val('');
+                return false;
+            });
+            $('#tab1').click(function() {
+                taskType = 'waitTask';
+            });
+            $('#tab2').click(function() {
+                taskType = 'finishTask';
+            });
+            waitTaskListView = new C.ListView({
+                id : '#page1',
+                listDivId : '#waitTaskList',
+                templateId : '#waitTaskList-template',
+                listName : 'taskInfoList',
+                fn : $client.getWaitTaskList,
+                callback : function(ret,err){
+                    api.parseTapmode();
+                }
+            });
+            waitTaskListView.refresh();
+            finishTaskListView = new C.ListView({
+                id : '#page2',
+                listDivId : '#finishTaskList',
+                templateId : '#finishTaskList-template',
+                listName : 'taskInfoList',
+                fn : $client.getFinishTaskList,
+            });
+            finishTaskListView.refresh();
+        };
+    </script>
+</html>

@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>api</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/main-bill-detail.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+	<link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+	<style>
+	#wrap{
+	    height: 100%;
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: vertical;
+	    -webkit-flex-flow: column;
+	           flex-flow: column;
+	}
+	#notFinishTaskList{
+	    -webkit-box-flex: 1; 
+	    -webkit-flex: 1;
+	    flex: 1;
+	}
+	#nav {
+		text-align: center;
+		background-color: #f2f2f2;
+	}
+	#nav ul{
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    -webkit-flex-direction: row;
+	    flex-direction: row;
+	}
+	#nav ul li{
+	    -webkit-box-flex: 1; 
+	    -webkit-flex: 1;
+	    flex: 1;
+	}
+	#header .header{
+	    display: none;
+	}
+	#header .active{
+	    display: block;
+	}
+	#header .finishTaskList .submenu, #header .bugFlow .submenu{
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    -webkit-flex-direction: row;
+	    flex-direction: row;
+	    background-color: #fff; 
+	}
+	#header .finishTaskList .submenu li, #header .bugFlow .submenu li{
+	    -webkit-box-flex: 1; 
+	    -webkit-flex: 1;
+	    flex: 1;
+	}
+	
+	#header .scan{
+		display:inline-block; position:absolute; bottom: 2px; right: 20px;
+	    width: 40px; height: 40px; text-indent: -9999px;
+	    background: url(../image/scan.png) no-repeat center center;
+	    background-size: 24px;
+	    -webkit-background-size: 24px;
+	}
+
+		/********************/
+     /* 底部按钮原始样式 */
+     /********************/
+     .bbtn01 {background: url(../image/widget_tab_icon_detail_nor.png) no-repeat center 4px; }
+     .bbtn02 {background: url(../image/widget_bar_news_nor.png) no-repeat center 4px; }
+     .bottom_btn {width: 99%; height: 50px;padding-top: 18px;background-position-y: 4px; background-size: 30px;  font-size: 12px; color: #A5A5A5;}
+     
+     /* 底部按钮激活样式 */
+     .activebtn0 {color:#F00; background: url(../image/widget_tab_icon_detail_over.png) no-repeat center 4px; }
+     .activebtn1 {color:#F00; background: url(../image/widget_bar_news_over.png) no-repeat center 4px; }
+     .activebtn {color:#F00; background-size: 30px; }
+     .bottomhover {background-color: #46494B;}
+	</style>
+</head>
+<body>
+	<script id="mainDetail-template" type="text/x-dot-template">
+		
+	</script>
+    <div id="wrap">
+        <header id="header">
+            <div class="notFinishTaskList header active titlebar">
+	        	<a class="back-icon" tapmode="" onclick="backHome();"></a>
+	            <h1>未完成巡检任务</h1>
+	            <a class="query-icon" tapmode="" onclick="openQueryInspectTask()"></a>
+	        </div>
+	        <div class="finishTaskList header titlebar">
+	        	<a class="back-icon" tapmode="" onclick="backHome()"></a>
+	            <h1>已完成巡检任务</h1>
+	            <a class="query-icon" tapmode="" onclick="openQueryInspectTask()"></a>
+	        </div>
+            
+        </header>
+        <div id="notFinishTaskList">
+                
+        </div>
+        <div id="nav">
+            <ul>
+                <li><a class="notFinishTaskList bottom_btn bbtn01 activebtn activebtn0"  onclick="openTab('notFinishTaskList','0')">未完成</a></li>
+                <li><a class="finishTaskList bottom_btn bbtn02"  onclick="openTab('finishTaskList','1')">已完成</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script> 
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+apiready = function(){
+    var header = $api.byId('header');
+    $api.fixIos7Bar(header);
+    //status bar style
+    api.setStatusBarStyle({
+        style: 'light'
+    });
+    var type = "notFinishTaskList";
+    var tid = 0;
+    if(api.pageParam.type != null){
+    	var type = api.pageParam.type;
+    	var tid = api.pageParam.tid;
+    }
+    openTab(type,tid);
+    
+    api.addEventListener({
+	    name:'viewappear'
+	},function(ret,err){
+	    api.closeWin({name:"queryInspectTask"});
+	    api.closeWin({name:"queryInspectTask"});
+	});
+    
+};
+//open tab
+function openTab(type,tid){
+    showHeader(type);
+    var width = api.winWidth;
+    var nav = $api.byId('nav');
+    var navPos = $api.offset(nav);
+    var header = $api.byId('header');
+    var headerPos = $api.offset(header);
+    var height = api.winHeight - navPos.h - headerPos.h;
+    type = type || 'notFinishTaskList';
+    randomSwitchBtn(tid);
+    //record page id
+    api.pageParam.type = type;
+    api.pageParam.tid = tid;
+    api.pageParam.headerHeight = headerPos.h;
+    prevPid = curPid;
+    curPid = type;
+    if(prevPid !== curPid){
+        if(isOpened(type)){
+            api.setFrameAttr({
+                name: type,
+                hidden: false
+            });
+        }else{
+            api.openFrame({
+                name: type,
+                url: type +'.html',
+                bounces: true,
+                opaque: true,
+                reload:true,
+                vScrollBarEnabled: false,
+                pageParam:api.pageParam,
+                rect: {
+                    x: 0,
+                    y: headerPos.h,
+                    w: width,
+                    h: height
+                }
+            });
+        }
+
+        if(prevPid){
+            api.setFrameAttr({
+                name: prevPid,
+                hidden: true
+            });
+            
+        }
+
+        if(!isOpened(type)){
+            //save frame name
+            frameArr.push(type);
+        }
+        
+    }
+}
+
+//previous page id, current page id
+var prevPid = '', curPid = '';
+//save opened frame name
+var frameArr = [];
+
+//frame whether open
+function isOpened(frmName){
+    var i = 0, len = frameArr.length;
+    var mark = false;
+    for(i; i<len; i++){
+        if(frameArr[i] === frmName){
+            mark = true;
+            return mark;
+        }
+    }
+    return mark;
+}
+
+//toggle header
+function showHeader(type){
+    if(!type){return;}
+    var header = $api.dom('#header .active');
+    $api.removeCls(header,'active');
+    var thisHeader = $api.dom('#header .'+type);
+    $api.addCls(thisHeader,'active');
+}
+
+// 随意切换按钮
+function randomSwitchBtn(index) {
+	var lis = $api.domAll('.bottom_btn');
+	var i = 0, len = lis.length;
+	var curLi = lis[index];
+	
+	for (i; i < len; i++) {
+		var thisLi = lis[i];
+		if (thisLi === curLi) {
+			$api.addCls(thisLi, 'activebtn');
+			$api.addCls(thisLi, 'activebtn' + index);
+			continue;
+		} else {
+			if ($api.hasCls(thisLi, 'activebtn')) {
+				$api.removeCls(thisLi, 'activebtn');
+				$api.removeCls(thisLi, 'activebtn' + i);
+			}
+		}
+	}
+}
+
+// 打开查询任务页面
+function openQueryInspectTask(){
+    api.openWin({
+        name: 'queryInspectTask',
+        url: 'queryInspectTask.html',
+        bounces: false,
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: api.pageParam,
+        reload: true
+    });  
+}
+</script>
+</html>

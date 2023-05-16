@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>进站派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../script/agile/css/flat/flat.component.css">
+    <link rel="stylesheet" type="text/css" href="../../script/agile/css/flat/flat.color.css">
+    <link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/standBillRevertDetail.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/list-format.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <style type="text/css">
+        .hide{
+            display: none!important;
+        }
+        .cardLabel,
+        .cardTextareaLabel {
+            color: black;
+        }
+
+        .billDetailDivId {
+            margin-left: -8%;
+        }
+
+        .darktitle {
+            background-color: white;
+        }
+
+        .cardTextareaDiv {
+            margin-bottom: 60px;
+        }
+
+        .winDiv {
+            display: none;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        #header {
+            height: 58px;
+        }
+
+        html,
+        body,
+        #wrap,
+        #header {
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <script id="dict-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {}}
+        <option value="{{=it[i].itemValue}}">{{=it[i].itemName}}</option>
+        {{ } }}
+    </script>
+    <div id="wrap" class="auditForm" style="overflow:auto;width: 120%;height: 100%;">
+        <div class="darktitle">
+            <h2><img class="tit_img" src="../image/bt_icon2.png" alt="" />申请信息</h2>
+        </div>
+        <div id="billDetailDivId" class="billDetailDivId">
+            <div class="cardDiv">
+                <div class="cardLabel">省-市-区域：</div>
+                <div class="cardCon">
+                    <input id="area" type="text" form-field readonly style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">站址名称：</div>
+                <div class="cardCon">
+                    <input id="stationName" form-field disabled type="text" readonly style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">站址编码：</div>
+                <div class="cardCon">
+                    <input id="deviceId" form-field disabled type="number" readonly style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站类型：</div>
+                <div class="cardCon">
+                    <select id="standType" form-param form-field style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+                    </select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">作业内容：</div>
+                <div class="cardCon">
+                    <select id="workType" form-param form-field style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+                    </select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站人：</div>
+                <div class="cardCon">
+                    <input id="arrivalsName" form-field readonly type="text" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站人电话：</div>
+                <div class="cardCon">
+                    <input id="arrivalsPhone" form-field readonly type="text" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站人身份：</div>
+                <div class="cardCon">
+                    <select id="arrivalsType" form-param form-field style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+                    </select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">申请进站时间：</div>
+                <div class="cardCon">
+                    <input id="auditStartTime" form-field="bookStartTime" form-param type="datetime-local" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">申请离站时间：</div>
+                <div class="cardCon">
+                    <input id="auditEndTime" form-field="bookEndTime" form-param type="datetime-local" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">开门类型：</div>
+                <div class="cardCon">
+                    <select id="openWay" form-param form-field readonly style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;">
+                    </select>
+                </div>
+            </div>
+            <div id="key-field-div" class="cardDiv hide">
+                <div class="cardLabel">钥匙：</div>
+                <div class="cardCon">
+                    <input id="keyCode" onclick="openSelectKeyWin()" type="text" readonly placeholder="点击选择机械钥匙" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                    <input id="keyId" form-param type="hidden">
+                </div>
+            </div>
+            <div id="refiefDealInfoDivId"  style="margin-bottom: 20px;" class="cardTextareaDiv">
+                <div class="cardTextareaLabel">上站原因：</div>
+                <div class="cardTextareaCon">
+                    <textarea id="cause" form-param form-field rows="8" class="noborder" style="background-color:white;border:solid 1px green;width:100%;height:100%;"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="darktitle">
+            <h2><img class="tit_img" src="../image/bt_icon2.png" alt="" />审核信息</h2>
+        </div>
+        <div class="billDetailDivId" >
+            <div class="cardDiv">
+                <div class="cardLabel">是否随工：</div>
+                <div class="cardCon">
+                    <select id="isNeedPerson" form-param style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;">
+                        <option value="N">否</option>
+                        <option value="Y">是</option>
+                    </select>
+                </div>
+            </div>
+            <div id="person-field-div" class="cardDiv hide isfollow">
+                <div class="cardLabel">代维人员：</div>
+                <div class="cardCon">
+                    <input id="personName" form-param readonly onclick="openSelectUserWin()" placeholder="点击选择用户" type="text"
+                        style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                    <input id="personAccount" form-param type="hidden">
+                </div>
+            </div>
+            <div class="cardDiv isfollow">
+                <div class="cardLabel">上站联系人： </div>
+                <div class="cardCon">
+<!--                    <input id="standPerson" form-param maxlength="11" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">-->
+                    <input id="standPerson" form-param form-field type="text" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv isfollow">
+                <div class="cardLabel">上站联系电话： </div>
+                <div class="cardCon">
+                    <input id="standPhone" form-param type="number" maxlength="11" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardTextareaDiv isfollow">
+                <div class="cardTextareaLabel">上站注意事项： </div>
+                <div class="cardTextareaCon">
+                    <textarea id="standNotes" form-param rows="8" class="noborder" style="background-color:white;border:solid 1px green;width:80%;height:100%;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="cardButtonDiv">
+            <button style="width: 32%;" onclick="closeWin()">取消</button>
+            <button style="width: 32%;background-color: #DB4537;color: white;" onclick="audit()">同意</button>
+            <button style="width: 32%;background-color: #3779d0;color: white;" onclick="back()">退回</button>
+        </div>
+    </footer>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<!--<script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.9.1/vconsole.min.js"></script>-->
+<!--<script >-->
+<!--    var vConsole = new VConsole();-->
+<!--</script>-->
+<script>
+    var selectedKeyInfo = {};
+    var isBorrowKey = false,isNeedPerson = false;
+    var selectedUserInfo = {};
+    request.detailById = function(id,callback){
+        service({
+            url: "/enterStationBill/detailById.do",
+            data: {id:id}
+        },callback)
+    }
+
+    request.auditAgree = function(data,callback){
+        service({
+            url: "/enterStationBill/auditBill.do",
+            data: $.extend(data,{agree:true})
+        },callback)
+    }
+
+    function openSelectKeyWin(){
+        api.openWin({
+            name : 'newCreateStandBillSelectKey_win',
+            url : '../dialog/newCreateStandBillSelectKey_win.html',
+            bounces : false,
+            pageParam : {
+                stationId:api.pageParam.stationId,
+                selectedKeyInfo:selectedKeyInfo || {}
+            }
+        });
+    }
+
+    function onSelectKey(keyInfo){
+        selectedKeyInfo = keyInfo;
+        $("#keyCode").val(keyInfo ? keyInfo.keyCode : "");
+        $("#keyId").val(keyInfo ? keyInfo.id : "");
+    }
+
+    function openSelectUserWin(){
+        api.openWin({
+            name : 'newCreateStandBillSelectUser_win',
+            url : '../dialog/newCreateStandBillSelectUser_win.html',
+            bounces : false,
+            pageParam : {
+                stationId:api.pageParam.stationId,
+                selectedUserInfo:selectedUserInfo || {}
+            }
+        });
+    }
+
+    function onUserSelect(userInfo){
+        selectedUserInfo = userInfo;
+        $("#personName").val(userInfo ? userInfo.userName : "");
+        $("#personAccount").val(userInfo ? userInfo.userId : "");
+        console.log("【选择的用户信息】",JSON.stringify(selectedUserInfo))
+    }
+
+    function switchStandType(type){
+        if(!type){return}
+        request.getDict("IDD_WORK_TYPE_" + type,function (ret){
+            if(ret.data && ret.data.length > 1){
+                renderTemp('workType', 'dict-template', ret.data, false);
+            }else{
+                renderTemp('workType', 'dict-template', [], false);
+                api.toast({msg: "该进站类型下没有工作内容可选", duration: 1000, location: 'middle'});
+            }
+        })
+    }
+
+    function switchOpenWay(openWay){
+        isBorrowKey = openWay === "2";
+        // 机械钥匙开门
+        if(isBorrowKey){
+            $("#key-field-div").removeClass("hide");
+        }else{
+            $("#key-field-div").addClass("hide");
+            selectedKeyInfo = {};
+            $("#keyCode").val("");
+            $("#keyId").val("");
+        }
+    }
+
+    apiready = function () {
+        api.addEventListener({
+            name: 'churuzhanBillAudit'
+        }, function(ret, err) {
+            if (ret.value.state === 'auditOver') {
+                api.closeWin();
+            }
+        });
+        request.getDictList(["IDD_ARRIVALS_TYPE","IDD_STAND_TYPE_STATION","IDD_OPEN_WAY"],function (ret){
+            renderTemp('arrivalsType', 'dict-template', ret.data.IDD_ARRIVALS_TYPE, false);
+            renderTemp('standType', 'dict-template', ret.data.IDD_STAND_TYPE_STATION, false);
+            renderTemp('openWay', 'dict-template', ret.data.IDD_OPEN_WAY, false);
+            request.detailById(api.pageParam.id,function(res){
+                if(res.success && res.data){
+                    res.data.area = res.data.cityName + "-" + res.data.countyName + "-" + res.data.stationName
+                    res.data.bookStartTime = res.data.bookStartTime.toDate("yyyy-MM-dd hh:mm:ss").pattern("yyyy-MM-ddTHH:mm");
+                    res.data.bookEndTime = res.data.bookEndTime.toDate("yyyy-MM-dd hh:mm:ss").pattern("yyyy-MM-ddTHH:mm");
+                    service.fillForm("#billDetailDivId",res.data);
+                    switchStandType(res.data.standType);
+                    switchOpenWay(res.data.openWay);
+                }
+            })
+        })
+
+        $("#standType").change(function(){
+            var type = $(this).val();
+            if(type){
+                switchStandType(type)
+            }
+        })
+        $("#openWay").change(function(){
+            switchOpenWay($(this).val())
+        })
+        $("#isNeedPerson").change(function(){
+            let bool = $(this).val() === "Y";
+            if(bool){
+                $("#person-field-div").removeClass("hide");
+            }else{
+                $("#person-field-div").addClass("hide");
+                selectedUserInfo = {}
+                $("#personName").val("");
+                $("#personAccount").val("");
+            }
+
+        })
+    };
+    function audit() {
+        var json = request.serialization(".auditForm");
+        if (!json.standNotes) {
+            return api.toast({msg: "请填写上站注意事项", duration: 1000, location: 'middle'});
+        }
+        if (isBorrowKey && !json.keyId) {
+            return api.toast({msg: "请选择机械钥匙", duration: 1000, location: 'middle'});
+        }
+        if ($("#isNeedPerson").val() === "Y" && !json.personAccount) {
+
+            return api.toast({msg: "请选择代维人员", duration: 1000, location: 'middle'});
+        }
+        json.auditStartTime = json.auditStartTime.replace(/T/, " ") + ":00";
+        json.auditEndTime = json.auditEndTime.replace(/T/, " ") + ":00";
+        json.id = api.pageParam.id;
+        api.showProgress({title: '加载中', modal: false});
+        request.auditAgree(json, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    api.toast({msg: "审核完成！", duration: 800, location: 'middle'});
+                    window.setTimeout(function() {
+                        api.hideProgress();
+                        api.sendEvent({name: 'churuzhanBillAudit', extra: {state: 'auditOver'}});
+                        api.closeWin({name : 'mainStandBillDetail'});
+                        api.closeWin();
+                    },3000);
+                    return;
+                } else {
+                    api.toast({msg: ret.msg, location: 'middle'});
+                }
+            } else {
+                api.toast({msg: err.msg, location: 'middle'});
+            }
+            api.hideProgress();
+        });
+    }
+
+    function back() {
+        api.openFrame({
+                name : 'back',
+                url : 'back.html',
+                bounces : false,
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                pageParam : api.pageParam,
+                reload : true
+            });
+    }
+
+
+</script>
+
+</html>

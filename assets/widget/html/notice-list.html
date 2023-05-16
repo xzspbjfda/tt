@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>api</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/bill-list.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+		<link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+</head>
+<body>
+    <div id="wrap">
+        <div id="main">
+            <header id="header">
+				<div class="titlebar">
+	                <h1></h1>
+	                <a class="back-icon" tapmode="" onclick="api.closeWin()"></a>
+	                <!--<a class="near" tapmode="">附近</a>-->
+            	</div>
+            </header>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script>
+apiready = function(){
+    var header = $api.byId('header');
+    $api.fixIos7Bar(header);
+    var pos = $api.offset(header);
+    var h1=$api.dom(header,'h1');
+    $api.html(h1,api.pageParam.title);
+    api.openFrame({
+        name: 'notice-listCon',
+        url: 'notice-listCon.html',
+        rect:{
+          x: 0,
+          y: pos.h + 4,
+          w: 'auto',
+          h: 'auto'
+        },
+        bounces: true,
+        opaque: true,
+        vScrollBarEnabled: false
+    });
+};
+</script>
+</html>

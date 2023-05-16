@@ -1,0 +1,414 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>路径规划</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		.ccssoft_list {
+			background-color: #eff1f0;
+			override: hidden;
+		}
+
+		.ccssoft_list li {
+			list-style: none;
+			border-bottom: 1px solid #e3e2e2;
+			background: #fff;
+			overflow: hidden;
+		}
+
+		.aui-list-li {
+			line-height: 50px;
+			padding: 5px 10px 1px 10px;
+		}
+
+		.cardButtonDiv {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			zoom: 1;
+			width: 100%;
+			padding: 5px 15px 0px 15px;
+			height: 50px;
+			z-index: 3;
+			background-color: #f7f7f7;
+			box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			/*box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+			-webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+		}
+
+		.okBtn {
+			text-align: center;
+			font-size: 16px;
+			transition: all .5s;
+			-webkit-transition: all .5s;
+			background-color: #DB4537;
+		}
+
+		.botton_nav_box {
+			width: 100%;
+			position: absolute;
+			bottom: 59px;
+			display: flex;
+			justify-content: space-around;
+			;
+			border-top: 1px solid #e3e2e2;
+		}
+
+		.botton_nav {
+			width: 50%;
+			padding: 6px 0 6px 0;
+			border-bottom: 1px solid #e3e2e2;
+		}
+
+		.botton_nav.active {
+			color: red;
+			border-bottom: 2px solid red;
+		}
+
+		.botton_nav_tit {
+			font-size: 14px;
+			margin-left: 40px;
+		}
+
+		.botton_nav_jf {
+			margin-left:40px;
+			font-size: 18px;
+		}
+
+		.botton_nav_km {
+			margin-left: 40px;
+			font-size: 12px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<footer style="height:50px;">
+		<div class="cardButtonDiv" style="width: 100%;">
+			<button class="okBtn" onclick="goGPS();" style="width: 100%;color:#fff;">
+            开始驾车导航
+        </button>
+		</div>
+	</footer>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+
+<script>
+	// 获取需填写字段
+	var stationMessageArrNew = $api.getStorage('stationposition');
+	// 目的地坐标
+	var destlon;
+	var destlat;
+	var mylon, mylat;
+	var claimedToalNum;
+
+	apiready = function() {
+		var user = $api.getStorage('user');
+
+		var map = api.require('bMap');
+
+		map.getLocation({
+			accuracy: '100m',
+			autoStop: true,
+			filter: 1
+		}, function(ret, err) {
+			if (ret.status) {
+				$api.setStorage('mylon', ret.lon);
+				$api.setStorage('mylat', ret.lat);
+			} else {
+				api.toast({
+					msg: '定位失败,请稍后再试',
+					location: 'bottom'
+				}); //定位失败
+			}
+		});
+
+		mylon = $api.getStorage('mylon');
+		mylat = $api.getStorage('mylat');
+
+
+		Route();
+	};
+
+
+	function closeWin(name) {
+		if (name == null || name == '' || name == 'undefined') {
+			api.closeWin();
+		} else {
+			api.closeWin({
+				name: name
+			});
+		}
+	}
+	var colId;
+	//对json进行降序排序函数
+	var desc = function(x,y){
+			return (x[colId] < y[colId]) ? 1 : -1
+	}
+	//对json进行升序排序函数
+	var asc = function(x,y){
+			return (x[colId] > y[colId]) ? 1 : -1
+	}
+
+	function Route() {
+
+		if (stationMessageArrNew.length>0) {
+
+			var map = api.require('bMap');
+
+			for (var i = 0; i < stationMessageArrNew.length; i++) {
+				(function(i) {
+					map.getDistance({
+						start: {
+							lon: mylon,
+							lat: mylat
+						},
+						end: {
+							lon: stationMessageArrNew[i].lon,
+							lat: stationMessageArrNew[i].lat
+						}
+					}, function(ret) {
+						if (ret.status) {
+								stationMessageArrNew[i].distanceNum = ret.distance / 1000;
+						}
+					});
+				})(i);
+			}
+
+			setTimeout(function(){
+				colId="distanceNum";
+				stationMessageArrNew.sort(asc);
+				console.log("0000000000000000000000000000000000000000000000000000000000");
+				console.log(JSON.stringify(stationMessageArrNew));
+
+
+			},900)
+
+
+
+			api.showProgress({
+				title: '加载中',
+				modal: true,
+			});
+
+			setTimeout(function(){
+				destlon = stationMessageArrNew[0].lon;
+				destlat = stationMessageArrNew[0].lat;
+
+				var map = api.require('bMap');
+
+
+				map.close();
+
+				var body_h = $api.offset($api.dom('body')).h;
+				var body_w = $api.offset($api.dom('body')).w;
+				console.log(destlon);
+				console.log(destlat);
+				map.open({
+					rect: {
+						x: 0,
+						y: 0,
+						w: body_w,
+						h: body_h - 50
+					},
+					center: {
+						lon: mylon,
+						lat: mylat
+					},
+					zoomLevel: 8,
+					showUserLocation: true,
+					fixedOn: api.frameName,
+					fixed: true
+				}, function(ret) {
+					if (ret.status) {
+						api.hideProgress();
+						var NewLine=[];
+						NewLine.push({
+							lon:mylon,
+							lat:mylat
+						})
+						for (var i = 0; i < stationMessageArrNew.length; i++) {
+							NewLine.push({
+								lon:stationMessageArrNew[i].lon,
+								lat:stationMessageArrNew[i].lat
+							})
+						}
+						console.log(JSON.stringify(NewLine));
+						// 直线链接站址
+						map.addLine({
+						    id: 1,
+						    styles: {
+						        borderColor: '#FF0000',
+						        borderWidth: 3
+						     },
+						     points: NewLine
+						});
+					} else {
+						api.toast({
+							msg: '地图打开失败，请重试',
+							location: 'bottom'
+						});
+					}
+
+				});
+
+				if (!stationMessageArrNew) {
+					api.toast({
+						msg : '无站址信息'
+					});
+					return;
+				};
+
+				var stationlocationlist=[];
+				for (var i = 0; i < stationMessageArrNew.length; i++) {
+					stationlocationlist.push({
+						id : Number(stationMessageArrNew[i].site_id),
+						lon : Number(stationMessageArrNew[i].lon),
+						lat : Number(stationMessageArrNew[i].lat)
+					});
+				}
+
+
+				console.log(stationlocationlist);
+				//设置标注点stationlocationlist
+				// var bbb=[{'id':43010200000008,'lon':113.0115,'lat':28.19885},{id:45010201000016,lon:108.4188,lat:22.93538},{id:450102700000053614,lon:108.3686,lat:22.85980},{id:45010201000067,lon:108.4044,lat:22.88232},{id:450102700000053509,lon:108.3963,lat:22.94157},{id:450102908000000051,lon:108.6292,lat:22.96187},{id:450103700000053181,lon:108.3402,lat:22.81991},{id:450102908000000316,lon:108.3262,lat:22.82350},{id:43010200000003,lon:113.1013,lat:28.20675}];
+				map.addAnnotations({
+					annotations :stationlocationlist,
+					draggable: false
+				}, function(ret) {
+					if (ret) {
+						tan(ret.id);
+	    		}
+				});
+
+
+
+
+
+
+
+
+				//设置点击弹出框
+				for (var i = 0; i < stationMessageArrNew.length; i++) {
+				var stationMessageArrNewMapID=Number(stationMessageArrNew[i].site_id);
+				var stationMessageArrNewMap = stationMessageArrNew[i];
+				console.log("wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+				console.log(JSON.stringify(stationMessageArrNewMap));
+					map.setBubble({
+						id: stationMessageArrNewMapID,
+						content: {
+								title: stationMessageArrNewMap.stationname
+						},
+						styles : {
+							titleColor: '#000',
+							titleSize: 14,
+							subTitleColor: '#999',
+							subTitleSize: 12,
+							illusAlign: 'center',
+							w:600
+						}
+					}, function(ret) {
+							console.log(getObj(ret));
+					});
+				}
+
+				// 弹出标注框
+				// for (var i = 0; i < stationMessageArrNew.length; i++) {
+				// var stationMessageArrNewMap = stationMessageArrNew[i];
+				// console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+				// console.log(JSON.stringify(stationMessageArrNewMap));
+				// map.popupBubble({
+				// 	id : 100000908001900290
+				// });
+				// }
+
+
+			},1200)
+		}else {
+			api.toast({
+				msg: '未领取工单,请稍后',
+				location: 'bottom'
+			});
+		}
+
+	}
+
+	function tan(retId){
+		var map = api.require('bMap');
+		map.popupBubble({
+			id : retId
+		});
+	}
+	// 移除折线
+	function removeRoute(){
+		var map = api.require('bMap');
+		map.close();
+	}
+
+	// 开始导航
+	function goGPS() {
+		var baiduNavigation = api.require('baiduNavigation');
+		baiduNavigation.start({
+			start: { // 起点信息.
+				position: { // 经纬度，与address配合可为空
+					lon: mylon, // 经度.
+					lat: mylat // 纬度.
+				},
+				title: "", // 描述信息
+				address: "" // 地址信息，与position配合为空
+			},
+			end: { // 终点信息.
+				position: { // 经纬度，与address配合可为空
+					lon: destlon, // 经度
+					lat: destlat // 纬度
+				},
+				title: "", // 描述信息
+				address: "" // 地址信息，与position配合为空
+			}
+		}, function(ret, err) {
+			if (ret.status) {
+
+			} else {
+				var msg = "未知错误";
+				if (1 == err.code) {
+					msg = "获取地理位置失败";
+				}
+				if (2 == err.code) {
+					msg = "定位服务未开启";
+				}
+				if (3 == err.code) {
+					msg = "线路取消";
+				}
+				if (4 == err.code) {
+					msg = "退出导航";
+				}
+				if (5 == err.code) {
+					msg = "退出导航声明页面";
+				}
+				api.toast({
+					msg: msg,
+					location: 'bottom'
+				});
+			}
+		});
+	}
+</script>
+
+</html>

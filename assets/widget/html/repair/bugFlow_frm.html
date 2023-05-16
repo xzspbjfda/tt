@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+</head>
+<style type="text/css">
+.aui-content {
+    background: #ffffff;
+    overflow: hidden;
+    padding: 15px;
+}
+</style>
+<!-- // wxx
+// onclick="openActionDetail('{{=(j)}}')"删除了li的单击事件
+// wxx -->
+<body style="background-color:#FFFFFF;">
+	<script id="bugFlow-template" type="text/x-dot-template">
+		{{ for(var i=0,j=1; i<=it.length-1; i++,j++) {
+			actionJsonArr.push(it[i]);
+		}}
+
+			<li >
+				<i class="aui-iconfont aui-icon-mark aui-bg-warning"></i>
+				<div class="aui-timeline-item">
+					<div class="aui-timeline-body">{{=it[i].unit}}通过【{{=it[i].device}}】进行【
+			{{? it[i].action == '1' }}
+          人工派单
+            {{?? it[i].action == '2' }}
+         问题核实
+
+            {{?? it[i].action == '3' }}
+           方案制定
+
+            {{?? it[i].action == '4' }}
+           组织实施
+
+            {{?? it[i].action == '5' }}
+           结果验收
+
+            {{?? it[i].action == '6' }}
+            转更新改造
+             {{?? it[i].action == '7' }}
+          计划性修缮
+             {{?? it[i].action == '8' }}
+          直接归档
+             {{?? it[i].action == '9' }}
+          回退
+             {{?? it[i].action == '10' }}
+           解除挂起
+            {{?? it[i].action == '11' }}
+           转派
+            {{?}}】</br>备注：{{=it[i].remark}}</div>
+					<div class="aui-timeline-footer" style="text-align:right;">
+					{{=it[i].tasktime}}
+					</div>
+				</div>
+			</li>
+		{{ } }}
+	</script>
+    <div class="aui-content">
+        <ul class="aui-timeline" id="bugFlowDetail">
+
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+	var actionJsonArr = new Array();
+
+    apiready = function() {
+        initHeader();
+        //status bar style
+        api.setStatusBarStyle({
+            style : 'light'
+        });
+        var opts={};
+        opts.billsn=api.pageParam.billsn;
+        	$client.getRepairStep(opts, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+            // wxx
+            // consoleObj(ret.list[0])
+            for (var i = 0; i < ret.list.length; i++) {
+              console.log(getObj(ret.list[i]));
+            }
+				renderTemp('bugFlowDetail', 'bugFlow-template', ret.list);
+                api.parseTapmode();
+					} else {
+						api.toast({
+							msg : ret.data_info,
+							location : 'middle'
+						});
+					}
+				} else {
+					api.toast({
+						msg : err.msg,
+						location : 'middle'
+					});
+				}
+				api.hideProgress();
+			});
+
+    };
+</script>
+</html>

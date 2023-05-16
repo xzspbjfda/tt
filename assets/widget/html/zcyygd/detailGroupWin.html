@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>出入站待办工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            #header .openMenu-icon {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                background: url(../../image/actionbar_icon_add.png) no-repeat center center;
+                -webkit-background-size: 14px 18px;
+                background-size: 30px 30px;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
+            .iconFont {
+                font-size: 22px;
+                color: #8f8f94;
+                height: 30px;
+                line-height: 30px;
+                display: inline-block;
+                margin-top: 3px;
+            }
+            .activeWarning p {
+                color: #DB4537;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="back1()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title">
+                工单详情
+            </div>
+            <a id="menuBtn" class="aui-pull-right" tapmode onclick="openMenu()"> <span class="aui-iconfont aui-icon-add"></span> </a>
+        </header>
+        <footer class="aui-nav" style="border-top:1px solid #ADADAD;" id="footer">
+            <ul class="aui-bar-tab">
+                <li tapmode class="activeWarning">
+                    <span class="iconFont"> <img src="../../image/widget_tab_icon_detail_nor.png" width="25px" height="25px"/> <img style="display:none;" src="../../image/widget_tab_icon_detail_over.png" width="25px" height="25px"/> </span>
+                    <p>工单详情</p>
+                </li>
+                <li tapmode>
+                    <span class="iconFont"> <img src="../../image/widget_tab_icon_station_nor.png" width="25px" height="25px"/> <img style="display:none;" src="../../image/widget_tab_icon_station_over.png" width="25px" height="25px"/> </span>
+                    <p>站址信息</p>
+                </li>
+                <li tapmode>
+                    <span class="iconFont"> <img src="../../image/widget_tab_icon_alarm_nor.png" width="25px" height="25px"/> <img style="display:none;" src="../../image/widget_tab_icon_alarm_over.png" width="25px" height="25px"/> </span>
+                    <p>告警信息</p>
+                </li>
+                <li tapmode>
+                    <span class="iconFont"> <img src="../../image/widget_tab_icon_step_nor.png" width="25px" height="25px"/> <img style="display:none;" src="../../image/widget_tab_icon_step_over.png" width="25px" height="25px"/> </span>
+                    <p>处理流程</p>
+                </li>
+            </ul>
+        </footer>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../bill/script/main.bill.detail.js"></script>
+    <script type="text/javascript">
+
+        var billItem,detailInfo;
+
+        request.getDetailById = function(id,callback){
+            service.get({
+                url:"/worderAssetRun/getDetailById.do",
+                data:{
+                    id:id
+                }
+            },callback)
+        }
+
+        function notice(frameName){
+            // 加入缓存，方便弹窗、选择转派人员时调用
+            $api.setStorage("zzyygdDetailInfo",detailInfo);
+            api.execScript({
+                name : 'detailGroupWin', frameName: frameName,
+                script : 'detailOnLoad(' + JSON.stringify(detailInfo) + ');'
+            });
+            api.hideProgress();
+        }
+
+        function loadDetailInfo(frameName){
+            api.showProgress({title : '加载中', modal : true});
+            if(detailInfo){
+                notice(frameName);
+            }else{
+                request.getDetailById(billItem.ID,function(ret){
+                    if(ret.success){
+                        detailInfo = ret.data;
+                        console.log("【查询的详情】",JSON.stringify(detailInfo))
+                        notice(frameName);
+                    }else{
+                        api.toast({msg:ret.msg, location: 'middle'});
+                    }
+                })
+            }
+        }
+        apiready = function() {
+            initHeader();
+            billItem = api.pageParam.billItem;
+            console.log("【详情页item】",JSON.stringify(billItem));
+            // 其他页面通过sendEvent发起获取详细信息请求
+            api.addEventListener({
+                name : 'getDetailInfo'
+            }, function(ret) {
+                // 传入frameName以告知要通知给谁
+                loadDetailInfo(ret.value.frameName);
+            });
+
+            api.openFrameGroup({
+                name : 'detailGroupWin_footer_tab',
+                scrollEnabled : true,
+                rect : frameRect(),
+                index : 0,
+                preload : 0,
+                frames : [{
+                    name : 'detailGroupFrm0',
+                    url : 'detailGroupFrm0.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'detailGroupFrm1',
+                    url : 'detailGroupFrm1.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'detailGroupFrm2',
+                    url : 'detailGroupFrm2.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'detailGroupFrm3',
+                    url : 'detailGroupFrm3.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }]
+            }, function(ret, err) {
+                var $curTab = $('#footer li:eq('+ret.index+')');
+                $curTab.addClass('activeWarning').find('img:hidden').show().siblings().hide();
+                $curTab.siblings('.activeWarning').removeClass('activeWarning').find('img:hidden').show().siblings().hide();
+                $('.aui-title').text($curTab.find('p').text());
+            });
+
+            /*
+             * jQuery事件:tab切换
+             */
+            $('#footer li').click(function() {
+                api.setFrameGroupIndex({
+                    name : 'detailGroupWin_footer_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+            });
+        };
+
+        function cb_toggleMenu(status) {
+            if (status) {
+                $('#menuBtn').show();
+            } else {
+                $('#menuBtn').hide();
+            }
+        }
+
+        function back1(){
+            api.closeWin();
+        }
+        
+        function openMenu() {
+            api.openFrame({
+                name : 'popMenu',
+                url : 'popMenu.html',
+                bounces : false,
+                rect : {x : 0, y : 0, w : 'auto', h : 'auto'},
+                pageParam : api.pageParam,
+                reload : true
+            });
+	    }
+
+        function openMenu_() {
+            /**
+             * 风险提示页面参数说明
+             * time : 每条风险提示需要等待多少秒才可以点击
+             * event : 通知事件名称
+             * autoClose = false : 传入true时，页面内的取消和阅读完成动作会自动关闭自身(不影响通知)
+             * v : 建议必传，传入当前时间戳，避免页面有缓存导致用户无法加载最新的内容
+             */
+            api.openFrame({
+                name : 'riskTip',
+                url : env.getRiskTipUrlTest() + "?time=3&event=onRiskTipDone&v=" + new Date().getTime(),
+                bounces : false,
+                rect : {x : 0, y : 0, w : 'auto', h : 'auto'},
+                pageParam : api.pageParam,
+                reload : true
+            });
+            /**
+             * 外链页面操作回调
+             * done : 已阅读完所选条目
+             * cancel : 在选择项目时点击了取消
+             */
+            api.addEventListener({name: 'onRiskTipDone'}, function(ret) {
+                alert("来自风险提示外链页面的回调：" + JSON.stringify(ret.value));
+                switch (ret.value) {
+                    case "done":
+                        api.toast({msg:"阅读完成了属于是！"});
+                        api.closeFrame({name:"riskTip"})
+                        break;
+                    case "cancel":
+                        api.toast({msg:"点击取消了属于是！"});
+                        api.closeFrame({name:"riskTip"})
+                        break;
+                }
+            });
+
+	    }
+    </script>
+</html>

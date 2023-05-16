@@ -1,0 +1,323 @@
+.shadow{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    background:#333;
+    opacity:0.6;
+    filter:alpha(opacity=60);
+}
+.menu-list li span{
+    text-indent: 1em;
+}
+#revertDiv{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+.winDiv{
+	display:none;
+	background-color:#f2f2f2;
+	width:300px;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+}
+.winTitleDiv{
+	text-align:center;
+	font-size: 20px;
+	color:#FFFFFF;
+	background-color:#DB4537;
+	height:35px;
+	line-height:35px;
+	-webkit-border-radius:10px 10px 0 0;
+	-moz-border-radius:10px 10px 0 0;
+	border-radius:10px 10px 0 0;
+}
+.winContentSnDiv{
+	font-size: 16px;
+	height:30px;
+	line-height:30px;
+	margin-top:20px;
+	text-align:center;
+	background-color:#F2F2F2;
+}
+.winContentTitleDiv{
+	font-size: 16px;
+	line-height:30px;
+	margin-bottom:20px;
+	text-align:center;
+	background-color:#F2F2F2;
+}
+.winButtonDiv{
+	background-color:#e0e0e0;
+	height:50px;
+	width:300px;
+	-webkit-border-radius:0 0 10px 10px;
+	-moz-border-radius:0 0 10px 10px;
+	border-radius:0 0 10px 10px;
+}
+.winOkBtn{
+	width: 130px;
+	height:40px;
+	color:#FFFFFF;
+	text-align: center;
+	font-size: 20px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+  	background-color:#DB4537;
+  	float:right;
+  	margin-top:5px;
+    margin-right:5px;
+
+}
+.winCancelBtn{
+    width: 130px;
+    height:40px;
+    color:#FFFFFF;
+    text-align: center;
+    font-size: 20px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	background-color:#3779d0;
+    float:left;
+  	margin-left:5px;
+  	margin-top:5px;
+}
+.otherDivHeader{
+	text-align:center;
+	font-size: 20px;
+	color:#FFFFFF;
+	background-color:#DB4537;
+	height:40px;
+	line-height:40px;
+	-webkit-border-radius:10px 10px 0 0;
+	-moz-border-radius:10px 10px 0 0;
+	border-radius:10px 10px 0 0;
+}
+.opinionLabelDiv{
+	text-align:center;
+	font-size: 16px;
+	color:#3498DB;
+	height:30px;
+	line-height:30px;
+}
+.otherDealInfo{
+	background-color:#FFFFFF;
+	border: 1px solid #adadad;
+	width:280px;
+	margin-left:10px;
+	margin-top:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.selectLabelDiv{
+	text-align:center;
+	font-size: 16px;
+	color:#3498DB;
+	height:30px;
+	line-height:30px;
+}
+.transferDiv{
+	width:300px;
+	height:40px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.transferSel{
+	width:280px;
+	height:40px;
+	line-height：40px;
+	margin-left:10px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	background-color:#FFFFFF;
+}
+.textareaborder{
+	height:40px;
+	margin-left:10px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	background-color:#FFFFFF;
+}
+.supportDefineCls{
+    background-color: #EFEFEF;
+    box-shadow: 0 0 5px #D6D6D6;
+    position: relative;
+    z-index: 3;
+}
+.supportDefineBtnDiv{
+	background-color: #d0d0d0;
+	height:50px;
+	line-height:50px;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+}
+.supportDefineOkBtn{
+	font-size: 20px;
+	color:#FFFFFF;
+	width:30%;
+	height:40px;
+	margin-left:10%;
+	margin-top:5px;
+	background-color:#66b3ff;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.supportDefineCancelBtn{
+	font-size: 20px;
+	color:#FFFFFF;
+	width:30%;
+	height:40px;
+	margin-left:20%;
+	margin-top:5px;
+	background-color:#66b3ff;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+/*矩形框*/
+.cardDiv{
+	width:100%;
+	height:40px;
+	font-size:12px;
+	margin-top:10px;
+}
+.cardTextareaDiv{
+	width:100%;
+	height:80px;
+	font-size:12px;
+	margin-top:10px;
+}
+.cardLabel{
+	color:#adadad;
+	width:30%;
+	height:40px;
+	line-height:40px;
+	text-align:right;
+	float:left;
+}
+.cardTextareaLabel{
+	color:#adadad;
+	width:30%;
+	height:80px;
+	line-height:80px;
+	text-align:right;
+	float:left;
+}
+.cardCon{
+	width:67%;
+	height:40px;
+	float:left;
+	border-radius:4px;
+	overflow:hidden;
+	border:1px solid #dddddd;
+	margin-right:0px;
+}
+.cardTextareaCon{
+	width:67%;
+	height:80px;
+	float:left;
+	border-radius:4px;
+	overflow:hidden;
+	border:1px solid #dddddd;
+	margin-right:0px;
+}
+.cardDate{
+	width:37%;
+	height:40px;
+	float:left;
+	border-radius:4px;
+	overflow:hidden;
+	border:1px solid #dddddd;
+	margin-right:2px;
+}
+.cardTime{
+	width:29%;
+	height:40px;
+	float:left;
+	border-radius:4px;
+	overflow:hidden;
+	border:1px solid #dddddd;
+	margin-right:8px;
+}
+.cardButtonDiv{
+	height:50px;
+	background-color:#DDDDDD;
+}
+.revertBillOkBtn{
+	font-size: 20px;
+	color:#FFFFFF;
+	width:30%;
+	height:40px;
+	margin-left:10%;
+	background-color:#66b3ff;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.revertBillCancelBtn{
+	font-size: 20px;
+	color:#FFFFFF;
+	width:30%;
+	height:40px;
+	margin-left:20%;
+	background-color:#66b3ff;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.elecRevertBillOkBtn{
+	font-size: 20px;
+	color:#FFFFFF;
+	width:30%;
+	height:40px;
+	margin-left:10%;
+	background-color:#66b3ff;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	margin-top:5px;
+}
+.elecRevertBillCancelBtn{
+	font-size: 20px;
+	color:#FFFFFF;
+	width:30%;
+	height:40px;
+	margin-left:20%;
+	background-color:#66b3ff;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	margin-top:5px;
+}
+
+.hotel-p-s-filterForBillMenu {
+	position: fixed;
+	z-index: 300;
+	bottom: 0;
+	width: 100%;
+	box-sizing: border-box;
+	background: #efefef;
+	border-width: 1px 0 0;
+	border-style: solid;
+	border-color: #ddd;
+	-webkit-border-image: url(data:image/gif;base64,R0lGODlhBQAFAIABAN3d3f///yH5BAEAAAEALAAAAAAFAAUAAAIHhB9pGatnCgA7) 2 stretch;
+}
+.menuListLi{
+	height:40px;
+	line-height:40px;
+	color:#46a3FF;
+	text-align:center;
+	font-size:16px;
+}

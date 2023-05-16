@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>巡检监控列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<!--<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />-->
+		<!--<link rel="stylesheet" type="text/css" href="../../css/common.css"/>-->
+		<link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+		<!--<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />-->
+		<style>
+		</style>
+	</head>
+	<body>
+		<script id="listView-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var major="";
+			var beginTime=it[i].begintime;
+			var endtime=it[i].endtime;
+			var plantime=it[i].plantime;
+			var actual_starttime=it[i].actual_starttime;
+			var actual_endtime=it[i].actual_endtime;
+			var applymajor=it[i].applymajor;
+			if( beginTime != null &&beginTime!=''){
+			beginTime=beginTime.substring(0,beginTime.lastIndexOf('-')+3);
+			}
+			if( endtime != null &&endtime!=''){
+			endtime=endtime.substring(0,endtime.lastIndexOf('-')+3);
+			}
+			if(plantime!=null&&plantime!=''){
+			plantime=plantime.substring(0,plantime.lastIndexOf('-')).replace('-','年')+'月';
+			}
+			if(actual_starttime!=null&&actual_starttime!=''){
+			actual_starttime= actual_starttime.substring(0,actual_starttime.lastIndexOf(':'));
+			}else{
+			actual_starttime="";
+			}
+			if(actual_endtime!=null&&actual_endtime!=''){
+			actual_endtime=actual_endtime.substring(0,actual_endtime.lastIndexOf(':'));
+			}else{
+			actual_endtime="";
+			}
+			
+			if("TOWER"==applymajor){
+			major="铁塔";
+			}else if("ROOMPARTS"==applymajor){
+			major="机房及配套";
+			}else if("HODINGPOLE"==applymajor){
+			major="抱杆";
+			}else if("CABINETPARTS"==applymajor){
+			major="机柜及配套";
+			}else if("EXTERNELECTRIC"==applymajor){
+			major="外市电";
+			}else if("TOWERROOMPARTS"==applymajor){
+			major="铁塔+机房及配套";
+			}else if("TOWERCABINETPARTS"==applymajor){
+			major="铁塔+机柜及配套";
+			}else if("TOWERRRU"==applymajor){
+			major="铁塔+RRU拉远";
+			}else if("POLEROOMPARTS"==applymajor){
+			major="抱杆+机房及配套";
+			}else if("POLECABINETPARTS"==applymajor){
+			major="抱杆+机柜及配套";
+			}else if("POLERRU"==applymajor){
+			major="抱杆+RRU拉远";
+			}
+			
+			}}
+			<li tapmode="active" onclick="openMonitorTask('{{=it[i].mainplanid != null ? it[i].mainplanid:""}}');">
+			<div class="liTop">
+			<div class="liTopIcon">
+			<div class="{{=it[i].isplamtimeout=="0" ? "greenIconCls" :"redIconCls"}}"></div>
+			</div>
+			<div class="liTopTitle">{{=it[i].mainplanname != null ? it[i].mainplanname:""}}</div>
+			<div class="liTopProgress">进度:{{=it[i].finishnum != null ? it[i].finishnum:"0"}}/{{=it[i].allnum != null ? it[i].allnum:"0"}}</div>
+			</div>
+			{{? api.pageParam.type=='XUNJIAN_MONITOR'}}
+			<div class="liDown">
+			<div class="liDownBegin" style="width: 50%;text-align:left;"><span style="color: #000000;font-weight:550 ;">计划类型:</span>{{=it[i].type != null ? it[i].type:""}}</div>
+			<div class="liDownBegin" style="width: 50%;"><span style="color: #000000;font-weight:550 ;">对象类型:</span>{{=it[i].planobjtype != null ? it[i].planobjtype:""}}</div>
+			</div>
+			<div class="lastDown" >
+			<div class="liDownBegin" style="width: 50%;text-align: left;margin-top: 0px;"><span style="color: #000000;font-weight:550 ;">计划开始时间:</span>{{=beginTime != null ? beginTime:""}}</div>
+			<div class="liDownEnd" style="width: 50%;text-align: right;margin-top: 0px;"><span style="color: #000000;font-weight:550 ;">计划结束时间:</span>{{=endtime != null ? endtime:""}}</div>
+			</div>
+			<div class="lastDown">
+			<div class="liDownRemark"><span style="color: #000000;font-weight:550 ;">巡检描述:</span>{{=it[i].remark != null ? it[i].remark:""}}</div>
+			</div>
+			{{?? api.pageParam.type=='NEW_XUNJIAN_MONITOR'}}
+			<div class="liDown">
+			<div class="liDownBegin" style="width: 65%;text-align:left;"><span style="color: #000000;font-weight:550 ;">适用专业:</span>{{=major}}</div>
+			<div class="liDownBegin" style="width: 35%;"><span style="color: #000000;font-weight:550 ;">执行时间:</span>{{=plantime}}</div>
+			</div>
+			<div class="lastDown" >
+			<div class="liDownBegin" style="width: 50%;text-align: left;margin-top: 0px;"><span style="color: #000000;font-weight:550 ;">实际开始:</span>{{=actual_starttime}}</div>
+			<div class="liDownEnd" style="width: 50%;text-align: right;margin-top: 0px;"><span style="color: #000000;font-weight:550 ;">实际结束:</span>{{=actual_endtime}}</div>
+			</div>
+			<div class="lastDown">
+			<div class="liDownRemark"><span style="color: #000000;font-weight:550 ;">巡检描述:</span>{{=it[i].remark != null ? it[i].remark:""}}</div>
+			</div>
+			{{?}}
+			</li>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<ul class="ccssoft_list" id="listView"></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript">
+		var listView;
+		apiready = function() {
+			var type = $api.getStorage("modelType");
+			if ("XUNJIAN_MONITOR" == type) {
+				listView = new C.ApiListView({
+					listName : 'planList',
+					fn : $client.getXunJianMonitorList
+				});
+			} else if ("NEW_XUNJIAN_MONITOR" == type) {
+				listView = new C.ApiListView({
+					listName : 'planList',
+					fn : $client.getXunJianMonitorNewList
+				});
+			}
+			listView.refresh();
+		};
+		/**
+		 *打开巡检任务的
+		 * readyStartTime 计划开始时间
+		 */
+		function openMonitorTask(mainplanid) {
+			openPage_MonitorTask(mainplanid,$api.getStorage("modelType"));
+		}
+
+		/**
+		 *从查询条件跳转过来的信息
+		 */
+		function cb_queryXunJianMonitorList(opts) {
+			listView.setQueryOptions(opts);
+			listView.refresh();
+		}
+	</script>
+</html>

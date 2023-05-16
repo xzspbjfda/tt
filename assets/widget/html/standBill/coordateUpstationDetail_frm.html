@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>协调上站详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/billRevertDetail.css" />
+	</head>
+	<body>
+		<div id="wrap">
+			<!--普通回单begin-->
+			<form>
+				<div id="billRevertDivId" style="overflow:auto;margin-bottom:55px;">
+					<div id="isStandStaHidDivId" class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>是否需要随工：
+						</div>
+						<div class="cardCon" style="padding-right: 5px;"  >
+							<select id="isNeedSelId" name="isUpStation" class="required" data-valid="required" data-error="请选择是否上站！"  value="" onchange="toggleFsuStatus(this)">
+								<option value="">------请选择------</option>
+								<option value="Y">是</option>
+								<option value="N">否</option>
+							</select>
+						</div>
+					</div>
+					<div id="fsuStatusLabel" class="cardDiv" style="display: none">
+						<div class="cardLabel">
+							<font color="red" >*</font>FSU状态是否正常：
+						</div>
+						<div class="cardCon" style="padding-right: 5px;" >
+							<select id="fsuStatus" name="isUpStation" class="required" data-valid="required" data-error="请选择是否上站！"  value="">
+								<option value="">------请选择------</option>
+								<option value="Y">是</option>
+								<option value="N">否</option>
+							</select>
+						</div>
+					</div>
+					<div class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>是否如约上站：
+						</div>
+						<div class="cardCon" style="padding-right: 5px;">
+							<select id="isBookSelId" name="isRelief" class="required" data-valid="required"   value="" onchange="isOnTime()" >
+								<option value="">------请选择------</option>
+								<option value="Y">是</option>
+								<option value="N">否</option>
+							</select>
+						</div>
+					</div>
+					<div class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>协调上站时间：
+						</div>
+						<div id="applyStandDateDivId" class="cardCon" style="display: none;padding-right: 5px;">
+							<input id="applyStandDateId" name="recoveryTime" type="text" class="required" data-valid="required||checkRecoveryTime" data-error="请填写修复时间！||修复时间不能大于当前时间!" style="line-height:40px;">
+						</div>
+						<div id="coorStandDateDivId" class="cardCon" style="padding-right: 5px;">
+							<input id="coorStandDateId" name="recoveryTime" type="datetime-local" class="required" data-valid="required||checkRecoveryTime" data-error="请填写修复时间！||修复时间不能大于当前时间!" style="line-height:40px;">
+						</div>
+					</div>
+					<div class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>协调离站时间：
+						</div>
+						<div class="cardCon" style="padding-right: 5px;">
+							<input id="outStandDateId" name="recoveryTime" type="datetime-local" class="required" data-valid="required||checkRecoveryTime" data-error="请填写修复时间！||修复时间不能大于当前时间!" style="line-height:40px;">
+						</div>
+					</div>
+					<div class="cardTextareaDiv" >
+						<div class="cardTextareaLabel" >
+							<font color="red" >*</font>处理方法：
+						</div>
+						<div class="cardTextareaCon" style="background-color: #fff">
+							<textarea id="coorDealCommentId" name="reliefCause" rows="4" class="noborder required" data-valid="isRelief" data-error="请填写免责具体原因！" ></textarea>
+						</div>
+					</div>
+				</div>
+				<!--普通回单end-->
+				<footer style="height:50px;">
+					<div class="cardButtonDiv">
+						<button class="billRevertCancelBtn"  onclick="api.closeWin()">
+							取消
+						</button>
+						<button  class="billRevertOkBtn" onclick="coordinateFunc()">
+							确定
+						</button>
+					</div>
+				</footer>
+			</form>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script>
+		var billModel;
+		var menuApplyId = "";
+		apiready = function() {
+//			api.setStatusBarStyle({
+//				style : 'light'
+//			});
+			var standBillModel = $api.getStorage('standBillModel');
+			menuApplyId = standBillModel.applyid;
+			document.getElementById('applyStandDateId').value = standBillModel.applystanddate;
+		};
+		function toggleFsuStatus(target) {
+			var val = $(target).val();
+			if (val == 'N') {
+				$('#fsuStatusLabel').show();
+			} else {
+				$('#fsuStatusLabel').hide();
+			}
+		}
+
+		function isOnTime() {
+			var isOnTime = $api.byId('isBookSelId').value;
+			if (isOnTime == 'Y') {
+				$("#applyStandDateDivId").show();
+				$("#coorStandDateDivId").hide();
+			} else {
+				$("#coorStandDateDivId").show();
+				$("#applyStandDateDivId").hide();
+			}
+		}
+
+		//协调上站
+		function coordinateFunc() {
+			var isNeedSel = $api.byId('isNeedSelId').value;
+			var isBookSel = $api.byId('isBookSelId').value;
+			var coorStandDateId = $api.byId('coorStandDateId').value;
+			var outStandDateId = $api.byId('outStandDateId').value;
+			var coorDealComment = $api.byId('coorDealCommentId').value;
+			var fsuStatus = $api.byId('fsuStatus').value;
+			//var coorStandDateDivId  = $api.byId('coorStandDateDivId');
+			//var applyStandDateDivId  = $api.byId('applyStandDateDivId');
+			//var applyStandDateId  = $api.byId('applyStandDateId');
+			if (!isNeedSel) {
+				api.toast({
+					msg : "请选择是否需要随工",
+					duration : 1000,
+					location : 'middle'
+				});
+				return false;
+			}
+			if (isNeedSel == 'N') {
+				if (!fsuStatus) {
+					api.toast({
+						msg : "请选择FSU状态",
+						duration : 1000,
+						location : 'middle'
+					});
+					return;
+				}
+			}
+			if (!isBookSel) {
+				api.toast({
+					msg : "请选择是否如约上站",
+					duration : 1000,
+					location : 'middle'
+				});
+				return;
+			} else if (isBookSel == "Y") {
+				coorStandDateId = $api.byId('applyStandDateId').value;
+			}
+			if (!coorStandDateId && isBookSel == "N") {
+				api.toast({
+					msg : "请填写协调上站时间",
+					duration : 1000,
+					location : 'middle'
+				});
+				return;
+			}
+			if (!outStandDateId) {
+				api.toast({
+					msg : "请填写协调离站时间",
+					duration : 1000,
+					location : 'middle'
+				});
+				return;
+			}
+			api.showProgress({
+				title : '处理中',
+				modal : true,
+			});
+			var data = {};
+			//	data.userID = menuUserId;
+			data.applyid = menuApplyId;
+			data.isneedperson = isNeedSel;
+			data.isbooking = isBookSel;
+			data.coorstanddate = coorStandDateId.replace(/T/, " ") + ":00";
+			data.cooroffsitedate = outStandDateId.replace(/T/, " ") + ":00";
+			data.dealcomment = coorDealComment;
+			data.fsuStatus = fsuStatus;
+			//	data.portType = "STATION_BILL_COORDINATE";
+			//	dealStandBillFunc(data, "coordinateModelPanel", "操作成功");
+//			$client.getCoordateUpstation(data, function(ret, err) {
+//				if (ret) {
+//				console.log("---------1------:"+ret);
+//				api.hideProgress();
+//					if (ret.success) {
+//						console.log("---------2------:"+ret.success);
+//						finishOptBill("操作成功");
+//					} else {
+//						api.toast({
+//							msg : ret.data_info,
+//							location : 'bottom'
+//						});
+//					}
+//				} else {
+//					api.toast({
+//						msg : err.msg,
+//						location : 'bottom'
+//					});
+//				}
+//				
+//			});
+		}
+
+		function finishOptBill(msg) {
+			//	var fromPage = api.pageParam.fromPage;
+			//用来表示来之上站待办还是上站已办
+			//如果字段为空或未定义，这默认赋值为上站待办
+			//	if (fromPage == null || fromPage == '' || fromPage == 'undefined') {
+			//		fromPage = "standBillListWin";
+			//	}
+			api.toast({
+				msg : msg,
+				duration : 1000,
+				location : 'middle'
+			});
+			window.setTimeout(function() {
+				//              openBillList(fromPage);
+				//              //如果是从上站已办页面过来，则操作完后退回到上站已办时，要刷新framegroup中的第一个frame
+				//		if (fromPage == 'standFinishBillListWin') {
+				//			api.execScript({
+				//				name : 'standFinishBillListWin',
+				//				script : 'refreshFrame();'
+				//			});
+				//		}
+				//		if (fromPage == "standBillListWin") {
+				api.execScript({
+					name : 'standBillListWin',
+					script : 'refreshFrame();'
+				});
+				//		}
+				api.closeWin('coordateUpstationWin');
+				api.closeToWin({
+					name : 'standBillListWin'
+				});
+			}, 1000);
+		}
+	</script>
+</html>

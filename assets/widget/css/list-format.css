@@ -1,0 +1,103 @@
+/*设置详情页面的格式*/
+.classify {
+    height: 37px;
+    line-height: 37px;
+    background-color: #fff;
+    position: relative;
+    border-bottom: 1px solid #e0e0e0;
+}
+.classify .sublogo {
+    width: 30px;
+    margin-top: 15px;
+    margin-left: 15px;
+    float: left;
+}
+.classify .arrow {
+    position: absolute;
+    vertical-align: top;
+    right: 15px;
+    top: 20px;
+    height: 20px;
+}
+.classify .info {
+    height: 35px;
+    line-height: 35px;
+    float: left;
+    clear: both;
+    width: 95%;
+    margin: 1px 0 1px 10px;
+}
+.classify .info .title {
+    height: 35px;
+    font-size: 15px;
+    line-height: 35px;
+    color: #000;
+    float: left;
+    width: 38%;
+}
+
+.classify .info .subtitle {
+    height: 35px;
+    font-size: 15px;
+    line-height: 35px;
+    color: #666;
+    float: right;
+    width: 60%;
+}
+
+@media screen and (max-width: 320px) {
+    .classify .info .title {
+        height: 35px;
+        font-size: 15px;
+        line-height: 35px;
+        color: #000;
+        float: left;
+        width: 35%;
+    }
+
+    .classify .info .subtitle {
+        height: 35px;
+        font-size: 15px;
+        line-height: 35px;
+        color: #666;
+        float: right;
+        width: 65%;
+    }
+}
+
+.classify .info .active {
+    background: url(../image/icons/png/arrow-right.png) no-repeat center right;
+}
+.subclass {
+    display: none;
+}
+.subclass .flipcard {
+    margin: 0;
+}
+.brb {
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+.bb {
+    border-bottom: 1px solid #e0e0e0;
+}
+html, body {
+    width: 100%;
+    min-height: 100%;
+    background: #f0f0f0;
+}
+.darktitle {
+    height: 40px;
+    line-height: 40px;
+    margin-left: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.titleinfo{
+background-color: #f0f0f0;
+width: 100%;
+margin-left: 0px;
+padding-left: 12px;
+
+}

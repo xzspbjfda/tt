@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html >
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+				<style>
+				.aui-content-wxx{
+					width: 100%;
+					margin: 0;
+				}
+				.aui-content-wxx ul{
+					background-color: #fff;
+					border-radius: 0;
+					overflow: hidden;
+					margin-bottom: 10px;
+					padding: 0 3%;
+				}
+				</style>
+	</head>
+	<body style="width: 100%">
+		<script id="billDetail-template" type="text/x-dot-template">
+			{{
+				var status = it.status;
+				var authStatus = it.authStatus;
+				var statusId = 0;
+				var statusName = "";
+				if(status=="0"){
+					statusName = "待审核";
+				}else if(status=="1"){
+					statusName = "待签到";
+					statusId = 1;
+				}else if(status=="2"&&authStatus!="1"){
+					statusName = "待身份识别";
+					statusId = 2;
+				}else if(status=="2"&&authStatus=="1"){
+					statusName = "待身份识别";
+					statusId = 2;
+				}else if(status=="3"){
+					statusName = "施工前记录";
+					statusId = 3;
+				}else if(status=="4"){
+					statusName = "施工中记录";
+					statusId = 4;
+				}else if(status=="5"){
+					statusName = "离站确认";
+					statusId = 5;
+				}else if(status=="6"){
+					statusName = "待归还钥匙";
+					statusId = 6;
+				}else if(status=="9"){
+					statusName = "已归档";
+					statusId = 9;
+				}
+			}}
+			<ul class="aui-list-view">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>出入站申请单信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 工单号</div>
+					<div class="aui-col-xs-8 aui-pull-right">{{=it.billSn != null ? it.billSn:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 工单状态</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=statusName}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 上站类型</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.standTypeName) != 'undefined' ? it.standTypeName:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 作业内容</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.workTypeName) != 'undefined' ? it.workTypeName:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 上站开门方式</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.openWayName) != 'undefined' ? it.openWayName:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 进站人姓名</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.arrivalsName) != 'undefined' ? it.arrivalsName:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 进站人身份</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.arrivalsTypeName) != 'undefined' ? it.arrivalsTypeName:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 预约开始时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.bookStartTime != undefined ? it.bookStartTime : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 预约结束时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.bookEndTime != undefined ? it.bookEndTime : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 申请时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.applyTime != undefined ? it.applyTime : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 上站原因</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.cause}}</div>
+				</li>
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>上站确认信息</h2></div>
+				{{?statusId>=1}}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 审核开始时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.auditStartTime != undefined ? it.auditStartTime : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 审核结束时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.auditEndTime != undefined ? it.auditEndTime : ""}}</div>
+				</li>
+				{{?}}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 是否借用钥匙</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.isBorrowKey== 'Y' ? "是" : it.isBorrowKey == 'N' ? "否" : ""}}</div>
+				</li>
+				{{?it.isBorrowKey== 'Y'}}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 钥匙名称</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.keyCode) != 'undefined' ? it.keyCode:''}}</div>
+				</li>
+				{{?}}
+				<!-- <li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 施工内容</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=typeof(it.operationContentName) != 'undefined' ? it.operationContentName:''}}</div>
+				</li> -->
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 是否随工</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.isNeedPerson== 'Y' ? "是" : it.isNeedPerson == 'N' ? "否" : ""}}</div>
+				</li>
+				{{?it.isNeedPerson== 'Y'}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 随工人员姓名</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.personName}}</div>
+					</li>
+				{{?}}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 上站联系人</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.standPerson}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 联系人电话</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.standPhone}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 上站注意事项</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.standNotes}}</div>
+				</li>
+				<!-- <li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 备注说明</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.remark}}</div>
+				</li>	 -->
+			</ul>
+			
+			{{?statusId > 1}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>签到信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 签到人姓名</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signUserName}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 签到时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signData != undefined ? it.signData : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 签到经度</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signLongitude}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 签到维度</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signLatitude}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 偏差距离</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signDeviationDistance}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 偏差描述</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signDeviationRemork}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 偏离原因</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.signDeviationReason}}</div>
+				</li>
+			</ul>
+			{{?}}
+			
+			{{?typeof(it.authStatus) != 'undefined' && it.authStatus != null && it.authStatus != ""}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>身份识别信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 识别时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.authTime != undefined ? it.authTime : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 识别人姓名</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.authUserName}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 识别次数</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.authTimes}}</div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 识别状态</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.authStatus == 1 ? "成功" : it.authStatus == 2 ? "失败" : ""}}</div>
+				</li>
+			</ul>
+			{{?}}
+
+			{{?typeof(it.openDoorStatus) != 'undefined' && it.openDoorStatus != null && it.openDoorStatus != ""}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>开门信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 开门时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.openDoorTime != undefined ? it.openDoorTime : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 操作人姓名</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.openDoorUserName}}</div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 开门状态</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.openDoorStatus == 1 ? "成功" : it.openDoorStatus == 2 ? "失败" : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 开门来源</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.openDoorSource == 1 ? "APP" : it.openDoorSource == 2 ? "其他" : ""}}</div>
+				</li>
+			</ul>
+			{{?}}
+			
+			{{?statusId > 2 || (statusId==2 && (typeof(it.openDoorStatus) != 'undefined' && it.openDoorStatus != null && it.openDoorStatus != ""))}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>人脸识别信息</h2></div>
+				{{? it.imgList0 != null && it.imgList0.length>0 }}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 人脸识别照片</div>
+						<div class="aui-col-xs-8 aui-pull-right">
+							{{ for(var i=0, len=it.imgList0.length; i < len; i++) {}}
+								{{? it.imgList0[i].substring(it.imgList0[i].length-3).toUpperCase() == 'JPG' || it.imgList0[i].substring(it.imgList0[i].length-3).toUpperCase() == 'GIF' || it.imgList0[i].substring(it.imgList0[i].length-3).toUpperCase() == 'PNG' || it.imgList0[i].substring(it.imgList0[i].length-3).toUpperCase() == 'PEG' }}
+									<img style="margin:5px;" class="aui-img-object aui-pull-left" src="{{=it.imgList0[i]}}" height="73" width="48" onclick="openImg('{{=it.imgList0[i]}}');"></img>
+								{{??}}
+									{{? it.imgList0[i].IMAGENAME!=null}}
+									-
+									{{??}}
+									-
+									{{?}}
+								{{?}}
+							{{ } }}
+						</div>
+					</li>
+				{{??}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 人脸识别照片</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							无
+						</div>
+					</li>
+				{{? }}
+			</ul>
+			{{?}}
+
+			{{?statusId > 3}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>施工前信息</h2></div>
+				{{? it.imgList1 != null && it.imgList1.length>0 }}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 施工前照片</div>
+						<div class="aui-col-xs-8 aui-pull-right">
+							{{ for(var i=0, len=it.imgList1.length; i < len; i++) {}}
+								{{? it.imgList1[i].substring(it.imgList1[i].length-3).toUpperCase() == 'JPG' || it.imgList1[i].substring(it.imgList1[i].length-3).toUpperCase() == 'GIF' || it.imgList1[i].substring(it.imgList1[i].length-3).toUpperCase() == 'PNG' || it.imgList1[i].substring(it.imgList1[i].length-3).toUpperCase() == 'PEG' }}
+									<img style="margin:5px;" class="aui-img-object aui-pull-left" src="{{=it.imgList1[i]}}" height="73" width="48" onclick="openImg('{{=it.imgList1[i]}}');"></img>
+								{{??}}
+									{{? it.imgList1[i].IMAGENAME!=null}}
+									-
+									{{??}}
+									-
+									{{?}}
+								{{?}}
+							{{ } }}
+						</div>
+					</li>
+				{{??}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 施工前照片</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							无
+						</div>
+					</li>
+				{{? }}
+			</ul>
+			{{?}}
+			
+			{{?statusId > 4}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>施工中信息</h2></div>
+				{{? it.imgList2 != null && it.imgList2.length>0 }}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 施工中照片</div>
+						<div class="aui-col-xs-8 aui-pull-right">
+							{{ for(var i=0, len=it.imgList2.length; i < len; i++) {}}
+								{{? it.imgList2[i].substring(it.imgList2[i].length-3).toUpperCase() == 'JPG' || it.imgList2[i].substring(it.imgList2[i].length-3).toUpperCase() == 'GIF' || it.imgList2[i].substring(it.imgList2[i].length-3).toUpperCase() == 'PNG' || it.imgList2[i].substring(it.imgList2[i].length-3).toUpperCase() == 'PEG' }}
+									<img style="margin:5px;" class="aui-img-object aui-pull-left" src="{{=it.imgList2[i]}}" height="73" width="48" onclick="openImg('{{=it.imgList2[i]}}');"></img>
+								{{??}}
+									{{? it.imgList2[i].IMAGENAME!=null}}
+									-
+									{{??}}
+									-
+									{{?}}
+								{{?}}
+							{{ } }}
+						</div>
+					</li>
+				{{??}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 施工中照片</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							无
+						</div>
+					</li>
+				{{? }}
+			</ul>
+			{{?}}
+			{{?statusId > 5}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>离站信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 离站人姓名</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.leaveUserName}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 离站状态</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.leaveStatus == 1 ? "正常离站" : it.leaveStatus == 2 ? "异常离站" : ""}}</div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 离站原因</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.leaveReason}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 离站时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.leaveTime != undefined ? it.leaveTime : ""}}</div>
+				</li>
+				{{? it.imgList3 != null && it.imgList3.length>0 }}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 离站照片</div>
+					<div class="aui-col-xs-8 aui-pull-right">
+							{{ for(var i=0, len=it.imgList3.length; i < len; i++) {}}
+								{{? it.imgList3[i].substring(it.imgList3[i].length-3).toUpperCase() == 'JPG' || it.imgList3[i].substring(it.imgList3[i].length-3).toUpperCase() == 'GIF' || it.imgList3[i].substring(it.imgList3[i].length-3).toUpperCase() == 'PNG' || it.imgList3[i].substring(it.imgList3[i].length-3).toUpperCase() == 'PEG' }}
+									<img style="margin:5px;" class="aui-img-object aui-pull-left" src="{{=it.imgList3[i]}}" height="73" width="48" onclick="openImg('{{=it.imgList3[i]}}');"></img>
+								{{??}}
+									{{? it.imgList3[i].IMAGENAME!=null}}
+									-
+									{{??}}
+									-
+									{{?}}
+								{{?}}
+							{{ } }}
+						</div>
+					</li>
+				{{??}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 离站照片</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							无
+						</div>
+					</li>
+				{{? }}
+			</ul>
+			{{?}}
+			
+						
+			{{?statusId == 9}}
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>归档信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 是否归还钥匙</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.isReturnKey == 'Y'? "是" : it.isReturnKey ==  'N' ? "否" : ""}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 进站人电话</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.arrivalsPhone}}</div>
+				</li>
+			</ul>
+			{{?}}
+		</script>
+		<div class="aui-content aui-content-wxx" id="standBillDetail">
+
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/request.js"></script>
+	<script>
+		refreshFrame = function() {
+			console.log("+=========refreshFrame==================+")
+			console.log(api.pageParam.applyId);
+			console.log(api.pageParam.isHistory);
+			var Id = api.pageParam.applyId;
+			var isHistory = api.pageParam.isHistory;
+			if (api.pageParam.fromTab != null && api.pageParam.fromTab != '' && api.pageParam.fromTab != 'undefined'){
+				opts.fromTab = api.pageParam.fromTab
+			}else{
+				opts.fromTab = ''
+			}
+			if (Id != null && Id != '' && Id != 'undefined') {
+				opts.Id = Id;
+				opts.stationname=api.pageParam.stationName;
+			}
+
+			if (isHistory != null && isHistory != '' && isHistory != 'undefined') {
+				opts.ishistory = isHistory;
+			}
+			api.showProgress({
+				title : '加载中',
+				modal : false
+			});
+			request.getStandBillDetail = function (opts,callback) {
+				service({
+					url: "/enterStationBill/handlerRequest.do",
+					data: opts
+				},callback)
+			};
+
+			request.getStandBillDetail(opts, function(ret, err) {
+				if (ret) {
+					if (ret.success&&ret.data!=null) {
+						var data = ret.data.enterStationBill
+						data.imgList0 = ret.data.list0
+						data.imgList1 = ret.data.list1
+						data.imgList2 = ret.data.list2
+						data.imgList3 = ret.data.list3
+						//签到获取站址经纬度
+						data.st_lat = data.stLat
+						data.st_lon = data.stLon
+						// console.log("工单详情:"+JSON.stringify(data))
+						//开门用值
+						$api.setStorage('st_id', data.stationId); //站址Id
+						$api.setStorage('st_code', data.stationCode); //站址编码
+						$api.setStorage('UserUnit',data.company); //用户单位
+						$api.setStorage('UserName', data.arrivalsName); //用户姓名
+						$api.setStorage('UserMobile', data.arrivalsPhone); //用户手机
+						$api.setStorage('OpenReason', "施工勘察"); //开门原因
+						$api.setStorage('OpenWay', data.openWay); //开门方式
+						data.applyId = data.billSn;
+						$api.setStorage("standBillModel", data);
+						data = setInitDictList(data);
+						//照片用值
+						var parolData={};
+						parolData.stationname = data.stationName;
+						parolData.stationcode = data.stationId;
+						parolData.deviceid = data.stationId;
+						$api.setStorage('parolData', parolData);
+						//新站地址信息用值
+						data.st_code = data.stationId;
+						
+						$api.setStorage('billModel',data)
+						//获取区域经理
+						// getAreaman(ret,ret.model);
+						//存储日志
+						$api.setStorage("standBillAction", ret.data.standBillAction);
+						renderTemp('standBillDetail', 'billDetail-template', data);
+					} else {
+						api.toast({
+							msg : "没有",
+							location : 'middle'
+						});
+					}
+				} else {
+					api.toast({
+						msg : err.msg,
+						location : 'middle'
+					});
+				}
+				api.hideProgress();
+			});
+		}
+		var opts = {};
+		apiready = function() {
+			refreshFrame();
+		};
+
+		function initView(ret,billModel){
+			renderTemp('standBillDetail', 'billDetail-template', billModel);
+			$api.setStorage("standBillModel", billModel);
+			//将处理流程存入缓存
+			$api.setStorage("standBillAction", ret.actionList);
+
+			var userid = $api.getStorage('user') ? $api.getStorage('user').userid : null;
+			/*如果当前的用户id等于建单人id（createoper） 才可以进行（是否及时上站和最终确认操作），否则隐藏操作按钮 */
+			if (billModel.processflag_dictvalue == 'ISPROMPT' || billModel.processflag_dictvalue == 'SENISPROMPT') {
+				if (userid && billModel.createoper != userid) {
+					showlog('该出入站工单[' + billModel.id + ']建单人(' + billModel.createoper + ')非当前用户(' + userid + ')，无法操作工单！');
+					api.toast({
+						msg : '该出入站工单建单人非当前用户，无法操作工单！'
+					});
+					api.execScript({
+						name : 'mainStandBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+			}
+			//“是否同意”的出入站工单需有区域经理处理
+			if (billModel.processflag_dictvalue == 'ISAGREE') {
+				if (userid && billModel.st_areamanager.indexOf(userid) == -1) {
+					showlog('该出入站工单[' + billModel.id + ']区域经理(' + billModel.st_areamanager + ')非当前用户(' + userid + ')，无法操作工单！');
+					api.toast({
+						msg : '该出入站工单区域经理非当前用户，无法操作工单！'
+					});
+					api.execScript({
+						name : 'mainStandBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+			}
+		}
+
+		//获取区域经理
+		function getAreaman(ret,billModel) {
+			var userNameList = new Array;
+			var userIdList = new Array;
+			$client.getAreaManagers({
+				siteid : billModel.st_id
+			}, function(ret1, err) {
+				if (ret1) {
+					if (ret1.success) {
+						var areaManagers = ret1.list;
+						for (var i = 0, size = areaManagers.length; i < size; i++) {
+							//						$('<option>').text(areaManagers[i].username).val(areaManagers[i].userid).appendTo('#areaManagerId');
+							userNameList.push(areaManagers[i].username);
+							userIdList.push(areaManagers[i].userid);
+						}
+//						var userInfoId = listToStr(userIdList);
+//											alert(userInfoId);
+						billModel.st_areamanager = listToStr(userIdList);
+						billModel.st_areamanager_name = listToStr(userNameList);
+						initView(ret,billModel);
+//						var content = $api.byId('stationDetail');
+//						var tpl = $api.byId('stationDetail-template').text;
+//						var tempFn = doT.template(tpl);
+//						content.innerHTML = tempFn(billModel);
+//						$api.setStorage('stationModel', billModel);
+//						$api.setStorage('stationName', billModel.st_name);
+						api.parseTapmode();
+					} else {
+						initView(ret,billModel);
+						api.parseTapmode();
+					}
+				} else {
+					initView(ret,billModel);
+					api.parseTapmode();
+				}
+			});
+		}
+
+		//把list转为字符串
+		function listToStr(stringList) {
+			if (stringList == null) {
+				return null;
+			}
+			var result = "";
+			var flag = false;
+			for (var i = 0; i < stringList.length; i++) {
+				var string = stringList[i];
+				if (flag) {
+					//	                result.append(",");
+					result += ",";
+				} else {
+					flag = true;
+				}
+				result += string;
+			}
+			return result.toString();
+		}
+
+		function cb_openBillPicDetail() {
+//          pageParam.billId = api.pageParam.billId;
+//          pageParam.billSn = api.pageParam.billSn;
+            api.openFrame({
+                name : 'standPicDetail_frm',
+                url : 'standPicDetail_frm.html',
+                bounces : false,
+                pageParam : opts
+            });
+        }
+
+		function setInitDictList(data) {
+			var standTypeListObj = $api.getStorage("standTypeList");
+			//switchStandType(data.standType,data);
+			var workTypeListObj0 = $api.getStorage("workTypeList0");
+			var workTypeListObj1 = $api.getStorage("workTypeList1");
+			var workTypeListObj2 = $api.getStorage("workTypeList2");
+			var openWayListObj = $api.getStorage("openWayList");
+			var arrivalsTypeListObj = $api.getStorage("arrivalsTypeList");
+			var operationContentListObj = $api.getStorage("operationContentList");
+			data = getListName(standTypeListObj,"standTypeName",data.standType,data);
+			if(data.standType=="0"){
+				data = getListName(workTypeListObj0,"workTypeName",data.workType,data);
+			}else if(data.standType=="1"){
+				data = getListName(workTypeListObj1,"workTypeName",data.workType,data);
+			}else if(data.standType=="2"){
+				data = getListName(workTypeListObj2,"workTypeName",data.workType,data);
+			}else{
+				data.workTypeName = ""
+			}
+			data = getListName(openWayListObj,"openWayName",data.openWay,data);
+			data = getListName(arrivalsTypeListObj,"arrivalsTypeName",data.arrivalsType,data);
+			// data = getListName(operationContentListObj,"operationContentName",data.operationContent,data);
+			console.log(JSON.stringify(data));
+			return data;
+        }
+		function getListName(list,id,value,data){
+			data[id] = "";
+			// console.log(id+"---"+value)
+			list.forEach(element => {
+				// console.log(element.itemname+"---"+element.itemcode)
+				if(value == element.itemcode){
+					data[id] = element.itemname;
+				}
+			});
+			return data;
+		}
+
+		function openImg(imgPath) {
+			console.log("imgPath=="+imgPath);
+			window.event.stopPropagation();
+            showlog("openImg:" + imgPath);
+            // var module = api.require('imageBrowser');
+            // module.openImages({
+            //     imageUrls : [imgPath],
+            //     showList : false
+            // });
+			var pageParam = {
+				images: [imgPath]
+			};
+			api.openWin({
+				name: 'imageViewer',
+				url:'../photoViewer/mainFrame.html',
+				pageParam : pageParam
+			})
+		}
+
+	</script>
+</html>

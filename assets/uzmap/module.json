@@ -1,0 +1,135 @@
+{modules:[{
+	"name":"apicloud",
+	"class":"com.king.apicloud.APIModule"
+}
+,{
+	name:'app',
+	class:'com.apicloud.navigation.MyApplication'
+},
+{
+	name:'baiduNavigation',
+	class:'com.apicloud.navigation.UZbaiduNavigation'
+}
+,{
+		    name:'eas',
+		    class:'com.uzmap.pkg.uzmodules.uzBMap.EasDelegate'
+},
+{
+		    name:'bMap',
+		    class:'com.uzmap.pkg.uzmodules.uzBMap.UzBMap'
+}
+,{
+    name:'db',
+    class:'com.uzmap.pkg.uzmodules.uzdb.UzDatebaseSQL'
+}
+,{
+	 "name":"fileBrowser",
+	"class":"com.apicloud.fileBrowser.FileBrowserModule"
+}
+,{
+
+			"name":"FNImageClip",
+			"class":"com.apicloud.devlop.FNImageClip.UzImgClip"
+}
+,{
+	"name":"FNScanner",
+	"class":"com.uzmap.pkg.uzmodules.uzFNScanner.UzFNScanner"
+}
+,{
+			"name":"fs",
+			"class":"com.uzmap.pkg.uzmodules.fs.UzFsUtils"
+}
+,{
+   name:'imageBrowser',
+   class:'com.uzmap.pkg.uzmodules.uzimageBrowser.UZImageBrowser'
+}
+,{
+		    name:'imageFilter',
+		    class:'com.uzmap.pkg.uzmodules.uzimageFilter.uzimageFilter'
+}
+,{
+	name:'jpushVip',
+	class:'com.dbc.jpushvip.JPush'
+},
+{
+	name:'ajpusheas',
+	class:'com.dbc.jpushvip.AppDelegate'
+}
+,{
+    "name":"logCrash",
+    "class":"com.example.bugly.BuglyAndroid"
+}
+,{
+    name:'mam',
+    class:'com.uzmap.pkg.uzmodules.uzmam.UzMAM'
+}
+,{
+    name:'model',
+    class:'com.uzmap.pkg.uzmodules.uzmcm.UzMCM'
+},
+{
+    name:'query',
+    class:'com.uzmap.pkg.uzmodules.uzmcm.UzMCMQuery'
+},
+{
+    name:'user',
+    class:'com.uzmap.pkg.uzmodules.uzmcm.UzMCMUser'
+},
+{
+    name:'relation',
+    class:'com.uzmap.pkg.uzmodules.uzmcm.UzMCMRelation'
+}
+,{"name":"miCalendar","class":"com.apicloud.miCalendar.CalendarModule"}
+,{
+			name:'MNActionButton',
+			class:'com.uzmap.pkg.uzmodules.MNActionButton.MNActionButton'
+}
+,{
+	"name":"safe",
+	"class":"com.tieta.moduleSafe.SafeDelegate"
+},
+{
+	"name":"moduleSafe",
+	"class":"com.tieta.moduleSafe.APIPush"
+}
+,{
+	"name":"eas",
+	"class":"com.tieta.moduleSo.EasDelegate"
+},
+{
+	"name":"moduleSo",
+	"class":"com.tieta.moduleSo.APIPush"
+}
+,{
+	name:'personalCenter',
+	class:'com.uzmap.pkg.uzmodules.uzPersonCenter.UzPersonCenter'
+}
+,{
+	"name":"photoBrowser",
+	"class":"com.uzmap.pkg.uzmodules.photoBrowser.PhotoBrowser"
+}
+,{
+		    name:'signature',
+		    class:'com.apicloud.signature.UzSignature'
+}
+,{
+		    name:'tabBar',
+		    class:'com.uzmap.pkg.uzmodules.uztabBar.UzTabBar'
+}
+,{
+	name:'trans',
+	class:'com.uzmap.pkg.uzmodules.uzxml.UzXml'
+}
+,{
+	name:'UIPhotoViewer',
+	class:'com.uzmap.pkg.uzmodules.photoBrowserSu.PhotoBrowser'
+}
+,{
+		    name:'wx',
+		    class:'com.uzmap.pkg.uzmodules.uzWx.UzWx'
+}
+,{
+	"name":"zyEncryptCcssoft",
+	"class":"com.halfsuger.zyencryptccssoft.zyEncryptCcssoft"
+}
+]}

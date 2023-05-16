@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>手机签到</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="../bill/css/supportDefineDetail.css"/>
+    <style>
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <div id="sddDivId" style="overflow:auto;margin-bottom:55px;">
+        <div  id="transferLabelDivId" class="selectLabelDiv" style="margin-top: 10px;display: none" >
+            <div id="user_name" style="font-size:16px;color:#adadad;">
+                接收人
+            </div>
+        </div>
+        <div id="locaId" class="cardTextareaDiv" style="display: none;">
+            <div class="cardTextareaLabel">
+                所在位置：
+            </div>
+            <div class="cardTextareaCon">
+                <textarea id="locationId" rows="8"></textarea>
+            </div>
+        </div>
+        <div class="cardTextareaDiv" id="err_cause" style="display:none">
+            <div class="cardTextareaLabel">
+                偏差说明：
+            </div>
+            <div class="cardTextareaCon">
+                <textarea id="opinion" rows="4" style="overflow:auto; "></textarea>
+            </div>
+        </div>
+    </div>
+    <footer id="footId" style="height:50px;display: none;">
+        <div class="cardButtonDiv">
+            <button class="cancelBtn" onclick="signSubmit();">
+                确定
+            </button>
+            <button class="okBtn" onclick="restartLocationFunc();">
+                重新定位
+            </button>
+        </div>
+    </footer>
+</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript">
+    var idclean = "";
+    var distance;
+    var lon;
+    var lat;
+    var stLon;
+    var stLat;
+    apiready = function () {
+        api.addEventListener({
+            name: 'viewappear'
+        }, function (ret, err) {
+            api.closeFrame({
+                name: 'checkSignIn'
+            });
+        });
+        restartLocationFunc();
+        api.setStatusBarStyle({
+            style: 'light'
+        });
+    };
+
+    //初始化故障定位信息
+    function initRelief() {
+        var user = $api.getStorage('user');
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('locaId').style.display = "";
+        $api.byId('footId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('err_cause').style.display = "";
+
+        console.log(JSON.stringify(api.pageParam))
+
+        var location = $api.getStorage('LAST_GPS_LOCATION1');
+        var currentTime = new Date().pattern("HH:mm:ss");
+        var lon1 = $api.getStorage("lon1");
+        var lat1 = $api.getStorage("lat1");
+        lon = location.lon != null ? location.lon : lon1;
+        lat = location.lat != null ? location.lat : lat1;
+        var status = api.pageParam.status;
+        var stLon;
+        var stLat;
+        // 不知道为什么要这么取，根据后端查询sql推断出
+        // 使用baidux和baiduy
+        if(status=="6"||status=="9"||status=="10"){
+            stLon = api.pageParam.baidux;
+            stLat = api.pageParam.baiduy;
+            // 使用latitude和longitude
+        }else if(status=="5"||status=="7"){
+            stLon = api.pageParam.latitude;
+            stLat = api.pageParam.longitude;
+        }
+        stLon = stLon || 0;
+        stLat = stLat || 0;
+        var stLonText = stLon == 0 ? "异常" : stLon;
+        var stLatText = stLat == 0 ? "异常" : stLat;
+        lon = displaynum(lon);
+        lat = displaynum(lat);
+        var info = "";
+        var distance = GetDistance(stLat, stLon, lat, lon);
+        $api.setStorage('lon', lon);
+        $api.setStorage('lat', lat);
+        $api.setStorage('distance', distance);
+        if (distance <= 100) {
+            info = "站址经度是：" + stLonText + "\n站址纬度是：" + stLatText + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + currentTime + "\n偏差：" + distance + "米" + "\n情况描述：偏差在100米范围内，可以进行手机定位";
+        } else if (distance > 1000) {
+            //readonly="readonly" style="overflow:auto;background-color: #FAFAFA "
+            console.log("时间：" + location.timestamp);
+            info = "站址经度是：" + stLonText + "\n站址纬度是：" + stLatText + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + currentTime + "\n偏差：" + distance + "米" + "\n情况描述：偏差已经超过1000米，请在空旷的地方进行重新定位或者填写误差过大原因";
+        }
+        $api.byId('locationId').innerHTML = info;
+    }
+
+    function signSubmit() {
+        var user = $api.getStorage('user');
+        var userId = user.userid;
+        var username = user.username;
+        var id = api.pageParam.id; //巡检项目ID
+        var opinion = $api.byId('opinion').value; //偏差说明
+        var distance = $api.getStorage('distance');
+        var time = new Date().pattern("yyyy-MM-dd HH:mm:ss"); //签到时间
+        if(!distance){
+            return api.toast({msg: "未获取到位置！请稍后再点击！",location: 'middle'});
+        }
+        if (distance > 1000 && !opinion) {
+            return api.toast({msg: "偏差距离过大，请填写说明...",location: 'middle'});
+        }
+        api.showProgress({title: '处理中', modal: true});
+        var opts = {
+            id: id,
+            signinperson: userId,
+            signinpersonName: username,
+            signinlongitude: $api.getStorage('lon'),
+            signinlatitude: $api.getStorage('lat'),
+            signindistance: distance,
+            description: opinion,
+            signtime: time
+        };
+        $client.zndwTaskdrawSignInSubmit(opts, function (ret, err) {
+            console.log(JSON.stringify(ret));
+            if (ret) {
+                if (ret.success) {
+                    api.toast({
+                        msg: "签到成功",
+                        duration: 1000,
+                        location: 'middle'
+                    });
+                    window.setTimeout(function () {
+                        //刷新页面
+                        api.sendEvent({name: 'generationBill_list_frm', extra: {state: 'checkSign'}});
+                        api.sendEvent({name: 'generationBill_detail_frm', extra: {state: 'checkSign'}});
+                        api.closeWin();
+                    }, 1500);
+                } else {
+                    api.toast({
+                        msg: ret.errorMsg,
+                        location: 'middle'
+                    });
+                }
+            } else {
+                api.toast({
+                    msg: '接口访问失败',
+                    location: 'middle'
+                });
+            }
+            api.hideProgress();
+        });
+    }
+
+    function restartLocationFunc() {
+
+        getHeartFromGps("checkSignIn_win", "checkSignIn_frm");
+    }
+
+    function getHeartFromGps(winName, frmName) {
+        var script = "startLocation('" + winName + "','" + frmName + "');";
+        console.log("异步加载" + script);
+        api.execScript({
+            name: "home_win",
+            frameName: 'gps',
+            script: script
+        });
+        gps_invoke();
+    }
+
+    function gps_invoke() {
+        var lastLocation = $api.getStorage('LAST_GPS_LOCATION1');
+        console.log("经度：" + lastLocation.lon);
+        console.log("定位时间：" + lastLocation.timestamp);
+        if (!lastLocation || !lastLocation.status || lastLocation.timestamp == 0 || lastLocation.lon == 0 || lastLocation.lat == 0) {
+            return;
+        }
+        $api.setStorage("lon1", lastLocation.lon);
+        $api.setStorage("lat1", lastLocation.lat);
+        window.setTimeout(function () {
+            api.hideProgress();
+            api.execScript({
+                frameName: "dd_checkSignIn_frm",
+                script: 'initRelief();'
+            });
+        }, 2000);
+    }
+
+    function closeWin() {
+        api.closeWin({
+            name: 'supportDefine_win'
+        });
+    }
+</script>
+</html>

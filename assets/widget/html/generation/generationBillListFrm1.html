@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>代维调度待办列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<style>
+			.aui-flex-col:first-child {
+				height: 30px;
+				line-height: 30px;
+				border-bottom: 1px dashed #00a0c8;
+			}
+			.aui-flex-col {
+				height: 25px;
+				line-height: 25px;
+			}
+			.ccssoft_list {
+				background-color: #eff1f0;
+				override: hidden;
+			}
+			.ccssoft_list {
+				margin-top: 15px;
+			}
+			.ccssoft_list li {
+				list-style: none;
+				border-bottom: 1px solid #e3e2e2;
+				background: #fff;
+				overflow: hidden;
+				margin-bottom: 10px;
+			}
+			.ccssoft_list li:hover {
+				background: #f9e9df;
+			}
+			.ccssoft_list li.acitve {
+				background: #f9e9df;
+			}
+			.cj-orange{
+				background-color: orange;
+			}
+			.cj-blue{
+				background-color: blue;
+			}
+			.cj-purple{
+				background-color: purple;
+			}
+			.cj-green{
+				background-color: green;
+			}
+
+			.cj-l-level{
+				width: 18px;
+				height: 18px;
+				border-radius: 50%;
+				line-height: 18px;
+				text-align: center;
+				display: inline-block;
+				color: #fff;
+				margin: 0 4px;
+				vertical-align:top;
+			}
+
+			.cj-ash{
+				background-color: grey;
+			}
+
+			.ccssoft_list_wxx {
+			 background-color: #eff1f0;
+			 overflow: hidden;
+			 width: 94%;
+			 margin: 0 auto;
+		 }
+		 .ccssoft_list_wxx li {
+				 list-style: none;
+				 border-radius: 6px;
+				 padding:3px 10px 3px 10px;
+				 background: #fff;
+				 overflow: hidden;
+				 margin-top: 10px;
+		 }
+		 /*.ccssoft_list_wxx li:hover {
+				 background: #f9e9df;
+		 }
+		 .ccssoft_list_wxx li.acitve {
+				 background: #f9e9df;
+		 }*/
+		 .ccssoft_list_wxx .showBox{
+				 text-align:center;
+				 font-size:12px;
+		 }
+		 #main{
+			 background-color: #f4f4f4;
+			 padding-top: 10px;
+		 }
+		 .cj-l-title-wxx{
+				 border-bottom: 1px dashed #00a0c8;
+				 font-size: 16px;
+				 font-weight: bold;
+				 line-height: 20px;
+				 padding: 8px 70px 8px 0;
+				 position: relative;
+		 }
+
+		 .cj-l-title-wxx span {
+				 display: block;
+				 width: 90px;
+				 height: 20px;
+				 line-height: 20px;
+				 color: #666;
+				 text-align: right;
+				 position: absolute;
+				 top: 5px;
+				 right: 0;
+				 font-size: 12px;
+				 font-weight: bold;
+		 }
+		 .cj-l-into-wxx {
+				 font-size: 12px;
+				 color: #666;
+				 line-height: 20px;
+				 padding: 3px 0;
+				 position: relative;
+		 }
+		 .cj-l-date-wxx {
+				 display: block;
+				 position: absolute;
+				 top: 3px;
+				 right: 0;
+				 width: 180px;
+				 text-align: right;
+		 }
+		 .cj-l-date-wxx span {
+				 margin-left: 7px;
+		 }
+		 .cj-l-date-wxx:after {
+				 content: "";
+				 display: block;
+				 width: 1px;
+				 height: 12px;
+				 background: #e3e3e3;
+				 position: absolute;
+				 top: 4px;
+				 left: 60px;
+		 }
+		 .cj-l-date-wxx-2{
+			 display: block;;
+			 width: 1px;
+			 height: 12px;
+			 background: #e3e3e3;
+			 position: absolute;
+			 right: -4px;
+			 top:4px;
+		 }
+
+		 .cj-l_line{
+			 position: absolute;
+			 width:5px;
+			 height: 18px;
+			 left: -10px;
+			 top: 9px;
+			 border-radius: 10px;
+		 }
+		 .cj-l_line1{
+			 background: linear-gradient(#fe7a7d, #fe4f4f);
+		 }
+			.LC_img{
+				height: 60px;
+				display: block;
+				margin: 0 auto;
+				background-color:#ccc;
+			}
+			.wxx_btn_box{
+				display: flex;
+				justify-content: space-between;
+			}
+			.wxx_btn{
+				width: 118px;
+				height: 33px;
+				border-radius: 35px;
+				border: 1px solid #db4537;
+				line-height: 30px;
+				box-shadow: 0 3px 8px rgba(226,132,123,.5);
+				color: #db4537;
+				font-size: 14px;
+				text-align: center;
+				margin: 4px auto;
+			}
+			.none{
+				display: none;
+			}
+			.jifenshul{
+				background-color: #fff;
+				box-shadow: 0 10px 16px #e7eaf0;
+				width: 94%;
+				margin: 14px auto 0 auto;
+				border-radius: 3px;
+				border: none!important;
+				line-height: 40px!important;
+				height: 80px!important;
+			}
+			.jifenshul img{
+				margin-top: 10px;
+				margin-left: 6px;
+				float: left;
+				width: 20px;
+			}
+			.jifenshul span{
+				float: left;
+				margin-left: 2px;
+			}
+			.jifenshul .jsnum{
+				float: right;
+				margin-right: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="listView-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var status = it[i].status;
+			var processflagName = "";
+			var pcolor = "";
+			if(status=="5"){
+			processflagName = "未领取";
+			pcolor = "#22AADD";
+			}else if(status=="6"){
+			processflagName = "已领取";
+			pcolor = "#B372F6";
+		}else if(status=="7"){
+			processflagName = "超时未领取";
+			pcolor = "#E088CF";
+		}else if(status=="8"){
+			processflagName = "完成待确认";
+			pcolor = "#AED684";
+		}else if(status=="9"){
+			processflagName = "超时未完成";
+			pcolor = "#E088CF";
+		}else if(status=="10"){
+			processflagName = "未完成";
+			pcolor = "#D088CF";
+		}else if(status=="11"){
+			processflagName = "已归档";
+			pcolor = "#B372F6";
+		}
+			}}
+			<li class="aui-content" style="padding:8px;" tapmode="active">
+			 <div class="detailDiv" org_name ="{{=it[i].org_name}}"
+			 add_man_code ="{{=it[i].add_man_code}}"
+			 update_user ="{{=it[i].update_user}}"
+			 col_cc ="{{=it[i].col_cc}}"
+			 c_org_name  ="{{=it[i].c_org_name}}"
+			 tangleicol  ="{{=it[i].tangleicol}}"
+			 work_time_limit ="{{=it[i].work_time_limit}}"
+			 task_type_name ="{{=it[i].task_type_name}}"
+			 ceshi_new_a  ="{{=it[i].ceshi_new_a}}"
+			 do_deal_name  ="{{=it[i].do_deal_name}}"
+			 ceshi_new_b  ="{{=it[i].ceshi_new_b}}"
+			 do_man_code  ="{{=it[i].do_man_code}}"
+			 task_type_id ="{{=it[i].task_type_id}}"
+			 rownum_  ="{{=it[i].rownum_}}"
+			 tl_ce_cola  ="{{=it[i].tl_ce_cola}}"
+			 a_org_id  ="{{=it[i].a_org_id}}"
+			 p_org_id ="{{=it[i].p_org_id }}"
+			 c_org_id ="{{=it[i].c_org_id }}"
+			 status="{{=it[i].status}}"
+			 a_org_name ="{{=it[i].a_org_name }}"
+			 task_name ="{{=it[i].task_name }}"
+			 site_id ="{{=it[i].site_id }}"
+			 task_score ="{{=it[i].task_score }}"
+			 ceshi_new ="{{=it[i].ceshi_new }}"
+			 self_task_name ="{{=it[i].self_task_name }}"
+			 utf ="{{=it[i].status}}"
+			 site_name ="{{=it[i].site_name }}"
+			 version_id ="{{=it[i].version_id}}"
+			 col_dd ="{{=it[i].col_dd }}"
+			 org_id ="{{=it[i].org_id }}"
+			 p_org_name ="{{=it[i].p_org_name }}"
+			 update_time ="{{=it[i].update_time }}"
+			 create_time ="{{=it[i].create_time }}"
+			 create_user ="{{=it[i].create_user }}"
+			 qlj_code_ ="{{=it[i].qlj_code_ }}"
+			 username="{{=it[i].username}}"
+			 id="{{=it[i].id}}"
+			 get_task_time="{{=it[i].get_task_time}}"
+			 do_end_time="{{=it[i].do_end_time}}" baidux="{{=it[i].baidux}}" baiduy="{{=it[i].baiduy}}"onclick="openStandBillDetail(this)"><!--1.dingxb-->
+			<div class="aui-flex-col">
+			<div class="aui-flex-item-9" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"> {{=it[i].site_name ? it[i].site_name : '&nbsp;'}}   &nbsp;    {{=it[i].priority ? it[i].priority : '&nbsp;'}} </div>
+
+			<div class="aui-flex-item-3 aui-text-right" style="color:{{=pcolor}}">{{=processflagName}}</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-9">{{=it[i].task_name  != null ? it[i].task_name :''}}</div>
+			<div class="aui-flex-item-3 aui-text-right">分值：{{=it[i].task_score != null ? it[i].task_score :''}}</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-9">工单要求完成时限：{{=it[i].work_time_limit != null ? it[i].work_time_limit:''}}</div>
+			<div class="aui-flex-item-3 aui-text-right">{{=it[i].add_man_code != null ? it[i].add_man_code:''}}</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-9">剩余时间：<span class="myTime"></span><span style="display:none;">{{=it[i].work_time_limit != null ? it[i].work_time_limit:''}}</span></div>
+			<div class="aui-flex-item-3 aui-text-right">{{=it[i].do_deal_name != null ? it[i].do_deal_name:''}}</div>
+			</div>
+			</div>
+			<div class="wxx_btn_box">
+			{{? status=="5"||status=="7" }}
+			<div class='wxx_btn' onclick='optBill("receiveDiv",this);'  id="{{=it[i].id}}" version_id ="{{=it[i].version_id}}" site_name="{{=it[i].site_name}}">领取</div>
+			<div class='wxx_btn' onclick="navigation('{{=it[i].baidux != null ? it[i].baidux :0}}','{{=it[i].baiduy != null ? it[i].baiduy :0}}')">导航</div>
+			{{?? status=="6"||status=="9"||status=="10"}}
+			<div class='wxx_btn' onclick='optBill("REVERT",this);' id="{{=it[i].id}}" version_id ="{{=it[i].version_id}}" site_name="{{=it[i].site_name}}" site_id ="{{=it[i].site_id }}" self_task_name="{{=it[i].self_task_name}}">回单</div>
+			<div class='wxx_btn' onclick="navigation('{{=it[i].baidux != null ? it[i].baidux :0}}','{{=it[i].baiduy != null ? it[i].baiduy :0}}')">导航</div>
+			{{?}}
+			</div>
+
+			</li>
+			{{ } }}
+		</script>
+
+
+
+		<script id="listView-template2" type="text/x-dot-template">
+			{{
+
+				for(var i=0, len=it.length; i < len; i++) {
+
+			}}
+			<li class="aui-content" style="padding:8px;" tapmode="active">
+			<div onclick="openGenerationBillListNumWin('{{=it[i].name ? it[i].name : ""}}')">
+				<div class="aui-flex-col">
+				<div class="aui-flex-item-9" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"> {{=it[i].name ? it[i].name : '&nbsp;'}}</div>
+
+				<div class="aui-flex-item-3 aui-text-right">{{=it[i].all != null ? it[i].all :0}}/{{=it[i].me != null ? it[i].me :0}}</div>
+				</div>
+				<div style="font-size:12px;line-height:18px;">
+				<div>{{=it[i].address  != null ? it[i].address  :''}}</div>
+				</div>
+			</div>
+
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-9">{{=it[i].Kmtance != null ? it[i].Kmtance : 0}}km</div>
+			<div class="aui-flex-item-3 aui-text-right" style="color:#B372F6" onclick="navigation('{{=it[i].lon != null ? it[i].lon :0}}','{{=it[i].lat != null ? it[i].lat :0}}','{{=it[i].address  != null ? it[i].address  :''}}')">导航</div>
+			</div>
+			</li>
+			{{ } }}
+		</script>
+		<div id="wrap" >
+			<div id="shadowId" class="shadow none" tapmode="" ></div>
+			<div id="header"></div>
+			<div id="standBillMenuMain"></div>
+		</div>
+		<!--领取任务begin-->
+		<div id="receiveDiv" class="winDiv">
+			<div class="winTitleDiv">
+				确定领取任务？
+			</div>
+			<div  id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;" >
+				<div id="user_name5" style="font-size:16px;color:#adadad;text-align:left; margin-left:23px;">
+
+				</div>
+			</div>
+
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeDiv(receiveDiv)">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="acceptFunc2()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--领取任务end-->
+		<div class="aui-content ">
+			<div class="aui-flex-col jifenshul">
+				<div class="aui-flex-item-6">
+				<img src="../../image/dd01.png" alt=""/>
+					<span>当月已领</span>
+
+					<span class='jsnum' id='jsnum1'>0</span>
+				</div>
+				<div class="aui-flex-item-6">
+				<img src="../../image/dd02.png" alt=""/>
+
+					<span>当月可领</span>
+					<span class='jsnum' id='jsnum2'>0</span>
+
+				</div>
+				<div class="aui-flex-item-6">
+				<img src="../../image/dd03.png" alt=""/>
+
+					<span>积分</span>
+					<span class='jsnum' id='jsnum3'>0</span>
+
+				</div>
+			</div>
+			<ul class="ccssoft_list_wxx" id="listView"></ul>
+		</div>
+
+
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+	<script type="text/javascript" src="script/standBillMenu.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+
+
+
+	<script type="text/javascript">
+
+
+		// 导航
+		function navigation(lon,lat,address){
+			console.log(lon);
+			console.log(lat);
+			console.log(address);
+			var wgs;
+			var bdlat;
+			var bdlon;
+			var win_name = "mapHeader";
+			var frm_name = "mapDetail_frm";
+			var script = "startLocation('" + win_name + "','" + frm_name + "');";
+			api.execScript({
+				frameName : 'gps',
+				script : script
+			});
+
+			var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+
+			if (!lastLocation || !lastLocation.status || lastLocation.timestamp == 0 || lastLocation.lon == 0 || lastLocation.lat == 0) {
+				api.toast({
+						msg:'获取当前位置失败'
+				});
+			}else{
+				wgs=GPS.wgs_tobd(lastLocation.lat,lastLocation.lon);
+				bdlat= wgs.lat;
+				bdlon= wgs.lon;
+				api.confirm({
+					title : '确认提示',
+					msg : '确定进行导航？',
+					buttons : ['取消', '确定']
+				}, function(ret) {
+					if (ret.buttonIndex == 2) {
+						console.log('事件：'+lastLocation.longitude+","+lastLocation.latitude);
+						var baiduNavigation = api.require('baiduNavigation');
+						baiduNavigation.start({
+							start : {// 起点信息.
+								position : {// 经纬度，与address配合可为空
+									lon : bdlon, // 经度.
+									lat : bdlat // 纬度.
+								}
+							},
+							end : {// 终点信息.
+								position : {// 经纬度，与address配合可为空
+									lon : lon, // 经度
+									lat : lat // 纬度
+								},
+								title : "", // 描述信息
+								address : ''// 地址信息，与position配合为空
+							}
+						}, function(ret, err) {
+
+							if (ret.status) {
+
+							} else {
+								var msg = "未知错误";
+								if (1 == err.code) {
+									msg = "获取地理位置失败";
+								}
+								if (2 == err.code) {
+									msg = "定位服务未开启";
+								}
+								if (3 == err.code) {
+									msg = "线路取消";
+								}
+								if (4 == err.code) {
+									msg = "退出导航";
+								}
+								if (5 == err.code) {
+									msg = "退出导航声明页面";
+								}
+								api.alert({
+									title : "导航出错",
+									msg : msg
+								});
+							}
+						});
+					}
+				});
+			}
+		}
+		// 0314
+		refreshFrame = function() {
+			if (api.pageParam.type==0) {
+				listView = new C.ApiListView({
+					fn : $client.getGenerationList,
+					listName : 'listUnclaimedZndw',
+					templateId:'#listView-template',
+					limit:1000
+				});
+			} else if(api.pageParam.type==1) {
+				listView = new C.ApiListView({
+					fn : $client.getGenerationFinshList,
+					listName : 'zndwInfoFinshList',
+					templateId:'#listView-template',
+					limit:1000
+				});
+			}else if(api.pageParam.type==3) {
+				listView = new C.ApiListView({
+					fn : $client.getGenerationList,
+					listName : 'listClaimedList',
+					templateId:'#listView-template',
+					limit:1000
+				});
+			}else if(api.pageParam.type==4) {
+				listView = new C.ApiListView({
+					fn : $client.getGenerationListFinished,
+					listName : 'listFileZndw',
+					templateId:'#listView-template',
+					limit:1000
+				});
+			}else {
+				// 站址模式
+				listView = new C.ApiListView({
+					fn : $client.getGenerationNum,
+					listName : 'siteNameList',
+					templateId:'#listView-template2',
+					limit:10000
+				});
+			}
+			listView.refresh();
+		};
+
+		apiready=function(){
+			var user=$api.getStorage('user');
+			$('#user_name5').html("操作人:" + user.username);
+			var opts={};
+			$client.getGenerationJF(opts,function(ret,err){
+				if(ret.success){
+					var dataList=JSON.parse(ret.data);
+					$('#jsnum1').html(dataList.meClaimed);
+					$('#jsnum2').html(dataList.daiClaimed);
+					$('#jsnum3').html(dataList.score);
+				}
+			})
+			refreshFrame();
+			api.addEventListener({//增加数据变更监听
+                  name:'viewappear'  //如果页面重新出现，执行ret方法
+                  },function(ret,err){
+										if($api.getStorage('difreload')){
+											refreshFrame();
+											window.setTimeout(function() {  //延迟清除标识符
+												$api.rmStorage("difreload");
+											}, 3000);
+										}
+              });
+							countsurplustime();
+		}
+
+		//-----------------dxb------------------------
+		//设置定时器，在页面加载完成以后再获取完成期限时间，拿到时间后，给出页面计算剩余的时间，再进行1秒的刷新操作
+		function countsurplustime(){
+
+				setInterval(function(){
+					$('.myTime').each(function(){
+						var work_time_limit=$(this).siblings('span').html();
+						work_time_limit=work_time_limit.replace(/-/g, "/");
+						var longTime2=getDateLong(new Date(work_time_limit).getTime()-new Date().getTime());
+						$(this).html(longTime2);
+					});
+				},1000);
+		}
+		//-----------------dxb------------------------
+		function getDateLong(date3){
+
+				var days=Math.floor(date3/(24*3600*1000));
+		//	console.log('天数：'+days+"原数值："+date3/(24*3600*1000));
+				//计算出小时数
+
+				var leave1=date3%(24*3600*1000) ;   //计算天数后剩余的毫秒数
+				var hours=Math.floor(leave1/(3600*1000))  ;
+				//计算相差分钟数
+				var leave2=leave1%(3600*1000)  ;      //计算小时数后剩余的毫秒数
+				var minutes=Math.floor(leave2/(60*1000))  ;
+				//计算相差秒数
+				var leave3=leave2%(60*1000) ;     //计算分钟数后剩余的毫秒数
+				var seconds=Math.round(leave3/1000)  ;
+		//  alert(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
+			var allTime=(hours+days*24)+"小时 "+minutes+" 分钟"+seconds+" 秒";
+			return allTime;
+		}
+		function cb_queryWaitTaskList(opts) {
+			 listView.setQueryOptions(opts);
+				 listView.refresh();
+		}
+
+		function refreshwxx(){
+				listView.refresh();
+		}
+		function openGenerationBillListNumWin(stationname){
+			var pageParam={
+				name:stationname
+			}
+			api.openWin({
+				name : 'openGenerationBillListNumWin',
+				url : 'generationBillListNumWin.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+
+		function openStandBillDetail(el) {
+			var a_org_id=$api.attr(el, 'a_org_id');
+			var b_org_id=$api.attr(el, 'b_org_id');
+			var c_org_id=$api.attr(el, 'c_org_id');
+			var p_org_id=$api.attr(el, 'p_org_id');
+			var org_id=$api.attr(el, 'org_id');
+			var status = $api.attr(el, 'status');
+			var id = $api.attr(el, 'id');
+			var task_name = $api.attr(el, 'task_name');
+			var site_id = $api.attr(el, 'site_id');
+			var site_name = $api.attr(el, 'site_name');
+			var work_time_limit = $api.attr(el, 'work_time_limit');
+			var task_score = $api.attr(el, 'task_score');
+			var do_deal_name = $api.attr(el, 'do_deal_name');
+			var tl_ce_cola = $api.attr(el, 'tl_ce_cola');
+			var tangleicol = $api.attr(el, 'tangleicol');
+			var col_cc = $api.attr(el, 'col_cc');
+			var col_dd = $api.attr(el, 'col_dd');
+			var ceshi_new_b = $api.attr(el, 'ceshi_new_b');
+			var utf = $api.attr(el, 'utf');
+			var ceshi_new_a = $api.attr(el, 'ceshi_new_a');
+			var ceshi_new  = $api.attr(el, 'ceshi_new');
+			var p_org_name = $api.attr(el, 'p_org_name');
+			var c_org_name = $api.attr(el, 'c_org_name');
+			var a_org_name = $api.attr(el, 'a_org_name');
+			var self_task_name = $api.attr(el, 'self_task_name');
+			var task_type_name = $api.attr(el, 'task_type_name');
+			var add_man_code  = $api.attr(el, 'add_man_code');
+			var update_user   = $api.attr(el, 'update_user');
+			var create_time   = $api.attr(el, 'create_time');
+			var update_time   = $api.attr(el, 'update_time');
+			var version_id   = $api.attr(el, 'version_id');
+			var create_user   = $api.attr(el, 'create_user');
+			var do_man_code   = $api.attr(el, 'do_man_code');
+			var get_task_time = $api.attr(el, 'get_task_time');
+			var do_end_time = $api.attr(el, 'do_end_time');
+			var baidux = $api.attr(el, 'baidux');
+			var baiduy = $api.attr(el, 'baiduy');
+			var pageParam = {};
+			pageParam.a_org_id = a_org_id;
+			pageParam.b_org_id = b_org_id;
+			pageParam.c_org_id = c_org_id;
+			pageParam.p_org_id = p_org_id;
+			pageParam.org_id = org_id;
+			pageParam.status = status;
+			pageParam.id = id;
+			pageParam.task_name = task_name;
+			pageParam.site_id = site_id;
+			pageParam.site_name = site_name;
+			pageParam.work_time_limit = work_time_limit;
+			pageParam.task_score = task_score;
+			pageParam.do_deal_name = do_deal_name;
+			pageParam.tl_ce_cola = tl_ce_cola;
+			pageParam.tangleicol = tangleicol;
+			pageParam.col_cc = col_cc;
+			pageParam.col_dd = col_dd;
+			pageParam.ceshi_new_b = ceshi_new_b;
+			pageParam.utf = utf;
+			pageParam.ceshi_new_a = ceshi_new_a;
+			pageParam.ceshi_new  = ceshi_new;
+			pageParam.p_org_name  = p_org_name;
+			pageParam.c_org_name  = c_org_name;
+			pageParam.a_org_name  = a_org_name;
+			pageParam.self_task_name  = self_task_name;
+			pageParam.task_type_name  = task_type_name;
+			pageParam.add_man_code  = add_man_code;
+			pageParam.update_user  = update_user;
+			pageParam.create_time  = create_time;
+			pageParam.update_time  = update_time;
+			pageParam.version_id  = version_id;
+			pageParam.create_user  = create_user;
+			pageParam.do_man_code  = do_man_code;
+			pageParam.type = api.pageParam.type;
+			pageParam.get_task_time = get_task_time;
+			pageParam.do_end_time = do_end_time;
+			pageParam.baidux = baidux;
+			pageParam.baiduy = baiduy;
+			// 超时状态不允许跳转操作
+			// if(status=='9'){
+			// 	api.toast({
+			// 			msg: '已超时!',
+			// 			duration: 2000,
+			// 			location: 'bottom'
+			// 	});
+			// }else {
+			//
+			// }
+			pageParam.fromPage = "generationBillListWin";
+
+
+			api.openWin({
+				name : 'mainGenerationBillDetail',
+				url : 'mainGenerationBillDetail.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+
+		//关闭弹出DIV对话框
+		function closeDiv(divId) {
+			easyDialog.close({
+				container : divId
+			});
+		}
+
+		//接单操作
+		function acceptFunc2() {
+			var generationBillMenu = $api.getStorage('generationBillMenu');
+			var user = $api.getStorage('user');
+
+			api.showProgress({
+				title : '处理中',
+				modal : true,
+			});
+			var opts = {
+				 username : user.loginname,
+				 id : generationBillMenu.id
+			};
+			console.log(getObj(opts));
+			// 领取代维调度任务
+			$client.getGeneration(opts, function(ret, err) {
+				if (ret) {
+						if (ret.success) {
+							closeDiv(receiveDiv)
+							api.hideProgress();
+							api.toast({
+							    msg: '领取成功',
+							    duration: 2000,
+							    location: 'bottom'
+							});
+							window.setTimeout(function() {
+									api.execScript({
+											name: 'generationBillListWin',
+									    frameName: 'generationBillListFrm',
+									    script: 'refreshFrame();'
+									});
+									api.execScript({
+											name: 'generationBillListWin',
+									    frameName: 'generationBillListFinshFrm',
+									    script: 'refreshFrame();'
+									});
+								//直接返回上一层
+							}, 1000);
+						} else {
+								api.hideProgress();
+								showToast(ret.data_info);
+						}
+				} else {
+						api.hideProgress();
+						showToast(err.msg);
+				}
+			})
+		}
+	</script>
+</html>

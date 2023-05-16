@@ -1,0 +1,436 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>人工派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+	<link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+	<link rel="stylesheet" type="text/css" href="../css/standBillRevertDetail.css" />
+	<style>
+	.cardCon2 {
+            width: 60%;
+            float: left;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 0px;
+            margin-top: 10px;
+        }
+        .saomabtn{
+          width: 100px;
+          text-align: center;
+          font-size: 14px;
+          background-color: #3779d0;
+          border: none;
+          color: #fff;
+          display: inline-block;
+          border-radius: 3px;
+          padding:5px 0;
+          margin-top: 4px;
+        }
+        .removebtn{
+          position: absolute;
+          right: 0;
+          top: 10px;
+          width: 20px!important;
+          height: 20px;
+          padding: 0;
+          margin: 0;
+        }
+	</style>
+</head>
+<body>
+
+<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+
+	    {{ } }}
+	</script>
+
+	<script id="option-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i < len; i++) {}}
+		<option value="{{=it[i].orgid}}">{{=it[i].orgname}}</option>
+		{{ } }}
+	</script>
+	<script id="station-option" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i < len; i++) {}}
+		<option value="{{=it[i].st_id}}">{{=it[i].st_name}}</option>
+		{{ } }}
+	</script>
+	<script id="img-template" type="text/x-dot-template">
+        <li class="aui-list-view-cell aui-img aui-col-xs-4">
+        <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+        <button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+        </li>
+    </script>
+    <div id="wrap">
+        <div id="billDetailDivId" style="overflow:auto;margin-bottom:55px;">
+        	<div class="cardDiv">
+		  		<div class="cardLabel">选择的站址：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-stationName" type="text" readonly="readonly" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+		  	<div class="cardDiv">
+		  		<div class="cardLabel"><font color="red">*</font>故障类型：</div>
+		  		<div class="cardCon">
+					<select id="bill-type" style="background-color:#FFFFFF;width:100%;height:100%;font-size:14px;display:block;" value="">
+        				<option value="">请选择</option>
+						<option value="GENERELEC">停电</option>
+						<option value="2001">开关电源设备故障</option>
+						<option value="2002">蓄电池设备故障</option>
+						<option value="2003">机房环境设备故障</option>
+						<option value="2004">空调设备故障</option>
+						<option value="NOSIGNAL">无信号(已停用)</option>
+						<option value="OTHER">其它</option>
+						<option value="2005">断站退服</option>
+    				</select>
+    				<input id="sfTypeName" type="text" readonly="readonly" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;display:none;" value="室分故障">
+    				<input id="sfTypeId" type="hidden" value="4001">
+		  		</div>
+		  	</div>
+	  	  	<div class="cardDiv">
+		  		<div class="cardLabel"><font color="red">*</font>故障标题：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-title" type="text" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+		  	<div id="refiefDealInfoDivId" class="cardTextareaDiv">
+		  		<div class="cardTextareaLabel"><font color="red">*</font>故障描述：</div>
+			  	<div class="cardTextareaCon">
+		  			<textarea id="bill-desc" rows="8" class="noborder" style="background-color:white;border:solid 1px green;width:100%;height:100%;padding:5px"></textarea>
+		  		</div>
+		  	</div>
+		  	<div class="cardDiv">
+		  		<div class="cardLabel">客户名称：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-customer" type="text" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+		  	<div class="cardDiv">
+		  		<div class="cardLabel">联系人：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-contact" type="text" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+		  	<div class="cardDiv">
+		  		<div class="cardLabel">联系电话：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-contactTel" type="number" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+		  	<div class="cardDiv">
+		  		<div class="cardLabel">申告人：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-declarePerson" type="text" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+		  	<div class="cardDiv">
+		  		<div class="cardLabel">申告电话：</div>
+		  		<div class="cardCon">
+		  			<input id="bill-declareTel" type="number" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+		  		</div>
+		  	</div>
+			<div class="cardDiv2">
+				<div class="cardLabel">
+		                上传照片：
+		              </div>
+		              <div class="cardCon2">
+		                <ul id="list-view" class="aui-list-view aui-grid-view">
+		                    <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+		                        <img class="aui-img-object" src="../image/icons/png/icon_addpic_focused.png">
+		                    </li>
+		                    <canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+		                    <img class='imgPath' style="display:none;"  src=''/>
+		                </ul>
+		              </div>
+			</div>
+        </div>
+        <footer style="height:50px;">
+			<div class="cardButtonDiv">
+				<button class="cancelBtn"  onclick="closeWin()">取消</button>
+				<button class="okBtn"  onclick="creatBillOpt()">保存</button>
+			</div>
+		</footer>
+    </div>
+</body>
+<script src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/aui.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/debug.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../script/utils/ImageUtil.js"></script>
+<script type="text/javascript" src="../script/cache.js"></script>
+<script>
+var imageUtil;
+var imgArray = new Array();
+apiready = function() {
+	var user = $api.getStorage("user");
+
+	$api.byId("bill-customer").value = api.pageParam.stationInfo ? api.pageParam.stationInfo.st_operators || "" : "";
+	$api.byId("bill-declarePerson").value = user.username;
+	$api.byId("bill-declareTel").value = user.mobilephone;
+
+	imageUtil.init({
+          uploadFn : $client.uploadCreateBillImage
+      });
+	//status bar style
+	api.setStatusBarStyle({
+		style : 'light'
+	});
+	var tdObj = document.getElementById("bill-stationName");
+	tdObj.value = api.pageParam.stationName;
+	//判断是否为“室分故障”类型
+	var isShiFen = api.pageParam.isShiFen;
+	if(isShiFen=="Y"){
+		document.getElementById("bill-type").style.display="none";
+		document.getElementById("sfTypeName").style.display="block";
+	}else{
+		document.getElementById("bill-type").style.display="block";
+		document.getElementById("sfTypeName").style.display="none";
+	}
+
+	initDict();
+};
+
+function initDict(){
+       var faultTypeList= $api.getStorage("faultTypeList");//进站人单位
+       if(faultTypeList!=null&&faultTypeList.length>0){
+//     alert("集合数："+faultTypeList.length);
+      	 $('#bill-type').empty();
+        $('<option>').text('请选择').val('').appendTo('#bill-type');
+		renderTemp('bill-type', 'dict-template', faultTypeList, true);
+		 }
+
+        }
+function creatBillOpt() {
+	var isShiFen = api.pageParam.isShiFen;
+	var user = $api.getStorage('user');
+	var userId = user.userid;
+	var faultType = "";
+	var billTitle = document.getElementById("bill-title").value;
+	var faultDesc = document.getElementById("bill-desc").value;
+	var contact = document.getElementById("bill-contact").value;
+	var contactTele = document.getElementById("bill-contactTel").value;
+	var declarePerson = document.getElementById("bill-declarePerson").value;
+	var declareTel = document.getElementById("bill-declareTel").value;
+	var customerName = document.getElementById("bill-customer").value;
+
+	if(isShiFen=="Y"){
+		faultType =document.getElementById("sfTypeId").value;
+	}else{
+		faultType =document.getElementById("bill-type").value;
+	}
+
+	if(!faultType){
+		api.toast({msg: "请选择故障类型",duration:1000, location: 'middle'});
+		return;
+	}
+	if (!billTitle) {
+		api.toast({msg : "请填写故障标题",duration:1000,location : 'middle'});
+		return false;
+	}
+	if (!faultDesc) {
+		api.toast({msg : "请填写故障描述",duration:1000,location : 'middle'});
+		return false;
+	}
+	var paramJson = {};
+	paramJson.stationId = api.pageParam.stationId;
+	paramJson.billTitle = billTitle;
+	paramJson.faultDesc = faultDesc;
+	paramJson.faultType = faultType;
+	paramJson.contact = contact;
+	paramJson.contactTele = contactTele;
+	paramJson.declarePerson = declarePerson;
+	paramJson.declaretelepho = declareTel;
+	paramJson.customerName = customerName;
+	paramJson.imgArr=imgArray;
+	api.closeWin({
+		name : "createBillSelStation"
+	});
+	api.showProgress({
+		title : '加载中',
+		modal : false
+	});
+	$client.createNoAlarmBill(userId, paramJson, function(ret, err) {
+		if (ret) {
+			if (ret.success) {
+				api.toast({
+					msg : "人工建单成功",
+					duration : 800,
+					location : 'middle'
+				});
+				window.setTimeout(function() {
+					closeWin();
+				}, 900);
+			} else {
+				api.toast({
+					msg : ret.data_info,
+					location : 'middle'
+				});
+			}
+		} else {
+			api.toast({
+				msg : err.msg,
+				location : 'middle'
+			});
+		}
+		api.hideProgress();
+	});
+}
+function closeWin(){
+    api.closeWin({
+    	name:'createBill'
+    });
+}
+
+		/**
+		 * 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		 */
+		function addPic(e) {
+			var permission = 'camera';
+			var resultList = api.hasPermission({
+			    list: [permission]
+			});
+			if (resultList[0].granted) {
+			    // 已授权，可以继续下一步操作
+			} else {
+			    api.confirm({
+			        msg: '应用需要您的授权才能访问相机',
+			        buttons: ['取消', '去设置']
+			    }, function(ret) {
+			        if (ret.buttonIndex == 2) {
+			            api.requestPermission({
+			                list: [permission],
+			            }, function(res) {
+			                if (res.list[0].granted) {
+			                    // 已授权，可以继续下一步操作
+			                }
+			            });
+			        }
+			    });
+			}  
+			var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			if (!lastLocation || !lastLocation.status) {
+				api.toast({
+					msg : '暂未定位\n无法上传照片！'
+				});
+			}else {
+				////////////////////////////////////////////
+				var curentTime2 = CurentTime2();
+				$api.setStorage('newtime', curentTime2);
+				$api.setStorage('lon1', lon1);
+				$api.setStorage('lat1', lat1);
+				var lon1 = $api.getStorage('lon1');
+				var lat1 = $api.getStorage('lat1');
+				var user=$api.getStorage('user');
+				/* var newtime = $api.getStorage('newtime');
+				var lon1 = $api.getStorage('lon1');
+				var lat1 = $api.getStorage('lat1');
+				var billModel = $api.getStorage('billModel'); */
+				////////////////////////////////////////////
+				 var imgRet = null;
+				imageUtil.add('camera', function(ret, err) {
+					//alert(JSON.stringify(ret));
+					// var stationname=api.pageParam.stationname;
+					// var billId=api.pageParam.billId;
+					// var billSn=api.pageParam.billSn;
+					// var businessid = billModel.businesstype;
+
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						// var oldret = ret.data.split(".");
+						// var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+billId+';'+businessid+';'+billSn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+						// console.log(newret);
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						// var filePath = ret.data;
+						//alert(ret);
+						imgRet = ret;
+						var imgModel = {
+								userid : user.userid,
+								businessid : "故障单录入",
+								//stationname : api.pageParam.stationname,
+								//billsn : billModel.billsn,
+								imgpath : ret,
+								phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+								lon : lon1,
+								lat : lat1,
+								photoaddress : lastLocation.photoaddress
+                //state:api.pageParam.billStatus,
+                //billstatusname:billModel.billstatusname
+
+						};
+            // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            //cacheImgArr(imgModel);
+            // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            console.log("ss///////////////////////////////////////"+getObj(imgModel));
+						imageUtil.getImageArray().push(imgModel);
+						console.log(JSON.stringify(imageUtil.getImageArray()));
+					showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+	  
+         imageUtil.upload(function(count) {
+            //imageUtil.getImageArray=new Array();
+            //alert(count);
+            count.imgFlag=imgRet
+            imgArray.push(count);
+            //alert(JSON.stringify(imgArray));
+            
+            var tpl = $api.byId('img-template').text;
+			var tempFn = doT.template(tpl);
+			$('#addPic').before(tempFn(imgModel));
+    			$new = $('#addPic').prev();
+    			$new.css('height', $new.css('width'));
+    			
+          });
+          
+				},e,true,false);
+			}
+		}
+
+      /**
+       *删除图片
+       */
+      function removeImg(imgPath) {
+        var imageArray = imageUtil.getImageArray();
+        var size = imageArray.length;
+        var imgFlag ="";
+        for (var i = 0; i < size; i++) {
+          var data = imageArray[i];
+          if (data.imgpath == imgPath) {
+            imageArray.remove(i);
+            break;
+          }
+        }
+        //alert(JSON.stringify(imgArray))
+        for (var i=0; i<imgArray.length; i++){
+        	if (imgArray[i].imgFlag==imgPath){
+        		imgArray.remove(i);
+        		break;
+        	}
+        }
+        //alert(JSON.stringify(imgArray))
+        $(event.target).parents('.picBox').find('#add').show();
+        $(event.target).parents('li.aui-img').remove();
+        // 删除本地缓存图片其一
+     
+        //deleteImgArr(imgPath);
+        alert("删除本地缓存图片");
+      }
+
+      // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</script>
+</html>

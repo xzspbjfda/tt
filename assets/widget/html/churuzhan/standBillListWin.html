@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>出入站待办列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">
+                上站待办
+            </div>
+        </header>
+        <div id='isshow' class="aui-tab">
+            <ul id="tabBox" class="aui-tab-nav">
+                <li tabName = 'waitTaskList1' class="active" tapmode>
+                    待处理
+                </li>
+                <li tabName = "waitTaskList2" tapmode>
+                    申请中
+                </li>
+                <li tabName = "finishTaskList" tapmode>
+                    已归档
+                </li>
+            </ul>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        refreshFrame = function(){
+            console.log("==============refreshFrame===============")
+			var header = initHeader();
+            var headerPos = $api.offset(header);
+            var body_h = $api.offset($api.dom('body')).h;
+            api.openFrameGroup({
+                name : 'xinshangzhan_header_tab',
+                rect : frameRect(),
+                preload : 0,
+                frames : [{
+                    name : 'waitTaskList1',
+                    url : 'standBillListFrm.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'waitTaskList2',
+                    url : 'standBillApplyingListFrm.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'finishTaskList',
+                    url : 'standBillFinishListFrm.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }],
+
+            }, function(ret, err) {
+                if (ret) {
+                    $('#tabBox li:eq(' + ret.index + ')').addClass('active').siblings().removeClass('active');
+                }
+            });
+		}
+    	apiready = function() {
+    		// 标识入口页面
+            $api.setStorage('billcntFrom', 'standBillListWin');
+            refreshFrame();
+            $api.addEvt($api.byId('back'), 'click', function() {
+                api.closeWin();
+            });
+            /*jquery事件:tab切换*/
+            $('#tabBox li').click(function() {
+                $(this).addClass('active').siblings().removeClass('active');
+                api.setFrameGroupIndex({
+                    name : 'xinshangzhan_header_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+                var nindex=$(this).index();
+                api.pageParam.pageIndex=nindex;
+                console.log("选中了"+nindex)
+            });
+        };	  
+    </script>
+</html>

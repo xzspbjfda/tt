@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>公告列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <style>
+            .list {
+                padding: 0px 0px 5px;
+            }
+            .list li {
+                position: relative;
+                overflow: hidden;
+                border-bottom: 1px solid #d9d9d9;
+                 display: block;
+                padding: 10px;
+            }
+           
+            .list li.active {
+                background-color: #d9e4e9;
+            }
+            .list img {
+                float: left;
+                width: 60px;
+                height: 60px;
+                border-radius: 4px;
+            }
+            .list h3, ul .list .info {
+                margin-left: 0px;
+            }
+            .list h3 {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 70%;
+                margin-bottom: 5px;
+                position: relative;
+            }
+            .list h3:after {
+                content: "";
+                display: inline-block;
+                width: 14px;
+                height: 17px;
+                margin-left: 10px;
+                vertical-align: middle;
+                -webkit-background-size: contain;
+                background-size: contain;
+            }
+            
+            .list .info span {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 95%;
+                margin-top: 5px;
+                margin-bottom: 2px;
+                
+                position: relative;
+            }
+            
+            .list .user-info {
+               font-size: 12px;
+                color: #666;
+                line-height: 20px;
+            
+                position: relative;
+            }
+            
+             .list .user-info .cj-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 140px;
+                text-align: right;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <div class="aui-content">
+            <ul class="list" id="listView"></ul>
+        </div>
+        <div class="aui-content">
+                <ul id="messageListUl" class="aui-list-view"></ul>
+        </div>
+    </body>
+    <script id="messagelistView-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {}}
+        <li tapmode="active" noticeId="{{=it[i].id}}" >
+       	<div style="border-top:1px #999 solid;">
+        <h3>{{=it[i].title}}</h3>
+        <div class="info clearfix">
+        <div style="text-align: left;font-size:16px;">消息内容：{{=it[i].content}}</div>
+         </div>
+       <div class="cj-date" style="text-align: left;"> 时间：{{=it[i].time}}</div>
+       </div>
+        </li>
+        {{ } }}
+    </script>
+    <!-- third -->
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/xunjian_db.js"></script>
+    <script type="text/javascript">
+        function showDetail(url) {
+            //  C.alert("提示",url);
+            openPage_bulleDetail(url);
+        }
+
+        var listView;
+        apiready = function() {
+//          listView = new C.ApiListView({
+//              listName:'bulleList',
+//              fn : $client.getBulleList
+//          });
+//          listView.refresh();
+		db_init(function(ret, err) {
+                if (ret) {
+                user = getStorage('user');
+                userid = user.userid;
+//              alert("userid:"+userid);
+ 			db_getMessageCenter(userid, function(ret1, err) {
+// 			alert("33");
+                    if (ret1 && ret1 != "undefined") {
+                        //判断是否有未上传的图片
+                        if (ret1.length) {
+//                      alert("查询成功");
+//                      alert(ret1.length);
+//                      alert(ret1[0].content);
+                            renderTemp('messageListUl', 'messagelistView-template', ret1, true);
+                            resCheckImgs = ret1;
+                        } else {
+//                          $('#picResCheckListUl').parent().addClass('alert-bg-noresult');
+                        }
+                    } else {
+//                      $('#picResCheckListUl').parent().addClass('alert-bg-noresult');
+                        showToast("数据加载失败！");
+                    }
+                });
+        }
+        
+        });
+        
+        }
+    </script>
+</html>

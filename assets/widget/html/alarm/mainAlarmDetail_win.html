@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>告警详情</title>
+        <link rel="stylesheet" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" tapmode onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">
+                告警详情
+            </div>
+            <a id="menuBtn" class="aui-pull-right" tapmode onclick="openMenu()"> <span class="aui-iconfont aui-icon-add"></span> </a>
+        </header>
+        <footer class="aui-nav" style="border-top:1px solid #ADADAD;" id="footer">
+            <ul class="aui-bar-tab">
+                <li tapmode class="activeWarning">
+                    <span class="iconFont"><img src="../../image/widget_tab_icon_detail_nor.png" width="25px" height="25px"/><img style="display:none;" src="../../image/widget_tab_icon_detail_over.png" width="25px" height="25px"/> </span>
+                    <p>
+                        告警详情
+                    </p>
+                </li>
+                <li tapmode>
+                    <span class="iconFont"> <img src="../../image/widget_tab_icon_station_nor.png" width="25px" height="25px"/> <img id="stationOverId" style="display:none;" src="../../image/widget_tab_icon_station_over.png" width="25px" height="25px"/> </span>
+                    <p>
+                        站址信息
+                    </p>
+                </li>
+            </ul>
+        </footer>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../bill/script/main.bill.detail.js"></script>
+    <script type="text/javascript">
+        apiready = function() {
+            initHeader();
+            //设置告警工单操作按钮的显隐
+            var alarmLevel = api.pageParam.alarmlevel;
+            var faultId = api.pageParam.faultid;
+            if ((alarmLevel == '3' || alarmLevel == '4') && (faultId == null || faultId == 'null' || faultId == '')) {
+                $('#menuBtn').show();
+            }
+            api.pageParam.fromFlag = 'ALARM';
+            api.openFrameGroup({
+                name : 'alarm_footer_tab',
+                scrollEnabled : true,
+                rect : frameRect(),
+                index : 0,
+                preload : 0,
+                frames : [{
+                    name : 'alarmDetail_frm',
+                    url : 'alarmDetail_frm.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'stationDetail_frm',
+                    url : '../station/stationDetail_frm.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }]
+            }, function(ret, err) {
+                var $curTab = $('#footer li:eq(' + ret.index + ')');
+                $curTab.addClass('activeWarning').find('img:hidden').show().siblings().hide();
+                $curTab.siblings('.activeWarning').removeClass('activeWarning').find('img:hidden').show().siblings().hide();
+                $('.aui-title').text($curTab.find('p').text());
+            });
+            /*
+             * jQuery事件:tab切换
+             */
+            $('#footer li').click(function() {
+                api.setFrameGroupIndex({
+                    name : 'alarm_footer_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+            });
+        };
+        // 打开菜单
+        function openMenu() {
+            api.openFrame({
+                name : 'alarmMenu_frm',
+                url : 'alarmMenu_frm.html',
+                bounces : false,
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                pageParam : api.pageParam,
+                reload : true
+            });
+        }
+    </script>
+</html>

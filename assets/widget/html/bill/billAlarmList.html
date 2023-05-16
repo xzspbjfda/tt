@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单告警列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            body {
+                background-color: #eff1f0;
+            }
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .ccssoft_list li {
+                list-style: none;
+                padding: 8px;
+                border-bottom: 1px solid #e3e2e2;
+                background: #fff;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .ccssoft_list li:hover {
+                background: #f9e9df;
+            }
+            .ccssoft_list li:active {
+                background: #f9e9df;
+            }
+            .cj-l-title, .cj-f-title {
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 8px 10px 8px 10px;
+                position: relative;
+            }
+            .ccssoft_list .cj-green .cj-l-title:before {
+                background: #1ac36b;
+            }
+            .ccssoft_list .cj-red .cj-l-title:before {
+                background: #ff3333;
+            }
+            .ccssoft_list .cj-grey .cj-l-title:before {
+                background: #8f9693;
+            }
+            #main li .tag {
+                color: #fff;
+                font-size: 12px;
+                border-radius: 7px;
+                height: 18px;
+                line-height: 18px;
+                display: inline-block;
+            }
+            .listTop {
+                width: 100%;
+                padding: 0px 5px 3px 5px;
+                height: 35px;
+                border-bottom: 1px solid #e3e2e2;
+            }
+            .listTopTitle {
+                float: left;
+                width: 70%;
+                height: 30px;
+                line-height: 30px;
+                font-size: 16px;
+                font-weight: bold;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-left: 10px;
+            }
+            .listTopParam {
+                float: left;
+                width: 30%;
+                height: 30px;
+            }
+            .listTopParamCount {
+                font-size: 14px;
+                text-align: center;
+                float: right;
+                width: 80px;
+                color: #ADADAD;
+                margin-right: 2px;
+            }
+            .listTopParamLevel {
+                float: right;
+                text-align: center;
+                width: 50px;
+                margin-top: 6px;
+                background-color: #00FF00;
+            }
+            .listDown {
+                width: 100%;
+                padding: 3px 0px 3px 0px;
+                height: 20px;
+                font-size: 12px;
+            }
+            .curStatus {
+                height: 18px;
+                width: 45px;
+                line-height: 18px;
+                background-color: red;
+                font-size: 12px;
+                text-align: center;
+                color: white;
+                border-radius: 7px;
+                margin-top: 6px;
+            }
+            .historyStatus {
+                height: 18px;
+                width: 45px;
+                line-height: 18px;
+                background-color: #8F9693;
+                font-size: 12px;
+                text-align: center;
+                color: white;
+                border-radius: 7px;
+                margin-top: 6px;
+            }
+        </style>
+    </head>
+    <body>
+        <script id="listView-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {
+            var lev = it[i].alarmlevel;
+            var levName="";
+            var levColor = "";
+            if(lev == "1"){
+            levName = "一级";
+            levColor = "#FF3333";
+            }else if(lev == "2"){
+            levName = "二级";
+            levColor = "#FFCC33";
+            }else if(lev == "3"){
+            levName = "三级";
+            levColor = "#3300FF";
+            }else if(lev == "4"){
+            levName = "四级";
+            levColor = "#00FF00";
+            }
+            }}
+            <li tapmode="active"  onclick="openAlarmDetail('{{=it[i].id}}','{{=it[i].alarmlevel}}');">
+            <div class="listTop">
+            <div style="float:left;width:15%;height:30px;">
+            {{? it[i].iscurrent == '0' }}
+            <div class="historyStatus">历史</div>
+            {{?}}
+            {{? it[i].iscurrent == '1' }}
+            <div class="curStatus">当前</div>
+            {{?}}
+            </div>
+            <div style="float:left;width:85%;height:30px;">
+            <div class="listTopTitle">{{=it[i].alarmname}}</div>
+            <div class="listTopParam">
+            <span class="tag listTopParamLevel" style="background-color:{{=levColor}};">{{=levName}}</span>
+            </div>
+            </div>
+            </div>
+            <div class="listDown">
+            <span style="float:left;color:#666;"> 首次告警：{{=it[i].firstalarmtime}}</span>
+            <span style="float:right;color:#666;">末次告警：{{=it[i].lastalarmtime}}</span>
+            </div>
+            </li>
+            {{  } }}
+        </script>
+        <div id="main">
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript">
+        var listView;
+        apiready = function() {
+            var billDetailInfo = $api.getStorage('billDetailInfo');
+            if ( typeof ("billDetailInfo") != "undefined" && billDetailInfo != null) {
+                //opts.history_lasttime = billDetailInfo.list.ala_lastalarmtime;
+                listView = new C.ApiListView({
+                    fn : $client.getBillAlarmList,
+                    listName : 'list'
+                });
+                listView.setQueryOptions({
+                    billsn : billDetailInfo.list.billsn,
+                    history_lasttime : ''
+                });
+                listView.refresh();
+            } else {
+                api.toast({
+                    msg : '无工单告警信息'
+                });
+            }
+        };
+        function openAlarmDetail(alarmId, alarmlevel) {
+            var billDetailInfo = $api.getStorage('billDetailInfo');
+            var faultId = billDetailInfo.list.billsn;
+            var pageParam = {
+                stationId : billDetailInfo.list.st_id,
+                alarmlevel : alarmlevel,
+                alarmId : alarmId
+            };
+            if (faultId != null && faultId != "" && faultId != "null" && faultId != "undefined") {
+                pageParam.faultid = faultId;
+            } else {
+                pageParam.faultid = null;
+            }
+            api.openWin({
+                name : 'mainAlarmDetail_win',
+                url : '../alarm/mainAlarmDetail_win.html',
+                opaque : true,
+                bounces : false,
+                reload : true,
+                pageParam : pageParam,
+                vScrollBarEnabled : false
+            });
+        }
+    </script>
+</html>

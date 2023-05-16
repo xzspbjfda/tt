@@ -1,0 +1,566 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>日历</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+  <link rel="stylesheet" href="libs/calendar.css">
+	<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+	<link rel="stylesheet" type="text/css" href="../bill/css/billMenu.css" />
+
+	</style>
+</head>
+<style>
+body{
+	/*background-color: #fff;*/
+}
+.calendar{
+	height: 276px;
+}
+.calendar-bottom{
+	border-bottom: 1px solid #fe7a7d;
+}
+/*wxxxxxxxxxxxxxxxx*/
+.wrapper{
+	background-color: #f5f5f5;
+
+}
+.index_sbox{
+	margin: 14px auto;
+	background-color: #fff;
+	overflow: hidden;
+}
+.cj-l_line{
+	position: absolute;
+	width:5px;
+	height: 18px;
+	left: 0px;
+	top: 3px;
+	border-radius: 10px;
+}
+.cj-l_line1{
+	background: linear-gradient(#fe7a7d, #fe4f4f);
+}
+.cj-l_line4{
+	background: linear-gradient(#f8a435, #f99803);
+}
+.cj-l_line3{
+	background: linear-gradient(#81a4ff, #4d7ffe);
+}
+.cj-l_line2{
+	background: linear-gradient(#fe7a7d, #fe4f4f);
+}
+.cj-l_line5{
+	background: linear-gradient(#69d4d2, #36cdb7);
+}
+.cj-l_line6{
+	background: linear-gradient(#f8a435, #f99803);
+}
+
+.wrapper .clearfix{
+	border: none;
+}
+
+.order_btn_box{
+	display: flex!important;
+	justify-content: space-between;
+	width: 94%;
+	margin: 0 auto;
+	margin-bottom: 14px;
+	border: none!important;
+	text-align: center;
+}
+	.order_btn{
+		border:1px solid  #e5e5e5;
+		border-top: 3px solid #db4537;
+		width: 31%!important;
+		font-size: 12px;
+		border-radius:6px;
+		padding: 6px 0;
+		text-align: center;
+	}
+	.order_btn_num{
+		color: #db4537;
+		font-weight: bold;
+		font-size: 16px;
+		line-height: 10px;
+		margin-top: 4px;
+	}
+	.tital_btn{
+		width: 94%;
+		height: 40px;
+		background-color: #db4537;
+		border-radius: 4px;
+		color: #fff;
+		margin: 0 auto;
+		display: block;
+	}
+	.tital_tit{
+		padding: 10px 10px 0 10px;
+	}
+	.tital_text{
+		line-height: 24px;
+		font-size: 14px;
+		margin-top: 4px;
+		padding: 0 10px;
+	}
+	.darktitle{
+		width: 94%;
+		padding:10px 0 5px 0;
+		font-size: 14px;
+		margin-left: 3%!important;
+	}
+	.rc-line{
+		width: 80px;
+	}
+	.beizhuLi{
+		border-bottom: 1px solid #ccc;
+	}
+	.tit_img2{
+		width: 18px;
+		float: right;
+		margin-right: 18px;
+	}
+	#beizhu{
+		margin-top: 0;
+		padding-top: 0;
+	}
+</style>
+<body>
+	<script id="dict-template" type="text/x-dot-template">
+		{{for(var i=0, len=it.length; i < len; i++) { }}
+		<li class="beizhuLi">
+			<div class="tital_tit">
+				{{=i+1}}.{{=it[i].title}}
+				<img class="tit_img2" src="../../image/change.png" alt="" onclick="changebz('{{=it[i].scheduleid}}')">
+				<img class="tit_img2" src="../../image/detrl.png" alt="" onclick="deletebz('{{=it[i].scheduleid}}')">
+			</div>
+			<div class="tital_text">
+				{{=it[i].msgtext}}
+			</div>
+		</li>
+		{{ } }}
+	</script>
+	<div style="padding-top:276px;">
+		<div class="Calendar_sbox_b">
+			<div class="index_sbox">
+					<div class="darktitle" ><h4><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>今日待办工单</h4></div>
+					<ul class="order_btn_box">
+							<li class="order_btn" style="position:relative;" onclick="openWinList('bill/bill-list_win','工单待办','RL_BILL')">
+								<div id="preBillTip" class="order_btn_num">0</div>
+								<img class="rc-line" src="../../image/rc-line.png" alt="">
+								<div>故障工单</div>
+							</li>
+
+							<li class="order_btn" style="position:relative;" onclick="openWinList('bill/bill-list_win','停发电工单','RL_FD')">
+								<div id="allElectBillCount" class="order_btn_num">0</div>
+								<img class="rc-line" src="../../image/rc-line.png" alt="">
+								<div>停发电工单</div>
+							</li>
+
+							<li class="order_btn" style="position:relative;" onclick="openWinList('generation/generationBillListWin','代维调度','RL_DW')" >
+								<div id="userListClaimedCount" class="order_btn_num">0</div>
+								<img class="rc-line" src="../../image/rc-line.png" alt="">
+								<div>调度工单</div>
+							</li>
+					</ul>
+
+					<ul class="order_btn_box">
+							<li class="order_btn" style="position:relative;" onclick="openWinList('xunjian/task_list_win','巡检任务','RL_XUNJIAN',false)">
+								<div id="taskNewTip" class="order_btn_num">0</div>
+								<img class="rc-line" src="../../image/rc-line.png" alt="">
+								<div>巡检任务</div>
+							</li>
+
+							<li class="order_btn" style="position:relative;" onclick="openWinList('standBill/standBillListWin','上站待办','RL_STATION')" >
+								<div id="standStaPreBillTip" class="order_btn_num">0</div>
+								<img class="rc-line" src="../../image/rc-line.png" alt="">
+								<div>上站待办</div>
+							</li>
+
+							<li class="order_btn" style="position:relative;" onclick="openWinList('repair/repair-list_win','日常修理','RL_Repair')" >
+								<div id="repairBillIdTip" class="order_btn_num">0</div>
+								<img class="rc-line" src="../../image/rc-line.png" alt="">
+								<div>日常维修</div>
+							</li>
+					</ul>
+			</div>
+
+			<button class="tital_btn" type="button" name="button" id="beizhubtn" onclick="titalFun()">添加日程</button>
+
+			<div class="index_sbox">
+					<div class="darktitle" ><h4><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>日程</h4></div>
+					<ul id="beizhu">
+
+					</ul>
+			</div>
+
+		</div>
+	</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+<script type="text/javascript" src="libs/calendar.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/home_frm.js"></script>
+<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+
+
+
+<script>
+	var Newtime=CurentTime5();
+	apiready = function() {
+		var miCalendar = api.require('miCalendar');
+		miCalendar.open({
+				rect: {
+						x: 0,
+						y: 0,
+						w: api.frameWidth,
+						h: 276
+				},
+				currentDateTitle: {
+						 h: 30 ,
+						 size:16,
+						 color:'#fff',
+						 backgroundColor:'#ffb8b8'
+						 },
+				styles: {
+						bg: 'rgba(255,255,255,255)',
+							 title: {
+								 color: '#3b3b3b',
+								 size: 12
+							},
+						date: {
+								color: '#3b3b3b',
+								selectedColor: '#fff',
+								selectedBg: '#ffcac5',
+								size: 12
+						},
+						today: {
+								color: '#fff',
+								bg: '#db4537'
+						}
+				},
+				isLunarCalendar:false,
+				fixedOn: api.frameName,
+				fixed: false
+		}, function(ret, err) {
+				if (ret) {
+								var datebefore=ret.date;
+								console.log(JSON.stringify(datebefore));
+								if(datebefore&&datebefore.length==9){
+									datebefore=datebefore.slice(0,8)+'0'+datebefore.slice(8)
+								}
+								var opts={
+									date:datebefore
+								};
+
+								$client.getDayCalendar(opts,function(ret,err){
+									console.log(JSON.stringify(ret));
+									if(ret.success&&ret.UserLocationArea&&ret.UserLocationArea.length>0){
+										// var beizhuList=JSON.parse(ret.UserLocationArea);
+										var beizhuList=ret.UserLocationArea;
+										renderTemp('beizhu', 'dict-template', beizhuList, false);
+									}else {
+										$('#beizhu').html('<li><div class="tital_tit">无</div></li>')
+									}
+								})
+
+								$client.getDayNumCalendar(opts,function(ret,err){
+									console.log(JSON.stringify(ret));
+									if(ret.success){
+										$('#preBillTip').html(ret.mainlistcount);
+										$('#allElectBillCount').html(ret.tasklistcount);
+										$('#userListClaimedCount').html(ret.zndwListcount);
+										$('#taskNewTip').html(ret.projectcount);
+										$('#standStaPreBillTip').html(ret.standlistcount);
+										$('#repairBillIdTip').html(ret.fixlistListcount);
+									}
+								})
+
+								Newtime=ret.date;
+								$api.setStorage('Newtime', ret.date);
+				} else {
+
+				}
+		});
+
+
+		var data={
+		}
+		var datelistArr=[];
+		$client.getRemarksList(data,function(ret,err){
+			console.log(JSON.stringify(ret));
+			if (ret.success) {
+				for (var i = 0; i < ret.datelist.length; i++) {
+					datelistArr.push({
+						date: ret.datelist[i],
+						badge:'widget://res/jiaobred.png'
+					})
+				}
+				var data2={
+					date:CurentTime5()
+				}
+
+				$client.getStationCalendar(data2,function(ret,err){
+					console.log(JSON.stringify(ret));
+					if (ret.success) {
+						for (var i = 0; i < ret.datelist.length; i++) {
+							datelistArr.push({
+								date: ret.datelist[i],
+								badge:'widget://res/jiaobdai.png'
+							})
+						}
+						miCalendar.setSpecialDates({
+							specialDates: datelistArr
+						});
+					} else {
+						api.toast({
+							msg : '获取代办日期列表失败'
+						});
+					}
+				})
+			} else {
+				api.toast({
+					msg : '获取日程日期列表失败'
+				});
+			}
+		})
+
+		// JS日历
+		// var calendar = new Calendar({
+		// 	start: CurentTime3(), //开始日期（必传）
+		// 	end: CurentTime4(), //结束日期（必传）
+		// 	specialDates: [{
+		// 		date: '2019/05/23', //标记的日期
+		// 		text: '放假', //标记的文字
+		// 	}, {
+		// 		date: '2020/01/01',
+		// 		text: '元旦'
+		// 	}],
+		// 	autoHide: false,
+		// 	itemClick: function(item) {
+		// 		console.log(item.year + '-' + item.month + '-' + item.date);
+		// 		var time=item.year + '-' + item.month + '-' + item.date;
+		// 		var opts={
+		// 			date:time
+		// 		};
+		// 		$client.getDayCalendar(opts,function(ret,err){
+		// 			if(ret.success&&ret.UserLocationArea){
+		// 				var beizhuList=JSON.parse(ret.UserLocationArea);
+		// 				console.log(JSON.stringify(beizhuList));
+		// 				renderTemp('beizhu', 'dict-template', beizhuList, false);
+		// 			}else {
+		// 				$('#beizhu').html('<li><div class="tital_tit">无</div></li>')
+		// 			}
+		// 		})
+		//
+		// 		$client.getDayNumCalendar(opts,function(ret,err){
+		// 			console.log(JSON.stringify(ret));
+		// 			if(ret.success){
+		// 				$('#preBillTip').html(ret.mainlistcount);
+		// 				$('#allElectBillCount').html(ret.tasklistcount);
+		// 				$('#userListClaimedCount').html(ret.zndwListcount);
+		// 				$('#taskNewTip').html(ret.projectcount);
+		// 				$('#standStaPreBillTip').html(ret.standlistcount);
+		// 				$('#repairBillIdTip').html(ret.fixlistListcount);
+		// 			}
+		// 		})
+		//
+		// 		Newtime=time;
+		//
+		// 	}
+		// })
+
+		// $('.calendar-body li').each(function(){
+		// 	var dataNum=$(this).attr('data-date');
+		// 	if(CurentTime3()==dataNum){
+		// 		$(this).addClass('calendar-on');
+		// 	}
+		// })
+
+		var opts={
+			date:Newtime
+		}
+
+		$client.getDayNumCalendar(opts,function(ret,err){
+			if(ret.success){
+				$('#preBillTip').html(ret.mainlistcount);
+				$('#allElectBillCount').html(ret.tasklistcount);
+				$('#userListClaimedCount').html(ret.zndwListcount);
+				$('#taskNewTip').html(ret.projectcount);
+				$('#standStaPreBillTip').html(ret.standlistcount);
+				$('#repairBillIdTip').html(ret.fixlistListcount);
+			}
+		})
+
+		$client.getDayCalendar(opts,function(ret,err){
+			console.log(JSON.stringify(ret));
+			if(ret.success&&ret.UserLocationArea.length>0){
+				// var beizhuList=JSON.parse(ret.UserLocationArea);
+				var beizhuList=ret.UserLocationArea;
+				renderTemp('beizhu', 'dict-template', beizhuList, false);
+			}else {
+				$('#beizhu').html('<li><div class="tital_tit">无</div></li>')
+			}
+		})
+
+
+
+	};
+	function CurentTime3(){
+	    return (new Date()).pattern("yyyy/M/d");
+	}
+	function CurentTime5(){
+	    return (new Date()).pattern("yyyy-MM-dd");
+	}
+
+	/**
+	 *获取当前时间
+	 */
+	function CurentTime4(){
+		var now = new Date();
+		now.setFullYear(now.getFullYear()+1);
+		return (now).pattern("yyyy/M/d");
+	}
+
+
+	function titalFun(){
+		var opts={
+			date:Newtime
+		}
+
+		$client.getDayCalendar(opts,function(ret,err){
+			if(ret.success&&ret.UserLocationArea.length>9){
+				api.toast({
+					msg : '日程记录最多不超过10条！'
+				});
+			}else {
+				api.openFrame({
+								name: 'otherDiv',
+								url: 'otherDiv.html',
+								pageParam:{
+									Newtime:Newtime
+								},
+								rect: {
+									x:0,
+									y:0,
+									w:api.winWidth,
+									h:api.winHeight
+								},
+								bgColor: 'rgba(0,0,0,0.6)',
+								bounces:false
+				});
+			}
+		})
+	}
+
+	function Refreshrili(){
+		var miCalendar = api.require('miCalendar');
+
+		var opts={
+			date:Newtime
+		};
+
+		$client.getDayCalendar(opts,function(ret,err){
+			console.log(JSON.stringify(ret));
+			if(ret.success&&ret.UserLocationArea&&ret.UserLocationArea.length>0){
+				// var beizhuList=JSON.parse(ret.UserLocationArea);
+				var beizhuList=ret.UserLocationArea;
+				renderTemp('beizhu', 'dict-template', beizhuList, false);
+			}else {
+				$('#beizhu').html('<li><div class="tital_tit">无</div></li>')
+			}
+		})
+
+		var data={
+		}
+		$client.getRemarksList(data,function(ret,err){
+			console.log(JSON.stringify(ret));
+			if (ret.success) {
+				var datelistArr=[];
+				for (var i = 0; i < ret.datelist.length; i++) {
+					datelistArr.push({
+						date: ret.datelist[i],
+						badge:'widget://res/jiaobred.png'
+					})
+				}
+				miCalendar.setSpecialDates({
+					specialDates: datelistArr
+				});
+			} else {
+				api.toast({
+					msg : '获取日程日期列表失败'
+				});
+			}
+		})
+
+	}
+
+	function deletebz(scheduleid){
+		var opts={
+			id:scheduleid
+		};
+		console.log(JSON.stringify(opts));
+		api.confirm({
+		    title: '提示',
+		    msg: '是否删除日程？',
+		    buttons: ['确定', '取消']
+		}, function(ret, err) {
+		    var index = ret.buttonIndex;
+				if(index==1){
+					$client.deleteDayCalendar(opts,function(ret,err){
+						console.log(JSON.stringify(ret));
+						if (ret.success) {
+							api.hideProgress();
+							api.toast({
+								msg : '删除日程成功！'
+							});
+							Refreshrili()
+						} else {
+							api.hideProgress();
+							api.toast({
+								msg : '删除日程失败！'
+							});
+						}
+					})
+				}
+		});
+	}
+
+
+	function changebz(scheduleid){
+		api.openFrame({
+						name: 'otherDiv',
+						url: 'otherDiv.html',
+						pageParam:{
+							Newtime:Newtime,
+							scheduleid:scheduleid
+						},
+						rect: {
+							x:0,
+							y:0,
+							w:api.winWidth,
+							h:api.winHeight
+						},
+						bgColor: 'rgba(0,0,0,0.6)',
+						bounces:false
+		});
+	}
+
+</script>
+
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>title</title>
+        <link rel="stylesheet" href="../../css/api.css"/>
+        <link rel="stylesheet" href="../../css/common.css" />
+        <link rel="stylesheet" href="../../css/vueComponent.css" />
+        <link rel="stylesheet" href="../../css/query.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/aui.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+    </head>
+    <style>
+        html, body {
+            height: auto;
+        }
+        body.active {
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+        .ccssoft_list li{
+            border-bottom: 2px dashed #00a0c8;
+        }
+        #app{
+            position: relative;
+        }
+
+        .main-div {
+            /*position: fixed;*/
+            /*top: 0;*/
+            /*left: 0;*/
+            /*bottom: 50px; !*距离底部的距离为底部盒子的高度，自己也可以设置*!*/
+            /*overflow-y: scroll;*/
+            /*width: 100%;*/
+            /*height: auto;*/
+            /*-webkit-overflow-scrolling: touch;   !*这句是为了滑动更顺畅*!*/
+            padding-bottom: 50px;
+        }
+
+        #footer {
+            position: fixed;
+            bottom: 0;
+            height: 50px;
+            left: 0;
+            zoom: 1;
+            width: 100%;
+            padding: 5px 15px 0px 15px;
+            z-index: 3;
+            background-color: #f7f7f7;
+
+
+        }
+
+        .ios .main-div{
+            /*bottom: 15vh;*/
+            padding-bottom: 15vh;
+        }
+        .ios #footer{
+            height: 15vh;
+        }
+
+        /*.cardButtonDiv{*/
+        /*    position: absolute;*/
+        /*    top: 0;*/
+        /*    width: 100%;*/
+        /*}*/
+
+        /*.cardButtonDiv{*/
+        /*    position: fixed;*/
+        /*    bottom: 0;*/
+        /*    left: 0;*/
+        /*    zoom: 1;*/
+        /*    width: 100%;*/
+        /*    padding: 5px 15px 0px 15px;*/
+        /*    height: 50px;*/
+        /*    z-index: 3;*/
+        /*    background-color: #f7f7f7;*/
+        /*    box-sizing: border-box;*/
+        /*    -webkit-box-sizing: border-box;*/
+        /*    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+        /*    -webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+        /*    padding-bottom: 50px;*/
+        /*}*/
+
+        .aui-list-view-cell{
+            line-height: 35px;
+        }
+        .radio-icon{
+            border: 1px solid #6f7174;
+            border-radius: 100%;
+            width: 14px;
+            height: 14px;
+            background-color: #fff;
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+
+        .radio-icon.active:after {
+            width: 6px;
+            height: 6px;
+            border-radius: 100%;
+            /*background-color: #fff;*/
+            background: #293036;
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transition: transform .15s ease-in;
+            transform: translate(-50%,-50%) scale(1);
+        }
+
+        .user-name{
+            font-weight: bold;
+        }
+        .ccssoft_list li:hover {
+            background: unset;
+        }
+
+        .fileBtn{
+            padding:2px 6px;
+            border-radius:4px;
+            background-color:#3c7dbd;
+            color:#fff;
+            font-size:14px;
+            height:26px;
+            line-height: 26px;
+            margin-top: 7px;
+            display: inline-block;
+        }
+        .removebtn{
+            position: absolute;
+            right: 0;
+        }
+
+    </style>
+    <body>
+        <div id="app" v-cloak>
+            <div class="main-div">
+                <ul id="listView" class="ccssoft_list">
+                    <template v-if="dataList.length < 1"></template>
+                    <template v-else>
+                        <li v-for="(item,index) in dataList" @click="selectUser(item)" :class="['aui-list-view-cell']">
+                            <div class="aui-col-xs-1" style="text-align: center" >
+                                <span :class="['radio-icon',item.userId === selectedUser.userId ? 'active' : '']"></span>
+                            </div>
+                            <div class="aui-col-xs-5" >
+                                <span class="user-name">{{item.userName}}</span>
+                            </div>
+                            <div class="aui-col-xs-6" >{{item.loginName}}</div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+            <yt-confirm-dialog title="确定转派？" @decided="decided" :show.sync="dialogShow" close-on-decided>
+                <template v-slot:content>
+                    <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                        <div class="aui-flex-item-5 " style=" height: 40px;line-height: 40px; text-align: right;">
+                            当前工单是否转派给：
+                        </div>
+                        <div class="aui-flex-item-6"  style=" height: 40px;line-height: 40px; text-align: left;">{{selectedUser.userName}}</div>
+                    </div>
+                </template>
+            </yt-confirm-dialog>
+            <yt-confirm-dialog title="情况说明" @decided="decidedSubmitAudit" :show.sync="submitAuditDialogShow">
+                <template v-slot:content>
+                    <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                        <div class="aui-flex-item-5 " style=" height: 40px;line-height: 40px; text-align: right;">
+                            <span style="color: red;">*</span>转派说明：
+                        </div>
+                        <div class="aui-flex-item-6"  style="line-height: 40px; text-align: left;padding-left: 10px;">
+                            <textarea v-model="zpDescribe" style="height: 100%;padding: 2px"></textarea>
+                        </div>
+                        <div class="aui-flex-item-5 " style=" height: 40px;line-height: 40px; text-align: right;">
+                            <span style="color: red;">*</span>图片上传：
+                        </div>
+                        <div class="aui-flex-item-6"  style=" text-align: left;">
+                            <ul class="aui-list-view aui-grid-view" style="background-color: unset;">
+                                <li class="aui-list-view-cell aui-img aui-col-xs-6" v-if="base64Data">
+                                    <img class="aui-img-object" :src="base64Data">
+                                    <button class="aui-btn aui-btn-danger removebtn" @click.stop="removeImg">×</button>
+                                </li>
+                                <li class="aui-list-view-cell aui-img aui-col-xs-6" v-if="!file" @click.stop="selectFile">
+                                    <img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </template>
+            </yt-confirm-dialog>
+            <footer id="footer">
+                <div class="cardButtonDiv">
+                    <button style="width: 49%;background-color: #3779d0;color: white;height: 40px;" onclick="back()">返回</button>
+                    <button style="width: 49%;background-color: #DB4537;color: white;height: 40px;" @click="transfer">提交</button>
+                </div>
+            </footer>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script type="text/javascript" src="../../script/vueComponent.js"></script>
+    <script type="text/javascript" src="../../script/lcApi.js"></script>
+<!--        <script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.9.1/vconsole.min.js"></script><script >var vConsole = new VConsole();</script>-->
+    <script type="text/javascript">
+        // if(/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+        //     $("body").addClass("ios");
+        // }
+        var app = new Vue({
+            el:'#app',
+            data:function (){
+                return {
+                    dataList:[
+                        // {userId:1,userName:"用户1"},
+                        // {userId:2,userName:"用户2"},
+                        // {userId:3,userName:"用户3"},
+                        // {userId:4,userName:"用户4"},
+                        // {userId:1,userName:"用户1"},
+                        // {userId:2,userName:"用户2"},
+                        // {userId:3,userName:"用户3"},
+                        // {userId:4,userName:"用户4"},
+                        // {userId:1,userName:"用户1"},
+                        // {userId:2,userName:"用户2"},
+                        // {userId:3,userName:"用户3"},
+                        // {userId:4,userName:"用户4"},
+                        // {userId:1,userName:"用户1"},
+                        // {userId:2,userName:"用户2"},
+                        // {userId:3,userName:"用户3"},
+                        // {userId:4,userName:"用户4"},
+                    ],
+                    selectedUser:{},
+                    dialogShow:false,
+                    submitAuditDialogShow:false,
+                    zpDescribe:"",
+                    file:null,
+                    base64Data:"",
+                    userInfo:{}
+                }
+            },
+            methods:{
+                selectUser:function (user) {
+                    this.selectedUser = user;
+                },
+                transfer:function (){
+                    if(!this.selectedUser.userId){
+                        return api.toast({msg:"请选择一个用户！"})
+                    }
+                    if(this.selectedUser.loginName === this.userInfo.loginname){
+                        return api.toast({msg:"无法转派给自己！"})
+                    }
+                    /*if(this.billInfo.taskTypeName !== "疑似设备变动监控"){
+                        return this.dialogShow = true;
+                    }*/
+                    return this.submitAuditDialogShow = true;
+                    // 判断选中的用户是否为客户经理
+                    // request.lcApi.getUserIsManager(this.selectedUser.loginName,(res)=>{
+                    //     // 如果是客户经理，打开表单弹窗
+                    //     if(res.isSuccess){
+                    //         this.submitAuditDialogShow = true;
+                    //     }else{
+                    //         // 不是客户经理，正常转派
+                    //         this.dialogShow = true;
+                    //     }
+                    // })
+                },
+                decidedSubmitAudit(){
+                    if(!this.zpDescribe){
+                        return api.toast({msg:"请填写转派说明！"})
+                    }
+                    if(!this.file){
+                        return api.toast({msg:"请上传图片！！"})
+                    }
+                    this.decided();
+                },
+                decided:function(){
+                    let _this = this;
+                    request.post({
+                        url:"/worderAssetRun/sendTask.do",
+                        data:{
+                            id:this.billInfo.id,
+                            userCode:this.selectedUser.loginName,
+                            userName:this.selectedUser.userName,
+                            status:this.billInfo.status,
+                            zpDescribe:this.zpDescribe
+                        },
+                        autoCloseProgress:false
+                    },function(ret){
+                        if(ret.success && ret.data){
+                            if(ret.data.isSuccess){
+                                _this.uploadImage(()=>{
+                                    api.toast({msg:"转派成功！"});
+                                    setTimeout(function(){
+                                        api.sendEvent({name: 'zcyygdAudit', extra: {state: 'auditOver'}});
+                                        api.closeWin({name : 'detailGroupWin'});
+                                        api.closeWin({name : 'transferSelectUserWin'});
+                                        _this.closeSelf();
+                                        api.hideProgress();
+                                    },2000)
+                                });
+                            }else{
+                                api.toast({msg:ret.data.msg});
+                            }
+                        }else{
+                            api.toast({msg:ret.msg});
+                        }
+                    })
+                },
+                selectFile(){
+                    this.$selectPhoto(null,(file)=>{
+                        this.file = file;
+                        this.loadBase64ImgAtFile(this.file,(ret)=>{
+                            this.base64Data = ret;
+                        });
+                    })
+                },
+                removeImg(){
+                    this.file = null;
+                    this.base64Data = "";
+                },
+                uploadImage(callback){
+                    if(this.file){
+                        request.lcApi.uploadTransferImg({
+                            taskid:this.billInfo.id,
+                            userCode:this.userInfo.loginname,
+                            file:this.file,
+                        },(ret)=>{
+                            callback && callback(ret);
+                        })
+                    }else{
+                        callback && callback();
+                    }
+                },
+            }
+        });
+
+        apiready = function() {
+            initHeader();
+            $api.fixTabBar($api.byId('footer'));
+            app.userInfo = $api.getStorage("user");
+            app.billInfo = $api.getStorage("zzyygdDetailInfo");
+            request.getUserPageList = function(params,callback){
+                service({
+                    url:"/worderAssetRun/getUserPageList.do",
+                    data:params
+                },callback)
+            }
+
+            listView = new C.ApiListView({
+                fn : request.getUserPageList,
+                newSystem:true,
+                vueProxy:true,
+                callback:function(res,restart){
+                    if(!res.data.list || res.data.list.length < 1){
+                        return api.toast({msg:"没有可转派的用户！"});
+                    }
+                    if(restart){
+                        app.dataList = res.data.list;
+                    }else{
+                        app.dataList = app.dataList.concat(res.data.list);
+                    }
+                }
+            });
+            listView.refresh();
+        };
+
+    </script>
+</html>

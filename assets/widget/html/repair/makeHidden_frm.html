@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>派单</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../bill/css/supportDefineDetail.css" />
+		<style>
+			
+			.repairinput {
+				background-color: #FFFFFF;
+				width: 100%;
+				height: 100%;
+				line-height: 40px;
+			}
+			.noPut{
+            	background-color: #777777;
+				width:100%;
+				height:100%;
+				line-height:40px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="sddDivId" style="overflow:auto;margin-bottom:55px;">
+				<div id="finduser" class="cardDiv" >
+					<div class="cardLabel">
+						发现人员:
+					</div>
+					<div class="cardCon">
+						<input id="contactfinduser" class="noPut" type="text" readonly="readonly" style="background-color:#f3f3f3;width:100%;height:100%;line-height:40px;"> 
+					</div>
+				</div>
+				<div id="findphone" class="cardDiv" >
+					<div class="cardLabel">
+						发现人电话：
+					</div>
+					<div class="cardCon">
+						<input id="contactfindphone" class="noPut" type="text" readonly="readonly" style="background-color:#f3f3f3;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="findtime" class="cardDiv" >
+					<div class="cardLabel">
+						发现时间：
+					</div>
+					<div class="cardCon">
+						<input id="contactfindtime" class="noPut" type="text" readonly="readonly" style="background-color:#f3f3f3;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="devname" class="cardDiv" >
+					<div class="cardLabel">
+						隐患设备:
+					</div>
+					<div class="cardCon">
+						<input id="contactdevname" class="noPut" type="text" readonly="readonly" style="background-color:#f3f3f3;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="hiddencontent" class="cardDiv" >
+					<div class="cardLabel">
+						隐患内容:
+					</div>
+					<div class="cardCon">
+						<input id="contacthiddencontent" class="noPut" type="text" readonly="readonly" style="background-color:#f3f3f3;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="hiddengrade" class="cardDiv" >
+					<div class="cardLabel">
+						隐患等级：
+					</div>
+					<div class="cardCon">
+						<input id="contacthiddengrade" class="noPut" type="text" readonly="readonly" style="background-color:#f3f3f3;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="deviceName" class="cardDiv" >
+					<div class="cardLabel">
+						<font color="red">*</font>设备名称：
+					</div>
+					<div class="cardCon">
+						<select id="contactdeviceName" class="repairinput" style="display:block;" value="" onchange="getInspstand(this)"  data-valid="required" >
+						  <option value="">请选择</option>
+						</select>
+					</div>
+				</div>
+				<div id="deviceCode" class="cardDiv" >
+					<div class="cardLabel">
+						<font color="red">*</font>设备型号：
+					</div>
+					<div class="cardCon">
+						<input id="contactdeviceCode" type="text" readonly="readonly" style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="fixcontent" class="cardDiv" >
+					<div class="cardLabel">
+						<font color="red">*</font>维修类别：
+					</div>
+					<div class="cardCon">
+						<select id="contactfixcontent" class="repairinput" style="display:block;" value="" data-valid="required" >
+						  <option value="">请选择</option>
+						</select>
+					</div>
+				</div>
+				<div id="hiddenremark" class="cardTextareaDiv">
+					<div class="cardTextareaLabel">
+						<font color="red">*</font>隐患描述:
+					</div>
+					<div class="cardTextareaCon">
+						<textarea id="contacthiddenremark" rows="4"  style="overflow:auto; "></textarea>
+					</div>
+				</div>
+			</div>
+			<footer id="footId" style="height:50px;">
+				<div class="cardButtonDiv">
+					<button class="cancelBtn"  onclick="closeWin();">
+						取消
+					</button>
+					<button class="okBtn"  onclick="signOptFunc();">
+						提交
+					</button>
+				</div>
+			</footer>
+		</div>
+		<!--下拉列表-->
+		<script id="dict-template1" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i< len; i++) {}}
+			<option value="{{=it[i].model}}">{{=it[i].name}}</option>
+			{{ } }}
+		</script>
+		<!--下拉列表-->
+		<script id="dict-template2" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i< len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript">
+		var idclean = "";
+		var distance;
+		var isSuper = "N";
+		var repairDetail = {}
+		var fixcontentList = []
+		var DeviceList = []
+		apiready = function() {
+			api.addEventListener({
+				name : 'viewappear'
+			}, function(ret, err) {
+				api.closeFrame({
+					name : 'standBillMenu'
+				});
+			});
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+			initRelief();
+		};
+		function initRelief() {
+			var user = $api.getStorage('user');
+			repairDetail = $api.getStorage('repairDetail');
+			DeviceList = $api.getStorage('DeviceList');
+			repairDetail.userid = user.userid;
+			fixcontentList = $api.getStorage("fixcontentList");
+			// console.log("fdfdfdfdfdf");
+			// console.log(JSON.stringify(repairDetail));
+			// console.log(JSON.stringify(DeviceList));
+			// console.log(JSON.stringify(user));
+			// console.log(JSON.stringify(fixcontentList))
+			$('#contactdeviceName').empty();
+			$('<option>').text('请选择').val('').appendTo('#contactdeviceName');
+			renderTemp('contactdeviceName', 'dict-template1', DeviceList,true);
+			$('#contactfixcontent').empty();
+			$('<option>').text('请选择').val('').appendTo('#contactfixcontent');
+			renderTemp('contactfixcontent', 'dict-template2', fixcontentList,true);
+
+			$api.byId('contactfinduser').value = repairDetail.finduser;
+			$api.byId('contactfindphone').value = repairDetail.findphone;
+			$api.byId('contactfindtime').value = repairDetail.findtime;
+			$api.byId('contactdevname').value = repairDetail.devname;
+			$api.byId('contacthiddencontent').value = repairDetail.hiddencontent;
+			if(repairDetail.hiddengrade=='A'){
+				$api.byId('contacthiddengrade').value = '特别严重';
+			}else if (repairDetail.hiddengrade=='B') {
+				$api.byId('contacthiddengrade').value = '严重';
+			}else if (repairDetail.hiddengrade=='C') {
+				$api.byId('contacthiddengrade').value = '一般';
+			}else{
+				$api.byId('contacthiddengrade').value = '';
+			}
+			$api.byId('contacthiddenremark').innerHTML = repairDetail.hiddenremark;
+		}
+
+		function closeWin() {
+			api.closeWin({
+				name : 'makeHidden_win'
+			});
+		}
+		function getInspstand(date){
+			var code = $(date).val();
+			$api.byId('contactdeviceCode').value = code !='null' ? code : '';
+		}
+		function signOptFunc(){
+			var deviceName = $api.byId('contactdeviceName').value
+			var deviceCode = $api.byId('contactdeviceCode').value
+			var fixcontent = $api.byId('contactfixcontent').value
+			console.log('aaaaasdfasdf')
+			console.log('deviceName:'+deviceName+' ,deviceCode:'+deviceCode+' ,fixcontent:'+fixcontent)
+			if(!deviceName && deviceName == ''){
+				api.toast({
+					msg: "请选择维修设备",
+					location: 'middle'
+				});
+                api.hideProgress();
+				return
+			}else if(!fixcontent && fixcontent == ''){
+				api.toast({
+					msg: "请选择维修类别",
+					location: 'middle'
+				});
+                api.hideProgress();
+				return
+			}
+			repairDetail.deviceName = deviceName;
+			repairDetail.deviceCode = deviceCode;
+			repairDetail.fixcontent = fixcontent;
+			var opts = repairDetail
+			api.showProgress({
+				title: '加载中',
+				modal: false
+			});
+			$client.insterRepairBill(opts,function(ret, err) {
+				console.log(JSON.stringify(ret))
+				if(ret){
+					if(ret.success){
+						api.toast({
+							msg: ret.data_info,
+							location: 'middle'
+						});
+						window.setTimeout(function() {
+							api.execScript({
+								name : 'repair/repair-list_win',
+							    frameName: 'repair-listCon_frm',
+								script : 'refreshList();'
+							});
+							api.closeToWin({
+								name : 'repair/repair-list_win'
+							});
+						}, 3000);
+					}else{
+						api.toast({
+							msg: err.msg,
+							location: 'middle'
+						});
+					}
+				}else{
+                    api.toast({
+                        msg: err.msg,
+                        location: 'middle'
+                    });
+				}
+                api.hideProgress();
+
+			})
+		}
+	</script>
+</html>

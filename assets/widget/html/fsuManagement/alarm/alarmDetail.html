@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>alarm</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../../css/aui-win.css" />
+	<link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+				class="aui-iconfont aui-icon-left"></span>
+		</a>
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="openQueryStationWin()"><span
+				class="aui-iconfont aui-icon-search"></span>
+		</a>
+		<div class="aui-title">
+			告警详情
+		</div>
+	</header>
+	<div class="wrapper" id="info">
+		<div class="box-cpn">
+			<h4>
+				<div class="title title-aqua"></div>描述
+			</h4>
+			<div>此页面为测试页面</div>
+		</div>
+	</div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript">
+	apiready = function () {
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		api.hideProgress()
+	}
+
+</script>
+
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../css/billMenu.css" />
+		<style>
+			.myCircle {
+				position: absolute;
+				width: 200px;
+				height: 200px;
+				bottom: 150px;
+				left: calc(50% - 100px);
+			}
+			@media screen and (max-width: max-width) {
+				.myCircle {
+					position: absolute;
+					width: 200px;
+					height: 200px;
+					bottom: 100px;
+					left: calc(50% - 100px);
+				}
+			}
+			ul {
+				margin-top: 40px;
+			}
+			ul > li {
+				font-size: 25px;
+				font-weight: bold;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<!--开门操作begin-->
+		<div id="otherDiv" class="winDiv" style="display: none">
+			<div id="spanTitleId" class="otherDivHeader"></div>
+			<input type="hidden" id="optTypeId" value=""/>
+			<div  id="transferLabelDivId" class="selectLabelDiv" style="margin-top: 10px;text-align:left;" >
+				<div id="user_name" style="font-size:16px;color:#adadad;margin-left:15px;">
+					接收人
+				</div>
+			</div>
+			<div id="contactTelSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					联系电话:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<input id="contactTelTextId"  type="text" class="textareaborder" value=""/>
+				</div>
+			</div>
+			<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+			<div id="contactTelSpanId"class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					紧急程度:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<input id="emergencylevel"  type="text" class="textareaborder" value="一般" disabled="disabled"/>
+				</div>
+			</div>
+			<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+			<div id="opinionLabelDiv" class="cardTextareaDiv" style="height:100px;margin-bottom: 20px;">
+				<div class="cardTextareaLabel " style="height: 100px;font-size: 16px;width: 28%;text-align:left;padding-left:10px;">
+					开门原因:
+				</div>
+				<div style="width:68%;height:80px;float:right;margin-right:10px;">
+					<textarea id="otherDealInfoId" disabled="disabled" name="handlerResult" rows="4" style='font-size:14px;' class="dealInfo required" data-valid="required" data-error="请填写处理方法！" ></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame()">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="otherOptFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--开门操作等end-->
+		<div style="width: 100%;">
+			<div style="font-size: 16px;text-align: left;margin-left: 18px;height: 40px;line-height: 40px;font-weight:bold;">
+				站址名称：<span id="deviceid" style="color: #666;margin-left:3px;">暨大北门</span>
+			</div>
+		</div>
+		<script id="doorDevice-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<li onclick="openCall('{{=it[i].userphone}}')" style=" border-bottom: 1px solid #e3e2e2;">
+			<div style="text-align:left;font-size: 16px;padding: 7px;margin-left: 10px;" >包站人：<span style="color: #666">{{=it[i].username}}({{=it[i].userphone}})</span><img src="../image/title_call_icon.png" style="width: 30px;height: 30px;line-height:30px;float: right" /></div>
+			</li>
+			{{ } }}
+		</script>
+		<ul id="list-view" class="aui-list-view" style="background-color:#F4F4F4 ; "></ul>
+		<!--<div  style="background-image: url(../image/btn_doorkey_no.png);width: 100px;height: 100px;"></div>-->
+		<div id="btnid" style="position: relative; width: 200px; height: 200px;left: 50%;margin-left:-100px;"  onclick="setPoint()" >
+			<img id="imgid" src="../image/btn_doorkey_no.png" style="width: 200px;height: 200px;position: absolute;" />
+			<span id="btn_txt" style="margin-left:-100px;margin-top:-25px;position: absolute; top: 50%; left: 50%;color: #FFFFFF;display:block;width:200px;height:50px;line-height:50px;text-align:center;font-weight:bold;">FSU离线</span>
+		</div>
+		<!--<canvas id="myCanvas" class="myCircle" width="200px" height="200px">
+		开门
+		</canvas>-->
+		<div style="position: absolute;bottom:0px;width: 100%;height:50px;line-height:50px;  background-color: #FFFFFF">
+			<p id="alarminfo" style="text-align: center;color:red;">
+				警告：请不要随意打开或关闭
+			</p>
+		</div>
+	</body>
+	<script src="../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/debug.js"></script>
+	<script type="text/javascript" src="../script/config.js"></script>
+	<script type="text/javascript" src="../script/client.api.js"></script>
+	<script type="text/javascript" src="../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/doT.min.js"></script>
+	<script type="text/javascript" src="../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript">
+		//		var canvas = document.getElementById("myCanvas");
+		//		var cxt = canvas.getContext("2d");
+
+		var fsuStatus = "";//fsu状态：1在线
+		var FSUID = "";
+		var DeviceID = "";
+		var signal = "";
+		var status = 1;
+		var userid = null;
+
+		//开启状态，0为待开启，1为开启，－1为关闭
+		var user = $api.getStorage("user");
+		if ( typeof (user) != "undefined") {
+			userid = user.userid;
+		}
+		apiready = function() {
+
+			var standBillModel = $api.getStorage('standBillModel');
+			FSUID = api.pageParam.fsuid || api.pageParam.devFsuId;
+			DeviceID = api.pageParam.devicecode || api.pageParam.deviceCode;
+			signal = api.pageParam.signal;
+			var devicename = api.pageParam.devicename;
+			var stationName = api.pageParam.stationName || "<无站址名称>";
+			//          $('<li>').text('站址名称：' + stationName).appendTo($('ul'));
+			var roomUsername = standBillModel.st_maintenance_roomperson;
+			var roomUserphone = standBillModel.st_maintenance_roomphone;
+			fsuStatus = standBillModel.regist_status;
+
+			// wxx
+			// fsuStatus = "1"
+			// wxx
+			$api.byId('deviceid').innerHTML = api.pageParam.stationName;
+
+			if (roomUsername.indexOf(',') > 0 && roomUserphone.indexOf(',') > 0) {
+				var userJsonArr = new Array();
+				var roomUserArr = roomUsername.split(",");
+				var roomPhoneArr = roomUserphone.split(",");
+				for (var j = 0; j < roomUserArr.length; j++) {
+					var per = {};
+					per.username = roomUserArr[j];
+					per.userphone = roomPhoneArr[j];
+					userJsonArr.push(per);
+				}
+				renderTemp('list-view', 'doorDevice-template', userJsonArr, true);
+			} else {
+				var userJsonArr1 = new Array();
+				if (roomUserphone.indexOf(',')) {
+					roomUserphone = roomUserphone.substring(0, roomUserphone.length - 1);
+					var per1 = {};
+					per1.username = roomUsername;
+					per1.userphone = roomUserphone;
+					userJsonArr1.push(per1);
+					renderTemp('list-view', 'doorDevice-template', userJsonArr1, true);
+				}
+			}
+			if (fsuStatus == "1") {
+//
+				$api.byId('imgid').src = "../image/btn_doorkey_yes.png";
+				$api.byId('btn_txt').innerHTML = "打开";
+				$api.byId('alarminfo').innerHTML = "注意：FSU在线，请使用APP开门";
+//				$('#btnid').attr("onclick","");
+				document.getElementById("btnid").disabled = true;
+				//			setPoint();
+			} else {
+				document.getElementById('btnid').disabled = true;
+				$api.byId('imgid').src = "../image/btn_doorkey_no.png";
+				$api.byId('btn_txt').innerHTML = "FSU离线";
+				$api.byId('alarminfo').innerHTML = "注意：FSU离线，请借钥匙开门";
+				$('#btnid').attr("onclick","");
+			}
+		};
+		function otherOptFunc() {
+			var causeDealInfo = $api.byId('otherDealInfoId').value;
+			if (causeDealInfo == '') {
+				api.toast({
+					msg : "开门原因必填！",
+					duration : 1000,
+					location : 'middle'
+				});
+				return;
+			}
+
+
+		var taskid = api.pageParam.taskid;
+		var openname = user.username;
+		var emergencylevel = $('#emergencylevel').val();
+		userId = user.userid;
+		console.log(getObj(user));
+		var SemaphoreId ='';
+		var userInfo = $api.getStorage('userInfo');
+
+// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			// var opts = {
+			// 	openname:openname,
+			// 	cause:causeDealInfo,
+			// 	contactphone:user.mobilephone,
+			// 	company:user.leadername,
+			// 	stationcode:api.pageParam.stationcode,
+			// 	emergencylevel:emergencylevel,
+			// 	deviceid:DeviceID,
+			// 	orgnames:userInfo.orgnames
+			// };
+			//
+			// $client.getWxx(opts, function(ret, err) {
+			// 	// alert(getObj(ret))
+			// 	if (ret.success) {
+			// 			api.hideProgress();
+			// 			$api.byId('imgid').src = "../image/btn_doorkey_no.png";
+			// 			$api.byId('btn_txt').innerHTML = "开门操作已记录";
+			// 			$('#btnid').attr("onclick","");
+			// 			easyDialog.close({
+			// 				container : 'otherDiv'
+			// 			});
+			// 	}
+			// });
+// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+					api.showProgress({
+							title : '加载中'
+					});
+					$client.setPoint(userid, FSUID, DeviceID, signal, function(ret, err) {
+						// alert('userid:'+userid+'   FSUID:'+FSUID+'   DeviceID:'+DeviceID+'   signal:'+signal);
+						// alert(JSON.stringify(ret))
+						if (ret) {
+							if (ret.status == '200') {
+								$api.byId('imgid').src="../image/btn_doorkey_no.png";
+								$api.byId('btn_txt').innerHTML="设备按钮";
+								$api.byId('btnid').disabled=false;
+								api.hideProgress();
+							} else {
+								api.hideProgress();
+								api.toast({
+									msg : ret.data_info,
+									location : 'middle'
+								});
+								$api.byId('imgid').src="../image/btn_doorkey_yes.png";
+								$api.byId('btn_txt').innerHTML="打开";
+								$api.byId('btnid').disabled=true;
+							}
+						} else {
+							api.hideProgress();
+							api.toast({
+								msg : err.msg,
+								location : 'middle'
+							});
+							$api.byId('imgid').src="../image/btn_doorkey_yes.png";
+								$api.byId('btn_txt').innerHTML="打开";
+								$api.byId('btnid').disabled=true;
+						}
+					});
+		}
+
+		function closeFrame() {
+			easyDialog.close({
+				container : 'otherDiv'
+			});
+		}
+
+		function setPoint() {
+			//var t_workKind = "";//zhangzhitao 工单类型 1故障和停电工单(工单中),2发电工单(工单中),3巡检(巡检中)
+			var t_workKind = api.pageParam.t_workKind;//zhangzhitao
+			var t_openReason = api.pageParam.t_cause;
+
+
+			if (fsuStatus == "1") {
+				var user = $api.getStorage("user");
+				$api.byId('spanTitleId').innerHTML = "开门确认";
+				$api.byId('contactTelSpanId').style.display = "";
+				$api.byId('transferLabelDivId').style.display = "";
+				$api.byId('user_name').innerHTML = "操作人： " + user.username;
+				$api.byId('contactTelTextId').value = user.mobilephone;
+				$api.byId('optTypeId').value = "hangUp";
+
+				//alert(t_workKind+":"+t_openReason);
+				$api.byId('otherDealInfoId').value = t_openReason||'  ';//zhangzhitao
+
+				// 隐藏弹出开门确认
+				// easyDialog.open({
+				// 	container : 'otherDiv',
+				// 	fixed : false
+				// });
+
+				otherOptFunc();
+
+
+			}
+		}
+
+		function drawCircle(color, borderColor) {
+			cxt.beginPath();
+			cxt.fillStyle = color;
+			cxt.lineWidth = 1.5;
+			cxt.arc(100, 100, 100, 0, Math.PI * 2, true);
+			cxt.fill();
+			cxt.closePath();
+			cxt.beginPath();
+			cxt.strokeStyle = borderColor;
+			cxt.lineWidth = 2.5;
+			cxt.arc(100, 100, 98, 0, Math.PI * 2, true);
+			cxt.stroke()
+			cxt.closePath();
+		}
+
+		function drawText(text) {
+			cxt.beginPath();
+			cxt.fillStyle = "#ffffff";
+			cxt.font = "40px Arial";
+			cxt.textAlign = "center";
+			cxt.textBaseline = "middle";
+			cxt.fillText(text, 100, 100);
+			cxt.fill();
+			cxt.closePath();
+		}
+
+		function openCall(phone) {
+			if (phone != null && phone != "" && phone != "null") {
+				api.call({
+					type : 'tel_prompt',
+					number : phone
+				});
+			} else {
+				api.toast({
+					msg : '号码为空，无法拨号！'
+				});
+			}
+		}
+	</script>
+</html>

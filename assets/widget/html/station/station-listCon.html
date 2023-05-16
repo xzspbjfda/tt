@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>api</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            body.active {
+                background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .ccssoft_list {
+                margin-top: 0px;
+            }
+            .ccssoft_list li {
+                list-style: none;
+                padding: 8px;
+                border-bottom: 1px solid #e3e2e2;
+                background: #fff;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .ccssoft_list li:hover {
+                background: #f9e9df;
+            }
+            .ccssoft_list li.acitve {
+                background: #f9e9df;
+            }
+            .cj-l-title, .cj-f-title {
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 8px 70px 8px 32px;
+                position: relative;
+            }
+            .cj-f-title {
+                padding: 8px 70px 8px 0px;
+            }
+            .cj-l-title:before {
+                content: ".";
+                display: block;
+                width: 18px;
+                height: 18px;
+                background: #999;
+                border-radius: 20px;
+                position: absolute;
+                top: 10px;
+                left: 5px;
+            }
+            .ccssoft_list .cj-green .cj-l-title:before {
+                background: #1ac36b;
+            }
+            .ccssoft_list .cj-red .cj-l-title:before {
+                background: #ff3333;
+            }
+            .cj-l-title .subType {
+                display: block;
+                width: 100px;
+                height: 20px;
+                line-height: 20px;
+                color: #666;
+                text-align: right;
+                position: absolute;
+                top: 5px;
+                right: 0;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .cj-l-into {
+                font-size: 12px;
+                color: #666;
+                line-height: 20px;
+                padding: 3px 0;
+                position: relative;
+                /*   padding-right: 210px;*/
+            }
+            .cj-l-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 140px;
+                text-align: right;
+            }
+            .cj-l-date span {
+                margin-left: 7px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                var model = it[i];
+                var statusColor="#2d89ef";
+                var typeColor="#0022D9";
+                if(model.st_status == ""){
+                statusColor="#2d89ef";
+                }else if(model.st_status=="交维"){
+                statusColor="#00a300";
+                }else if(model.st_status=="退网下线"){
+                statusColor="#d8544d";
+                }else if(model.st_status=="存量"){
+                statusColor="#5B7A2C";
+                }else if(model.st_status=="工程"){
+                statusColor="#9DE35B";
+                }else if(model.st_status=="测试"){
+                statusColor="#FFCB00";
+                }
+                if(model.st_type==null || model.st_type=="null"){
+                model.st_type="";
+                }
+                else if(model.st_type=="室外站"){
+                typeColor="#0022D9";
+                }else if(model.st_type=="室内宏站"){
+                typeColor="#4F8B8A";
+                }else if(model.st_type=="室分"){
+                typeColor="#EDBD19";
+                }else if(model.st_type=="BBU"){
+                typeColor="#5F3388";
+                }else if(model.st_type=="RRU"){
+                typeColor="#F0D869";
+                }else if(model.st_type=="普通宏站"){
+                typeColor="#7EF0FE";
+                }else if(model.st_type=="拉远站"){
+                typeColor="#FFE493";
+                }else if(model.st_type=="室分系统"){
+                typeColor="#C5AFDA";
+                }
+                }}
+                <li tapmode="active"   class="{{=(model.fsuonlinecount=="0"||model.fsuonlinecount==null) ? "cj-red" :"cj-green"}}" stationId="{{=model.st_id}}" onclick="openStationDetail('{{=model.st_id}}','{{=model.st_name}}');">
+                <div class="cj-l-title">{{=model.st_name}}<div class="subType" style="color:{{=typeColor}}"><span style="color:{{=typeColor}}">{{=model.st_type}}</span>&nbsp;|&nbsp;<span style="color:{{=statusColor}}">{{=model.st_status}}</span></div></div>
+                <div class="cj-l-into">{{=model.st_code}} | {{=model.st_cityid}}<div class="cj-l-date"><span>机房:{{=model.fsucount}},设备:{{=model.devicecount}}</span></div></div>
+                </li>
+                {{  } }}
+            </script>
+            <!-- <ul class="ccssoft_list" id="stationList"></ul>-->
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script>
+        var listView;
+        /**
+         *打开工单详情模块
+         */
+        function openStationDetail(stationId, stationName) {
+//      var name='donglei';
+//      var code="120101908000000142";
+            var params = {
+                stationId : stationId,
+                stationName : stationName
+            }
+            api.openWin({
+                name : 'mainStationDetail',
+                url : 'mainStationDetail.html',
+                opaque : true,
+                bounces : false,
+                reload : true,
+                pageParam : params,
+                vScrollBarEnabled : false
+            });
+
+
+//				api.openApp({
+//                  iosUrl:"ChinaTower://userName="+name+"&siteCode="+code+"&openclassname=CTResStationResultViewController"
+//              },function(ret, err){
+//                  if(ret){
+//                  }else{
+//                       MainClass.api_toast("QQ没有安装");
+//                  }
+//              });
+
+
+
+        }
+
+        /**
+         *从查询条件跳转过来的信息
+         */
+        function cb_queryStationList(opts) {
+            listView.setQueryOptions(opts);
+            listView.refresh();
+        }
+
+        apiready = function() {
+            listView = new C.ApiListView({
+                listName : 'stationList',
+                fn : $client.getBaseStationList
+            });
+            listView.refresh();
+        }
+    </script>
+</html>

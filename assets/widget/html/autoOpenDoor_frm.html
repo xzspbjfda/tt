@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>title</title>
+        <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+        <style>
+            .myCircle {
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                bottom: 150px;
+                left: calc(50% - 100px);
+            }
+            @media screen and (max-width: max-width) {
+                .myCircle {
+                    position: absolute;
+                    width: 200px;
+                    height: 200px;
+                    bottom: 100px;
+                    left: calc(50% - 100px);
+                }
+            }
+            ul {
+                margin-top: 40px;
+            }
+            ul > li {
+                font-size: 25px;
+                font-weight: bold;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <ul></ul>
+        </div>
+        <canvas id="myCanvas" class="myCircle" width="200px" height="200px">
+            开门
+        </canvas>
+        <div style="position: absolute;bottom:40px;width: 100%;">
+            <p style="text-align: center;color:red;">
+                警告：请不要随意打开或关闭
+            </p>
+        </div>
+    </body>
+    <script src="../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../script/api.js"></script>
+    <script type="text/javascript" src="../script/debug.js"></script>
+    <script type="text/javascript" src="../script/config.js"></script>
+    <script type="text/javascript" src="../script/client.api.js"></script>
+    <script type="text/javascript" src="../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        var canvas = document.getElementById("myCanvas");
+        var cxt = canvas.getContext("2d");
+        // wxx
+        var status = 1;
+        var userid = null;
+        //开启状态，0为待开启，1为开启，－1为关闭
+        var user = $api.getStorage("user");
+        if ( typeof (user) != "undefined") {
+            userid = user.userid;
+        }
+        apiready = function() {
+            var FSUID = api.pageParam.fsuid || api.pageParam.devFsuId;
+            var DeviceID = api.pageParam.devicecode || api.pageParam.deviceCode;
+            var signal = api.pageParam.signal;
+            var stationName = api.pageParam.stationName || "<无站址名称>";
+            $('<li>').text('站址名称：' + stationName).appendTo($('ul'));
+            drawCircle('#2baf2b', '#0a8f08');
+            drawText('开门');
+            $(canvas).click(function() {
+                switch(parseInt(status)) {
+                    case -1 :
+                        drawCircle('#2baf2b', '#0a8f08');
+                        drawText('开门');
+                        status = 1;
+                        break;
+                    case 1 :
+                        drawCircle('#ffa726', '#fb8c00');
+                        drawText('等待开启');
+                        status = 0;
+                        $client.setPoint(userid, FSUID, DeviceID, signal, function(ret, err) {
+                            if (ret) {
+                                if (ret.status == '200') {
+                                    drawCircle('#e84e40', '#dd191d');
+                                    drawText('关闭');
+                                    status = -1;
+                                } else {
+                                    api.toast({
+                                        msg : ret.data_info,
+                                        location : 'middle'
+                                    });
+                                    drawCircle('#2baf2b', '#0a8f08');
+                                    drawText('开门');
+                                    status = 1;
+                                }
+                            } else {
+                                api.toast({
+                                    msg : err.msg,
+                                    location : 'middle'
+                                });
+                                drawCircle('#2baf2b', '#0a8f08');
+                                drawText('开门');
+                                status = 1;
+                            }
+                        });
+                        break;
+                }
+            });
+        };
+        function drawCircle(color, borderColor) {
+            cxt.beginPath();
+            cxt.fillStyle = color;
+            cxt.lineWidth = 1.5;
+            cxt.arc(100, 100, 100, 0, Math.PI * 2, true);
+            cxt.fill();
+            cxt.closePath();
+            cxt.beginPath();
+            cxt.strokeStyle = borderColor;
+            cxt.lineWidth = 2.5;
+            cxt.arc(100, 100, 98, 0, Math.PI * 2, true);
+            cxt.stroke()
+            cxt.closePath();
+        }
+
+        function drawText(text) {
+            cxt.beginPath();
+            cxt.fillStyle = "#ffffff";
+            cxt.font = "40px Arial";
+            cxt.textAlign = "center";
+            cxt.textBaseline = "middle";
+            cxt.fillText(text, 100, 100);
+            cxt.fill();
+            cxt.closePath();
+        }
+    </script>
+</html>

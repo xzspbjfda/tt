@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>转派人员列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<style>
+			.aui-flex-col:first-child {
+				height: 30px;
+				line-height: 30px;
+				border-bottom: 1px dashed #00a0c8;
+			}
+			.aui-flex-col {
+				height: 25px;
+				line-height: 25px;
+			}
+			.ccssoft_list {
+				background-color: #eff1f0;
+				override: hidden;
+			}
+			.ccssoft_list {
+				margin-top: 15px;
+			}
+			.ccssoft_list li {
+				list-style: none;
+				border-bottom: 1px solid #e3e2e2;
+				background: #fff;
+				overflow: hidden;
+				margin-bottom: 10px;
+			}
+			.ccssoft_list li:hover {
+				background: #f9e9df;
+			}
+			.ccssoft_list li.acitve {
+				background: #f9e9df;
+			}
+			.cj-orange{
+				background-color: orange;
+			}
+			.cj-blue{
+				background-color: blue;
+			}
+			.cj-purple{
+				background-color: purple;
+			}
+			.cj-green{
+				background-color: green;
+			}
+
+			.cj-l-level{
+				width: 18px;
+				height: 18px;
+				border-radius: 50%;
+				line-height: 18px;
+				text-align: center;
+				display: inline-block;
+				color: #fff;
+				margin: 0 4px;
+				vertical-align:top;
+			}
+
+			.cj-ash{
+				background-color: grey;
+			}
+
+			.ccssoft_list_wxx {
+			 background-color: #eff1f0;
+			 overflow: hidden;
+			 width: 94%;
+			 margin: 0 auto;
+		 }
+		 .ccssoft_list_wxx li {
+				 list-style: none;
+				 border-radius: 6px;
+				 padding:3px 10px 3px 10px;
+				 background: #fff;
+				 overflow: hidden;
+				 margin-top: 10px;
+		 }
+		 /*.ccssoft_list_wxx li:hover {
+				 background: #f9e9df;
+		 }
+		 .ccssoft_list_wxx li.acitve {
+				 background: #f9e9df;
+		 }*/
+		 .ccssoft_list_wxx .showBox{
+				 text-align:center;
+				 font-size:12px;
+		 }
+		 #main{
+			 background-color: #f4f4f4;
+			 padding-top: 10px;
+		 }
+		 .cj-l-title-wxx{
+				 border-bottom: 1px dashed #00a0c8;
+				 font-size: 16px;
+				 font-weight: bold;
+				 line-height: 20px;
+				 padding: 8px 70px 8px 0;
+				 position: relative;
+		 }
+
+		 .cj-l-title-wxx span {
+				 display: block;
+				 width: 90px;
+				 height: 20px;
+				 line-height: 20px;
+				 color: #666;
+				 text-align: right;
+				 position: absolute;
+				 top: 5px;
+				 right: 0;
+				 font-size: 12px;
+				 font-weight: bold;
+		 }
+		 .cj-l-into-wxx {
+				 font-size: 12px;
+				 color: #666;
+				 line-height: 20px;
+				 padding: 3px 0;
+				 position: relative;
+		 }
+		 .cj-l-date-wxx {
+				 display: block;
+				 position: absolute;
+				 top: 3px;
+				 right: 0;
+				 width: 180px;
+				 text-align: right;
+		 }
+		 .cj-l-date-wxx span {
+				 margin-left: 7px;
+		 }
+		 .cj-l-date-wxx:after {
+				 content: "";
+				 display: block;
+				 width: 1px;
+				 height: 12px;
+				 background: #e3e3e3;
+				 position: absolute;
+				 top: 4px;
+				 left: 60px;
+		 }
+		 .cj-l-date-wxx-2{
+			 display: block;;
+			 width: 1px;
+			 height: 12px;
+			 background: #e3e3e3;
+			 position: absolute;
+			 right: -4px;
+			 top:4px;
+		 }
+
+		 .cj-l_line{
+			 position: absolute;
+			 width:5px;
+			 height: 18px;
+			 left: -10px;
+			 top: 9px;
+			 border-radius: 10px;
+		 }
+		 .cj-l_line1{
+			 background: linear-gradient(#fe7a7d, #fe4f4f);
+		 }
+			.LC_img{
+				height: 60px;
+				display: block;
+				margin: 0 auto;
+				background-color:#ccc;
+			}
+			.wxx_btn{
+				width: 118px;
+				height: 33px;
+				border-radius: 35px;
+				border: 1px solid #db4537;
+				line-height: 30px;
+				box-shadow: 0 3px 8px rgba(226,132,123,.5);
+				color: #db4537;
+				font-size: 14px;
+				text-align: center;
+				margin: 4px auto;
+			}
+			.none{
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="listView-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var status = it[i].status;
+			var processflagName = "";
+			var pcolor = "";
+			}}
+			<li class="aui-content" style="padding:8px;" tapmode="active">
+			 <div class="detailDiv"
+				userid ="{{=it[i].userid}}"
+				username ="{{=it[i].username}}"
+				mobilephone ="{{=it[i].mobilephone}}"
+				fullcode ="{{=it[i].fullcode}}"
+				usertype ="{{=it[i].usertype}}"
+				islock ="{{=it[i].islock}}"
+				loginserver ="{{=it[i].loginserver}}"
+				email ="{{=it[i].email}}"
+				leadername ="{{=it[i].leadername}}"
+				userrdn ="{{=it[i].userrdn}}"
+				locknum ="{{=it[i].locknum}}"
+				homephone ="{{=it[i].homephone}}"
+				officephone ="{{=it[i].officephone}}"
+				createdate ="{{=it[i].createdate}}"
+				idcardno ="{{=it[i].idcardno}}"
+				titles ="{{=it[i].titles}}"
+				contractcompany ="{{=it[i].contractcompany}}"
+				base ="{{=it[i].base}}"
+			 onclick="openStandBillDetail1(this)"><!--1.dingxb-->
+			<div class="aui-flex-col">
+			<div class="aui-flex-item-9" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">姓名：{{=it[i].username ? it[i].username : '&nbsp;'}}</div>
+
+			<div class="aui-flex-item-3 aui-text-right" style="color:{{=pcolor}}">{{=processflagName}}</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-6">登陆名称：{{=it[i].loginname  != null ? it[i].loginname :''}}</div>
+			<div class="aui-flex-item-6 aui-text-right">电话：{{=it[i].mobilephone != null ? it[i].mobilephone :''}}</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-8">领导名称：{{=it[i].leadername != null ? it[i].leadername:''}}</div>
+			<div class="aui-flex-item-4 aui-text-right">类型：{{=it[i].usertype != null ? it[i].usertype:''}}</div>
+			</div>
+			</div>
+			<div class='wxx_btn'
+			onclick='transtodomoan("receiveDiv",this);'>转派</div>
+			</li>
+			{{ } }}
+		</script>
+		<script id="listView-template2" type="text/x-dot-template">
+			{{
+
+				for(var i=0, len=it.length; i < len; i++) {
+
+			}}
+			<li class="aui-content" style="padding:8px;" tapmode="active">
+			<div onclick="openGenerationBillListNumWin('{{=it[i].name ? it[i].name : ""}}')">
+				<div class="aui-flex-col">
+				<div class="aui-flex-item-9" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"> {{=it[i].name ? it[i].name : '&nbsp;'}}</div>
+
+				<div class="aui-flex-item-3 aui-text-right">{{=it[i].me != null ? it[i].me :0}}/{{=it[i].finsh != null ? it[i].finsh :0}}/{{=it[i].all != null ? it[i].all :0}}</div>
+				</div>
+				<div class="aui-flex-col" style="font-size:12px;">
+				<div class="aui-flex-item-12">{{=it[i].address  != null ? it[i].address  :''}}</div>
+				</div>
+			</div>
+
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-9">{{=it[i].Kmtance != null ? it[i].Kmtance : 0}}km</div>
+			<div class="aui-flex-item-3 aui-text-right" style="color:#B372F6" onclick="navigation('{{=it[i].lon != null ? it[i].lon :0}}','{{=it[i].lat != null ? it[i].lat :0}}','{{=it[i].address  != null ? it[i].address  :''}}')">导航</div>
+			</div>
+			</li>
+			{{ } }}
+		</script>
+		<div id="wrap" >
+			<div id="shadowId" class="shadow none" tapmode="" ></div>
+			<div id="header"></div>
+			<div id="standBillMenuMain"></div>
+		</div>
+		<!--领取任务begin-->
+		<div id="receiveDiv" class="winDiv">
+			<div class="winTitleDiv">
+				确定转派？
+			</div>
+			<div  id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;" >
+				<div id="user_name5" style="font-size:16px;color:#adadad;text-align:left; margin-left:23px;">
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeDiv(receiveDiv)">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="acceptFunc2()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--领取任务end-->
+		<div class="aui-content">
+			<ul class="ccssoft_list_wxx" id="listView"></ul>
+		</div>
+
+
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+	<script type="text/javascript" src="script/standBillMenu.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+
+
+
+	<script type="text/javascript">
+	var taskid;
+	var siteid;
+	var usertype;
+
+	function gettodoman(){
+		api.showProgress({
+	title : '加载中',
+	modal : false
+		});
+	//-----------------------dxb---------------------------------
+	//初始化taskid,siteid,usertype
+	taskid=((api.pageParam.taskid==''||api.pageParam.taskid=='undefined')?'':api.pageParam.taskid);
+	siteid=((api.pageParam.stationid==''||api.pageParam.stationid=='undefined')?'':api.pageParam.stationid);
+	usertype=((api.pageParam.applymajor==''||api.pageParam.applymajor=='undefined')?'':api.pageParam.applymajor);
+	if(usertype!=''&&usertype!='undefined'){
+		if(usertype=="ROOMPARTS"){
+			usertype="ROOM"
+		}
+	}
+	//设置需要传递的参数
+	var opts={
+		taskid:taskid,
+		siteid:siteid,
+		usertype:usertype
+	}
+	//调用查询包站人员接口
+	$client.getPacketPerson(opts,function(ret,err){
+				if(ret){
+					//调用成功
+					 api.hideProgress();
+					 renderTemp('listView','listView-template',ret.XJuserDetailList);
+				}else if(err){
+					api.toast({
+						msg:"获取包站人员失败",
+						duration:2000,
+						location:"bottom"
+					});
+				}
+	});
+	}
+
+	apiready=function(){//进入该页面时默认获取当前区域可以转派人员的信息
+			gettodoman();
+			// api.addEventListener({//增加数据变更监听
+      //             name:'viewappear'  //如果页面重新出现，执行ret方法
+      //             },function(ret,err){
+			// 							if($api.getStorage('iftransfersuccess')){
+			// 								gettodoman();
+			// 								window.setTimeout(function() {  //延迟清除标识符
+			// 									$api.rmStorage("iftransfersuccess");
+			// 								}, 3000);
+			// 							}
+			//
+      //                   });
+	}
+	function transtodomoan(type,e) {
+		if(e){
+			var detailDiv=$(e).siblings('.detailDiv');//获取该层信息
+			var el=detailDiv[0];
+			var userid = $api.attr(el, 'userid');
+			if(userid!=null){
+				$api.setStorage('transuserid',userid);
+			}
+		}
+		if (type == "REVERT") {
+			openBillList("generationWriteWin");
+		}	else if(type=="TRANSFER"){//dingxb 转派
+			openBillList("generationTransferWin");
+		}else if(type=="GPSMAP"){
+			var opts={
+				start:1,
+				limit:20
+			}
+			$client.getGenerationList(opts,function(ret,err){
+				if(ret.success){
+					if(ret.listClaimedList.length>0){
+						openBillList("generationGpsWin");
+					}else {
+						api.toast({
+							msg: '请领取工单后尝试',
+							location: 'bottom'
+						});
+					}
+				}
+			})
+		}else if(type=="TAKEPHOTO"){
+		api.execScript({
+				frameName : 'standBillDetail_frm',
+				script : 'cb_openBillPicDetail();'
+			});
+			api.closeFrame();
+
+		}
+
+	//	else if (type == "coordinateModelPanel") {
+	//		openBillList("coordateUpstationWin");
+	//		api.closeFrame();
+	//	}
+		 else if (type == "PHONESIGN") {
+			openBillList("billStationSign_win");
+	//		api.closeFrame();
+		} else if (type == "confireDiv") {
+			document.getElementById("shadowId").style.display = "none";
+			document.getElementById("standBillMenuMain").style.display = "none";
+			var standBillModel = $api.getStorage('standBillModel');
+			var fsustatus = standBillModel.fsustatus;
+			var fsustatus_text = '';
+			if (fsustatus) {
+				switch(fsustatus) {
+					case 'Y':
+						fsustatus_text = '正常';
+						break;
+					case 'N':
+						fsustatus_text = '不正常';
+						break;
+				}
+				$('<option>').text(fsustatus_text).val(fsustatus).appendTo('#confireDiv [name=fsuStatus]');
+			}
+			initDict();
+			easyDialog.open({
+				container : type,
+				fixed : false
+			});
+		} else if (type == "lastConfireData") {
+			var standBillModel = $api.getStorage('standBillModel');
+			if ("Y" == standBillModel.isagree && "Y" == standBillModel.isreief) {
+				$("#info").text("区域经理认为本次上站不及时可免责");
+				$("#reliefLeft").text("免责条款：");
+				$("#reliefRight").text(standBillModel.isreieftype);
+				$("#reliefCause").text(standBillModel.isreiefcause);
+				$("#isreliefCause").show();
+			} else {
+				$("#info").text("区域经理不同意本次上站不及时");
+				$("#isreliefCause").hide();
+				$("#reliefLeft").text("处理描述：");
+				$("#reliefRight").text(standBillModel.AgreeMero ? standBillModel.AgreeMero : "无");
+			}
+			easyDialog.open({
+				container : type,
+				fixed : false
+			});
+		}else if(type == "openDoor_electric"){//zhangzhitao
+			var t_standBillModel = $api.getStorage('standBillModel');
+			//consoleObj(t_standBillModel);
+			var pageParam = {
+					// fsuid : $(el).attr("data-fsuid"),
+					// devicecode : $(el).attr("data-devicecode"),
+					// signal : $(el).attr("data-signal"),
+					// devicename : $(el).attr("data-name"),
+					// stationName : api.pageParam.stationName
+					t_workKind:"2",
+					t_cause:t_standBillModel.cause
+			};
+			api.openWin({
+					name : 'autoOpenDoor_win',
+					url : '../autoOpenDoor_win.html',
+					bounces : false,
+					pageParam : pageParam
+			});
+		}else if(type == "openDoor_inspect"){//zhangzhitao wxx
+			var cause = $api.getStorage('cause');
+			var stationId = api.pageParam.stationId;
+			var pageParam = {
+					// fsuid : $(el).attr("data-fsuid"),
+					// devicecode : $(el).attr("data-devicecode"),
+					// signal : $(el).attr("data-signal"),
+					// devicename : $(el).attr("data-name"),
+					// stationName : api.pageParam.stationName,
+					t_workKind:"3",
+					t_cause: cause
+			};
+			api.openWin({
+					name : 'autoOpenDoor_win',
+					url : '../autoOpenDoor_win.html',
+					bounces : false,
+					pageParam : pageParam
+			});
+		}else  if(type == "leaveStation") {
+			var standBillModel =  $api.getStorage('standBillModel');
+			easyDialog.open({
+				container : type,
+				fixed : false
+			});
+		}else {
+
+			if (type == "isAgreeModelPanel") {
+				initisAgree();
+			}
+			document.getElementById("shadowId").style.display = "none";
+			document.getElementById("standBillMenuMain").style.display = "none";
+			easyDialog.open({
+				container : type,
+				fixed : false
+			});
+		}
+	}
+		// 导航
+		function navigation(lon,lat,address){
+			console.log(lon);
+			console.log(lat);
+			console.log(address);
+			var wgs;
+			var bdlat;
+			var bdlon;
+			var win_name = "mapHeader";
+			var frm_name = "mapDetail_frm";
+			var script = "startLocation('" + win_name + "','" + frm_name + "');";
+			api.execScript({
+				frameName : 'gps',
+				script : script
+			});
+
+			var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+
+			if (!lastLocation || !lastLocation.status || lastLocation.timestamp == 0 || lastLocation.lon == 0 || lastLocation.lat == 0) {
+				api.toast({
+						msg:'获取当前位置失败'
+				});
+			}else{
+				wgs=GPS.wgs_tobd(lastLocation.lat,lastLocation.lon);
+				bdlat= wgs.lat;
+				bdlon= wgs.lon;
+				api.confirm({
+					title : '确认提示',
+					msg : '确定进行导航？',
+					buttons : ['取消', '确定']
+				}, function(ret) {
+					if (ret.buttonIndex == 2) {
+						console.log('事件：'+lastLocation.longitude+","+lastLocation.latitude);
+						var baiduNavigation = api.require('baiduNavigation');
+						baiduNavigation.start({
+							start : {// 起点信息.
+								position : {// 经纬度，与address配合可为空
+									lon : bdlon, // 经度.
+									lat : bdlat // 纬度.
+								}
+							},
+							end : {// 终点信息.
+								position : {// 经纬度，与address配合可为空
+									lon : lon, // 经度
+									lat : lat // 纬度
+								},
+								title : "", // 描述信息
+								address : ''// 地址信息，与position配合为空
+							}
+						}, function(ret, err) {
+
+							if (ret.status) {
+
+							} else {
+								var msg = "未知错误";
+								if (1 == err.code) {
+									msg = "获取地理位置失败";
+								}
+								if (2 == err.code) {
+									msg = "定位服务未开启";
+								}
+								if (3 == err.code) {
+									msg = "线路取消";
+								}
+								if (4 == err.code) {
+									msg = "退出导航";
+								}
+								if (5 == err.code) {
+									msg = "退出导航声明页面";
+								}
+								api.alert({
+									title : "导航出错",
+									msg : msg
+								});
+							}
+						});
+					}
+				});
+			}
+		}
+
+
+		function cb_queryWaitTaskList(opts) {//在搜索条件下点击查询执行的回调方法，opts中为查询的条件，
+			 //一共有5个参数，人员姓名contactPerson，电话contactPersonTelephone，省provId，市cityId，区areaId
+			var items=opts;
+			getperson(items);
+		}
+
+		function refreshwxx(){
+				listView.refresh();
+		}
+		function openGenerationBillListNumWin(stationname){
+			var pageParam={
+				name:stationname
+			}
+			api.openWin({
+				name : 'openGenerationBillListNumWin',
+				url : 'generationBillListNumWin.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+
+		function openStandBillDetail1(el) {//获取包站人员详情
+			//alert("准备进入协助人详情...");
+			var username=$api.attr(el, 'username');//用户名称
+			var mobilephone=$api.attr(el, 'mobilephone');//电话号码
+			var fullcode=$api.attr(el, 'fullcode');//登陆全码
+			var usertype=$api.attr(el, 'usertype');//用户类型
+			var islock=$api.attr(el, 'islock');//是否锁定
+			var loginserver=$api.attr(el, 'loginserver');//指定登陆的服务器
+			var email=$api.attr(el, 'email');//电子邮件
+			var leadername=$api.attr(el, 'leadername');//直属领导姓名
+			var userrdn=$api.attr(el, 'userrdn');//用户编码
+			var locknum=$api.attr(el, 'locknum');//锁定次数
+			var homephone=$api.attr(el, 'homephone');//家庭电话
+			var officephone=$api.attr(el, 'officephone');//办公电话
+			var createdate=$api.attr(el, 'createdate');//创建日期
+			var idcardno=$api.attr(el, 'idcardno');//身份证号
+			var titles=$api.attr(el, 'titles');//职称
+			var contractcompany=$api.attr(el, 'contractcompany');//签约公司
+			var base=$api.attr(el, 'base');//归属地
+			var pageParam = {};
+			//以下是将设置好的参数通过对象传入详情页面
+			pageParam.username = username;
+			pageParam.mobilephone = mobilephone;
+			pageParam.fullcode = fullcode;
+			pageParam.usertype = usertype;
+			pageParam.islock = islock;
+			pageParam.loginserver = loginserver;
+			pageParam.email = email;
+			pageParam.leadername = leadername;
+			pageParam.userrdn = userrdn;
+			pageParam.locknum = locknum;
+			pageParam.homephone = homephone;
+			pageParam.officephone = officephone;
+			pageParam.createdate = createdate;
+			pageParam.idcardno = idcardno;
+			pageParam.titles = titles;
+			pageParam.contractcompany = contractcompany;
+			pageParam.base = base;
+			pageParam.fromPage = "newtodomanlistFrm";
+
+			api.openWin({//打开新串口
+				name : 'addtodomandetailWin',//描述：window名字
+				url : 'addtodomandetailWin.html',//页面地址，可以为本地文件路径，支持相对路径和绝对路径，以及 widget://、fs://等协议路径，也可以为远程地址。 当data参数不为空时，url将做为baseUrl，data中的html引用的资源文件根路径以该url为基础。
+				opaque : true,//（可选项），设置是否不透明
+				bounces : false,//（可选项）页面是否弹动
+				reload : false,//（可选项）页面已经打开时，是否重新加载页面，重新加载页面后 apiready 方法将会被执行，默认值为false
+				pageParam : pageParam,//（可选项）页面参数，新页面中可以通过 api.pageParam 获取
+				vScrollBarEnabled : false//设置是否垂直可以滚动
+			});
+		}
+
+		//关闭弹出DIV对话框
+		function closeDiv(divId) { //dingxb点击转派页面的取消时需要执行的方法
+			easyDialog.close({
+				container : divId
+			});
+		}
+		function winReload(winName, frameName) {
+        var jsFun = 'location.reload();';
+        api.execScript({
+            name: winName,
+            frameName: frameName,
+            script: jsFun
+        });
+    }
+
+		function acceptFunc2() {//点击转派时需要处理的操作
+			//获取登陆实体
+			var user = $api.getStorage('user');
+			//获取userid
+			var userId=user.userid;
+			//转派人useid
+			var redeployId=$api.getStorage('transuserid');
+			//进度条
+			api.showProgress({
+				title : '处理中',
+				modal : true,
+			});
+			var opts={    //设置需要给接口传递的参数
+			userid:userId,
+			taskid:taskid,
+			redeployId:redeployId
+			}
+			//将登陆账号的userid，被转派人员的userid，需要转派出去的工单id传递给接口，后台实现操作，调用成功时返回的json如下
+			//{"status":"OK","count":0,"currentCount":0,"totalPages":0,"currentPage":0,"data_info":"正常","flag":"true","success":true}
+			$client.transtodoman(opts,function(ret,err){
+						closeDiv(receiveDiv);				//关闭确认框
+						if(ret){
+							//调用成功
+							 api.hideProgress();			//隐藏进度条
+							 var msg='';							//设置提示信息
+							 if(ret.flag=='true'){
+									msg="转派成功";
+									$api.setStorage('iftransfersuccess',"true"); //设置刷新标识，转派成功时，需要返回到工单页面进行刷新
+									window.setTimeout(function() {  //该方法用于执行某个窗口某个frame里的方法
+									api.closeToWin({  //该方法类似于跳转的效果，而且只能进入已打开的窗口，如果窗口没有打开过，这个方法直接无效
+												name: 'task_list_win'
+											});
+									}, 1000);
+							 }else if(ret.flag=='false'){
+								 msg="转派失败";
+							 }
+							 api.toast({					//给出提示信息
+								 msg:msg,
+								 duration:2000,
+								 location:"bottom"
+							 });
+						}else{				//调用接口失败
+								api.toast({
+									msg:"转派操作失败",
+									duration:2000,
+									location:"botton"
+								});
+						}
+			});
+		}
+	</script>
+</html>

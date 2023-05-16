@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>图片裁剪</title>
+	<link rel="stylesheet" type="text/css" href="script/aui.css" />
+ 	<style>
+    	html,body{background:transparent;}
+ 		.zknight-h5imgcut-bg-black{background: #000;}
+ 		.zknight-h5imgcut-color-white{color: #fff;}
+ 		.zknight-h5imgcut-margin-t10{margin-top: 10px;}
+ 		.zknight-h5imgcut-pad-lr10{padding-left:10px;padding-right:10px;}
+ 	</style>
+</head>
+<body>
+
+<footer id="footer_modal" class="aui-bar aui-bar-tab footer zknight-h5imgcut-bg-black zknight-h5imgcut-color-white">
+	<div class="aui-row zknight-h5imgcut-margin-t10 zknight-h5imgcut-pad-lr10">
+		<div class="aui-col-xs-4" onclick="zknightH5ImgcutCloseImgCut()"> 
+			<span class="aui-text-center aui-font-size-14">取  消</span>
+		</div>
+		<div class="aui-col-xs-4" onclick="zknightH5ImgcutResetImgCut()"> 
+			<span class="aui-text-center aui-font-size-14">重  置</span>
+		</div>
+		
+		<div class="aui-col-xs-4"  onclick="zknightH5ImgcutSaveImgCut()"> 
+			<span class="aui-text-center aui-font-size-14">确  认</span>
+		</div>
+	</div>
+</footer>	
+</body>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript">
+	// 图片裁剪
+	var FNImageClip = null;
+	// 图片裁剪需要参数
+	var params = {};
+	
+	apiready = function(){
+		FNImageClip = api.require('FNImageClip');
+		
+		//参数
+		params = {
+			imgPath : api.pageParam.imgPath  //图片路径，需本地路径
+		};
+		
+		//打开选中图片
+		zknightH5ImgcutOpenImgCut(params.imgPath);
+	};
+	
+	/**
+	 * 打开选中图片
+	 * imgPath ： 需要裁剪图片的本地路径
+	 */
+	function zknightH5ImgcutOpenImgCut(imgPath){
+		var footer = $api.byId('footer_modal');
+        //适配iOS7+，Android4.4+状态栏沉浸式效果，详见config文档statusBarAppearance字段
+	    $api.fixTabBar(footer);
+        var footerH = $api.offset(footer).h;
+        var frameH = api.winHeight - footerH;
+        
+		//open
+		FNImageClip.open({                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+		    rect: {
+		        x: 0,
+		        y: 0,
+		        w: api.winWidth,
+		        h: frameH
+		    },
+		    srcPath: imgPath,
+		    highDefinition: true,
+		    style: {
+		        mask: 'rgba(0,0,0,0.3)',
+		        rect: {
+		        	x : 0,
+		        	y : frameH,
+		        	w : api.frameWidth,
+		        	h : footerH
+		        },
+		        clip: {
+		            w: 300,
+		            h: 300,
+		            x: (api.frameWidth - 300) / 2,
+		            y: (api.frameHeight - 300) / 2,
+		            borderColor: '#0f0',
+		            borderWidth: 1,
+		            appearance: 'rectangle'
+		        }
+		    },
+		    fixedOn: api.frameName,
+		    mode : 'image'
+		}, function(ret, err) {
+		    
+		});
+	}
+	
+	/**
+	 * 保存裁剪图片到本地 
+	 */
+	function zknightH5ImgcutSaveImgCut(){
+		api.showProgress({
+	        title: '',
+	        text: '处理中...',
+	        modal: true
+	    });
+	    
+		FNImageClip.save({
+		    destPath: 'fs://image/zknightCutImg_shuiyin.png',
+		    copyToAlbum: false
+		}, function(ret, err) {
+		    if (ret.destPath) {
+				//将裁剪完的图片传递到需要页面
+		    	api.sendEvent({
+                    name:'zknight_img_cut_event',
+                    extra : {
+                    	cutOutImg : ret.destPath
+                    }
+                });
+                
+                api.hideProgress();
+                
+                FNImageClip.close();
+				api.closeFrame();
+		    } else {
+		    	 api.hideProgress();
+		    	 
+		         api.toast({
+	                 msg:'裁剪失败'
+                 });
+		    }
+		});
+	}
+	
+	/**
+	 * 重置裁剪
+	 */
+	function zknightH5ImgcutResetImgCut(){
+		FNImageClip.reset();
+	}
+	
+	/**
+	 * 关闭 
+	 */
+	function zknightH5ImgcutCloseImgCut(){
+		FNImageClip.close();
+		api.closeFrame();
+	}
+</script>
+</html>

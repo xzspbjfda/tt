@@ -1,0 +1,272 @@
+/**
+ *createtime 2015-10-13
+ */
+body {
+    background-color: #eff1f0;
+}
+.ccssoft-aui-bar-theme {
+    background-color: #db4537;
+}
+.ccssoft-aui-bar-theme span {
+    font-size: 16px;
+}
+.ccssoft-aui-list-view-divider {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 15px;
+    margin-top: -1px;
+    margin-left: 0;
+    font-weight: 500;
+    color: #999;
+    background-color: #fafafa;
+}
+.aui-list-view-cell .item-left {
+    width: 33%;
+    float: left;
+}
+.aui-list-view-cell .item-right {
+    overflow: hidden;
+}
+#header, .titlebar {
+    background-color: #db4537;
+}
+header h1 {
+    font-size: 20px;
+    height: 44px;
+    line-height: 44px;
+    margin: 0em;
+    color: #fff;
+}
+#ccssoft-pullup {
+    display: block;
+    height: 20px;
+    line-height: 20px;
+    padding: 5px 15px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+}
+#ccssoft-pullup ccssoft-pullup-label {
+    position: relative;
+    top: -10px;
+}
+#ccssoft-pullup pullup-icon {
+    position: relative;
+    top: -10px;
+}
+/** 列表模块的背景颜色 */
+.ccssoft_list {
+    background-color: #eff1f0;
+    override: hidden;
+}
+.ccssoft_color_red {
+    color: #ff3333;
+}
+.ccssoft_color_green {
+    color: #1ac36b;
+}
+.ccssoft_color_pink {
+    color: #ff4081;
+}
+.ccssoft_color_violet {
+    color: #9f00a7;
+}
+.ccssoft_color_carrot {
+    color: #e67e22;
+}
+.ccssoft_color_hui {
+    color: #666;
+}
+.ccssoft_backgroundColor_red {
+    background-color: #ff3333;
+}
+.ccssoft_backgroundColor_green {
+    background-color: #1ac36b;
+}
+.ccssoft_backgroundColor_pink {
+    background-color: #ff4081;
+}
+.ccssoft_backgroundColor_violet {
+    background-color: #9f00a7;
+}
+.ccssoft_backgroundColor_carrot {
+    background-color: #e67e22;
+}
+
+/*列表项*/
+.ccssoft-title,.ccssoft-content {
+    background-color: #fff;
+}
+/*页签菜单栏*/
+.tabbar {
+    background-color: #f7f4f4;
+    border-bottom: 1px solid #f7f4f4;
+}
+.tab {
+    color: #454545;
+}
+.tab:active, .tab.active {
+    color: #db4537;
+    border-bottom: 2px solid #db4537;
+}
+.tabbar-slider {
+    background-color: #f7f4f4;
+}
+.tab-more {
+    color: #aaa;
+    background-color: #f7f4f4;
+}
+.fixed_bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    zoom: 1;
+    width: 100%;
+    padding: 5px 15px 0px 15px;
+    height: 50px;
+    z-index: 3;
+    background-color: #f7f7f7;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+.fixed_bottom:before, .fixed_bottom:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+.fixed_bottom:after {
+    clear: both;
+}
+.fixed_bottom .left {
+    float: left;
+    width: 45%;
+    text-align: center;
+    font-size: 16px;
+    margin-right: 5px;
+    transition: all .5s;
+    -webkit-transition: all .5s;
+}
+
+
+.inputstyle{
+		width:50%;
+		margin: 0px;
+		padding: 0px 15px;
+		}
+
+/*
+ * 画一个圆角的文本背景
+ */
+.curStatus {
+                
+                width: 45px;
+                background-color: red;
+                font-size: 12px;
+                padding:3px;
+                text-align: center;
+                color: white;
+                border-radius: 7px;
+                margin-top: 6px;
+            }
+
+
+.fixed_bottom .right {
+    float: right;
+    width: 45%;
+    text-align: center;
+    font-size: 16px;
+    margin-left: 5px;
+    transition: all .5s;
+    -webkit-transition: all .5s;
+}
+.fixed_bottom .center {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    transition: all .5s;
+    -webkit-transition: all .5s;
+}
+#listView .showBox {
+    background-color: #fff;
+    font-size: 14px;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.textareaborder{
+	height:30px;
+	margin-left:10px;
+	-webkit-border-radius:5px; 
+	-moz-border-radius:5px; 
+	border-radius:5px;
+	background-color:#FFFFFF;
+}
+/*底部tab栏*/
+.iconFont {
+    font-size: 22px;
+    color: #8f8f94;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    margin-top: 3px;
+}
+.activeWarning p {
+    color: #DB4537;
+}
+
+/*＊＊＊＊＊＊＊＊＊＊＊＊以下CSS用于Web调试模式＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊*/
+
+iframe {
+    border: 0;
+    height:83.8%;
+}
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+    width: 0;
+    height: 16px;
+    background-color: rgba(0,0,0,1);
+}
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #f5f5f5;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+}
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #555;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+}
+
+.remember {
+    position: absolute;
+    left: 14px;
+    top: 5px;
+    cursor: pointer;
+    z-index: 1;
+    opacity: .01;
+}
+.remember:checked+ .checkbox {
+    background: #ca4a52 url("../../image/login/checked.png") 1px 1px;
+    border-color: #ca4a52;
+}
+.remember+ .checkbox {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    border: 1px solid #9abbe3;
+    background: 0;
+    border-radius: 11px;
+}
+

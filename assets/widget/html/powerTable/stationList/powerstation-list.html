@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" tapmode="" onclick="back();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">
+                停发电管理
+            </div>
+        </header>
+        <div  class="aui-tab">
+            <ul id="tabBox" class="aui-tab-nav">
+                <li tabName = 'powerstation1' class="active" tapmode>
+                    发电中
+                </li>
+                <li tabName = "powerstation2" tapmode>
+                    停电中
+                </li>
+                <li tabName = "powerstation3" tapmode>
+                    断站中
+                </li>
+            </ul>
+        </div>
+        <script type="text/javascript" src="../../../script/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../../../script/api.js"></script>
+        <script type="text/javascript" src="../../../script/common.js"></script>
+        <script type="text/javascript" src="../../../script/debug.js"></script>
+        <script>
+            apiready = function() {
+                var header = $api.byId('header');
+                $api.fixIos7Bar(header);
+                var pos = $api.offset(header);
+                api.parseTapmode();
+                api.openFrameGroup({
+                    name : 'powerstation_header_tab',
+                    rect : frameRect(),
+                    preload : 0,
+                    frames : [{
+                        name : 'powerstation1',
+                        url : 'powerstation-listCon.html',
+                        pageParam : {
+                            type:1,
+                            pageParam : api.pageParam
+                        },
+                        bounces : false
+                    }, {
+                        name : 'powerstation2',
+                        url : 'powerstation-listCon.html',
+                        pageParam : {
+                            type:2,
+                            pageParam : api.pageParam
+                        },
+                        bounces : false
+                    }, {
+                        name : 'powerstation3',
+                        url : 'powerstation-listCon.html',
+                        pageParam : {
+                            type:3,
+                            pageParam : api.pageParam
+                        },
+                        bounces : false
+                    }],
+
+                }, function(ret, err) {
+                    if (ret) {
+                        $('#tabBox li:eq(' + ret.index + ')').addClass('active').siblings().removeClass('active');
+
+                    }
+                });
+
+                /*jquery事件:tab切换*/
+                $('#tabBox li').click(function() {
+                    $(this).addClass('active').siblings().removeClass('active');
+                    api.setFrameGroupIndex({
+                        name : 'powerstation_header_tab',
+                        index : $(this).index(),
+                        scroll : true
+                    });
+
+                  var nindex=$(this).index();
+                  if(nindex==0||nindex==1){
+
+                  }else if(nindex==2){
+
+                  }
+                });
+
+            };
+
+        </script>
+</html>

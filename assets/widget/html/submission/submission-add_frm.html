@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>事件报送</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	</head>
+	<style>
+		input[disabled=disabled]{
+			background-color: rgb(235, 235, 228);
+		}
+		.ziyiframe {
+			width: 100%;
+			min-height: 340px;
+		}
+		.red{
+			color: red;
+		}
+
+		.aui-list-view-cell:after{
+			border: none!important;
+		}
+		.emergency-select{
+			margin: 0px;
+			padding:0;
+			font-size: 14px;
+			padding-left:10px;
+		}
+		#list-view input,#list-view select{
+			font-size: 14px;
+		}
+		.picFJ{
+			display: none;
+		}
+		.oilBox{
+			display: none;
+		}
+	</style>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+
+			}}
+			<option value="{{=it[i].text}}" {{=i==0?'selected':''}}>{{=it[i].text}}</option>
+			{{ } }}
+		</script>
+		<!--下拉列表-->
+		<script id="dict-template2" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+
+			}}
+			<option value="{{=it[i].text}}" selected>{{=it[i].text}}</option>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<form enctype = "multipart/form-data">
+				<ul id="list-view" class="aui-list-view"></ul>
+			</form>
+		</div>
+
+		<!--项目详情-->
+		<script id="parol-template" type="text/html">
+
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider" style="border-bottom:1px solid #c8c7cc">
+			基本信息
+			</li>
+			<div id="topmessage">
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			事件编码<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"  disabled="disabled"  style="width:100%;margin: 0px;padding : 0px,3%;"  name="sn"  value="{{=it.sn?it.sn:''}}"/>
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			事件名称<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"  style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventName" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			事件类型<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<select  class="textareaborder emergency-select required" data-valid="isStander" data-error="存在必填项未填！"  name="eventType" >
+					<option value="台风">台风</option>
+					<option value="暴雨">暴雨</option>
+					<option value="海啸">海啸</option>
+					<option value="龙卷风">龙卷风</option>
+					<option value="强对流">强对流</option>
+					<option value="地震">地震</option>
+					<option value="滑坡">滑坡</option>
+					<option value="火灾">火灾</option>
+					<option value="泥石流">泥石流</option>
+					<option value="冰雪凝冻">冰雪凝冻</option>
+					<option value="爆恐事件">爆恐事件</option>
+					<option value="安全生产事故">安全生产事故</option>
+					<option value="交通事故">交通事故</option>
+					<option value="核事故">核事故</option>
+					<option value="公共卫生事件">公共卫生事件</option>
+					<option value="战争">战争</option>
+					<option value="重大社会活动保障">重大社会活动保障</option>
+					<option value="节假日保障">节假日保障</option>
+					<option value="其它">其它</option>
+				</select>
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			影响级别<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<select class="textareaborder emergency-select required" data-valid="isStander" data-error="存在必填项未填！"  name="responseLevel" >
+					<option value="四级">四级</option>
+					<option value="三级">三级</option>
+					<option value="二级">二级</option>
+					<option value="一级">一级</option>
+				</select>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				事件发生时间<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="datetime-local"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"    style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventRaiseTime" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			报送单位<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="createOrg"  value="{{=it.createOrg?it.createOrg:''}}"/>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			省份<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventLocalProvince" value="{{=it.eventLocalProvince?it.eventLocalProvince:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			地市<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<div style="position:relative;">
+					<input type="text"  class="textareaborder change required" data-valid="isStander" id="LocalCity" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventLocalCity"  />
+
+				<select class="textareaborder emergency-select LocalCity" multiple="multiple"   onchange="selcectChange(this)"  style="position:absolute;z-index:10;left:0;top:0;opacity:0;">
+
+				</select>
+
+				</div>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			区县<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<div style="position:relative;">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" id="LocalCounty" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventLocalCounty"  />
+
+				<select class="textareaborder emergency-select LocalCounty" multiple="multiple"   onchange="selcectChangeCounty(this)" style="position:absolute;z-index:10;left:0;top:0;opacity:0;">
+
+				</select>
+				</div>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			乡镇<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<div style="position:relative;">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" id="LocalVillage" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventLocalVillage"  />
+
+				<select class="textareaborder emergency-select LocalVillage" multiple="multiple"  onchange="selcectChangeVillage(this)" style="position:absolute;z-index:10;left:0;top:0;opacity:0;">
+
+				</select>
+				</div>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			填报人姓名<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"  disabled="disabled"  style="width:100%;margin: 0px;padding : 0px,3%;"  name="createPerson" value="{{=it.createPerson?it.createPerson:''}}"/>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			联系方式<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！" disabled="disabled"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="submitterTelPhone" value="{{=it.submitterTelPhone?it.submitterTelPhone:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			报送时间<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！" disabled="disabled"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="createTime" value="{{=it.createTime?it.createTime:''}}"/>
+			</div>
+			</li>
+
+			<li class="isshow" data-win="list-image" style="padding:5px 15px;">
+				事件简述<span class="red">*</span>:
+			<textarea name="eventResume"   style="width:100%;height:100px; margin-bottom:0px;margin-top:6px;" class="required" data-valid="isStander" data-error="存在必填项未填！"></textarea>
+			</li>
+			</div>
+
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider" style="border-bottom:1px solid #c8c7cc">
+			通信影响及保障
+			</li>
+			<div id="downmessage">
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			受影响地市名称<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text" id="eventLocalCitydown" class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="eventLocalCity"/>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			受影响区县单位<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="affectedCountiesCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与运营商确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="operatorsDetermineSiteCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与移动确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="mobileDetermineSiteCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与电信确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="telecomDetermineSiteCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与联通确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="unicomDetermineSiteCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与运营商确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="operatorsFixElectricCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与移动确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="mobileFixElectricCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与电信确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="telecomFixElectricCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与联通确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="unicomFixElectricCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+		发电保障基站总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="powerGenerationCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			发电保障基站总数（移动）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="mobilePowerGenerationCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			发电保障基站总数（电信）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="telecomPowerGenerationCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			发电保障基站总数（联通）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="unicomPowerGenerationCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			铁塔损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="towerLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			机房损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="computerRoomLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			一体化柜损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="integratedCabinetLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			FSU损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="fsuLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			蓄电池损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="batteryLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			开关电源损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="switchingPowerLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			空调损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="airLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			外市电损失站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="outsideCityLossCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日直接经济损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="economicDayLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计直接经济损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="sumEconomicDayLoss" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日出动应急人员<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="economicDayPersonCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计出动应急人员<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="sumEconomicDayPersonCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日出动应急车辆<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="economicDayCarCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计出动应急车辆<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="sumEconomicDayCarCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日调遣油机数量<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="economicOilMachineCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计调遣油机数量<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="sumEconomicOilMachineCount" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			组成抢修队伍（个）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="rushRepairTeamNum" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计组成抢修队伍（个）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" data-valid="isStander" data-error="存在必填项未填！"   style="width:100%;margin: 0px;padding : 0px,3%;"  name="totalRushRepairTeanNum" />
+			</div>
+			</li>
+		</div>
+
+		</script>
+
+		<!--图片模板-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col" style="padding:0;">
+			<div class=" aui-flex-item-2">
+			<img class="aui-img-object aui-pull-left" style='width:50px;height:50px;' src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">X</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+	</body>
+	<!-- third -->
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/template-native.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script src="../../script/GPS.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil0.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+	<script>
+		var taskid, projectid, projectname, isFinish, isMonitor, objtype, devname, taskstate,modularid;
+		var imageUtil;
+		var user;
+		var isExist = 0;
+		var jsonArray = new Array();
+		var lastLocation;
+		var hiddenList;
+		var model;
+
+		apiready = function() {
+			initHeader();
+			imageUtil.init({
+				uploadFn : $client.uploadEmergencyImage
+			});
+
+			formUtil.init({
+				rules : {
+					actualfill : function(value, errorMsg, el) {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+					},
+					isStander : function(value, errorMsg, el) {
+							var isStander = $('input[id=isStanderid]').is(':checked');
+							if (!($('input[id=isStanderid]').is(':checked'))) {
+								if (value == '') {
+									if (!formUtil.getHasError()) {
+										formUtil.setHasError(true);
+										return errorMsg;
+									}
+								}
+							}
+					},
+					isShidden : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					},
+					hasImage : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (!imageUtil.getImageArray().length) {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					}
+				}
+			});
+			/**
+			 *加载巡检项目详情
+			 */
+			 var user=$api.getStorage("user");
+			 console.log(getObj(user));
+			 var userInfo=$api.getStorage('userInfo');
+			 console.log(getObj(userInfo));
+			 api.pageParam.createOrg=userInfo.orgnames;
+			 api.pageParam.eventLocalProvince=userInfo.orgnames;
+			 api.pageParam.createPerson=user.username;
+			 api.pageParam.submitterTelPhone=user.mobilephone;
+			 api.pageParam.createTime=CurentTime();
+
+
+
+
+
+			// 获取工单编号
+			var opts={};
+			$client.getSn(opts,function(ret,err){
+				api.pageParam.sn=err.body;
+			})
+
+			console.log(getObj(api.pageParam));
+
+
+
+
+
+			//  api.pageParam.
+			setTimeout(function (){
+				renderTemp('list-view', 'parol-template', api.pageParam, false);
+
+				var opts2={
+					province:userInfo.orgnames
+				};
+				console.log("opts2=",getObj(opts2));
+				$client.getCity(opts2,function(ret,err){
+					console.log("ret=",getObj(ret));
+					if (ret != null && ret.length > 0) {
+						$(".LocalCity").empty();
+						// $('<option>').text('无').val('').appendTo(".LocalCity");
+						var tpl = $api.byId('dict-template').text;
+						var tempFn = doT.template(tpl);
+						$(".LocalCity").append(tempFn(ret));
+						api.parseTapmode();
+						$('#LocalCity').val(ret[0].text);
+						$("#eventLocalCitydown").val(ret[0].text);
+						var opts3={
+							city:ret[0].text
+						};
+						$client.getCounty(opts3,function(ret,err){
+							if (ret != null && ret.length > 0) {
+								console.log(getObj(ret[0]));
+								$(".LocalCounty").empty();
+								// $('<option>').text('无').val('').appendTo(".mjselect");
+								var tpl = $api.byId('dict-template').text;
+								var tempFn = doT.template(tpl);
+								$(".LocalCounty").append(tempFn(ret));
+								api.parseTapmode();
+								$('#LocalCounty').val(ret[0].text);
+
+								// 区县下拉
+								var opts6={
+									citys:opts3.city,
+									countys:ret[0].text
+								};
+								console.log(getObj(opts6));
+								$client.getvillages(opts6,function(ret,err){
+									if (ret != null && ret.length > 0) {
+										console.log(getObj(ret[0]));
+
+										$(".LocalVillage").empty();
+										// $('<option>').text('无').val('').appendTo(".mjselect");
+										var tpl = $api.byId('dict-template2').text;
+										var tempFn = doT.template(tpl);
+										$(".LocalVillage").append(tempFn(ret));
+										api.parseTapmode();
+										$('#LocalVillage').val($(".LocalVillage").val());
+
+									}else {
+										$(".LocalVillage").empty();
+										$('#LocalVillage').val($(".LocalVillage").val());
+									}
+								})
+							}
+						})
+					} else {
+						console.log("进入else======================");
+						$('<option>').text('无').val('无').appendTo(".LocalCity");
+						  $('#eventLocalCity').val($(".LocalCity").val());
+						$('<option>').text('无').val('无').appendTo(".LocalCounty");
+							$('#eventLocalCounty').val($(".LocalCounty").val());
+						$('<option>').text('无').val('无').appendTo(".LocalVillage");
+							$('#eventLocalVillage').val($(".LocalVillage").val());
+					}
+				})
+
+			}, 500);
+		};
+
+		function selcectChange(e){
+			var str=$(e).val();
+			$(e).prev().val(str);
+			$("#eventLocalCitydown").val(str);
+			// 区县下拉
+			var opts4={
+				city:str
+			};
+			$client.getCounty(opts4,function(ret,err){
+				if (ret != null && ret.length > 0) {
+					console.log(getObj(ret[0]));
+					$(".LocalCounty").empty();
+					// $('<option>').text('无').val('').appendTo(".mjselect");
+					var tpl = $api.byId('dict-template').text;
+					var tempFn = doT.template(tpl);
+					$(".LocalCounty").append(tempFn(ret));
+					api.parseTapmode();
+				}
+			})
+		}
+
+		function selcectChangeCounty(e){
+			var str=$(e).val();
+			$(e).prev().val(str);
+			// 区县下拉
+			var opts5={
+				countys:str,
+				citys:$('#LocalCity').val()
+			};
+			console.log(getObj(opts5));
+			$client.getvillages(opts5,function(ret,err){
+				if (ret != null && ret.length > 0) {
+					console.log(getObj(ret[0]));
+					$(".LocalVillage").empty();
+					// $('<option>').text('无').val('').appendTo(".mjselect");
+					var tpl = $api.byId('dict-template2').text;
+					var tempFn = doT.template(tpl);
+					$(".LocalVillage").append(tempFn(ret));
+					api.parseTapmode();
+					$('#LocalVillage').val($(".LocalVillage").val());
+
+				}
+				// else {
+				// 	$(".LocalVillage").empty();
+				// 	$('#LocalVillage').val($(".LocalVillage").val());
+				// }
+			})
+		}
+
+		function selcectChangeVillage(e){
+			var str=$(e).val();
+			$(e).prev().val(str);
+
+		}
+
+
+		/**
+		 * 生成一个用不重复的ID
+		 */
+		function GenNonDuplicateID(randomLength){
+		  return Number(Math.random().toString().substr(3,randomLength) + Date.now()).toString(36)
+		}
+
+
+		/**
+		 *获取当前时间
+		 */
+		function CurentTime(){
+				var now = new Date();
+
+				var year = now.getFullYear();       //年
+				var month = now.getMonth() + 1;     //月
+				var day = now.getDate();            //日
+
+				var hh = now.getHours();            //时
+				var mm = now.getMinutes();          //分
+				var ss = now.getSeconds();           //秒
+
+				var clock = year + "-";
+
+				if(month < 10)
+						clock += "0";
+
+				clock += month + "-";
+
+				if(day < 10)
+						clock += "0";
+
+				clock += day + " ";
+
+				if(hh < 10)
+						clock += "0";
+
+				clock += hh + ":";
+				if (mm < 10) clock += '0';
+				clock += mm + ":";
+
+				if (ss < 10) clock += '0';
+				clock += ss;
+				return(clock);
+		}
+		// 验证手机号
+		function isPoneAvailable(str) {
+					var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+					if (!myreg.test(str)) {
+							return false;
+					} else {
+							return true;
+					}
+			}
+
+// 提交接口
+		function uploadData(opt) {
+				showMask("提交中…");
+				var connectionType = api.connectionType;
+				$client.addSubmission(opt, function(ret, err) {
+					hideMask();
+					console.log(getObj(err));
+					console.log(getObj(ret));
+					if(ret){
+						var message=ret.body;
+						if (message.indexOf('成功')>-1) {
+									api.toast({
+										msg : ret.body
+									});
+									api.execScript({
+										name : 'submission-list_win',
+										frameName : 'submission-list_frm',
+										script : 'refreshList();'
+									});
+									setTimeout(function() {
+										api.hideProgress();
+										api.closeWin();
+									}, 1100);
+						}else {
+							api.hideProgress();
+							api.toast({
+								msg : ret.body
+							});
+						}
+					}
+
+				});
+
+		}
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		// 保存
+		function call_validate() {
+			var user = $api.getStorage('user');
+			$('#userName').val(user.loginname);
+			if (formUtil.validate()) {
+				var opts={};
+				$('#topmessage').find("[name]:visible,input[type=hidden]").each(function() {
+            var name = $(this).attr('name');
+            var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+            if ($(this).attr('type') == 'datetime-local') {
+                val = val.replace(/T/, " ").replace(/\.\d+/, "");
+                //如果出现不带有秒数的时间字符串，补充
+                if (!(/\d{2}:\d{2}:\d{2}/.test(val))) {
+                    val += ':00';
+                }
+            }
+
+            if($(this).attr('type')=='radio'){
+            val=$("input[type='radio']:checked").val();
+
+            }
+            opts[name] = val;
+
+        });
+				opts['from']='app';
+				opts['userName']=user.loginname;
+				var messageArr=[];
+				var obj={};
+				$('#downmessage').find("[name]:visible,input[type=hidden]").each(function() {
+            var name = $(this).attr('name');
+            var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+            if ($(this).attr('type') == 'datetime-local') {
+                val = val.replace(/T/, " ").replace(/\.\d+/, "");
+                //如果出现不带有秒数的时间字符串，补充
+                if (!(/\d{2}:\d{2}:\d{2}/.test(val))) {
+                    val += ':00';
+                }
+            }
+
+            if($(this).attr('type')=='radio'){
+            val=$("input[type='radio']:checked").val();
+
+            }
+						obj[name]=val;
+
+        });
+				messageArr.push(obj)
+
+				opts['eventAffectList']=messageArr;
+
+				console.log("ppppppppppppppppppppppppppppppppp");
+				console.log(JSON.stringify(opts));
+				// 这里
+				uploadData(opts);
+			}
+		}
+
+// 删除接口
+
+		function emergencyRemoveDetail(){
+			var ida = api.pageParam.id;
+			var opts={
+				prefix: 'materialInfo',
+				ids:ida
+			}
+			api.confirm({
+			    title: '提示',
+			    msg: '是否删除此工单？',
+			    buttons: ['确定', '取消']
+			}, function(ret, err) {
+			    var index = ret.buttonIndex;
+					if(index==1){
+						$client.removeEmergency(opts,function(ret,err){
+							if(err.statusCode==200){
+								api.toast({
+									msg : '删除成功!'
+								});
+								api.execScript({
+									name : 'emergency-list_win',
+									frameName : 'emergency-list_frm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									api.closeWin();
+								}, 1000);
+							}else {
+								api.toast({
+									msg : '删除失败!'
+								});
+							}
+						})
+					}
+			});
+
+		}
+
+
+	</script>
+</html>

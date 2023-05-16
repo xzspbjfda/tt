@@ -1,0 +1,53 @@
+body { padding:0; margin:0; font-size:12px; color:#222; background:#f3f3f3; font-family:"tahoma","\5FAE\8F6F\96C5\9ED1";}
+html{ margin: 0; padding: 0;}
+* { box-sizing: border-box;}
+s{ margin: 0; padding: 0; vertical-align: middle;}
+ul,li,h2,h3,h4,h5,p,dl,dd,dt{ padding: 0; margin: 0; list-style: none;}
+/*tieta_header*/
+.tieta_header{ background: #cb5241; line-height: 44px; position: relative; padding: 0 30px; text-align: center; font-size: 16px; color: #FFF;}
+.tieta_header s{ width: 30px; height: 30px; line-height: 30px; background: url(../../image/ico_back.png) no-repeat center; background-size: 60%; display: block; position: absolute; left: 0; top: 7px; }
+.tieta_tab ul{ display: flex; justify-content: space-between; background: #FFF;  height: 44px;}
+.tieta_tab li{ display: inline-block; text-align: center; line-height: 44px; width: 33%; position: relative;}
+.tieta_tab li::after{ background: #27a97d; height: 2px; width: 100%; content: " "; position: absolute; left: 0; bottom: 0; display: none;}
+.tieta_tab li.current{ color: #27a97d;}
+.tieta_tab li.current::after{ display: block;}
+/*select*/
+.select{ display:inline-block; vertical-align:top; background:#FFF;}
+.select p{border:0 solid #EAEAEA; border-radius:2px; height:30px; line-height:30px; position:relative; padding-right:30px;}
+.select p a{ width:28px; height:28px; display:inline-block; position:absolute; background: url(../image/zhankai.png) no-repeat center; background-size:50%; right:0; top:0;}
+.select p span{ height:26px; width:100%; box-sizing:border-box; border:0; vertical-align:top; display:inline-block; padding-left:10px; font-size:12px; text-overflow:ellipsis;overflow:hidden;word-break:keep-all;white-space: nowrap;}
+.select p input{ height:26px; width:100%; min-width:80px; box-sizing:border-box; border:0; vertical-align:top; display:inline-block; padding-left:10px; font-size:12px}
+.selectcnt{ position:absolute; top:41px; border:0 solid #EAEAEA;width:100%!important; box-sizing:border-box; display:none; z-index:100; height: 100%; background: rgba(0,0,0,.5); left: 0; text-align: left;z-index:101}
+.selectcnt ul{ background:#FFF; }
+.selectcnt ul li{ padding:0 0 0 16px; line-height:30px; display:block; width:100%; box-sizing:border-box; cursor:pointer; font-size:12px}
+.selectcnt ul li:hover{ background:#F7F7F7;}
+.selectcnt .searchbox{ padding:0 31px 0 10px; border-width:0 0 1px 0;}
+.selectcnt .searchbox input{ padding:0; font-size:12px}
+.selectcnt .searchbox a.search{ background-color:none; border-left:0;}
+
+.select.current p{ color: #CB5241;}
+.select.current p a{ background: url(../../image/shouqi.png) no-repeat center;background-size:50%;}
+.tieta_content{margin-top: 8px; position: relative;}
+.tieta_contentwrap{padding-bottom: 78px;}
+/*tieta_search*/
+.tieta_search{background-color: #FFF; display: flex; justify-content: space-between; padding: 5px 0;border-bottom: 1px solid #E5E5E5;}
+.tieta_search > div{ width: 33%; display: inline-block;text-align: center;}
+.tieta_search .select{ width: 100%;}
+.tieta_ordersx{ background: #FFF; padding:20px 20px 8px;}
+.tieta_ordersx dl{ }
+.tieta_ordersx dt{ font-size: 14px; color: #333; line-height: 20px; margin-bottom: 12px;}
+.tieta_ordersx dd{ }
+.tieta_ordersx dd span{margin-bottom: 12px; height: 36px; line-height: 36px; display: inline-block; width: 32%; border-radius: 18px; background: #F5F5F5; text-align: center; margin-right: 2%; font-size: 13px; color: #333;}
+.tieta_ordersx dd span:nth-child(3n){ margin-right: 0;}
+.tieta_ordersx dd span.current{background: #FFE6E2;color: #CB5241;}
+.tieta_ordersx dd input.ttinput{height: 36px; line-height: 36px;border-radius: 18px;background: #F5F5F5; text-align: center; border: 0; font-size: 13px; color: #333; margin-bottom: 12px;}
+.tieta_ordersx dd input:focus{ border: 0;}
+.w{ width: 100%;}
+.w45{ width: 45%;}
+.timeinput{ display: flex; justify-content: space-between; vertical-align: middle}
+.timeinput em{ height: 36px; line-height: 32px; vertical-align: middle; color: #666;}
+/*tieta_btm*/
+.tieta_btm{ position: fixed; bottom: 0; padding:13px 0; width: 100%; height: 70px;box-shadow: 0 -2px 20px 0 rgba(0,0,0,0.15); background: #FFF;}
+.tieta_btn{ text-align: center;}
+.tieta_btn span{ height: 44px; line-height: 44px; border-radius: 22px; display: inline-block;background: #CB5241; color: #FFF; margin: 0 12px; width: 40%;border: 1px solid #CB5241; font-size: 16px;}
+.tieta_btn span.linered{ border: 1px solid #CB5241;color: #CB5241; background: #FFF;}

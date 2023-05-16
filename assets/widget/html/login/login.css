@@ -1,0 +1,420 @@
+html {
+    font-family: sans-serif;
+}
+html, body, header, section, footer, div, ul, ol, li, img, a, span, em, del, legend, center, strong, var, fieldset, form, label, dl, dt, dd, cite, input, hr, time, mark, code, figcaption, figure, textarea, h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    font-style: normal;
+}
+html, body {
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-user-select: none;
+    background-color: #fff;
+}
+nav, article, aside, details, main, header, footer, section, fieldset, figcaption, figure {
+    display: block;
+}
+img, a, button, em, del, strong, var, label, cite, small, time, mark, code, textarea {
+    display: inline-block;
+}
+header, section, footer {
+    position: relative;
+}
+ol, ul {
+    list-style: none;
+}
+.login_input {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    line-height: 44px;
+    padding-left: 40px!important;
+    /*-webkit-appearance:none;*/
+    background-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    height: 44px;
+    color: #000;
+    font-size: 16px;
+    -webkit-appearance: none;
+}
+span {
+    display: inline-block;
+}
+a:active, a:hover {
+    outline: 0;
+}
+a, a:visited {
+    text-decoration: none;
+}
+label, .wordWrap {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+td, th {
+    padding: 0;
+}
+.clearfix:after {
+    content: ' ';
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+.loading_more {
+    display: block;
+    height: 1.5em;
+    width: 100%;
+}
+.loading_more:before {
+    background-image: url(../../image/loading_more.gif) 30% center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    text-align: center;
+}
+.loading_more:after {
+    content: '加载更多';
+}
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+.auto_login {
+    height: 24px;
+    margin: 15px 0;
+    margin-left: 3%;
+    color: #246183;
+    position: relative;
+}
+.wording {
+    position: absolute;
+    left: 26px;
+    line-height: 18px;
+    height: 18px;
+    font-size: 14px;
+    color: #999;
+    display: inline-block;
+}
+.remember {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 0px;
+    cursor: pointer;
+    z-index: 1;
+    opacity: .01;
+}
+.remember:checked+ .checkbox {
+    background: #fff1f2 url("../../image/login/checked.png") 0 0;
+    border-color: #db4537;
+    background-size: 14px 14px;
+}
+.remember:checked+ .checkbox+ .wording {
+    color: #ea7a81;
+}
+.remember+ .checkbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    border: 1px solid #9abbe3;
+    background: 0;
+    border-radius: 2px;
+}
+/*新的登陆界面*/
+.content {
+    margin: 0 auto;
+    width: 100%;
+    /* height: 500px;*/
+    position: relative;
+    padding-top: 1%;
+}
+.login {
+    margin: 0 auto;
+    /**  padding-top: 30px;  */
+    text-align: center;
+}
+
+.logo {
+    width: 230px;
+    margin-top: 60px;
+}
+
+#q_login_title {
+    height: 32px;
+    line-height: 22px;
+    margin-bottom: 20px;
+    position: relative;
+}
+#q_login_logo {
+    background: url("../../image/login/android_logo_v1.png") no-repeat -44px 0;
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    left: 0;
+}
+#q_login_tips {
+    position: absolute;
+    left: 30px;
+    top: 0;
+    color: #246183;
+}
+#web_login {
+    width: 88%;
+    margin: 0 auto;
+}
+#g_list {
+    background: #fff;
+    height: 134px;
+    border-radius: 4px;
+}
+#g_list li {
+    border-bottom: 1px solid #eaeaea;
+}
+#g_u, #g_p {
+    position: relative;
+}
+#g_u input, #g_p input {
+    margin-bottom: 0;
+    border: none;
+}
+.del_touch {
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    position: absolute;
+    right: 0;
+    display: block;
+    height: 44px;
+    width: 48px;
+    z-index: 1;
+}
+.del_u {
+    display: none;
+    position: absolute;
+    left: 15px;
+    top: 13px;
+    height: 18px;
+    width: 18px;
+    background-color: #aaa;
+    border-radius: 9px;
+    background: url("../../image/login/android_logo_v1.png") no-repeat -44px 0;
+}
+
+#u_selBox {
+    display: none;
+    position: absolute;
+    width: 100%;
+    background-color: #FFFFFF;
+    margin: 0 auto;
+    border: 1px solid rgb(242,242,242);
+}
+.del_select {
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    color: #000000;
+    position: relative;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 44px;
+    z-index: 100;
+    padding-left: 30px;
+    border: 0;
+    font-size: 16px;
+    -webkit-appearance: none;
+    text-align: left;
+    background-color: #FFFFFF;
+}
+.del_select:not(:last-child){
+border-bottom: 1px solid #eaeaea;
+}
+
+#unit_selBox {
+    width: auto;
+    height: 44px;
+    font-size: 16px;
+    border: none;
+    float: left;
+    color: #000;
+    padding: none;
+    background: url(../../image/icons/png/arrow-drop-down.png) center right no-repeat;
+    background-size: 14px 10px;
+}
+.loading {
+    width: 150px;
+    height: 15px;
+    margin: 0 auto;
+}
+.loading span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: #111111;
+    -webkit-animation: load 1.04s ease infinite;
+}
+.loading span:last-child {
+    margin-right: 0px;
+}
+@-webkit-keyframes load{
+    0%{
+    opacity: 1;
+    }
+    100%{
+    opacity: 0;
+    }
+}
+.loading span:nth-child(1) {
+    -webkit-animation-delay: 0.13s;
+}
+.loading span:nth-child(2) {
+    -webkit-animation-delay: 0.26s;
+}
+.loading span:nth-child(3) {
+    -webkit-animation-delay: 0.39s;
+}
+.loading span:nth-child(4) {
+    -webkit-animation-delay: 0.52s;
+}
+.loading span:nth-child(5) {
+    -webkit-animation-delay: 0.65s;
+}
+
+.loading1 {
+    width: 150px;
+    height: 15px;
+    margin: 0 auto;
+}
+.loading1 span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    -webkit-animation: load 1.04s ease infinite;
+}
+.loading1 span:last-child {
+    margin-right: 0px;
+}
+@-webkit-keyframes load{
+    0%{
+    opacity: 1;
+    }
+    100%{
+    opacity: 0;
+    }
+}
+.loading1 span:nth-child(1) {
+    -webkit-animation-delay: 0.13s;
+}
+.loading1 span:nth-child(2) {
+    -webkit-animation-delay: 0.26s;
+}
+.loading1 span:nth-child(3) {
+    -webkit-animation-delay: 0.39s;
+}
+.loading1 span:nth-child(4) {
+    -webkit-animation-delay: 0.52s;
+}
+.loading1 span:nth-child(5) {
+    -webkit-animation-delay: 0.65s;
+}
+/*wxxxxx*/
+.input_box_img{
+  position: absolute;
+  left: 10px;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+}
+.bg_up{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.bg_dowm{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%
+}
+.four_a_login{
+    background: #fff;
+    /* height: 134px; */
+    border-radius: 4px;
+    height: 170px;
+    margin: 40px 0 0 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.resend{
+    height: 25px;
+    width: 70px;
+    line-height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    color: #ffffff;
+    background-color: #e74c3c;
+    float: right;
+    font-size: 13px;
+    /* padding: 1px 0px 0px 0px; */
+}
+.resend_count_down{
+    height: 25px;
+    width: 105px;
+    line-height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    color: gray;
+    /* background-color: #fff; */
+    float: right;
+    font-size: 13px;
+    border:1px solid gray;
+    /* padding: 1px 0px 0px 0px; */
+}
+.flex_center{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /* align-content: center; */
+}
+.login_sms_input {
+    width: 40%;
+    height: 44px;
+    border: 0;
+    text-align: left;
+    /* margin-left: 28px; */
+    line-height: 44px;
+    padding: 10px 5px;
+    line-height: 21px;
+    /* padding-left: 40px!important; */
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    color: #000;
+    font-size: 14px;
+    -webkit-appearance: none;
+    -webkit-user-select: text;
+    background-color: #fff;
+    /* border: 1px solid rgba(0, 0, 0, .2); */
+    border-radius: 3px;
+    outline: none;
+}
+.sms_img{
+    width: 20px;
+    width: 20px;
+}

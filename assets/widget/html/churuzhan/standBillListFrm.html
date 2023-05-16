@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>出入站待办列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<style>
+			.aui-flex-col:first-child {
+				height: 30px;
+				line-height: 30px;
+				border-bottom: 1px solid #999;
+			}
+			.aui-flex-col {
+				height: 25px;
+				line-height: 25px;
+			}
+			.ccssoft_list {
+				background-color: #eff1f0;
+				override: hidden;
+			}
+			.ccssoft_list {
+				margin-top: 15px;
+			}
+			.ccssoft_list li {
+				list-style: none;
+				border-bottom: 1px solid #e3e2e2;
+				background: #fff;
+				overflow: hidden;
+				margin-bottom: 10px;
+			}
+			.ccssoft_list li:hover {
+				background: #f9e9df;
+			}
+			.ccssoft_list li.acitve {
+				background: #f9e9df;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="listView-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var processflag = it[i].status;
+			var authStatus = it[i].authStatus;
+			var processflagName = "";
+			var pcolor = "";
+			if(processflag=="0"){
+			processflagName = "待审核";
+			pcolor = "#22AADD";
+			}else if(processflag=="1"){
+			processflagName = "待签到";
+			pcolor = "#1cc472";
+			}else if(processflag=="2" && authStatus!="1"){
+			processflagName = "待身份识别";
+			pcolor = "#7676BA";
+			}else if(processflag=="2" && authStatus=="1"){
+				processflagName = "远程开门";
+				pcolor = "#7676BA";
+			}else if(processflag=="3"){
+			processflagName = "施工前记录";
+			pcolor = "#B372F6";
+			}else if(processflag=="4"){
+			processflagName = "施工中记录";
+			pcolor = "#E088CF";
+			}else if(processflag=="5"){
+			processflagName = "离站确认";
+			pcolor = "#AED684";
+			}else if(processflag=="6"){
+			processflagName = "待归还钥匙";
+			pcolor = "#E088CF";
+			}else if(processflag=="9"){
+			processflagName = "已归档";
+			pcolor = "#953A6C";
+			}
+			}}
+			<li class="aui-content" style="padding:8px;" tapmode="active" applyId="{{=it[i].id}}" stationId="{{=it[i].stationId}}" stationName="{{=it[i].stationName}}" isneedperson="{{=it[i].isneedperson}}" onclick="openStandBillDetail(this)">
+			<div class="aui-flex-col" style="border-bottom: 1px dashed #00a0c8;">
+			<div class="aui-flex-item-6" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"> {{=it[i].stationName ? it[i].stationName : '&nbsp;'}}</div>
+			{{?it[i].isNeedPerson=="Y"}}
+			<div class="aui-flex-item-2 aui-text-right" style="color:#4AB518;">随工</div>
+			{{??it[i].isNeedPerson=="N"}}
+			<div class="aui-flex-item-2 aui-text-right" style="color:#F4AB15;">不随工</div>
+			{{??}}
+			<div class="aui-flex-item-2 aui-text-right" style="color:#F4AB15"></div>
+			{{?}}
+			<div class="aui-flex-item-4 aui-text-right" style="color:{{=pcolor}}">{{=processflagName}}</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-7"> {{=it[i].billSn}}</div>
+			<div class="aui-flex-item-5 aui-text-right" style="color:{{=it[i].workType == '07'?'#ff3333':'#000'}}">
+
+			{{? it[i].workType == '00' }}
+			日常维护
+			{{?? it[i].workType == '01' }}
+			更新改造
+			{{?? it[i].workType == '02' }}
+			故障处理
+			{{?? it[i].workType == '03' }}
+			外市电作业
+			{{?? it[i].workType == '04' }}
+			伐青
+			{{?? it[i].workType == '05' }}
+			-
+			{{?? it[i].workType == '06' }}
+			发电
+			{{?? it[i].workType == '07' }}
+			随工
+			{{?? it[i].workType == '08' }}
+			验收
+			{{?? it[i].workType == '09' }}
+			巡检
+			{{??}}
+			其它
+			{{?}}
+
+			</div>
+			</div>
+			<div class="aui-flex-col" style="font-size:12px;">
+			<div class="aui-flex-item-9">申请上站时间：{{=it[i].bookStartTime != null ? it[i].bookStartTime:''}}</div>
+			<div class="aui-flex-item-3 aui-text-right">{{=it[i].arrivalsName != null ? it[i].arrivalsName:''}}</div>
+			</div>
+			</li>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<ul class="ccssoft_list" id="listView"></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/request.js"></script>
+	<script type="text/javascript">
+		var listView;
+		var isTest = $api.getStorage("curServer");
+		apiready = function() {
+			if(api.pageParam.type=='RL_STATION'){
+				var Newtime=$api.getStorage('Newtime');
+				listView = new C.ApiListView({
+					fn : $client.getStationCalendar
+				});
+				listView.setQueryOptions({
+					date:Newtime
+				})
+			}else {
+				request.getStandBillList = function (opts,callback) {
+					service({
+						url: "/enterStationBill/stationBillWaitlist.do",
+						data: opts
+					},callback)
+				}
+				listView = new C.ApiListView({
+					listName: 'list',
+					fn : request.getStandBillList,
+					newSystem:true
+				});
+			}
+			listView.refresh();
+
+			api.addEventListener({
+				name: 'churuzhanBillAudit'
+			}, function(ret, err) {
+				if (ret.value.state === 'auditOver') {
+					refreshList()
+				}
+			});
+		};
+
+		function refreshList(){
+			listView.refresh();
+		}
+
+		function openStandBillDetail(el) {
+			showlog("isneedperson=" + $api.attr(el, 'isneedperson') + '， applyisneedperson＝' + $api.attr(el, 'applyisneedperson'));
+			var applyId = $api.attr(el, 'applyId');
+			var stationId = $api.attr(el, 'stationId');
+			var stationName = $api.attr(el, 'stationName');
+			var pageParam = {};
+			pageParam.applyId = applyId;
+			pageParam.stationId = stationId;
+			pageParam.stationName = stationName;
+			pageParam.isFinish='N';
+			pageParam.pageFrom='standBillListFrm';
+			//页面来源，这里表示从上站待办跳过来
+			pageParam.fromPage = "standBillListWin";
+			api.openWin({
+				name : 'mainStandBillDetail',
+				url : 'mainStandBillDetail.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+	</script>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>操作步骤详情</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+</head>
+<style>
+	.liLeft{
+		width:35%;
+		float:left;
+	}
+	.liRight{
+		width:65%;
+		float:left;
+		padding-left:20px;
+		color:#666;
+	}
+</style>
+<body>
+	<script id="actionDetail-template" type="text/x-dot-template">
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">步骤ID</div>
+       	<div class="liRight">{{=it.action_id != null?it.action_id:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">任务ID</div>
+       	<div class="liRight">{{=it.task_id != null?it.task_id:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">工单ID</div>
+       	<div class="liRight">{{=it.bill_id != null?it.bill_id:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">步骤ID</div>
+       	<div class="liRight">{{=it.action_id != null?it.action_id:''}}</div>
+    </li>
+    <li class="aui-list-view-cell" >
+       	<div class="liLeft">业务类型ID</div>
+       	<div class="liRight">{{=it.business_id != null?it.business_id:''}}</div>
+    </li>
+    <li class="aui-list-view-cell" >
+       	<div class="liLeft">处理时间</div>
+       	<div class="liRight">{{=it.operate_end_time != null?it.operate_end_time:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">任务工单状态</div>
+       	<div class="liRight">{{=it.taskstatus != null?it.taskstatus:''}}</div>
+    </li>
+    <li class="aui-list-view-cell" >
+       	<div class="liLeft">处理信息</div>
+       	<div class="liRight">{{=it.deal_info != null?it.deal_info:''}}</div>
+    </li>
+    <li class="aui-list-view-cell" >
+       	<div class="liLeft">步骤时限</div>
+       	<div class="liRight">{{=it.step_limit_times != null?it.step_limit_times:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">操作方向</div>
+       	<div class="liRight">{{=it.operate_direction != null?it.operate_direction:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">操作来源</div>
+       	<div class="liRight">{{=it.operate_source != null?it.operate_source:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">操作人</div>
+       	<div class="liRight">{{=it.operator != null?it.operator:''}}</div>
+    </li>
+	<li class="aui-list-view-cell" >
+       	<div class="liLeft">操作途径</div>
+       	<div class="liRight">{{=it.operate_way != null?it.operate_way:''}}</div>
+    </li>
+	</script>
+    <div class="aui-content">
+        <ul class="aui-list-view" id="actionDetail">
+
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		var actionDetail = api.pageParam.actionDetail;
+	    api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+	    if(actionDetail != null){
+	    	var jsonStr = actionDetail.substr(1,actionDetail.length-2);
+	    	var actionJson = $api.strToJson(jsonStr);
+	    	var content = $api.byId('actionDetail');
+            var tpl = $api.byId('actionDetail-template').text;
+            var tempFn = doT.template(tpl);
+            content.innerHTML = tempFn(actionJson);
+            api.parseTapmode();
+	    }else{
+	    	api.toast({msg:"详情为空", location: 'middle'});
+	    }
+		api.hideProgress();
+	};
+</script>
+</html>

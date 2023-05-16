@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>重要保障列表</title>
+       <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+        <style>
+            body.active{
+                background : url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            .ensure-title{
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 14px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 2px 8px 8px 2px;
+                position: relative;
+            }
+            .ensure-title span{
+                display: block;
+                width: 90px;
+                height: 20px;
+                line-height: 20px;
+                color: #666;
+                text-align: right;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                font-size: 12px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                 var model = it[i];
+                var billstatus = model.bussinessid;
+               	var grade= model.hiddengrade;
+               	var source= model.hiddensource;
+               	var type= model.hiddentype;
+               	var gradeName="";
+               	var hiddentype="";
+               	var hiddenSrc="";
+               	var longTime="";
+                var billStatusName="";
+
+                var billStatusColor = "";
+
+                if("A"==grade){
+                gradeName="特别严重隐患";
+                }else if("B"==grade){
+                gradeName="严重隐患";
+                }else if("C"==grade){
+                gradeName="一般隐患";
+                }
+
+                if(type == "1"){
+                hiddentype = "开关电源";
+                }else if(type == "2"){
+                hiddentype = "蓄电池";
+
+                }else if(type == "3"){
+                hiddentype = "空调";
+
+                }else if(type == "4"){
+                hiddentype = "机房环境";
+
+                }else if(type == "5"){
+                hiddentype = "铁塔环境";
+
+                }else if(type == "6"){
+                hiddentype = "FSU";
+
+                }else if(type == "7"){
+                hiddentype = "其他设备";
+
+                }
+
+                   if(billstatus == "1"){
+                billStatusName = "待问题核实";
+                billStatusColor = "#22AADD";
+                }else if(billstatus == "2"){
+                billStatusName = "待方案制定";
+                billStatusColor = "#fb8536";
+                }else if(billstatus == "3"){
+                billStatusName = "待实施";
+                billStatusColor = "#B372F6";
+                }else if(billstatus == "4"){
+                billStatusName = "待验收";
+                billStatusColor = "#B372F6";
+                }else if(billstatus == "5"){
+                billStatusName = "待验收归档";
+                billStatusColor = "#AED684";
+                }else if(billstatus == "6"){
+                billStatusName = "挂起";
+                billStatusColor = "#7676BA";
+                }else if(billstatus == "7"){
+                billStatusName = "已归档";
+                billStatusColor = "#953A6C";
+                }
+
+
+                if("1"==source){
+                  hiddenSrc="巡检发现";
+                }else if("2"==source){
+                  hiddenSrc="运营商申告";
+                }else if("3"==source){
+                  hiddenSrc="自有人员上站巡查";
+                }else if("4"==source){
+                  hiddenSrc="业主申告";
+                }else if("5"==source){
+                  hiddenSrc="告警发现";
+                }
+
+                }}
+                <li tapmode="active"  onclick="openEnsureDetail()">
+                <div class="ensure-title">重保名称：啦啦啦<span  style="color:{{=billStatusColor}}">{{=billStatusName}}</span></div>
+                <div class="cj-l-into"><span style="margin-left: 2px;">编号：{{=model.billsn}}<span></div>
+                <div class="cj-l-into">
+
+                <span style="margin-left: 2px;">紧急程度</span>
+                  <div class="cj-l-date">
+                  <span>一般</span>
+                  </div>
+                </div>
+                </li>
+                {{  } }}
+            </script>
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script>
+     var  listView;
+     apiready = function() {
+       var opts={
+            start : 1,
+            limit : 20
+          };
+       listView = new C.ApiListView({
+  			fn : $client.getRepairBillList
+    	 });
+       listView.setQueryOptions(opts);
+       listView.refresh();
+      //  $client.wxxxxx(opts,function(ret,err) {
+      //    console.log(getObj(ret.list[0]));
+      //  })
+     }
+     /**
+		 *刷新页面
+		 */
+		function refreshList() {
+			listView.refresh();
+		}
+
+    function cb_queryBillList(opts) {
+    	listView.setQueryOptions(opts);
+    	listView.refresh();
+    }
+
+    function openEnsureDetail(){
+      api.openWin({
+        name : "ensureDetail",
+        url : "../ensure/ensureDetail_win.html",
+        bounces : false,
+        vScrollBarEnabled : true,
+        reload : true,
+        slidBackEnabled : true,
+        pageParam : {},
+        animation : {
+          type : "push",
+          subType : "from_right",
+          duration : 300
+        }
+      });
+    }
+    </script>
+</html>

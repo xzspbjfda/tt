@@ -1,0 +1,413 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>个人信息</title>
+	<link rel="stylesheet" type="text/css" href="../../css/amazeui.min.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+	<link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+	<link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+	<link rel="stylesheet" href="../../script/app/css/app.css">
+	<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+</head>
+<style>
+	body {
+		background-color: #eee;
+		margin: 0px;
+	}
+
+	#wrap {
+		height: 100%;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-flex-flow: column;
+		flex-flow: column;
+	}
+
+	.noPadding-cell {
+		padding: 0px !important;
+	}
+
+	.itemLeft {
+		width: 40%;
+		margin-right: 10px;
+		margin-top: 11px;
+		margin-bottom: 11px;
+		margin-left: 15px;
+		float: left;
+	}
+
+	.itemRight {
+		overflow: hidden;
+		margin-top: 11px;
+		margin-bottom: 11px;
+		margin-right: 20px;
+	}
+
+	.item-content {
+		margin-top: 0px !important;
+		margin-bottom: 0px !important;
+	}
+
+	.table-view-cell {
+		position: relative;
+		padding: 11px 65px 11px 15px;
+		overflow: hidden;
+		border-bottom: 1px solid #ddd;
+		background-color: #fff;
+	}
+
+	.table-view-cell-Wxx {
+		position: relative;
+		padding: 11px 65px 11px 15px;
+		overflow: hidden;
+		background-color: #fff;
+	}
+
+	.table-view-cell:last-child {
+		border-bottom: 0;
+	}
+
+	.table-view-cell i {
+		text-align: center;
+	}
+
+	.table-view-cell span {
+		margin-left: 20px;
+	}
+
+	ul,
+	li,
+	dl,
+	dt,
+	dd {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	a {
+		background: transparent;
+		text-decoration: none;
+	}
+
+	.left {
+		background: url(../../image/navbtn_back.png) no-repeat center;
+		-webkit-background-size: 12px 20px;
+	}
+
+	.picCenter {
+		height: 150px;
+		width: 100%;
+		background: url(../../image/personalCenter/user_center_bg.png);
+		-webkit-background-size: 180px 100%;
+	}
+
+	.blankDiv {
+		height: 40px;
+		width: 100%;
+	}
+
+	.picBox {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-box-flex: 1;
+		-webkit-box-align: center;
+		-webkit-box-pack: center;
+		height: 40px;
+		width: 100%;
+		cursor: pointer;
+	}
+
+	.picShow {
+		height: 40px;
+		width: 40px;
+		margin-bottom: 10px;
+		background: url(../../image/personalCenter/widget_dface.png);
+		-moz-border-radius: 20px;
+		-webkit-border-radius: 20px;
+		border-radius: 20px;
+		-webkit-background-size: 40px 40px;
+	}
+
+	#uName {
+		text-align: center;
+		height: 30px;
+		line-height: 30px;
+		width: 100%;
+		font-size: 16px;
+	}
+
+	#uInfo {
+		height: 50px;
+		width: 100%;
+		line-height: 50px;
+		border-top: solid 1px #ADADAD;
+		text-align: left;
+	}
+
+	.uInfoLabel {
+		color: #BEBEBE;
+		font-size: 18px;
+	}
+
+	.uInfoContent {
+		color: #000;
+		font-size: 16px;
+		margin-left: 10px;
+	}
+
+	.phoneIconDiv {
+		width: 20px;
+		height: 30px;
+		line-height: 30px;
+		margin-top: 10px;
+		margin-right: 20px;
+		float: right;
+	}
+
+	.phoneIconA {
+		width: 20px;
+		height: 30px;
+		line-height: 30px;
+		background: url(../../image/personalCenter/title_call_icon.png);
+		-webkit-background-size: 20px 30px;
+	}
+
+	.noPadding-cell {
+		padding: 0px !important;
+	}
+
+	.tbqb {
+		width: 18px;
+	}
+
+	.side-list {
+		height: 50px;
+		line-height: 50px;
+		margin-top: 10px;
+		text-align: center;
+		background-color: #fff;
+	}
+
+	.timeinput {
+		height: 24px!important;
+		margin: 0!important;
+		min-height: 0!important;
+		background-color: #FFFFFF;
+		border-radius: 5px;
+		padding: 0!important;
+		text-align: right;
+	}
+
+</style>
+<script id="listView-template" type="text/x-dot-template">
+	{{ for(var i=0, len=it.length; i
+	< len; i++) {
+		var pushName='';
+		switch (Number(it[i].messagetype)) {
+			case 1:
+				pushName='故障工单';
+				break;
+				case 2:
+					pushName='发电工单';
+					break;
+					case 3:
+						pushName='巡检工单';
+						break;
+						case 4:
+							pushName='上站工单';
+							break;
+							case 5:
+								pushName='调度工单';
+								break;
+								case 6:
+									pushName='维修工单';
+									break;
+			default:
+ 				pushName='';
+		}
+	}}
+		<li class="table-view-cell  noPadding-cell">
+		<div class="table-view-cell-Wxx noPadding-cell">
+			<div class="itemLeft">
+				{{=pushName}}
+			</div>
+			<div class="itemRight">
+				<input type="checkbox" idVal="{{=it[i].id ? it[i].id : ''}}" typeVal="{{=i+1}}" {{=(it[i].isacceptance&&it[i].isacceptance=='Y' )? 'checked="checked"': ''}} class="aui-switch aui-pull-right" onclick="showDown(this)">
+			</div>
+		</div>
+		<div class="down_box" style="{{=(it[i].isacceptance&&it[i].isacceptance=='Y' )? '': 'display:none;'}}">
+			<div class="table-view-cell-Wxx noPadding-cell">
+				<div class="itemLeft">
+					开始时间
+				</div>
+				<div class="itemRight">
+					<input type="time" class="timeinput timeStart" value="{{=it[i].starttime? it[i].starttime : '00:00'}}" />
+				</div>
+			</div>
+			<div class="table-view-cell-Wxx noPadding-cell">
+				<div class="itemLeft">
+					结束时间
+				</div>
+				<div class="itemRight">
+					<input type="time" class="timeinput timeEnd"  value="{{=it[i].endtime? it[i].endtime : '00:00'}}"/>
+				</div>
+			</div>
+		</div>
+		</li>
+		{{ } }}
+</script>
+
+<body>
+	<div id="wrap" style="overflow:auto;margin-bottom:1px;">
+		<ul class="table-view" id="listView">
+		</ul>
+		<li class="side-list" onclick="logout();">
+			<span>设置</span>
+		</li>
+		<div style="color:red;font-size:14px;margin-top:10px;">注：设置时段后，在该时段将不接收此类工单消息推送</div>
+	</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/debug.js"></script>
+<script src='../../script/constant.js'></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/jpush-api.js"></script>
+<script>
+	apiready = function() {
+		var opt={};
+		$client.getMessageFun(opt,function(ret,err){
+			console.log(getObj(ret));
+				if (ret.success) {
+					var pushmessage=JSON.parse(ret.data_info);
+					if(pushmessage&&pushmessage.length>0){
+
+					}else {
+						var pushmessage=[{
+							isacceptance:'N',
+							starttime:'00:00',
+							endtime:'00:00',
+							messagetype:'1'
+						},{
+							isacceptance:'N',
+							starttime:'00:00',
+							endtime:'00:00',
+							messagetype:'2'
+						},{
+							isacceptance:'N',
+							starttime:'00:00',
+							endtime:'00:00',
+							messagetype:'3'
+						},{
+							isacceptance:'N',
+							starttime:'00:00',
+							endtime:'00:00',
+							messagetype:'4'
+						},{
+							isacceptance:'N',
+							starttime:'00:00',
+							endtime:'00:00',
+							messagetype:'5'
+						},{
+							isacceptance:'N',
+							starttime:'00:00',
+							endtime:'00:00',
+							messagetype:'6'
+						}]
+					}
+					renderTemp('listView', 'listView-template', pushmessage, false);
+				}else {
+					api.toast({
+						msg: '获取设置信息失败',
+						location: 'bottom'
+					});
+				}
+		})
+	};
+
+
+	/**
+	 * 设置
+	 */
+	function logout() {
+		var JsonStr = [];
+		var inputVal;
+		var timeStart;
+		var timeEnd;
+		var type;
+		$('input[type=checkbox]').each(function() {
+			if ($(this).is(':checked')) {
+				inputVal = 'Y';
+				timeStart = $(this).parents('.table-view-cell').find('.timeStart').val();
+				timeEnd = $(this).parents('.table-view-cell').find('.timeEnd').val();
+				type = $(this).attr('typeVal');
+				id=$(this).attr('idVal')
+				JsonStr.push({
+					inputVal: inputVal,
+					timeStart: timeStart,
+					timeEnd: timeEnd,
+					type: type,
+					id:id
+				})
+			}else {
+				inputVal = 'N';
+				type = $(this).attr('typeVal');
+				id=$(this).attr('idVal');
+				JsonStr.push({
+					inputVal: inputVal,
+					timeStart: '',
+					timeEnd: '',
+					type: type,
+					id:id
+				})
+			}
+		})
+		console.log(JSON.stringify(JsonStr));
+		var opts = {
+			messageset: JsonStr
+		}
+
+		$client.setMessageFun(opts,function(ret,err){
+			console.log(getObj(ret));
+			if (ret.success) {
+				api.toast({
+					msg: '设置成功！',
+					location: 'bottom'
+				});
+				setTimeout(function() {
+					api.closeWin();
+				}, 1000);
+			}else {
+				api.toast({
+					msg: '设置失败，请重试！',
+					location: 'bottom'
+				});
+			}
+		})
+
+
+	}
+
+	// 设置显示隐藏
+	function showDown(e) {
+		if ($(e).is(':checked')) {
+			$(e).parents('.table-view-cell').find(".down_box").slideDown();
+		} else {
+			$(e).parents('.table-view-cell').find(".down_box").slideUp();
+		}
+	}
+</script>
+
+</html>

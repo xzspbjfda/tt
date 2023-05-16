@@ -1,0 +1,1062 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>代维调度回单</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		.ccssoft_list {
+			background-color: #eff1f0;
+			override: hidden;
+		}
+
+		.ccssoft_list li {
+			list-style: none;
+			border-bottom: 1px solid #e3e2e2;
+			background: #fff;
+			overflow: hidden;
+		}
+
+		.aui-list-li {
+			line-height: 50px;
+			padding: 5px 10px 1px 10px;
+		}
+
+		.cardButtonDiv {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			zoom: 1;
+			width: 100%;
+			padding: 5px 15px 0px 15px;
+			height: 50px;
+			z-index: 3;
+			background-color: #f7f7f7;
+			box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+			-webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+		}
+
+		.okBtn {
+			text-align: center;
+			font-size: 16px;
+			transition: all .5s;
+			-webkit-transition: all .5s;
+			background-color: #DB4537;
+			display: inline-block;
+			height: 40px;
+			line-height: 40px;
+		}
+
+		.img_box {
+			position: relative;
+			padding: 10px 10px 0 0!important;
+		}
+
+		#addPic {
+			padding: 10px 10px 0 0!important;
+		}
+
+		.removebtn {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: 24px;
+			height: 24px;
+			padding: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<script id="img-template" type="text/x-dot-template">
+		<div class="aui-list-view-cell aui-img aui-col-xs-3 img_box">
+			<img class="aui-img-object" src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}')"> {{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button> {{?}}
+		</div>
+
+	</script>
+
+
+	<script id="listView-template" type="text/x-dot-template">
+		{{var tit=it[0].belong_link;}}
+		<div class="darktitle titleinfo" style="line-height:30px;margin:0;padding:0 10px;">
+			<h5>{{=tit}}</h5></div>
+		{{for(var i=0, len=it.length; i
+		< len; i++) { }} <li class="aui-list-li">
+			<div class="aui-col-xs-12">{{=it[i].col_name}} {{? it[i].is_must_val=='是'}}
+				<font color="red">*</font>
+				{{?}}
+			</div>
+			<div class="aui-col-xs-12 aui-list-view aui-grid-view" style="font-size:14px;padding:0;margin:0;" id="list-view">
+				{{?it[i].col_data_type == 'DATE'}}
+				<input name="{{=it[i].table_col}}" type="datetime-local" {{=it[i].is_must_val=='是' ? 'class="required" data-valid="actualfill"': ''}} data-error="请填写{{=it[i].col_name}}!" value="" style="height:35px;font-size:12px;" onchange="doJluGeneration('#generationid')">				{{?? it[i].col_data_type == 'NUMBER'&&it[i].col_rule!='REGION'}}
+				<input name="{{=it[i].table_col}}" type="number" style='line-height:12px;' pattern="[0-9]*" {{=it[i].is_must_val=='是' ? 'class="required" data-valid="actualfill"': ''}} data-error="请填写{{=it[i].col_name}}！" value="" style="height:35px; onchange=" doJluGeneration(
+								'#generationid') ""> {{?? it[i].col_data_type == 'NUMBER'&&it[i].col_rule=='REGION'}}
+				<input name="{{=it[i].table_col}}" type="number" style='line-height:12px;' pattern="[0-9]*" min="1" max="7" {{=it[i].is_must_val=='是' ? 'class="required" data-valid="actualfill"': ''}} onchange="numberSection(this)" data-error="请填写{{=it[i].col_name}}！"
+								value="" style="height:35px; " onchange="doJluGeneration('#generationid')"> {{?? it[i].col_rule=='ENUM'}}
+
+				<select name="{{=it[i].table_col}}" class="mjselect {{=it[i].is_must_val=='是'?'required':''}} " {{=it[i].is_must_val=='是' ? ' data-valid="actualfill"': ''}} data-error="请选择{{=it[i].col_name}}！" style="line-height:16px;" onchange="doJluGeneration('#generationid')">
+						{{
+							var valueListstring=it[i].limit_value;
+							var valueList=valueListstring.split(",");
+							for(var z=0, lens=valueList.length; z < lens; z++) {}}
+						<option value="{{=valueList[z]}}">{{=valueList[z]}}</option>
+						{{ } }}
+					</select> {{?? it[i].col_data_type == 'CHAR'}}
+				<div id="addPic" ismustval="{{=it[i].is_must_val}}" class="aui-list-view-cell aui-img aui-col-xs-3 mustImg" onclick="call_getPic(this,'{{=it[i].table_col}}')">
+					<img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+				</div>
+				<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+				<img style='display:none;' class='imgPath' src='' /> {{??}}
+				<input name="{{=it[i].table_col}}" type="text" {{=it[i].is_must_val=='是' ? 'class="required" data-valid="actualfill"': ''}} data-error="请填写{{=it[i].col_name}}！" value="" style="height:35px;" onchange="doJluGeneration('#generationid')"> {{?}}
+			</div>
+			</li>
+			{{ } }}
+	</script>
+
+	<script id="typeGenerationArr-template" type="text/x-dot-template">
+		<div class="darktitle titleinfo" style="line-height:40px;margin:0;padding:0 10px;">
+			<h2>发布人信息</h2></div>
+		{{ for(var key in it) {}}
+		<li class="aui-list-view-cell">
+			<div class="aui-col-xs-4 aui-pull-left">{{= key != null ? key:''}}</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it[key] != null ? it[key]:''}}</div>
+		</li>
+		{{ } }}
+	</script>
+	<form class="submitForm" id="generationid">
+		<input id='taskId' name="id" type="hidden" value="">
+		<ul class="ccssoft_list" id="listView">
+			<div class="darktitle titleinfo" style="line-height:40px;margin:0;padding:0 10px;">
+				<h2>代维人员信息</h2></div>
+		</ul>
+		<ul class="ccssoft_list" id="listView2"></ul>
+		<footer style="height:50px;">
+			<div class="cardButtonDiv" style="width: 100%;">
+				<a class="okBtn" onclick="upload();" style="width: 100%;color:#fff;">
+            确定
+        </a>
+			</div>
+		</footer>
+	</form>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../../script/cache.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+
+<script>
+	var imgArr = [];
+	var model;
+	var user;
+	var lastLocation;
+	var list;
+	var table_name;
+	var alarmEndTime;
+	// json排序方法
+	var colId;
+	//对json进行降序排序函数
+	var desc = function(x, y) {
+			return (x[colId] < y[colId]) ? 1 : -1
+		}
+		//对json进行升序排序函数
+	var asc = function(x, y) {
+		return (x[colId] > y[colId]) ? 1 : -1
+	}
+
+	function selcectChange(e) {
+		var str = $(e).val().join('$');
+		$(e).prev().val(str);
+		doJluGeneration('#generationid');
+	}
+	apiready = function() {
+		// 初始化图片上传
+		user = $api.getStorage('user');
+		lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+
+		db_init();
+		imageUtil.init({
+			uploadFn: $client.uploadGetGenerationImage,
+			saveFn: db_saveGeneraPic
+		});
+
+		var generationBillMenu = $api.getStorage('generationBillMenu');
+		var user = $api.getStorage('user');
+		console.log(getObj(generationBillMenu));
+		$('#taskId').val(generationBillMenu.id);
+		// $('#version_id').val(generationBillMenu.version_id);
+		api.showProgress({
+			title: '处理中',
+			modal: true,
+		});
+		// generationBillMenu.version_id
+		// console.log(generationBillMenu.version_id);
+		// 6F9EE86A95412955E05011AC26FB2E97
+		var opts = {
+			versionid: generationBillMenu.version_id,
+			id: generationBillMenu.id,
+			alarmId: generationBillMenu.alarm_id
+		};
+		console.log(getObj(opts));
+		// 获取需填写字段
+		$client.getWriteGeneration(opts, function(ret, err) {
+			console.log(JSON.stringify(ret));
+			if (ret) {
+				if (ret.success) {
+					api.hideProgress();
+
+					// colId="col_sort";
+					// list.sort(asc);
+					var itNum = Object.keys(ret).length - 8;
+					console.log(itNum);
+					for (var i = 0; i < itNum; i++) {
+						var itNumName = 'zndwColName' + i;
+						console.log(itNumName);
+						list = ret[itNumName];
+						renderTemp('listView', 'listView-template', list, true);
+					}
+					if (ret.taskPublish) {
+						var taskPublish = JSON.parse(ret.taskPublish);
+					}
+					if (taskPublish && Object.keys(taskPublish).length > 0) {
+						renderTemp('listView2', 'typeGenerationArr-template', taskPublish);
+					}
+
+					// 填充本地数据start
+					doJluSetGeneration();
+					setImgArrGeneration();
+					// 填充本地数据end
+
+				} else {
+					api.hideProgress();
+					showToast(ret.data_info);
+				}
+			} else {
+				api.hideProgress();
+				showToast(err.msg);
+			}
+		});
+
+
+		// 表单提交（回单）
+		formUtil.init({
+			rules: {
+				actualfill: function(value, errorMsg, el) {
+					if (value == '') {
+						if (!formUtil.getHasError()) {
+							formUtil.setHasError(true);
+							return errorMsg;
+						}
+					}
+				},
+				hasImage: function(value, errorMsg, el) {
+					if (!imageUtil.getImageArray().length) {
+						if (!formUtil.getHasError()) {
+							formUtil.setHasError(true);
+							return errorMsg;
+						}
+					}
+				}
+			}
+		});
+
+	};
+
+
+	function closeWin(name) {
+		if (name == null || name == '' || name == 'undefined') {
+			api.closeWin();
+		} else {
+			api.closeWin({
+				name: name
+			});
+		}
+	}
+
+	// 获取图片
+	function call_getPic(e, imgcode) {
+		var permission = 'camera';
+		var resultList = api.hasPermission({
+			list: [permission]
+		});
+		if (resultList[0].granted) {
+			// 已授权，可以继续下一步操作
+		} else {
+			api.confirm({
+				msg: '应用需要您的授权才能访问相机',
+				buttons: ['取消', '去设置']
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					api.requestPermission({
+						list: [permission],
+					}, function(res) {
+						if (res.list[0].granted) {
+							// 已授权，可以继续下一步操作
+						}
+					});
+				}
+			});
+		}
+		var imgtit = $(e).parent().siblings().html();
+		$api.setStorage('imgtit', imgtit)
+		var curentTime2 = CurentTime2();
+		$api.setStorage('newtime', curentTime2);
+		var lon1 = displaynum(lastLocation.lon);
+		var lat1 = displaynum(lastLocation.lat);
+		$api.setStorage('lon1', lon1);
+		$api.setStorage('lat1', lat1);
+		imageUtil.add('camera', addPic, e, true, '', imgcode);
+	}
+	/**
+	 * 添加照片
+	 */
+	function addPic(ret, err, imgcode, e) {
+		var generationBillMenu = $api.getStorage('generationBillMenu');
+
+		console.log("ooooooooooooooooooooooo");
+		console.log(imgcode);
+		////////////////////////////////////////////
+		var user = $api.getStorage('user');
+		var newtime = $api.getStorage('newtime');
+		var lon1 = $api.getStorage('lon1');
+		var lat1 = $api.getStorage('lat1');
+		///////////////////////////////
+
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		var oldret = ret.data.split(".");
+		var newret = oldret[0] + "_shuiyin;" + generationBillMenu.id + ';' + imgcode + ';.' + oldret[1];
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+		if (ret && ret.data) {
+			var titleName = $api.getStorage('imgtit');
+			var filePath = ret.data;
+			var parolData = $api.getStorage('parolData');
+
+			var imgModel = {
+				projectid: generationBillMenu.id,
+				titleName: titleName,
+				userid: user.userid,
+				applyid: api.pageParam.applyid,
+				stationname: parolData.site_name,
+				imgcode: imgcode,
+				imgpath: newret,
+				test: '',
+				phototime: (new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+				lon: lon1,
+				lat: lat1,
+				photoaddress: lastLocation.photoaddress
+			};
+			// 缓存图片
+			cacheImgGenerationArr(imgModel)
+			console.log("000000000000000000000000");
+			console.log(getObj(imgModel));
+
+			// 验证图片数量
+			var imgNum = 0;
+			var file_num;
+			imgArr = imageUtil.getImageArray();
+
+			for (var i = 0; i < list.length; i++) {
+				if (list[i].table_col == imgcode) {
+					file_num = list[i].file_num;
+				}
+			}
+
+			for (var i = 0; i < imgArr.length; i++) {
+				if (imgArr[i].imgcode == imgcode) {
+					imgNum++;
+				}
+			}
+			console.log(imgNum);
+			console.log(file_num);
+			if (file_num && file_num != null && imgNum >= file_num) {
+				api.toast({
+					msg: '该项照片数量超出数量限制',
+					duration: 2000,
+					location: 'bottom'
+				});
+			} else {
+				imageUtil.getImageArray().push(imgModel);
+				setTimeout(function() {
+					showPic(imgModel, e);
+				}, 3000);
+			}
+
+
+		}
+	}
+
+	/**
+	 * 展示图片信息，数据源： data
+	 */
+	function showPic(data, e) {
+		var content = $(e).parent('#list-view');
+		var tpl = $api.byId('img-template').text;
+		var tempFn = doT.template(tpl);
+		$(e).before(tempFn(data));
+		$new = $(e).prev();
+		$new.css('height', $new.css('width'));
+	}
+
+	/*
+	 * 上传服务器
+	 */
+	function upload() {
+		var generationBillMenu = $api.getStorage('generationBillMenu');
+		call_validate();
+	}
+
+	// 提交文本和图片
+	function call_validate() {
+		var imghas = true;
+
+		console.log(JSON.stringify(imgArr));
+		$('.mustImg').each(function() {
+				var numImg = $(this).siblings('div').length;
+				var ismustvalstr = $(this).attr('ismustval');
+				if ("是" == ismustvalstr && numImg < 1) {
+
+					imghas = false;
+					return false;
+				}
+			})
+			// alert(imghas);
+		if (formUtil.validate()) {
+			if (imghas) {
+				select();
+			} else {
+				api.toast({
+					msg: '存在必填照片未拍摄',
+					duration: 2000,
+					location: 'bottom'
+				});
+			}
+
+		}
+	}
+	/**
+	 *  选择提交方式：1.提交文本和图片，2. 仅提交文本
+	 */
+	function select() {
+
+		var optList = ['提交文本和图片', '仅提交文本'];
+		var cbTarget = {
+			name: api.winName,
+			frameName: 'generationWriteFrm',
+			cbFn: 'call_upload'
+		};
+		$api.setStorage('optList', optList);
+		$api.setStorage('cbTarget', cbTarget);
+		api.openFrame({
+			name: 'popup_select_frm',
+			url: '../dialog/popup_select.html',
+			pagePara: api.pageParam,
+			bounces: false
+		});
+
+	}
+
+	function call_upload(result) {
+		if (result == '提交文本和图片') {
+			submission = 'BOTH_SUBMIT_TEXT_IMAGE';
+			submitData();
+		} else if (result == '仅提交文本') {
+			submission = 'ONLY_SUBMIT_TEXT';
+			submitData();
+		}
+	}
+
+	function submitData() {
+
+		var opts = {};
+		var generationBillMenu = $api.getStorage('generationBillMenu');
+		$('.submitForm').find("input,select,textarea").each(function() {
+			var name = $(this).attr('name');
+			var val = $(this).val();
+
+			opts[name] = val;
+
+		});
+
+		opts.table_name = table_name;
+		opts.site_id = generationBillMenu.site_id;
+		uploadData(opts);
+	}
+
+	// 提交接口
+	function uploadData(opt) {
+		/*//====================测试用 ZZJ BEGIN
+		var generationBillMenu = $api.getStorage('generationBillMenu');
+		var opts = {
+			pagename: 'dd',
+			pageaction: 'REVERT',	//REVERT/ACCEPT
+			id: generationBillMenu.id,
+			stationName: generationBillMenu.site_name,
+			siteId: generationBillMenu.site_id
+		}
+		$client.sixBillRemind(opts, function(ret, err) {
+			if (ret.billCntInfo.length>0){
+				var billCntInfo = JSON.parse(ret.billCntInfo);
+				if (billCntInfo.status=='REVERT'){
+					// 已领取
+					api.confirm({
+						title: '提示',
+						msg: '本站还有工单未处理！',
+					}, function(ret, err) {
+						if (ret.buttonIndex == 2) {
+							//saveLocal();   //需要将图片保存到本地
+							setTimeout(function() {
+								api.hideProgress();
+								api.execScript({
+									name:'home_win',
+									frameName: 'footer_tab_1',
+									script: 'openDaibaiList("REVERT")'
+								});
+								api.closeToWin({
+									name: 'home_win'
+								});
+							}, 500);
+						}else{
+							api.closeWin({
+								name: 'mainGenerationBillDetail'
+							});
+						}
+					});
+				} else {
+					// 待领取
+					api.confirm({
+						title: '提示',
+						msg: '本站还有待领取工单未处理！',
+					}, function(ret, err) {
+						if (ret.buttonIndex == 2) {
+							saveLocal();   //需要将图片保存到本地
+							setTimeout(function() {
+								api.hideProgress();
+								api.execScript({
+									name:'home_win',
+									frameName: 'footer_tab_1',
+									script: 'openDaibaiList("ACCEPT")'
+								});
+								api.closeToWin({
+									name: 'home_win'
+								});
+							}, 500);
+						}else {
+							api.closeWin();
+						}
+					});
+				}
+			} else {
+				setTimeout(function() {
+					api.closeWin({
+						name: 'mainGenerationBillDetail'
+					});
+					api.closeWin();
+					api.sendEvent({   //回单
+							name: 'receipt',
+							extra: {
+							}
+					});
+				}, 500);
+			}
+		});
+		
+		return;
+		//====================测试用 ZZJ END*/
+		var alarmEndTime;
+		var billcntFrom;
+		billcntFrom = $api.getStorage('billcntFrom');	// 获取标识的入口页面
+		showMask("提交中…");
+		$client.askCancelAlarm(opt, function(ret, err) {
+			if (ret) {
+				if (ret.success) {
+					var isAlarm = ret.isAlarm;
+					var alarmEndTime = ret.alarmEndTime;
+					if (isAlarm === 'Y') {
+						if (alarmEndTime === 'null' || alarmEndTime === null || alarmEndTime === '' || alarmEndTime === undefined || alarmEndTime === 'undefined') {
+							api.alert({
+								title: '提示',
+								msg: "告警未恢复"
+							});
+							api.closeWin();
+						}
+					} else {
+						opt.alarmEndTime = ret.alarmEndTime;
+						$client.referWriteGeneration(opt, function(ret, err) {
+							hideMask();
+							if (ret) {
+								if (ret.success) {
+									if (imageUtil.getImageArray().length > 0) {
+										console.log("@0000qqqqq")
+										if (submission == 'ONLY_SUBMIT_TEXT') {
+																	console.log("@0000wwwww")
+											//====================修改 工单提醒 BEGIN
+											var generationBillMenu = $api.getStorage('generationBillMenu');
+											var opts = {
+												pagename: 'dd',
+												pageaction: 'REVERT',	//REVERT/ACCEPT
+												id: generationBillMenu.id,
+												stationName: generationBillMenu.site_name,
+												siteId: generationBillMenu.site_id
+											}
+											$client.sixBillRemind(opts, function(ret, err) {
+												if (ret.billCntInfo.length>0){
+													var billCntInfo = JSON.parse(ret.billCntInfo);
+													if (billCntInfo.status=='REVERT'){
+														// 已领取
+														api.confirm({
+															title: '提示',
+															msg: '本站还有工单未处理！',
+														}, function(ret, err) {
+															if (billcntFrom!='all_bill_list_frm'){
+																if (ret.buttonIndex == 2) {
+																	try{
+																		saveLocal();   //需要将图片保存到本地
+																	}catch(e){};
+																	setTimeout(function() {
+																		api.hideProgress();
+																		api.execScript({
+																			name:'home_win',
+																			frameName: 'footer_tab_1',
+																			script: 'openDaibaiList("REVERT", "'+generationBillMenu.site_id+'", "6")'
+																		});
+																		api.closeToWin({
+																			name: 'home_win'
+																		});
+																	}, 500);
+																}else{
+																	api.closeWin({
+																		name: 'mainGenerationBillDetail'
+																	});
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+																	console.log("@00001")
+																}
+															} else {
+																if (ret.buttonIndex == 2) {
+																	saveLocal();   //需要将图片保存到本地
+																	setTimeout(function() {
+																		api.hideProgress();
+																		api.closeWin({
+																			name: 'mainGenerationBillDetail'
+																		});
+																	console.log("@00002")
+																		api.closeWin();
+																		//携带参数到列表页面加载
+																		var opts = {
+																			siteId: generationBillMenu.site_id,
+																			sta: '1'
+																		}
+																		api.sendEvent({      //携带参数刷新页面
+																		    name: 'sptEventRevice',
+																		    extra: {
+																		        key: opts,
+																		    }
+																		});
+																	}, 500);
+																}else {
+																	api.closeWin();
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+																	console.log("@00003")
+																}
+															}
+														});
+													} else {
+														// 待领取
+														api.confirm({
+															title: '提示',
+															msg: '本站还有工单未处理！',
+														}, function(ret, err) {
+															if (billcntFrom!='all_bill_list_frm'){
+																if (ret.buttonIndex == 2) {
+																	saveLocal();   //需要将图片保存到本地
+																	setTimeout(function() {
+																		api.hideProgress();
+																		api.execScript({
+																			name:'home_win',
+																			frameName: 'footer_tab_1',
+																			script: 'openDaibaiList("'+billCntInfo.status+'", "'+generationBillMenu.site_id+'", "6")'
+																		});
+																		api.closeToWin({
+																			name: 'home_win'
+																		});
+																	}, 500);
+																}else {
+																	api.closeWin();
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+																	console.log("@00004")
+																}
+															} else {
+																if (ret.buttonIndex == 2) {
+																	saveLocal();   //需要将图片保存到本地
+																	setTimeout(function() {
+																		api.hideProgress();
+																		api.closeWin({
+																			name: 'mainGenerationBillDetail'
+																		});
+																	console.log("@00005")
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+																		api.closeWin();
+																		//携带参数到列表页面加载
+																		var opts = {
+																			siteId: generationBillMenu.site_id,
+																			sta: '1'
+																		}
+																		api.sendEvent({      //携带参数刷新页面
+																		    name: 'sptEventRevice',
+																		    extra: {
+																		        key: opts,
+																		    }
+																		});
+																	}, 500);
+																}else {
+																	console.log("@00006")
+																	api.closeWin();
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+																}
+															}
+														});
+													}
+												} else {
+													setTimeout(function() {
+														api.closeWin({
+															name: 'mainGenerationBillDetail'
+														});
+																	console.log("@00007")
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+														api.closeWin();
+														api.sendEvent({   //回单
+																name: 'receipt',
+																extra: {
+																}
+														});
+													}, 500);
+												}
+											});
+											//====================修改 工单提醒  END
+										} else {
+																	console.log("@0000rrrrr")
+																	var length2 = imageUtil.getImageArray().length;
+																	console.log(length2)
+											if (length2 > 0) { //上传照片时调用
+												imageUtil.upload(function(count) {
+													queryZndwDwList();
+												});
+											}
+										}
+									} else {
+																	console.log("@0000eeeee")
+									setTimeout(function(){
+										api.toast({
+											msg: '提交成功!'
+										});
+									}, 800);
+										queryZndwDwList();
+									}
+								} else {
+									api.toast({
+										msg: ret.data_info
+									});
+								}
+							} else {
+								api.toast({
+									msg: ret.data_info
+								});
+							}
+						});
+					}
+				}
+			}
+		});
+
+	}
+
+	//回单提交文本时查询列表是否还有待处理工单  zhangning
+	function queryZndwDwList() {
+		console.log("tetetewaresarse")
+		//====================修改 工单提醒 BEGIN
+		var billcntFrom = $api.getStorage('billcntFrom');	// 获取标识的入口页面
+		var generationBillMenu = $api.getStorage('generationBillMenu');
+		var opts = {
+			pagename: 'dd',
+			pageaction: 'REVERT',	//REVERT/ACCEPT
+			id: generationBillMenu.id,
+			stationName: generationBillMenu.site_name,
+			siteId: generationBillMenu.site_id
+		}
+		$client.sixBillRemind(opts, function(ret, err) {
+			if (ret.billCntInfo.length>0){
+				var billCntInfo = JSON.parse(ret.billCntInfo);
+				if (billCntInfo.status=='REVERT'){
+					// 已领取
+					api.confirm({
+						title: '提示',
+						msg: '本站还有工单未处理！',
+					}, function(ret, err) {
+						if (billcntFrom!='all_bill_list_frm'){
+							if (ret.buttonIndex == 2) {
+								console.log("@01")
+								setTimeout(function() {
+									api.hideProgress();
+									api.execScript({
+										name:'home_win',
+										frameName: 'footer_tab_1',
+										script: 'openDaibaiList("REVERT", "'+generationBillMenu.site_id+'", "6")'
+									});
+									api.closeToWin({
+										name: 'home_win'
+									});
+								}, 500);
+							}else{
+								console.log("@02")
+								api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+							}
+						} else {
+							if (ret.buttonIndex == 2) {
+								setTimeout(function() {
+									api.hideProgress();
+									api.closeWin({
+										name: 'mainGenerationBillDetail'
+									});
+																	console.log("@00008")
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+                                api.
+									api.closeWin();
+									//携带参数到列表页面加载
+									var opts = {
+										siteId: generationBillMenu.site_id,
+										sta: '0'
+									}
+									api.sendEvent({      //携带参数刷新页面
+									    name: 'sptEventRevice',
+									    extra: {
+									        key: opts,
+									    }
+									});
+								}, 1500);
+							}else {
+								api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+                                api.
+																	console.log("@00009")
+							}
+						}
+					});
+				} else {
+					// 待领取
+					api.confirm({
+						title: '提示',
+						msg: '本站还有工单未处理！',
+					}, function(ret, err) {
+						if (billcntFrom!='all_bill_list_frm'){
+							if (ret.buttonIndex == 2) {
+								saveLocal();   //需要将图片保存到本地
+								setTimeout(function() {
+									api.hideProgress();
+									api.execScript({
+										name:'home_win',
+										frameName: 'footer_tab_1',
+										script: 'openDaibaiList("'+billCntInfo.status+'", "'+generationBillMenu.site_id+'", "6")'
+									});
+									api.closeToWin({
+										name: 'home_win'
+									});
+								}, 500);
+							}else {
+								api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+                                api.
+																	console.log("@00010")
+							}
+						} else {
+							if (ret.buttonIndex == 2) {
+								setTimeout(function() {
+									api.hideProgress();
+									api.closeWin({
+										name: 'mainGenerationBillDetail'
+									});
+									//html\generation\generationBillListWin.html
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+                                api.
+																	console.log("@00011")
+									api.closeWin();
+									//携带参数到列表页面加载
+									var opts = {
+										siteId: generationBillMenu.site_id,
+										sta: '1'
+									}
+									api.sendEvent({
+											name: 'sptEventRevice',
+											extra: {
+													key: opts,
+											}
+									});
+								}, 1500);
+							}else {
+								api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+                                api.
+																	console.log("@00012")
+							}
+						}
+					});
+				}
+			} else {
+				setTimeout(function() {
+					api.closeWin({
+						name: 'mainGenerationBillDetail'
+					});
+																	console.log("@00013")
+					api.closeWin();
+                                api.execScript({
+                                    name: 'generationBillListWin',
+                                    frameName: 'generationBillListFrm',
+                                    script: 'refreshData();'
+                                });
+                                api.
+					api.sendEvent({   //回单
+							name: 'receipt',
+							extra: {
+							}
+					});
+				}, 500);
+			}
+		});
+		//====================修改 工单提醒  END
+}
+
+
+	// 图片保存道本地
+	function saveLocal() {
+		imageUtil.save(function(num) {
+			var length = imageUtil.getImageArray().length;
+			if (num) {
+				//刷新首页的图片上传模块头标
+				api.execScript({
+					name: 'home_win',
+					frameName: 'home_frm',
+					script: 'setofflineUploadCount();'
+				});
+				setTimeout(function() {
+					api.closeWin({
+						name: 'mainGenerationBillDetail'
+					});
+
+					api.closeWin();
+					//刷新单个列表项
+					api.execScript({
+						name: 'generationBillListWin',
+						frameName: 'generationBillListFrm',
+						script: 'refreshData();'
+					});
+					api.execScript({
+						name: 'generationBillListWin',
+						frameName: 'generationBillListFinshFrm',
+						script: 'refreshData();'
+					});
+					api.hideProgress();
+				}, 2000);
+			}
+		});
+	}
+	/**
+	 *删除图片
+	 */
+	function removeImg(imgPath) {
+		var imageArray = imageUtil.getImageArray();
+		var size = imageArray.length;
+		for (var i = 0; i < size; i++) {
+			var data = imageArray[i];
+			if (data.imgpath == imgPath) {
+				imageArray.remove(i);
+				break;
+			}
+		}
+		$(event.target).parent('.img_box').remove();
+		// 删除单个缓存图片
+		deleteImgArrGeneration(imgPath)
+	}
+
+	// 校验数字区间
+	function numberSection(e) {
+		var val = Number($(e).val());
+		var min = Number($(e).attr("min"));
+		var max = Number($(e).attr("max"));
+		if (val < min || val > max) {
+			api.toast({
+				msg: '请填写区间' + min + '-' + max + '的数字!'
+			});
+			$(e).val(min)
+		}
+	}
+</script>
+
+</html>

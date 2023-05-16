@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>隐患上报</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+    <style>
+        body.active{
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+    </style>
+</head>
+<body>
+
+    <script id="listView-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {
+          var model=it[i];
+       		var findtime=model.findtime;
+          var  hiddengrade = model.hiddengrade;
+          var hiddenstatus = model.hiddenstatusname;
+       		var hiddensource= model.hiddensourcename;
+           var stationname = model.stationname;
+           var  yhcode = model.yhcode;
+           var hiddencontent = model.hiddencontent;
+           var hiddenremark = model.hiddenremark;
+           var devname = model.devname;
+  
+        }}
+        <li tapmode="active" onclick="openWaitTask('{{=it[i].id}}','{{=yhcode}}','{{=stationname}}'
+        ,'{{=findtime}}','{{=hiddenstatus}}','{{=hiddengrade}}','{{=hiddensource}}','{{=hiddencontent}}','{{=hiddenremark}}',
+        '{{=model.stationcode}}','{{=model.stationid}}','{{=model.devname}}','{{=model.fixbillsn}}','{{=model.relproid}}');">
+        <div class="liTop">
+            <div class="liTopFinishTitle">{{=it[i].stationname != null ? it[i].stationname:""}}{{=it[i].checkresut != null ? "("+it[i].checkresut+")":""}}</div>
+            <div class="liTopFinishTotal">当前状态: {{=hiddenstatus}}</div>
+        </div>
+        <div class="liFinishMiddle">
+          <div class="liDownPerson" style="border-right: transparent;width: 50%">站址编码：{{=model.stationcode}}</div>
+          <div class="liDownBegin" style="float: right;width: 45%">发现时间: {{=findtime}}</div>
+        </div
+        <div class="liFinishMiddle">
+          <div class="liDownFinishBegin">隐患等级: {{=hiddengrade}}</div>
+          <div class="liDownFinishEnd" style="float: right;text-align: right">隐患来源:{{=hiddensource}}</div>
+        </div>
+		</li>
+        {{ } }}
+    </script>
+    <div id="" class="aui-content">
+    	<ul class="ccssoft_list" id="listView">
+
+    	</ul>
+    </div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+	var listView = null;
+    function openWaitTask(id,yhcode,stationname,findtime,hiddenstatus,hiddengrade,hiddensource,hiddencontent,hiddenremark,stationid,stationcode,devname,fixbillsn,relproid) {
+			
+        var opt = {
+          id,yhcode,stationname,findtime,hiddenstatus,hiddengrade,hiddensource,hiddencontent,hiddenremark,stationid,stationcode,devname,fixbillsn,relproid
+       	};
+       	api.openWin({
+            name : 'mainHiddenDetail',
+            url : 'mainHiddenDetail.html',
+            opaque : true,
+            bounces : false,
+            reload : true,
+            pageParam : opt,
+            vScrollBarEnabled : false
+       	});
+    }
+
+    apiready = function() {
+      listView = new C.ApiListView({
+						listName:'hiddenlist',
+						fn : $client.getHistoryHidden
+				});
+				listView.refresh();
+    };
+
+    function cb_queryWaitTaskList(opts) {
+    	 listView.setQueryOptions(opts);
+
+         listView.refresh();
+    }
+
+
+</script>
+</html>

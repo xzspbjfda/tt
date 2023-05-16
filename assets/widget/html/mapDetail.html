@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>地图</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css" />
+		<style type="text/css">
+		</style>
+	</head>
+	<body></body>
+	<script type="text/javascript" src="../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/doT.min.js"></script>
+	<script type="text/javascript" src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/GPS.js"></script>
+	<script type="text/javascript" src="../script/debug.js"></script>
+	<script>
+	var wgs;
+	 var bdlat;
+	 var bdlon;
+		apiready = function() {
+		var win_name = "mapHeader";
+		var frm_name = "mapDetail_frm";
+			var stationModel = $api.getStorage('stationModel');
+			console.log(getObj(stationModel));
+			var bMap = api.require('bMap');
+			if (!stationModel) {
+				api.toast({
+					msg : '无站址信息'
+				});
+				return;
+			};
+			//  showlog("调用GPS模块进行GPS获取,win_name:"+win_name); //獲取當前位置
+			var script = "startLocation('" + win_name + "','" + frm_name + "');";
+			api.execScript({
+				frameName : 'gps',
+				script : script
+			});
+
+	var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+
+	if (!lastLocation || !lastLocation.status || lastLocation.timestamp == 0 || lastLocation.lon == 0 || lastLocation.lat == 0) {
+		api.toast({
+	        msg:'获取当前位置失败'
+        });
+	}else{
+	  wgs=GPS.wgs_tobd(lastLocation.lat,lastLocation.lon);
+	  bdlat= wgs.lat;
+	  bdlon= wgs.lon;
+
+	}
+//      	wgs_lon=wgs.lon;
+//      	wgs_lat=wgs.lat;
+
+			bMap.open({
+				rect : {
+					x : 0,
+					y : 0,
+					w : api.frameWidth,
+					h : api.frameHeight
+				},
+				center : {
+					lon : stationModel.st_baidux,
+					lat : stationModel.st_baiduy
+				},
+				fixedOn : 'mapDetail_frm',
+				zoomLevel : 15
+			}, function(ret, err) {
+				if (ret && ret.status) {
+					bMap.addAnnotations({
+						annotations : [{
+							id : 1,
+							lon : stationModel.st_baidux,
+							lat : stationModel.st_baiduy
+						}],
+						icon: 'widget://icon/location.png'
+					}, function(ret, err) {
+						api.closeFrame({
+								name: 'mapDownDetailStation'
+						});
+							api.openFrame({
+											name: 'mapDownDetailStation',
+											url: 'mapDownDetailStation.html',
+											pageParam:{
+												stationlistMap:stationModel
+											},
+											rect: {
+															x:0,
+															y:api.winHeight-170,
+															w:api.winWidth,
+															h:170
+											},
+											bounces:false
+							});
+					});
+
+					//设置比例尺
+					bMap.setScaleBar({
+						show : true
+					});
+				}
+			});
+		};
+	</script>
+</html>

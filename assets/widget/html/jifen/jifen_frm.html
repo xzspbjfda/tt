@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>积分</title>
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" href="../home/css/home.css" />
+
+    <style>
+        div.weatherc {
+            position: absolute;
+            left: 0%;
+            top: 0px;
+            z-index: 999999;
+            height: 45px;
+            width: 81px;
+            margin-top: 65px;
+            margin-left: 0%;
+        }
+
+        div.weatherc2 {
+            position: absolute;
+            left: 0%;
+            top: 0px;
+            z-index: 999999;
+            height: 43px;
+            width: 80px;
+            margin-right: 0%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        /*清除浮动*/
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: " ";
+        }
+
+        .clearfix:after {
+            clear: both;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        .wrapper h4 {
+            padding: 0 0 0 16px;
+            margin: 10px 0 10px 0;
+            position: relative;
+        }
+
+        .tianqBox {
+            padding-bottom: 10px;
+            text-align: center;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 10px 16px #e7eaf0;
+            width: 94%;
+            margin: 14px auto;
+            border-radius: 7px;
+        }
+
+        .tianqBox iframe {
+            display: inline-block;
+            padding-top: 10px;
+            height: 60px;
+            width: 100%;
+            padding-left: 30px;
+        }
+
+        .tianqBoxDD {
+            height: 60px;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        /*wxxxxxxxxxxxxxxxx*/
+
+        .wrapper {
+            background-color: #f5f5f5;
+        }
+
+        .index_sbox {
+            width: 94%;
+            margin: 14px auto;
+            background-color: #fff;
+            border-radius: 7px;
+            box-shadow: 0 10px 16px #e7eaf0;
+            overflow: hidden;
+        }
+
+        .cj-l_line {
+            position: absolute;
+            width: 5px;
+            height: 18px;
+            left: 0px;
+            top: 3px;
+            border-radius: 10px;
+        }
+
+        .cj-l_line1 {
+            background: linear-gradient(#fe7a7d, #fe4f4f);
+        }
+
+        .cj-l_line4 {
+            background: linear-gradient(#f8a435, #f99803);
+        }
+
+        .cj-l_line3 {
+            background: linear-gradient(#81a4ff, #4d7ffe);
+        }
+
+        .cj-l_line2 {
+            background: linear-gradient(#fe7a7d, #fe4f4f);
+        }
+
+        .cj-l_line5 {
+            background: linear-gradient(#69d4d2, #36cdb7);
+        }
+
+        .cj-l_line6 {
+            background: linear-gradient(#f8a435, #f99803);
+        }
+
+        .wrapper .clearfix {
+            border: none;
+        }
+
+        .order_btn_box {
+            display: flex!important;
+            justify-content: space-between;
+            width: 90%;
+            margin: 0 auto;
+            margin-bottom: 14px;
+            border: none!important;
+        }
+
+        .order_btn {
+            border: 1px solid #dfeeff;
+            box-shadow: 0 0 3px #dfeeff;
+            width: 31%!important;
+            font-size: 12px;
+            border-radius: 6px;
+            padding: 6px 0;
+        }
+
+        .order_btn_num {
+            color: #43acfe;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 14px;
+            margin-top: 4px;
+        }
+
+        .titrow {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .tit_box {
+            width: 33%;
+            text-align: center;
+        }
+
+        .tit_top {
+            color: #999;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .tit_down {
+            color: #43acfe;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .hui_box {
+            width: 40%;
+            font-size: 14px;
+            color: #999;
+            line-height: 16px;
+            overflow: hidden;
+            margin-left: 4%;
+            margin-bottom: 14px;
+        }
+
+        .hui_icon {
+            width: 16px;
+            float: left;
+        }
+
+        .hui_box span {
+            float: left;
+            margin-left: 6px;
+        }
+
+        .hui_num {
+            float: right;
+            margin-right: 6%;
+        }
+
+        .jinengBox {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="index_sbox">
+            <div class="titrow">
+                <div class="tit_box">
+                    <div class="tit_top">
+                        工分
+                    </div>
+                    <div class="tit_down" id="score">
+                        0
+                    </div>
+                </div>
+
+                <div class="tit_box">
+                    <div class="tit_top">
+                        工分排名
+                    </div>
+                    <div class="tit_down" id="ranking">
+                        0
+                    </div>
+                </div>
+
+                <div class="tit_box">
+                    <div class="tit_top">
+                        工分占比
+                    </div>
+                    <div class="tit_down" id="accountfor">
+                        0%
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="index_sbox">
+            <h4><div class="cj-l_line cj-l_line2"></div>任务汇总</h4>
+            <div class="titrow">
+                <div class="hui_box">
+                    <img class="hui_icon" src="../../image/icons/svg/jifen1.svg" alt="">
+                    <span>本月完成</span>
+                    <div class="hui_num">
+                        0
+                    </div>
+                </div>
+
+                <div class="hui_box">
+                    <img class="hui_icon" src="../../image/icons/svg/jifen2.svg" alt="">
+                    <span>可执行</span>
+                    <div class="hui_num" id="daiClaimed">
+                        0
+                    </div>
+                </div>
+
+                <div class="hui_box">
+                    <img class="hui_icon" src="../../image/icons/svg/jifen3.svg" alt="">
+                    <span>3日预警</span>
+                    <div class="hui_num" id="dayWarning">
+                        0
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- <div class="index_sbox" id="faultDiv">
+            <ul class="clearfix">
+
+                <li class="home_gv_prework" style="position:relative;">
+
+                    <a tapmode="active" onclick="openWinList('bill/all_bill_list_win','','0')" style="font-size: 12px">待接单</a>
+                </li>
+                <li class="home_gv_xunjian_new" style="position:relative;">
+
+                    <a tapmode="active" onclick="openWinList('bill/all_bill_list_win','','1')" style="font-size: 12px">处理中</a>
+                </li>
+
+                <li style="position:relative;" class="home_stand_create">
+
+                    <a tapmode="active" onclick="openWinList('bill/all_bill_list_win','','2')" style="font-size: 12px">待回单</a>
+                </li>
+
+                <li id="upgradeBillId" style="position:relative;display:none;" class="home_person_upgrade">
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','升级箱','GET_BILL_UPDATE_LIST')" style="font-size: 12px">升级箱</a>
+                </li>
+
+                <li onclick="openWinList('xunjian/task_list_win0','离线巡检','NEW_XUNJIAN_TASK',true)" style="position:relative;" class="home_gv_preread3">
+                    <a tapmode="active" style="font-size: 12px">离线巡检</a>
+                </li>
+
+                <li id="checkId" style="position:relative;display:none;" class="home_gv_check">
+                    <a tapmode="active" onclick="openWinList('check/check_list_win','现场检查','')" style="font-size: 12px">现场检查</a>
+                </li>
+
+                <li id="workerLiId" style="position:relative;display:none;" class="home_gv_worker_yb">
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','工单已办','GET_BILL_FINISH_LIST')" style="font-size: 12px">工单已办</a>
+                </li>
+
+                <li id="offlineUploadId" style="position:relative;display:none;" class="home_stand_pre3">
+
+                    <a tapmode="active" onclick="openWinList('offlineUpload/offlineUpload_win','图片上传','')" style="font-size: 12px">图片上传</a>
+                </li>
+                <li style="position:relative;" class="home_stand_pre4">
+
+                    <a tapmode="active" onclick="goScan()" style="font-size: 12px">车辆位置上报</a>
+                </li>
+                <li class="home_gv_prework" style="position:relative;">
+                    <a tapmode="active" onclick="openApp()" style="font-size: 12px">作战室</a>
+                </li>
+            </ul>
+        </div> -->
+
+
+        <div class="index_sbox">
+            <h4><div class="cj-l_line cj-l_line2"></div>个人技能</h4>
+
+            <div class="jinengBox" id="main">
+
+            </div>
+
+        </div>
+
+    </div>
+</body>
+<script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/GPS.js"></script>
+<script type="text/javascript" src="../../script/swipe.js"></script>
+<script type="text/javascript" src="../../script/xunjian_wxx.js"></script>
+<script type="text/javascript" src="../../script/echarts.min.js"></script>
+
+
+
+<script type="text/javascript">
+    /**
+     *从查询条件跳转过来的信息
+     */
+    function cb_queryStationList(opt) {
+
+        api.showProgress({
+            title: '加载中...',
+            modal: true
+        });
+
+        // 获取积分数据
+        var opts = {
+            starttime: opt.alarmTimeStart,
+            endtime: opt.alarmTimeEnd
+        }
+        console.log(getObj(opts));
+
+        $client.getzndwCount(opts, function(ret, err) {
+            console.log(getObj(ret));
+            if (ret.success) {
+                api.hideProgress();
+                var num = JSON.parse(ret.data);
+                $("#score").html(num.score);
+                $("#accountfor").html(num.accountfor + '%');
+                $("#ranking").html(num.ranking);
+            } else {
+                api.hideProgress();
+                api.toast({
+                    msg: ret.errorMsg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        })
+
+    }
+
+    apiready = function() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '多雷达图',
+                show: false
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                x: 'center',
+                data: ['技能点']
+            },
+            radar: [{
+                indicator: [{
+                    text: '修理',
+                    max: 100
+                }, {
+                    text: '故障',
+                    max: 100
+                }, {
+                    text: '发电',
+                    max: 100
+                }, {
+                    text: '代维调度',
+                    max: 100
+                }, {
+                    text: '巡检',
+                    max: 100
+                }],
+                center: ['50%', '50%'],
+                radius: 120
+            }],
+            series: [{
+                type: 'radar',
+                tooltip: {
+                    trigger: 'item'
+                },
+                itemStyle: {
+                    normal: {
+                        areaStyle: {
+                            type: 'default'
+                        }
+                    }
+                },
+                data: [{
+                    value: [0, 0, 0, 0, 0],
+                    name: '技能点'
+                }]
+            }]
+        };
+
+
+
+
+        // 获取积分数据
+        var opts = {
+            starttime: getCurrentMonthFirst(),
+            endtime: getCurrentMonthLast()
+        }
+        console.log(getObj(opts));
+        $client.getzndwCount(opts, function(ret, err) {
+            console.log(getObj(ret));
+            if (ret.success) {
+                var num = JSON.parse(ret.data);
+                $("#score").html(num.score);
+                $("#accountfor").html(num.accountfor + '%');
+                $("#ranking").html(num.ranking);
+                var count=(num.falut+num.hhdder+num.fd+num.dw+num.task)||100;
+                option.radar[0].indicator[0].max=count;
+                option.radar[0].indicator[1].max=count;
+                option.radar[0].indicator[2].max=count;
+                option.radar[0].indicator[3].max=count;
+                option.radar[0].indicator[4].max=count;
+                option.series[0].data[0].value=[num.falut,num.hhdder,num.fd,num.dw,num.task];
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            } else {
+                api.toast({
+                    msg: ret.errorMsg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        })
+        var opts2={};
+        $client.getGenerationJF(opts2,function(ret,err){
+          console.log(getObj(ret));
+
+  				if(ret.success){
+            var data = JSON.parse(ret.data);
+
+  					$('#daiClaimed').html(data.daiClaimed+data.meClaimed);
+  					$('#dayWarning').html(data.dayWarning);
+  					// $('#meClaimed').html(dataList.score);
+  				}else {
+            api.toast({
+                msg: ret.errorMsg,
+                duration: 2000,
+                location: 'bottom'
+            });
+  				}
+  			})
+    }
+
+    //获取当前月第一天和最后一天
+    function getCurrentMonthFirst(){
+        var date = new Date();
+        date.setDate(1);
+        var month = parseInt(date.getMonth()+1);
+        var day = date.getDate();
+        if (month < 10) {
+            month = '0' + month
+        }
+        if (day < 10) {
+            day = '0' + day
+        }
+        return date.getFullYear() + '-' + month + '-' + day;
+    }
+
+
+    function getCurrentMonthLast(){
+      var date=new Date();
+      var currentMonth=date.getMonth();
+      var nextMonth=++currentMonth;
+      var nextMonthFirstDay=new Date(date.getFullYear(),nextMonth,1);
+      var oneDay=1000*60*60*24;
+      var lastTime = new Date(nextMonthFirstDay-oneDay);
+      var month = parseInt(lastTime.getMonth()+1);
+      var day = lastTime.getDate();
+      if (month < 10) {
+          month = '0' + month
+      }
+      if (day < 10) {
+          day = '0' + day
+      }
+      return date.getFullYear() + '-' + month + '-' + day ;
+  }
+
+
+</script>
+
+</html>

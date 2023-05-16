@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+    <link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+    <link rel="stylesheet" href="../../script/app/css/app.css">
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <style>
+    	body {
+            background-color:#FFFFFF;
+        }
+        #wrap{
+		    height: 100%;
+		    display: -webkit-box;
+		    display: -webkit-flex;
+		    display: flex;
+		    -webkit-box-orient: vertical;
+		    -webkit-flex-flow: column;
+		           flex-flow: column;
+		}
+		ul,li,dl,dt,dd {
+			margin:0;padding:0;list-style:none;
+		}
+		a {
+		  background: transparent;
+		  text-decoration:none;
+		}
+    	.uInfo{
+			height:50px;
+			width:100%;
+			line-height:50px;
+			border-bottom:solid 1px #E0E0E0;
+		}
+		.uInfo-hov{
+			background-color:#adadad;
+		}
+		.uInfoLabel{
+			color:#000;
+			font-size:18px;
+			padding-left:10px;
+			text-align:left;
+		}
+		.uInfoContent{
+			color:#4f4f4f;
+			font-size:16px;
+			float:right;
+			padding-right:10px;
+		}
+    </style>
+</head>
+<body>
+	<div id="wrap" style="overflow:auto;margin-bottom:1px;">
+
+				<div class="uInfo" tapmode="uInfo-hov" onclick="openWin('clearCache')">
+            <span class="uInfoLabel">清理缓存</span>
+            <span id="cacheId" class="uInfoContent" style="color:#007AFF;"></span>
+        </div>
+        <!-- <div class="uInfo" tapmode="uInfo-hov" onclick="openWin('infonotify')">
+            <span class="uInfoLabel">消息通知</span>
+        </div> -->
+		<!--
+        <div class="uInfo" tapmode="uInfo-hov" onclick="openWin('modifyPassword')">
+            <span class="uInfoLabel">修改密码</span>
+        </div>-->
+        <div class="uInfo" tapmode="uInfo-hov" onclick="openWin('about')">
+            <span class="uInfoLabel">关于中国铁塔</span>
+        </div>
+	</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/debug.js"></script>
+<script src='../../script/constant.js'></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="setting.js"></script>
+<script type="text/javascript" src="../../script/xunjian_wxx.js"></script>
+<script type="text/javascript">
+
+</script>
+</html>

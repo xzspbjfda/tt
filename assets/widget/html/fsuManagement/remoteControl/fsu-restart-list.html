@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>fsu-restart</title>
+	<link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" href="../css/base.css" />
+	<link rel="stylesheet" href="../module/css/aui.css" />
+</head>
+
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+				class="aui-iconfont aui-icon-left"></span>
+		</a>
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="openQueryStation()"><span
+				class="aui-iconfont aui-icon-search"></span>
+		</a>
+		<div class="aui-title">
+			远程重启
+		</div>
+	</header>
+	<div class="wrapper">
+		<div class="box-cpn" id="queryStation" style="display: none">
+			<h4>
+				<div class="title title-red"></div>
+				<div class="aui-tab" id="tab">
+					<div class="aui-tab-item" id="tbc1">远程重启</div>
+					<div class="aui-tab-item" id="tbc2">重启记录</div>
+				</div>
+			</h4>
+			<div class="my-form" id="my-form"></div>
+		</div>
+		<div id="content"></div>
+	</div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../module/script/aui-tab.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../../../script/navigate.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../js/init-list.js"></script>
+<script type="text/javascript">
+	const cacheName = 'restart-list'
+	apiready = () => {
+		api.parseTapmode()
+		pagination.pageNum = 1
+		pagination.pageSize = 10
+		initType()
+	}
+
+	// 初始化查询条件
+	let searchFrom = []
+	const typet = [
+		{ label: 'FSU名称', type: 'input', name: 'name' },
+		{ label: 'FSUID', type: 'input', name: 'fsuid' },
+		{ label: '厂家', type: 'select', name: 'vendoridList', options: vendors },
+		{ label: '站址编码', type: 'input', name: 'stationcode' },
+        { label: '站址名称', type: 'input', name: 'stationname' },
+		{ label: 'FSU状态', type: 'select', name: 'registstatusList', options: [{ label: '离线', value: ['0'] }, { label: '在线', value: ['1'] }] },
+	]
+	const typef = [
+		// { label: 'FSU名称', type: 'input', name: 'name' },
+		{ label: '站址编码', type: 'input', name: 'stationcode' },
+        { label: '站址名称', type: 'input', name: 'stationname' },
+		{ label: 'FSUID', type: 'input', name: 'targetId' },
+		{ label: '厂家', type: 'select2', name: 'vendor', options: vendors },
+		{ label: 'FSU状态', type: 'select2', name: 'status', options: [{ label: '重启中', value: '0' }, { label: '成功', value: '1' }, { label: '失败', value: '-1' }] },
+	]
+
+	// 默认为远程重启 每点一次切换一次
+	let type = true
+	function initType() {
+		const cacheType = handleLocalStorage('get', cacheName + '-type')
+		if (cacheType === null) {
+			type = cacheType == 'true' ? true : false
+			toggleSearchFrom()
+			initPage()
+		} else {
+			type = true
+			setCache(cacheName + '-type', type)
+			toggleSearchFrom()
+			initPage()
+		}
+		const tab = new auiTab({
+			element: document.getElementById("tab"),
+		}, ret => {
+			type = type ? false : true
+			setCache(cacheName + '-type', type)
+			toggleSearchFrom()
+		}, type ? 1 : 2)
+	}
+
+	// 初始化查询 是否已有缓存
+	function initPage() {
+		const cache = isCache(cacheName)
+		if (cache) {
+			type ? initFsuList(cache) : initRestartRecordList(cache)
+		} else {
+			getSearchForm()
+		}
+	}
+
+	function toggleSearchFrom() {
+		searchFrom = type ? typet : typef
+		initSearchForm(searchFrom)
+	}
+
+	// 查询接口
+	function search(data) {
+		data.pageNum = pagination.pageNum || 1
+		data.pageSize = pagination.pageSize || 10
+		// 设置APP记录查询状态 - 远程重启
+		data.type = '1'
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		// 区分查询类型 列表/记录
+		request({
+			url: type ? '/app/fsu/list' : '/app/record/list',
+			type: 'post',
+			data: data,
+			success: res => {
+				console.log(JSON.stringify(res))
+				type ? initFsuList(res) : initRestartRecordList(res)
+				return api.hideProgress()
+			},
+			catch: res => api.hideProgress()
+		})
+	}
+
+	// 打开operate页面
+	function openDetail(i, t) {
+		const param = { type: t, data: JSON.stringify(i) }
+		handleLocalStorage('remove', cacheName + '-operate')
+		handleLocalStorage('set', cacheName + '-operate', JSON.stringify(param))
+		openPage('fsuManagement/remoteControl/fsu-restart-operate', '远程重启', '')
+	}
+</script>
+
+</html>

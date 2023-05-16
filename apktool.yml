@@ -1,0 +1,44 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: base.apk
+compressionType: false
+doNotCompress:
+- resources.arsc
+- png
+- assets/guidance_polyphone.dat
+- jpg
+- assets/oem
+- assets/rg.tpl
+- assets/dist/api.min.js.sec
+- assets/dist/avm.min.js.sec
+- assets/widget/css/button.css
+- assets/widget/css/color.css
+- assets/widget/html/fsuManagement/module/aui2.1.txt
+- gif
+- jpeg
+- assets/widget/less/button.less
+- wav
+- mp3
+- assets/widget/script/utils/DatabaseUtil.js
+- ogg
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '21'
+  targetSdkVersion: '26'
+sharedLibrary: false
+sparseResources: false
+unknownFiles:
+  agconnect-core.properties: '0'
+  com/baidu/pano/platform/res/indoor_in.png: '0'
+  com/baidu/panosdk/plugin/indoor/res/indoor_exit.png: '0'
+  com/baidu/panosdk/plugin/indoor/res/panophoto_def.9.png: '0'
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.7.0
+versionInfo:
+  versionCode: '1433'
+  versionName: 0.6.69

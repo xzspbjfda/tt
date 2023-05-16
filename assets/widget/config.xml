@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- A6973002767421 新A6154294681342--><widget id="A6154294681342" security="false" version="0.0.2">
+  <name>掌上运维</name>
+  <description>用于铁塔运维系统</description>
+  <author email="485767782@qq.com" href="http://www.apicloud.com">陈崇鑫</author>
+  <content src="index.html"/>
+  <preference name="pageBounce" value="true"/>
+  <preference name="appBackground" value="rgba(242,242,242,0.0)"/>
+  <preference name="windowBackground" value="rgba(242,242,242,0.0)"/>
+  <preference name="frameBackgroundColor" value="rgba(242,242,242,0.0)"/>
+  <preference name="hScrollBarEnabled" value="true"/>
+  <preference name="vScrollBarEnabled" value="true"/>
+  <preference name="autoLaunch" value="true"/>
+  <preference name="fullScreen" value="true"/>
+  <preference name="autoUpdate" value="true"/>
+  <preference name="smartUpdate" value="true"/>
+  <preference name="debug" value="false"/>
+  <preference name="iOS7StatusBarAppearance" value="true"/>
+  <preference name="allowKeyboardExtension" value="true"/>
+  <preference name="backgroundMode" value="audio | location | remote-notification"/>
+  <preference name="urlScheme" value="chinatower2"/>
+  <preference name="querySchemes" value="chinatower,wechat,mqq,video,weixin,alipay"/>
+  <preference name="forbiddenSchemes" value="alipay"/>
+  <preference name="useWKWebView" value="true"/>
+  <permission name="readPhoneState"/>
+  <permission name="call"/>
+  <permission name="sms"/>
+  <permission name="camera"/>
+  <permission name="record"/>
+  <permission name="location"/>
+  <permission name="fileSystem"/>
+  <permission name="internet"/>
+  <permission name="bootCompleted"/>
+  <permission name="hardware"/>
+  <permission name="contact"/>
+  <access origin="*"/>
+  <feature name="tabBar"/>
+  <!-- <feature name="ajpush">
+    <param name="app_key" value="98ed76e7eae84eb376e5ad03"/>
+    <param name="channel" value="A6973002767421"/>
+  </feature> -->
+  <feature name="imageBrowser"/>
+  <feature name="imageFilter"/>
+  <feature name="fs"/>
+  <feature name="tingyun">
+    <param name="appKey" value="bb1cc7a38e214ebabe5b5bbfb39d329d"/>
+    <param name="rate" value="1"/>
+    <param name="locationAllowed" value="0"/>
+    <param name="option" value="7"/>
+  </feature>
+  <feature name="wx">
+    <param name="urlScheme" value="wxa351d767f6c459af"/>
+    <param name="apiKey" value="wxa351d767f6c459af"/>
+    <param name="apiSecret" value="2d49661807c64bd45c0f7247c21d624f"/>
+  </feature>
+  <feature name="bMap">
+    <param name="android_api_key" value="BHmyUXygGlwAM3dyP3yivQBX4Ejuj2yj"/>
+    <param name="ios_api_key" value="oIun1tGmrmmrIdSTWNM6MceMwSn8KcOs"/>
+  </feature>
+  <feature name="baiduNavigation">
+    <param name="android_api_key" value="BHmyUXygGlwAM3dyP3yivQBX4Ejuj2yj"/>
+    <param name="android_tts_appid" value="18284383"/>
+    <param name="ios_api_key" value="oIun1tGmrmmrIdSTWNM6MceMwSn8KcOs"/>
+    <param name="ios_tts_appid" value="18284633"/>
+  </feature>
+  <feature name="db"/>
+     <meta-data name="JPUSH_CHANNEL" value="e71a46893785bcba50f37944"/>
+     <meta-data name="JPUSH_APPKEY" value="98ed76e7eae84eb376e5ad03"/>
+     <!-- 小米开始 -->
+     <meta-data name="XIAOMI_APPKEY" value="MI-5611785653932"/>
+     <meta-data name="XIAOMI_APPID" value="MI-2882303761517856932"/>
+      <!--     小米结束 -->
+     <!-- oppo start -->
+     <meta-data name="OPPO_APPKEY" value="OP-394862b9c31b4d0b82850e12ff83234b"/>
+     <meta-data name="OPPO_APPID" value="OP-30156752"/>
+     <meta-data name="OPPO_APPSECRET" value="OP-84a47abd55cf4efd8b777b7df230d652"/>
+      <!-- oppo end -->
+     <!--    vivo start -->
+     <meta-data name="com.vivo.push.api_key" value="5386b2a9-cb25-4593-b156-d5a44c8c41a4"/>
+     <meta-data name="com.vivo.push.app_id" value="18604"/>
+     <!-- vivo end -->
+     <!--  huawei start -->
+     <meta-data name="com.huawei.hms.client.appid" value="appid=100396401"/>
+     <!--  huawei end  -->
+     <!--  iOS start -->
+     <feature name="jpushVip">
+        <param name="app_key" value="98ed76e7eae84eb376e5ad03"/>
+        <param name="channel" value="e71a46893785bcba50f37944"/>
+        <param name="requestPermission" value="true"/>
+    </feature>
+    <!--  <feature name="apiclund"/> -->
+    <!--  <feature name="腾讯 Bugly 捕获闪退"/> -->
+    <feature name="BugId">
+      <param name="android_id" value="26afed5138"/>
+      <param name="ios_id" value="72443182a3"/>
+      <param name="isDebug" value="true"/>
+    </feature>
+
+</widget>

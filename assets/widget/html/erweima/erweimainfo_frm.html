@@ -1,0 +1,1599 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>个人信息</title>
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../../script/app/css/app.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <style>
+    		*,html,body{
+    			font-family:"微软雅黑"
+    		}
+            body {
+                background:url('../../image/background.png');
+                background-size:cover;
+                background-repeat:no-repeat;
+
+            }
+            .fl{
+            	float:left;
+            }
+            #wrap{
+			    height: 100%;
+			    display: -webkit-box;
+			    display: -webkit-flex;
+			    display: flex;
+			    -webkit-box-orient: vertical;
+			    -webkit-flex-flow: column;
+			           flex-flow: column;
+			}
+            .noPadding-cell {
+                padding: 0px !important;
+            }
+            .itemLeft {
+                width: 45%;
+                margin-right: 10px;
+                margin-top: 11px;
+                margin-bottom: 11px;
+                margin-left: 10px;
+                float: left;
+            }
+            .itemRight {
+            	overflow: hidden;
+                margin-top: 11px;
+
+                margin-bottom: 11px;
+                margin-right: 10px;
+                text-align: left;
+            }
+            .item-content {
+                margin-top: 0px !important;
+                margin-bottom: 0px !important;
+            }
+            .table-view-cell {
+			  position: relative;
+			  padding: 11px 65px 11px 15px;
+			  overflow: hidden;
+
+			}
+			.table-view-cell:last-child {
+			  border-bottom: 0;
+			}
+			ul,li,dl,dt,dd {
+				margin:0;padding:0;list-style:none;
+			}
+			a {
+			  background: transparent;
+			  text-decoration:none;
+			}
+
+			.bg-blue{
+				color:#59b7f7;
+			}
+			.bg-red{
+				color:#f95959;
+			}
+			.fa{
+				font-size:22px;
+				margin-right:5px;
+				width:20%;
+				margin-top: 1px;
+				text-align:center;
+			}
+			#lilun,#shicao,#total,#lilun1,#shicao1,#total1,#lilun2,#shicao2,#total2,#lilun3,#shicao3,#total3{
+				width:33%;
+				height:100px;
+				float:left;
+			}
+			.table-view-cell div span{
+				color:#000;
+				font-size:16px;
+				/*display:inline-block;
+				margin-top:-13px;*/
+			}
+			.username{
+				font-size:30px !important;
+				font-weight: bold;
+			}
+			.bg_marker{
+				margin-top:15px;
+				margin-bottom:15px;
+
+			}
+        </style>
+    <body>
+		<div id="wrap" style="margin-bottom:1px;position:relative;display: none;">
+			<div style="position:absolute;top:38%;right:18%;"><img src="../../image/watermark.png" alt=""/></div>
+			<ul class="table-view">
+				<li class="table-view-cell  noPadding-cell bg_marker">
+        			<div class="itemLeft" style="width:38%">
+        				<img src="../../image/logo_mini.png" alt="" style="width:100%"/>
+        			</div>
+	        		<div class="itemRight" id="username" style="text-align:right">
+	        			<span id="name"  class="username"></span> <b id="sex">先生</b>
+	        		</div>
+	        	</li>
+
+	        	<li class="table-view-cell  noPadding-cell" >
+	        		<div class="itemLeft ">
+
+        				<div class="fl">身份证号：</div>
+
+	        		</div>
+	        		<div class="itemRight" id="idcard" ></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell">
+	        		<div class="itemLeft ">
+
+        				<div class="fl">代维专业：</div>
+
+	        		</div>
+	        		<div class="itemRight" id="professional" ></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell">
+	        		<div class="itemLeft " >
+
+        				<div class="fl" style="width:75%">所属代维单位名称：</div>
+
+	        		</div>
+	        		<div class="itemRight" id="procompany"></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell">
+        			<div class="itemLeft " >
+
+        				<div class="fl" style="width:75%">所服务的省级铁塔公司：</div>
+
+        			</div>
+	        		<div class="itemRight" id="towercompany"></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell" style="vertical-align: middle;">
+        			<div class="itemLeft " style="width:30%">
+        				<img src="../../image/linel.png" alt="" style="width:100%"/>
+        			</div>
+        			<div class="itemLeft " style="float:left;width:22%;margin-top: 10px;">认证信息</div>
+	        		<div class="itemRight" style="float:right;width:30%" >
+	        			<img src="../../image/liner.png" alt="" style="width:100%"/>
+	        		</div>
+	        	</li>
+            <li id="zong_two" class="table-view-cell  noPadding-cell" style="text-align:center;display: none;">
+	        		<div class="itemLeft" style="width:100%">
+
+        				<div style="width:100%;text-align: center;font-size:14px;">认证有效期 <span id="zong_start" style="font-size:14px;"></span><span id="zong_end" style="font-size:14px;"></span><span id="type_one" style="font-size:14px;"></span></div>
+
+	        		</div>
+
+	        	</li>
+
+	        	     <li id="zong_one" class="table-view-cell  noPadding-cell" style="display: none;">
+	        		<div class="fl" style=" position:relative;left:50%;">
+	        			<img src="../../image/science1.png" alt="" style="float:left; position:relative;right:50%;"/>
+	        			<span id="cert_zong" style="font-size:14px;float:left; position:relative;right:50%;margin-top: 5px;"></span>
+	        			<span style="float:left; position:relative;right:50%;">综合管理</span>
+	        		</div>
+	        		<div style="clear:both;">
+	        			<div id="lilun2"></div>
+	        			<div id="shicao2"></div>
+	        			<div id="total2"></div>
+	        		</div>
+
+	        	</li>
+
+	        	     	<li id="tower_one" class="table-view-cell  noPadding-cell" style="margin-top: 20px;display: none;">
+	        		<div class="fl" style=" position:relative;left:50%;">
+	        			<img src="../../image/science.png" alt="" style="float:left; position:relative;right:50%;"/>
+	        			<span id="cert_tower" style="font-size:14px;float:left; position:relative;right:50%;margin-top: 5px;"></span>
+	        			<span style="float:left; position:relative;right:50%;">铁塔维护</span>
+	        		</div>
+	        		<div style="clear:both;">
+	        			<div id="lilun3"></div>
+	        			<div id="shicao3"></div>
+	        			<div id="total3"></div>
+	        		</div>
+
+	        	</li>
+	        	<li  id="tower_two" class="table-view-cell  noPadding-cell" style="text-align:center;display: none;">
+	        		<div class="itemLeft" style="width:100%">
+
+        				<div style="width:100%;text-align: center;font-size:14px;">认证有效期 <span id="tower_start" style="font-size:14px;"></span><span id="tower_end" style="font-size:14px;"></span><span id="type_two" style="font-size:14px;"></span></div>
+
+	        		</div>
+
+	        	</li>
+	        	<li id="room_one" class="table-view-cell  noPadding-cell" style="margin-top: 20px;display: none;">
+	        		<div class="fl" style=" position:relative;left:50%;">
+	        			<img src="../../image/science1.png" alt="" style="float:left; position:relative;right:50%;"/>
+	        			<span id="cert_room" style="font-size:14px;float:left; position:relative;right:50%;margin-top: 5px;"></span>
+	        			<span style="float:left; position:relative;right:50%;">机房及动力配套</span>
+	        		</div>
+	        		<div style="clear:both;">
+	        			<div id="lilun"></div>
+	        			<div id="shicao"></div>
+	        			<div id="total"></div>
+	        		</div>
+
+	        	</li>
+	        	<li id="room_two" class="table-view-cell  noPadding-cell" style="text-align:center;display: none;">
+	        		<div class="itemLeft" style="width:100%">
+
+        				<div style="width:100%;text-align: center;font-size:14px;">认证有效期 <span id="room_start" style="font-size:14px;"></span><span id="room_end" style="font-size:14px;"></span><span id="type_three" style="font-size:14px;"></span></div>
+
+	        		</div>
+
+	        	</li>
+	        	<li id="shifen_one" class="table-view-cell  noPadding-cell" style="margin-top: 20px;display: none;">
+
+	        		<div class="fl" style=" position:relative;left:50%;">
+	        			<img src="../../image/science.png" alt="" style="float:left; position:relative;right:50%;"/>
+	        			<span id="cert_shifen" style="font-size:14px;float:left; position:relative;right:50%;margin-top: 5px;"></span>
+	        			<span style="float:left; position:relative;right:50%;">室分维护</span>
+	        		</div>
+	        		<div style="clear:both;">
+	        			<div id="lilun1"></div>
+	        			<div id="shicao1"></div>
+	        			<div id="total1"></div>
+	        		</div>
+
+	        	</li>
+	        	<li id="shifen_two" class="table-view-cell  noPadding-cell" style="text-align:center;display: none;">
+	        		<div class="itemLeft" style="width:100%">
+
+        				<div style="width:100%;text-align: center;font-size:14px;">认证有效期 <span id="shifen_start" style="font-size:14px;"></span><span id="shifen_end" style="font-size:14px;"></span><span id="type_four" style="font-size:14px;"></span></div>
+
+	        		</div>
+
+	        	</li>
+			</ul>
+		</div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/echarts.js"></script>
+    <script>
+
+    var placeHolderStyle = {
+		    normal : {
+		        color: 'rgba(0,0,0,0)',
+		        label: {show:false},
+		        labelLine: {show:false}
+		    },
+		    emphasis : {
+		        color: 'rgba(0,0,0,0)'
+		    }
+		};
+        apiready = function() {
+//   	hideMask();
+            var userInfo = api.pageParam.erweima;
+//          userInfo.allnum4='';
+            if(userInfo!=null){
+	            	if(userInfo.dwusername !=null && userInfo.dwusername  != "null"){
+	            		$("#name").text(userInfo.dwusername );
+	            	}
+	            	if(userInfo.cardnumber!=null && userInfo.cardnumber != "null"){
+//	                $("#idcard").text(userInfo.cardnumber);
+ 				  $("#idcard").text(userInfo.cardnumber.substring(0,14)+"****");
+	            }
+                if(userInfo.work_info!=null && userInfo.work_info != "null"){
+                		$("#professional").text(userInfo.work_info);
+                }
+                if(userInfo.companyname!=null && userInfo.companyname != "null"){
+                		 $("#procompany").text(userInfo.companyname);
+                }
+                if(userInfo.towername!=null && userInfo.towername != "null"){
+//              		$("#towercompany").text(userInfo.towername);
+                		if(userInfo.city!=null && userInfo.city != "null"){
+                		$("#towercompany").text(userInfo.province.substring(0,userInfo.province.indexOf('分'))+'铁塔-'+userInfo.city);
+                		}else{
+                		$("#towercompany").text(userInfo.province.substring(0,userInfo.province.indexOf('分'))+'铁塔');
+                		}
+                }
+
+                if(userInfo.markthrtime!=null && userInfo.markthrtime != "null"){
+                		$("#room_start").text(userInfo.markthrtime.substring(0,userInfo.markthrtime.lastIndexOf('-')+3)+'至');
+                }else{
+                $("#room_start").text('未填写 ');
+                }
+
+                if(userInfo.markthrendtime!=null && userInfo.markthrendtime != "null"){
+                		$("#room_end").text(userInfo.markthrendtime.substring(0,userInfo.markthrendtime.lastIndexOf('-')+3));
+                }
+
+                 if(userInfo.markfourtime!=null && userInfo.markfourtime != "null"){
+                		$("#shifen_start").text(userInfo.markfourtime.substring(0,userInfo.markfourtime.lastIndexOf('-')+3)+'至');
+                }else{
+                $("#shifen_start").text('未填写 ');
+                }
+
+                 if(userInfo.markfourendtime!=null && userInfo.markfourendtime != "null"){
+                		$("#shifen_end").text(userInfo.markfourendtime.substring(0,userInfo.markfourendtime.lastIndexOf('-')+3));
+                }
+
+                 if(userInfo.markendtime!=null && userInfo.markendtime != "null"){
+                		$("#zong_end").text(userInfo.markendtime.substring(0,userInfo.markendtime.lastIndexOf('-')+3));
+                }
+
+                 if(userInfo.marktime!=null && userInfo.marktime != "null"){
+                		$("#zong_start").text(userInfo.marktime.substring(0,userInfo.marktime.lastIndexOf('-')+3)+'至');
+                }else{
+                $("#zong_start").text('未填写 ');
+                }
+
+                  if(userInfo.marksecendtime!=null && userInfo.marksecendtime != "null"){
+                		$("#tower_end").text(userInfo.marksecendtime.substring(0,userInfo.marksecendtime.lastIndexOf('-')+3));
+                }
+
+                 if(userInfo.marksectime!=null && userInfo.marksectime != "null"){
+                		$("#tower_start").text(userInfo.marksectime.substring(0,userInfo.marksectime.lastIndexOf('-')+3)+'至');
+                }else{
+                $("#tower_start").text('未填写 ');
+                }
+
+                if(userInfo.typethree!=null && userInfo.typethree != "null"){
+                		$("#type_three").text('('+userInfo.typethree+')');
+                }
+
+                if(userInfo.typefour!=null && userInfo.typefour != "null"){
+                		$("#type_four").text('('+userInfo.typefour+')');
+                }
+
+                if(userInfo.typeone!=null && userInfo.typeone != "null"){
+                		$("#type_one").text('('+userInfo.typeone+')');
+                }
+
+                 if(userInfo.typetwo!=null && userInfo.typetwo != "null"){
+                		$("#type_two").text('('+userInfo.typetwo+')');
+                }
+
+                if(userInfo.certone!=null && userInfo.certone != "null"){
+                $("#cert_zong").text(userInfo.certone);
+                }
+
+                if(userInfo.certtwo!=null && userInfo.certtwo != "null"){
+                $("#cert_tower").text(userInfo.certtwo);
+                }
+
+                if(userInfo.certthree!=null && userInfo.certthree != "null"){
+                $("#cert_room").text(userInfo.certthree);
+                }
+
+                if(userInfo.certfour!=null && userInfo.certfour != "null"){
+                $("#cert_shifen").text(userInfo.certfour);
+                }
+
+                if(userInfo.sex=='1'){
+                $("#sex").text('先生');
+                }else{
+                 $("#sex").text('女士');
+                }
+
+                if(userInfo.allnum1!=null&&userInfo.allnum1!=''){
+                  $api.byId('zong_one').style.display = "";
+                  $api.byId('zong_two').style.display = "";
+                }
+
+                if(userInfo.allnum2!=null&&userInfo.allnum2!=''){
+                  $api.byId('tower_one').style.display = "";
+                  $api.byId('tower_two').style.display = "";
+                }
+
+                if(userInfo.allnum3!=null&&userInfo.allnum3!=''){
+                  $api.byId('room_one').style.display = "";
+                  $api.byId('room_two').style.display = "";
+                }
+
+                if(userInfo.allnum4!=null&&userInfo.allnum4!=''){
+                  $api.byId('shifen_one').style.display = "";
+                  $api.byId('shifen_two').style.display = "";
+                }
+
+
+                $api.byId('wrap').style.display = "";
+                initCharts(userInfo);
+
+//              window.setTimeout(function() {
+////					$('#wrap').
+//					$api.byId('wrap').style.display = "";
+//				}, 500);
+            }
+        };
+
+
+        function initCharts(userInfo){
+
+        // 基于准备好的dom，初始化echarts实例
+
+       var myChart11 = echarts.init(document.getElementById('total3'));
+
+        // 指定图表的配置项和数据
+		var option11 = {
+
+		    title : {
+		        text: '总成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		   color:['#aad299','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.allnum2, name:'总成绩'},
+		                {value:100-userInfo.allnum2, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		 color:'#3aac32'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'总成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart11.setOption(option11);
+
+        var myChart10 = echarts.init(document.getElementById('shicao3'));
+
+        // 指定图表的配置项和数据
+		var option10 = {
+
+		    title : {
+		        text: '实操考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		   color:['#fceb8b','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.shicao2, name:'实操考试成绩'},
+		                {value:100-userInfo.shicao2, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            	color:'#f5d006'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'实操考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart10.setOption(option10);
+
+          var myChart9 = echarts.init(document.getElementById('lilun3'));
+
+        // 指定图表的配置项和数据
+		var option9 = {
+
+		    title : {
+		        text: '理论考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#59b7f7','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.score2, name:'理论考试成绩'},
+		                {value:100-userInfo.score2, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#258ac2'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'理论考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart9.setOption(option9);
+
+       var myChart7 = echarts.init(document.getElementById('shicao2'));
+
+        // 指定图表的配置项和数据
+		var option7 = {
+
+		    title : {
+		        text: '实操考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		   color:['#fceb8b','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.shicao1, name:'实操考试成绩'},
+		                {value:100-userInfo.shicao1, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#f5d006'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'实操考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart7.setOption(option7);
+
+         var myChart8 = echarts.init(document.getElementById('total2'));
+
+        // 指定图表的配置项和数据
+		var option8 = {
+
+		    title : {
+		        text: '总成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		   color:['#aad299','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.allnum1, name:'总成绩'},
+		                {value:100-userInfo.allnum1, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		 color:'#3aac32'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'总成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart8.setOption(option8);
+
+        var myChart6 = echarts.init(document.getElementById('lilun2'));
+
+        // 指定图表的配置项和数据
+		var option6 = {
+
+		    title : {
+		        text: '理论考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#59b7f7','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.score1, name:'理论考试成绩'},
+		                {value:100-userInfo.score1, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#258ac2'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'理论考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart6.setOption(option6);
+
+         var myChart = echarts.init(document.getElementById('lilun'));
+
+        // 指定图表的配置项和数据
+		var option = {
+
+		    title : {
+		        text: '理论考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#59b7f7','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.score3, name:'理论考试成绩'},
+		                {value:100-userInfo.score3, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#258ac2'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'理论考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart2 = echarts.init(document.getElementById('total'));
+
+        // 指定图表的配置项和数据
+        var option2 = {
+
+		    title : {
+		        text: '总成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#aad299','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.allnum3, name:'总成绩'},
+		                {value:100-userInfo.allnum3, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#3aac32'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'总成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart2.setOption(option2);
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('shicao'));
+
+        // 指定图表的配置项和数据
+        var option1 = {
+
+		    title : {
+		        text: '实操考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#fceb8b','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.shicao3, name:'实操考试成绩'},
+		                {value:100-userInfo.shicao3, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#f5d006'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'实操考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option1);
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart3 = echarts.init(document.getElementById('lilun1'));
+
+        // 指定图表的配置项和数据
+		var option3 = {
+
+		    title : {
+		        text: '理论考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#59b7f7','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.score4, name:'理论考试成绩'},
+		                {value:100-userInfo.score4, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#258ac2'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '理论考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'理论考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart3.setOption(option3);
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart4 = echarts.init(document.getElementById('total1'));
+
+        // 指定图表的配置项和数据
+        var option4 = {
+
+		    title : {
+		        text: '总成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#aad299','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.allnum4, name:'总成绩'},
+		                {value:100-userInfo.allnum4, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#3aac32'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '总成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'总成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart4.setOption(option4);
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart5 = echarts.init(document.getElementById('shicao1'));
+
+        // 指定图表的配置项和数据
+        var option5 = {
+
+		    title : {
+		        text: '实操考试成绩',
+		        x:'center',
+		        y:'bottom',
+		        textStyle: {
+					fontSize:'12'
+				},
+
+		    },
+		    color:['#fceb8b','#f95959','#258ac2'],
+		    series: [
+		        {
+		            name:'考试成绩',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['60%', '70%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: true,
+		                    textStyle: {
+		                        fontSize: '25',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value ;
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:userInfo.shicao4, name:'实操考试成绩'},
+		                {value:100-userInfo.shicao4, name:'',itemStyle : placeHolderStyle},
+
+		            ]
+		        },
+		        {
+		            name:'考试成绩内环',
+		            type:'pie',
+		            hoverAnimation: false,
+		            center: ['50%', '40%'],
+		            radius: ['0%', '59%'],
+		            avoidLabelOverlap: false,
+		            itemStyle:{
+		            	normal:{
+		            		color:'#f5d006'
+		            	}
+		            },
+		            label: {
+		                normal: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '17',
+		                        fontWeight: 'bold',
+		                        color: '#fff'
+		                    },
+							formatter : function(param){
+								if(param.name == '实操考试成绩'){
+									return param.value + '分';
+								}
+							},
+		                    position: 'center'
+		                },
+
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:100, name:'实操考试成绩'},
+
+
+		            ]
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart5.setOption(option5);
+
+        }
+    </script>
+</html>

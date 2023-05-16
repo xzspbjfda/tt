@@ -1,0 +1,587 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>个人信息</title>
+		<link rel="stylesheet" type="text/css" href="../../css/amazeui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+		<link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+		<link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+		<link rel="stylesheet" href="../../script/app/css/app.css">
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	</head>
+	<style>
+		html{
+			background-color: #fff;
+		}
+		body {
+			background-color: #fff;
+			margin: 0px;
+		}
+		#wrap {
+			height: 100%;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-flex-flow: column;
+			flex-flow: column;
+		}
+		.noPadding-cell {
+			padding: 0px !important;
+		}
+		.itemLeft {
+			width: 40%;
+			margin-right: 10px;
+			margin-top: 11px;
+			margin-bottom: 11px;
+			margin-left: 4px;
+			float: left;
+		}
+		.itemRight {
+			overflow: hidden;
+			margin-top: 11px;
+			margin-bottom: 11px;
+			margin-right: 20px;
+			float: right;
+		}
+		.item-content {
+			margin-top: 0px !important;
+			margin-bottom: 0px !important;
+		}
+		.table-view-cell {
+			position: relative;
+			padding: 11px 0 11px 0;
+			margin: 0 15px;
+			overflow: hidden;
+			border-bottom: 1px solid #e5e5e5;
+		}
+		.table-view-cell:last-child {
+			border-bottom: 0;
+		}
+		.table-view-cell i {
+			text-align: center;
+		}
+		.table-view-cell span {
+			margin-left: 10px;
+		}
+		ul, li, dl, dt, dd {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		a {
+			background: transparent;
+			text-decoration: none;
+		}
+		.left {
+			background: url(../../image/navbtn_back.png) no-repeat center;
+			-webkit-background-size: 12px 20px;
+		}
+		.picCenter {
+			width: 100%;
+			background: url(../../image/personalCenter/bg.png);
+			background-size: cover;
+		}
+		.blankDiv {
+			height: 20px;
+			width: 100%;
+		}
+		.picBox {
+			/*height: 40px;*/
+			cursor: pointer;
+			overflow: hidden;
+			padding-left: 20px;
+			position: relative;
+		}
+		.name_box{
+			float: left;
+			margin-left: 16px;
+			margin-top: 10px;
+		}
+		.picShow {
+			height: 70px;
+			width: 70px;
+			margin-bottom: 10px;
+			background: url(../../image/personalCenter/widget_dface.png);
+			-moz-border-radius: 50%;
+			-webkit-border-radius: 50%;
+			border-radius: 50%;
+			-webkit-background-size: 60px 60px;
+			float: left;
+			border: 6px solid #e98172;
+		}
+		#uName {
+			text-align: center;
+			height: 30px;
+			line-height: 30px;
+			width: 100%;
+			font-size: 16px;
+		}
+		#uInfo {
+			height: 50px;
+			width: 100%;
+			line-height: 50px;
+			border-top: solid 1px #ADADAD;
+			text-align: left;
+		}
+		.uInfoLabel {
+			color: #BEBEBE;
+			font-size: 18px;
+		}
+		.uInfoContent {
+			color: #000;
+			font-size: 16px;
+			margin-left: 10px;
+		}
+		.phoneIconDiv {
+			width: 20px;
+			height: 30px;
+			line-height: 30px;
+			margin-top: 10px;
+			margin-right: 20px;
+			float: right;
+		}
+		.phoneIconA {
+			width: 20px;
+			height: 30px;
+			line-height: 30px;
+			background: url(../../image/personalCenter/title_call_icon.png);
+			-webkit-background-size: 20px 30px;
+		}
+		.noPadding-cell {
+			padding: 0px !important;
+		}
+		.tbqb{
+			width: 18px;
+		}
+		.messageNum{
+			padding: 2px 3px;
+			background-color: red;
+			color: #fff;
+			border-radius: 60%;
+			font-size: 12px;
+		}
+		.jifen{
+			padding: 2px 20px;
+			background-color: #e37868;
+			border: 1px solid #fff;
+			border-radius: 50px;
+			font-size: 12px;
+			color: #fff;
+			position: absolute;
+			left: 160px;
+			top:12px;
+		}
+		.jifen span{
+			color: #fff600;
+		}
+		.login_name{
+			font-size: 16px;
+		}
+		.nameID{
+			font-size: 12px;
+			color: #fff;
+			margin-top: 10px;
+		}
+		.qianb{
+			width: 94%;
+			margin: 0 auto;
+			background-color: #fff;
+			border-top-left-radius: 8px;
+			border-top-right-radius: 8px;
+			overflow: hidden;
+			/*box-shadow: 0 4px 10px #c1c1c1;*/
+		}
+		.qian_img{
+			float: left;
+			width: 24px;
+			margin-left: 8px;
+			margin-top: 8px;
+			margin-right: 8px;
+		}
+		.chakan{
+			float: right;
+			padding: 2px 8px ;
+			border-radius: 20px;
+			background-color: #db4537;
+			color: #fff;
+			font-size: 12px;
+			margin-right: 10px;
+			margin-top: 12px;
+		}
+		.btn_img{
+			width: 24px;
+		}
+		.itemRight{
+			margin-right: 10px;
+		}
+	</style>
+	<body>
+		<div id="picCenterId" class="picCenter">
+			<div class="blankDiv"></div>
+			<div class="picBox">
+				<div class="jifen" onclick="ringUp(7);">积分：<span id="score">0</span></div>
+				<div class="picShow"  onclick="openPage_person()"></div>
+				<div class="name_box">
+					<div class="login_name" style="color:#fff;" id="username">姓名</div>
+					<div class="nameID">账号：<span id="login_name"></span></div>
+				</div>
+			</div>
+			<div class="qianb">
+				<img class="qian_img" src="../../image/wallet.png" alt="">
+				<div style="float:left;line-height:44px;">
+					塔币钱包
+				</div>
+				<div class="chakan"  onclick="Transfer();">
+					立即查看 ▶
+				</div>
+			</div>
+		</div>
+		<div id="wrap" style="overflow:auto;margin-bottom:1px;">
+			<ul class="table-view" style="background-color: #fff;">
+				<li class="table-view-cell  noPadding-cell" onclick="ringUp(4);">
+					<div class="itemLeft">
+						<img class="btn_img" src="../../image/notice.png" alt=""><span>公告消息</span>
+					</div>
+					<div class="itemRight">
+						<img src="../../image/icons/png/arrow-right.png" alt="">
+					</div>
+				</li>
+				<li class="table-view-cell  noPadding-cell" onclick="ringUp(3);">
+					<div class="itemLeft">
+						<img class="btn_img" src="../../image/address_book.png" alt=""><span>通讯录</span>
+					</div>
+					<div class="itemRight">
+						<img src="../../image/icons/png/arrow-right.png" alt="">
+					</div>
+				</li>
+				<li class="table-view-cell  noPadding-cell" onclick="ITgoTo();">
+					<div class="itemLeft">
+						<img class="btn_img" src="../../image/operation.png" alt=""><span>运维支撑</span>
+					</div>
+					<div class="itemRight">
+						<img src="../../image/icons/png/arrow-right.png" alt="">
+					</div>
+				</li>
+				<li class="table-view-cell  noPadding-cell" onclick="api.openSlidPane({type:'left'});">
+					<div class="itemLeft">
+						<img class="btn_img" src="../../image/set.png" alt=""><span>设置</span>
+					</div>
+					<div class="itemRight">
+						<img src="../../image/icons/png/arrow-right.png" alt="">
+					</div>
+				</li>
+				<li class="table-view-cell  noPadding-cell"  onclick="openWin('about');">
+					<div class="itemLeft">
+						<img class="btn_img" src="../../image/about.png" alt=""><span>关于</span>
+					</div>
+					<div class="itemRight">
+						<img src="../../image/icons/png/arrow-right.png" alt="">
+					</div>
+				</li>
+			</ul>
+
+			<ul class="menu" style="width:90%;padding:10px 0;background-color: #fff;border: 1px solid #e5e5e5;margin: 20px auto; border-radius:20px;">
+				<li style="text-align:center;" class="side-list" onclick="logout();">
+					<span >注销帐号</span>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/jpush-api.js"></script>
+	<script type="text/javascript" src="../system/setting2.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script>
+	// 我的附近
+	function openNearby(){
+	  api.openWin({
+	    name : 'nearbyMapWin',
+	    url : '../../html/nearbyMapWin.html',
+	    reload : true,
+	    bounces : false,
+	    vScrollBarEnabled : false,
+	    pageParam : {}
+	  });
+	}
+	// 跳转转账页面
+	function Transfer(){
+		var user = $api.getStorage('user');
+		var loginname = encodeURI(user.loginname);
+		console.log(loginname);
+			api.openWin({
+				name : "recording",
+				url : "http://180.153.49.104:50080/oService/plugins/main/index_v3/iron_tower/individual/tab-webview-subpage-setting.html?name="+loginname,
+				bounces : false,
+				vScrollBarEnabled : true,
+				reload : true,
+				slidBackEnabled : true,
+				pageParam : {},
+				animation : {
+					type : "fade",
+					subType : "from_right"
+				}
+			});
+	}
+
+	//it服务
+	function ITgoTo(){
+		var user = $api.getStorage('user');
+		var ip=$api.getStorage('ip');
+		var loginname = user.loginname;
+		console.log(loginname);
+		console.log('http://'+ip+'/itower/mobile/token/generateToKen');
+		var token;
+		api.ajax({
+				url: 'http://'+ip+'/itower/mobile/token/generateToKen'+ '?loginname='+loginname,
+				method: 'get',
+				timeout: 30,
+				dataType: 'json',
+				data: {}
+		}, function(ret, err) {
+			console.log("0000000000000000000000000000000");
+			console.log(getObj(err));
+			if(err.statusCode=='200'){
+					token=err.body;
+					console.log(token);
+
+					api.openWin({
+						name : "recording",
+						url : "http://180.153.49.103/itsupport/mobile/sheetList?sysFlag=011&token="+token,
+						bounces : false,
+						vScrollBarEnabled : true,
+						reload : true,
+						slidBackEnabled : true,
+						pageParam : {},
+						animation : {
+							type : "fade",
+							subType : "from_right"
+						}
+					});
+			}else {
+				api.toast({
+					msg: '获取token失败',
+					location: 'bottom'
+				});
+			}
+		})
+	}
+
+	function pushsetting(){
+		api.openWin({
+			name : "personalPushSetting_win",
+			url : "../personalPushSetting/personalPushSetting_win.html",
+			bounces : false,
+			vScrollBarEnabled : true,
+			reload : true,
+			slidBackEnabled : true,
+			pageParam : api.pageParam,
+			animation : {
+				type : "push",
+				subType : "from_right",
+				duration : 300
+			}
+		});
+	}
+
+	function shuaxinCount(){
+		var bulleList=$api.getStorage('bulleList');
+		var count=0;
+
+		if(bulleList){
+			for (var i = 0; i < bulleList.length; i++) {
+				if(bulleList[i].readed!='Y'){
+						count++;
+				}
+			}
+			if(count>0){
+				$('.messageNumBox').show(0);
+				$('.messageNum').html(count);
+			}
+		}
+	}
+		apiready = function() {
+			shuaxinCount();
+			var opts = {id:$api.getStorage("user").userid};
+			console.log("opts:"+opts);
+	            $client.getUserDetailInfo(opts,function(ret,err){
+	                if(ret && ret.success){
+										console.log("ddddddddddddddddddddddddddddddddddd"+getObj(ret.model));
+	                   var userInfo = ret.model;
+										 $api.setStorage('userInfo', userInfo);
+
+		                console.log("leadername"+userInfo.leadername);
+		                console.log("orgnames"+userInfo.orgnames);
+		                console.log("mobilephone"+userInfo.mobilephone);
+		                console.log("officephone"+userInfo.leadername);
+		                console.log("loginname"+userInfo.loginname);
+										console.log("loginname"+userInfo.score);
+		        if (userInfo.leadername != null && userInfo.leadername != "null") {
+					$("#leadername").text(userInfo.leadername);
+				}
+				if (userInfo.orgnames != null && userInfo.orgnames != "null") {
+					$("#postname").text(userInfo.orgnames);
+				}
+				if (userInfo.mobilephone != null && userInfo.mobilephone != "null") {
+					$("#mobilephone").text(userInfo.mobilephone);
+				}
+				if (userInfo.officephone != null && userInfo.officephone != "null") {
+					$("#officephone").text(userInfo.officephone);
+				}
+				if (userInfo.score != null && userInfo.score != "null") {
+					$("#score").text(userInfo.score);
+				}
+				console.log(JSON.stringify($api.getStorage("user")));
+				$("#login_name").text(userInfo.loginname);
+				$("#username").text($api.getStorage("user").username);
+	                }else{
+	                    showToast("加载用户信息失败");
+	                }
+	            });
+			var userInfo = $api.getStorage("user");
+			var elementList = $api.getStorage('elementList');
+			if (elementList != null) {
+				for (var i = 0; i < elementList.length; i++) {
+					if (elementList[i] == "IDM_MAIL_LIST") {
+						$('#contractid').show();
+					} else if (elementList[i] == "IDM_BULLE") {
+						$('#buleid').show();
+					}
+				}
+			}
+
+		};
+		function ringUp(obj) {//dingxb
+			var phoneNumber = "";
+			if (1 == obj) {
+				phoneNumber = $('#mobilephone').text();
+				if (phoneNumber == null || phoneNumber == "") {
+				} else {
+					api.call({
+						type : 'tel_prompt',
+						number : phoneNumber
+					});
+				}
+			} else if (2 == obj) {
+				phoneNumber = $('#officephone').text();
+				if (phoneNumber == null || phoneNumber == "") {
+				} else {
+					api.call({
+						type : 'tel_prompt',
+						number : phoneNumber
+					});
+				}
+			} else if (3 == obj) {
+				api.openWin({
+					name : "contact-list",
+					url : "../contact/contact-list.html",
+					bounces : false,
+					vScrollBarEnabled : true,
+					reload : true,
+					slidBackEnabled : true,
+					pageParam : api.pageParam,
+					animation : {
+						type : "push",
+						subType : "from_right",
+						duration : 300
+					}
+				});
+			} else if (4 == obj) {
+				api.openWin({
+					name : "bulle_list_win",
+					url : "../bulle/bulle_list_win.html",
+					bounces : false,
+					vScrollBarEnabled : true,
+					reload : true,
+					slidBackEnabled : true,
+					pageParam : api.pageParam,
+					animation : {
+						type : "push",
+						subType : "from_right",
+						duration : 300
+					}
+				});
+			}else if (7 == obj) {//我的积分
+				api.openWin({
+					name : "jifen_win",
+					url : "../jifen/jifen_win.html",
+					bounces : false,
+					vScrollBarEnabled : true,
+					reload : true,
+					slidBackEnabled : true,
+					pageParam : api.pageParam,
+					animation : {
+						type : "push",
+						subType : "from_right",
+						duration : 300
+					}
+				});
+			}
+		}
+
+		/**
+		 * 注销帐号
+		 */
+		function logout() {
+			//注销时设置islogin为false，表示未登录
+			api.setPrefs({
+				key : constant.AUTO_LOGIN,
+				value : false
+			});
+            $api.setStorage("isLoginOut", "true");
+
+			//关闭极光推送
+			$push.stop();
+
+			//注销时提醒后台，改用户已注销
+			$client.userLoginOut(function(ret, err) {
+			});
+			api.execScript({
+				name : 'login',
+				script : 'refreshVerify();'
+			});
+
+			window.setTimeout(function(){
+				//打开登录页
+			api.closeToWin({
+				name : 'login'
+			});
+			openPage_login();
+			},200);
+
+
+		}
+
+		function openPage_person2() {
+
+		    openSingleWindow({
+		        name : "systemPerson",
+		        url : "html/system/person.html",
+		        bounces : false,
+		        vScrollBarEnabled : false,
+		        hScrollBarEnabled : false,
+		        slidBackEnabled : true,
+		        reload : true,
+		        userId : userId,
+		        animation : {
+		            type : "push",
+		            subType : "from_right",
+		            duration : 300
+		        }
+		    });
+
+		}
+	</script>
+</html>

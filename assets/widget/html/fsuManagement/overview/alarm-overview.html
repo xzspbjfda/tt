@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>overview</title>
+    <link rel="stylesheet" href="../module/css/aui.css" />
+    <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+                class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="init()"><span
+                class="aui-iconfont aui-icon-refresh"></span>
+        </a>
+        <div class="aui-title">
+            告警概览
+        </div>
+    </header>
+    <div class="wrapper" id="info" style="display: none">
+        <div class="box-cpn">
+            <h4>
+                <div class="title title-aqua"></div>实时告警分布
+            </h4>
+            <div id="distribute"></div>
+        </div>
+        <div class="box-cpn">
+            <h4>
+                <div class="title title-aqua"></div>最近24小时活动告警
+            </h4>
+            <div id="recent"></div>
+        </div>
+        <div class="box-cpn">
+            <h4>
+                <div class="title title-aqua"></div>告警类型TOP5
+            </h4>
+            <div id="top"></div>
+        </div>
+    </div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../js/echarts-all.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        init()
+    }
+    const color = ['#f52443', '#ff7875', '#f1c40f', '#3498db', '#7f8c8d']
+    // 接口返回的数据
+    let realTime
+    let top5
+    let last24Hours
+
+    function init() {
+        api.showProgress({
+            title: '加载中',
+            modal: false
+        })
+        request({
+            url: `/app/alarm/overview`,
+            type: 'post',
+            data: {},
+            success: res => {
+                realTime = res.data.resultList[0].relTime
+                top5 = res.data.resultList[0].top5
+                last24Hours = res.data.resultList[0].last24Hours
+                $('#info').show()
+                initEcharts()
+                return api.hideProgress()
+            },
+            catch: res => api.hideProgress()
+        })
+    }
+
+    function initEcharts() {
+        const distributeChart = echarts.init(initMyChart('distribute'))
+        const recentChart = echarts.init(initMyChart('recent'))
+        const topChart = echarts.init(initMyChart('top'))
+        // 饼状图 - 实时告警分布
+        const option1 = {
+            tooltip: {
+                trigger: 'item',
+                position: 'inside',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: ['一级告警', '二级告警', '三级告警', '四级告警']
+            },
+            color: color,
+            series: [
+                {
+                    name: '告警类型',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '60%'],
+                    data: computeRelTime(realTime),
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        }
+        distributeChart.setOption(option1)
+
+        // 折线图 - 最近24h告警数量
+        option2 = {
+            color: color,
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['一级告警', '二级告警', '三级告警', '四级告警']
+            },
+            toolbox: {
+                show: false,
+                orient: 'vertical',
+                left: 'right',
+                top: 'center',
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: { show: false },
+                    data: recent.computeTime()
+                    //  ['0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20', '22', '24']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: recent.computeData()
+        }
+        recentChart.setOption(option2)
+
+        // 柱状图 - 告警类型top5
+        const option3 = {
+            dataset: { source: computeTop(top5) },
+            color: color,
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [{
+                type: 'category',
+                axisTick: { alignWithLabel: true },
+                axisLabel: {
+                    formatter: function (params) {
+                        let newParamsName = ''
+                        let provideNumber = 3
+                        let rowNumber = Math.ceil(params.length / provideNumber)
+                        for (let row = 0; row < rowNumber; row++) {
+                            newParamsName += params.substring(row * provideNumber, (row + 1) * provideNumber) + '\n'
+                        }
+                        return newParamsName
+                    }
+                }
+            }],
+            yAxis: [{ type: 'value' }],
+            series: [{
+                name: '告警数量',
+                type: 'bar',
+                barWidth: '60%',
+
+            }]
+        }
+        topChart.setOption(option3)
+    }
+
+    function myRandom() {
+        const arr = []
+        for (let i = 0; i < 13; i++) {
+            arr.push(parseInt(Math.random() * 100) + 10)
+        }
+        return arr
+    }
+
+    // 图2
+    const recent = {
+        data: last24Hours,
+        time: ['0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20', '22', '24'],
+        hour: new Date().getHours(),
+        hours: [],
+        computeTime: function () {
+            let arr = []
+            let nt = this.hour + 1
+            for (let i = 0; i < 24; i++) {
+                arr.push(`${nt}`)
+                nt = nt === 23 ? 0 : nt + 1
+            }
+            this.hours = arr
+            return arr
+        },
+        computeData: function () {
+            const arr = []
+            const data = [{ name: '一级告警', value: this.valArr(1) },
+            { name: '二级告警', value: this.valArr(2) },
+            { name: '三级告警', value: this.valArr(3) },
+            { name: '四级告警', value: this.valArr(4) }]
+            data.forEach(item => arr.push({ name: item.name, type: 'line', barGap: 0, data: item.value }))
+            return arr
+        },
+        valArr: function (level) {
+            // 根据时间轴填充数据
+            const res = []
+            const arr = last24Hours.filter(i => i.level == level)
+            this.hours.forEach(o => {
+                let obj = arr.filter(i => (o == i.time || ('0' + o) == i.time))
+                res.push(obj.length > 0 ? obj[0].count : 0)
+            })
+            return res
+        }
+    }
+
+    function computeRecent(list) {
+        const arr = []
+        const data = list || [{ name: '一级告警', value: myRandom() },
+        { name: '二级告警', value: myRandom() },
+        { name: '三级告警', value: myRandom() },
+        { name: '四级告警', value: myRandom() }]
+        data.forEach(item => arr.push({ name: item.name, type: 'line', barGap: 0, data: item.value }))
+        return arr
+    }
+
+    // 图3
+    function computeTop(list) {
+        const data = list
+        // const arr = [['score', 'amount', 'product']]
+        const arr = [['alarm', 'num']]
+        const max = data.reduce((i1, i2) => i1.value > i2.value ? i1 : i2)
+        // arr.push(...data.map(item => [(item.value / max.value) * 100, item.value, item.name]))
+        arr.push(...data.map(item => [item.name, item.value]))
+        console.log(JSON.stringify(arr))
+        return arr
+    }
+
+    // 图1
+    function computeRelTime(list) {
+        let data = list[0]
+        let arr = [{ name: '一级告警', value: 0 },
+        { name: '二级告警', value: 0 },
+        { name: '三级告警', value: 0 },
+        { name: '四级告警', value: 0 },
+        ]
+        for (let i in data) {
+            switch (i) {
+                case 'LEVEL1':
+                    arr[0].value = data[i]
+                    break
+                case 'LEVEL2':
+                    arr[1].value = data[i]
+                    break
+                case 'LEVEL3':
+                    arr[2].value = data[i]
+                    break
+                case 'LEVEL4':
+                    arr[3].value = data[i]
+                    break
+                default:
+                    break
+            }
+        }
+        return arr
+    }
+</script>
+
+</html>

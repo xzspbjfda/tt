@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>合同信息列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" tapmode="" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+             <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="submit"> <span class="aui-iconfont" style="font-size:16px">提交</span> </a>
+             <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right"  onclick="showPopup()"><span class="aui-iconfont aui-icon-search"></span> </a>
+            <div class="aui-title">
+                合同信息
+            </div>
+        </header>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" >
+        apiready = function() {
+            var header = $api.byId('header');
+            $api.fixIos7Bar(header);
+            var headerPos = $api.offset(header);
+            var body_h = $api.offset($api.dom('body')).h;
+            api.parseTapmode();
+            var t_modelKind = api.pageParam.t_modelKind;
+            if('1'==t_modelKind){
+              api.openFrame({
+                  name : "contract-listCon_frm",
+                  url : 'contract-listConCode_frm.html',
+                  bounces : false,
+                  pageParam : api.pageParam,
+                  rect : {
+                      x : 0,
+                      y : headerPos.h,
+                      w : headerPos.w,
+                      h : 'auto'
+                  }
+              });
+            }else{
+              api.openFrame({
+                  name : "contract-listCon_frm",
+                  url : 'contract-listCon_frm.html',
+                  bounces : false,
+                  pageParam : api.pageParam,
+                  rect : {
+                      x : 0,
+                      y : headerPos.h,
+                      w : headerPos.w,
+                      h : 'auto'
+                  }
+              });
+            }
+
+
+
+             /*jQuery事件:提交按钮*/
+                $('#submit').click(function() {
+                    api.execScript({
+                        frameName : 'contract-listCon_frm',
+                        script : 'call_rollback();'
+                    });
+                });
+        };
+
+               // 打开查询工单页面
+        function showPopup() {
+            var query_setting = {
+                contractnoOpt : true,
+                paytypeOpt : true,
+                itemtypeOpt : true,
+                winName : api.winName,
+                frameName : 'contract-listCon_frm',
+                callback : 'cb_queryBillList'
+            };
+            api.openFrame({
+                name : 'popup_query_frm',
+                url : '../dialog/popup_query.html',
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                bounces : false,
+                pageParam : query_setting
+            });
+        }
+
+    </script>
+</html>

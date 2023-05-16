@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>巡检任务项目列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            .ccssoft_list li {
+                background-color: #fff;
+                padding: 8px;
+                padding-bottom: 0;
+            }
+            .ccssoft_list li.showBox {
+                padding: 0;
+            }
+            .ccssoft_list li:first-child {
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <script id="listView-template" type="text/x-dot-template">
+            {{ var finishCount = 0; }}
+            {{ for(var i=0, len=it.length; i < len; i++) {
+            if(it[i].isfinish=="Y")
+            finishCount +=1;
+            var objType = it[i].objtype;
+            var objTypeClass = "";
+            var objTypeName = "";
+            if(objType == "1"){
+            objTypeName = "铁塔";
+            objTypeClass ="ccssoft_color_carrot";
+            }else if(objType == "2"){
+            objTypeName = "动力环境";
+            objTypeClass="ccssoft_color_green";
+            }else if(objType == "3"){
+            objTypeName = "室分系统";
+            objTypeClass="ccssoft_color_pink";
+            }else if(objType == "4"){
+            objTypeName = "机房";
+            objTypeClass="ccssoft_color_violet";
+            }
+            }}
+            <li class="aui-content" tapmode="active" projectid="{{=it[i].id}}" projectname="{{=it[i].projectname}}" isfinish="{{=it[i].isfinish}}">
+            <div class="aui-flex-col">
+            <div class="aui-flex-item-9">{{=it[i].projectname || '&nbsp;'}}</div>
+            {{?it[i].isfinish == 'Y'}}
+            <div class="aui-flex-item-3">
+            <div class="aui-text-right aui-flex-middle ccssoft-status" style="color:#2ecc71;font-size: 12px;">已完成</div>
+            </div>
+            {{??}}
+            <div class="aui-flex-item-3">
+            <div class="aui-text-right aui-flex-middle ccssoft-status" style="color:#909090;font-size: 12px;">未完成</div>
+            </div>
+            {{?}}
+            </div>
+            <div class="aui-flex-col" style="font-size:12px;line-height: 39px;">
+            <div class="aui-flex-item-2 {{=objTypeClass || ''}}">{{=objTypeName || ''}}</div>
+            <div class="aui-flex-item-5" style="color: #6c6c6c">{{=it[i].devname || ''}}</div>
+            <div class="aui-flex-item-5 aui-text-right" style="color:#6c6c6c">
+            <i class="aui-iconfont aui-icon-pic" ></i>
+            <span class="ccssoft-img">{{=it[i].imagecount}}</span>
+            </div>
+            </div>
+            {{?!taskstatus || taskstatus == 'N'}}
+            {{?it[i].isfinish=="Y"}}
+            <div class="aui-flex-col ccssoft-btnlist" style="font-size:12px;flex-flow: row-reverse;border-top: 1px solid #f5f5f5;">
+            <div class="aui-flex-item-2">
+            <div class="aui-btn aui-flex-right aui-pull-right ccssoft-btn"  style="margin:5px;float:right;">重置</div>
+            </div>
+            </div>
+            {{?}}
+            {{?}}
+            </li>
+            {{ } }}
+        </script>
+        <div class="aui-content">
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/aui.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript">
+        var taskid, stattime, fromflag, taskstatus, readyStartTime,selectProjectId,listView,start_status;
+        //是否能够编辑项目
+        var editEnabled = true;
+
+        apiready = function() {
+            listView = new C.ApiListView({
+                fn : $client.getXunjianProjectList,
+                callback : load_callback,
+                limit : 1000
+            });3
+            taskid = api.pageParam.taskid ? api.pageParam.taskid : "CA665B59F48A3AB46EC2AAF17E8FDD50";
+            //任务ID
+            starttime = api.pageParam.starttime ? api.pageParam.starttime : "";
+            //开始时间
+            fromflag = api.pageParam.fromflag ? api.pageParam.fromflag : "Y";
+            //来自通知栏？
+            taskstatus = api.pageParam.taskstatus ? api.pageParam.taskstatus : "";
+            //是否开始进行中的任务
+            start_status = api.pageParam.start_status ? api.pageParam.start_status : "";
+            //计划开始时间
+            readyStartTime = api.pageParam.readyStartTime ? api.pageParam.readyStartTime : "";
+            listView.setQueryOptions({
+                taskid : taskid,
+                fromflag : fromflag
+            });
+            listView.refresh();
+            /*
+             * jQuery事件:list-item点击事件
+             */
+            $('#listView').on('click', 'li', function() {
+                var projectid = $(this).attr('projectid');
+                var projectname = $(this).attr('projectname');
+                var isfinish = $(this).attr('isfinish');
+                openProject(projectid, projectname, isfinish);
+            });
+            /*
+             * jQuery事件:list-btn点击事件(重置)
+             */
+            $('#listView').on('click', '.ccssoft-btn', function() {
+                var $target = $(this);
+                var projectid = $(this).parents('li').attr('projectid');
+                var taskId = api.pageParam.taskid;
+                var opts = {
+                    taskId : taskId,
+                    ID : projectid
+                };
+                $aui.dialog({
+                    title : '回退确认',
+                    msg : '确认回退该巡检任务吗？'
+                }, function(ret) {
+                    if (ret.buttonIndex) {
+                        api.showProgress({
+                            title : '回退中'
+                        });
+                        $client.getProjectRollback(opts, function(ret, err) {
+                            if (ret) {
+                                if (ret.success) {
+                                    //更新巡检项目的状态
+                                    $target.parents('li').attr('isfinish', 'N').find('.ccssoft-status').css({
+                                        'color' : '#909090',
+                                        'lex-flow' : 'row-reverse'
+                                    }).text('未完成').end().find('.ccssoft-img').text(0).end().find('.ccssoft-btnlist').hide();
+                                    $aui.toast({
+                                        msg : '重置成功',
+                                        duration : 500
+                                    });
+                                } else {
+                                    $aui.toast({
+                                        msg : ret.data_info
+                                    });
+                                }
+                            } else {
+                                $aui.toast({
+                                    msg : err.msg
+                                });
+                            }
+                            api.hideProgress();
+                        });
+                    }
+                    $aui.hideDialog();
+                });
+                return false;
+            })
+        };
+        /**
+         *打开待办任务的详情
+         */
+        function openProject(projectid, projectname, isFinish) {
+            openPage_project_detail(taskid, projectid, projectname, isFinish, editEnabled,taskstatus,start_status);
+        }
+
+        /**
+         *加载完成后的回调函数
+         */
+        function load_callback(ret, status) {
+            if (ret && ret.success) {
+                projectList = ret.list;
+                //巡检任务已经完成，不需要弹出窗口
+                if (taskstatus == "Y") {
+                    return;
+                }
+                if (readyStartTime != "") {
+                    //判断计划时间是否大于现在，如果是，提示用户巡检计划未激活
+                    var readyDate = Date.parse(readyStartTime);
+                    var nowDate = new Date();
+                    var a = readyDate - nowDate;
+                    if (a > 0) {
+                        editEnabled = false;
+                        showToast("巡检计划尚未激活，无法提交项目!");
+                        return;
+                    }
+                }
+                //开始时间为空，要弹出窗口给用户确认是否开始巡检
+                if (starttime == null || starttime == "") {
+                    C.confirm("提示", "是否开始巡检？", function(ret) {
+                        starttime = "start";
+                        $client.startXunjianTask({
+                            taskid : taskid
+                        });
+                    }, function() {
+                        editEnabled = false;
+                        showToast("巡检项目未激活！");
+                    });
+                } else if (ret.currentPage == 1 && ret.needConfirm && ret.needConfirm == "true") {
+                    C.confirm("提示", "任务已完成，是否结束巡检？", function(ret) {
+                        $client.stopXunjianTask({
+                            taskid : taskid
+                        }, function(ret, err) {
+                            api.execScript({
+                                name : "task_list_win",
+                                script : 'refreshList();'
+                            });
+                            setTimeout(function() {
+                                api.closeWin({
+                                });
+                            }, 300);
+                        });
+                    });
+                }
+            }
+        }
+
+        /*
+         * 巡检任务详情重置
+         */
+        function rollback(projectid) {
+        }
+
+        /**
+         *刷新页面
+         */
+        function refreshList() {
+            listView.refresh();
+        }
+
+        /*
+         * 刷新单个巡检项目
+         */
+        function refreshItem() {
+        }
+
+        function call_rollback() {
+            var taskid = api.pageParam.taskid
+            showlog('taskId = ' + taskid);
+            var opts = {
+                taskId : taskid
+            };
+            api.confirm({
+                title : '巡检项目重置确认',
+                msg : '确认重置该巡检项目吗？',
+                buttons : ["取消", "确认"]
+            }, function(ret) {
+                if (ret.buttonIndex == 2) {
+                    api.showProgress({
+                        title : '加载中',
+                        modal : false
+                    });
+                    $client.getTaskRollback(opts, function(ret, err) {
+                        api.hideProgress();
+                        if (ret) {
+                            if (ret.success) {
+                                api.execScript({
+                                    name : 'task_list_win',
+                                    frameName : 'waitTaskList1',
+                                    script : 'listView.refresh();'
+                                });
+                                api.execScript({
+                                    name : 'task_list_win',
+                                    frameName : 'finishTaskList',
+                                    script : 'listView.refresh();'
+                                });
+                                api.toast({
+                                    msg : '重置成功!'
+                                });
+                                window.setTimeout(function() {
+                                    api.closeWin();
+                                }, 2000)
+                            } else {
+                                api.toast({
+                                    msg : ret.data_info
+                                });
+                            }
+                        } else {
+                            api.toast({
+                                msg : ret.data_info
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</html>

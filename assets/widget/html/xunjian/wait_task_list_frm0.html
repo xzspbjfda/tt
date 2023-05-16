@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>巡检任务列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+    <style>
+        body.active{
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+        .greenPic{
+       /*<img src="../../image/dev_chaiyoufadianjizu.png" width="50px" height="50px"/>*/
+        }
+
+        .redPic{
+        background-image: url(../../image/red_sign.png);
+        }
+				.aui-content{
+					margin: 0 10px;
+				}
+
+				.li_box{
+					position: relative;
+					background-color: #fff;
+					border-radius: 6px;
+				}
+
+				.aui-checkbox{
+					margin: 0 4px 0 10px;
+					top: 20px;
+				}
+				.buttonGroup {
+						width: 94%;
+						position: fixed;
+						left: 50%;
+						margin-left: -47%;
+						bottom: 5px;
+						text-align: center;
+						display: none;
+				}
+				.buttonGroup2 {
+						width: 94%;
+						position: fixed;
+						left: 50%;
+						margin-left: -47%;
+						bottom: 5px;
+						text-align: center;
+						overflow: hidden;
+						display: none;
+				}
+				.uploadBtn{
+					width: 100%;
+					display: inline-block;
+				}
+				.uploadBtn2{
+					width: 100%;
+					display: inline-block;
+				}
+				.wxx_btn{
+					width: 100px;
+					height: 30px;
+					border-radius: 35px;
+					border: 1px solid #db4537;
+					line-height: 32px!important;
+					color: #db4537;
+					font-size: 14px;
+					text-align: center;
+					display: inline-block;;
+					background-color: #fff;
+					margin-bottom: 20px;
+				}
+
+			.ccssoft_list_wxx li{
+				border-bottom-left-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+    </style>
+</head>
+<body>
+	<script id="listView-template2" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var model=it[i];
+				var time= model.date;
+				var starttime= model.starttime;
+				var endtime= model.endtime;
+				if(time!=null&&time!=''){
+				time=time.substring(0,time.lastIndexOf('-')).replace('-','年')+'月';
+				}else{
+				time='';
+				}
+
+				if(starttime!=null&&starttime!=''){
+				starttime=starttime.substring(0,starttime.lastIndexOf(':'));
+				}else{
+				starttime='';
+				}
+
+				if(endtime!=null&&endtime!=''){
+			endtime=endtime.substring(0,endtime.lastIndexOf(':'));
+				}else{
+				endtime='';
+				}
+			}}
+			<div class="li_box">
+			{{? model.online!="true"}}
+			<input class="aui-pull-left aui-checkbox" taskid='{{=it[i].taskid != null ? it[i].taskid:""}}' type="checkbox"  style="display: none">
+			{{?}}
+			<li tapmode="active" onclick="openWaitTask2('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}','{{=it[i].taskstatus != null ? it[i].taskstatus:""}}',
+			'{{=it[i].stationname != null ? it[i].stationname:""}}','{{=it[i].stationcode != null ? it[i].stationcode:""}}','{{=it[i].stationid != null ? it[i].stationid:""}}','{{=it[i].operators != null ? it[i].operators:""}}',
+			'{{=it[i].countyname != null ? it[i].countyname:""}}', '{{=it[i].taskstate != null ? it[i].taskstate:""}}', '{{=it[i].deviceid != null ? it[i].deviceid:""}}','{{=it[i].signtime != null ? it[i].signtime:""}}','{{=it[i].online != null ? it[i].online:""}}');">
+					{{? api.pageParam.type=='XUNJIAN_TASK'}}
+		<div class="liTop">
+				<div class="liTopFinishTitle">{{=it[i].taskname != null ? it[i].taskname:""}}</div>
+				<div class="liTopFinishTotal">项目：{{=it[i].projectcount != null ? it[i].projectcount:""}}</div>
+		</div>
+		<div class="liFinishMiddle">
+			<div class="liDownPerson">巡检人：{{=it[i].taskusername != null ? it[i].taskusername:""}}</div>
+			<div class="liDownBegin">开始：{{=it[i].date != null ? it[i].date:""}}</div>
+			<div class="liDownEnd">结束：{{=it[i].inspectendtime != null ? it[i].inspectendtime:""}}</div>
+		</div
+		<div class="liFinishDown">
+			<div class="liDownFinishBegin">开始：{{=it[i].starttime != null ? it[i].starttime:""}}</div>
+			<div class="liDownFinishEnd">结束：{{=it[i].endtime != null ? it[i].endtime:""}}</div>
+		</div>
+		{{?? api.pageParam.type=='NEW_XUNJIAN_TASK'}}
+					<div class="liTop">
+				<div class="liTopFinishTitle">{{=it[i].stationname != null ? it[i].stationname:""}}{{=it[i].checkresut != null ? "("+it[i].checkresut+")":""}}</div>
+				<div class="liTopFinishTotal">项目：{{=it[i].projectcount != null ? it[i].projectcount:""}}</div>
+		</div>
+		<div class="liFinishMiddle">
+			<div class="liDownPerson" style="border-right: transparent;width: 50%">巡检人:{{=it[i].taskuser != null ? it[i].taskuser:""}}</div>
+			<div class="liDownBegin" style="float: right;width: 45%">执行时间:{{=time}}</div>
+		</div
+		<div class="liFinishDown">
+			<div class="liDownFinishBegin">实际开始:{{=starttime}}</div>
+			<div class="liDownFinishEnd" style="float: right;text-align: right">实际结束:{{=endtime}}</div>
+		</div>
+		 {{?}}
+	</li>
+	{{? it[i].LX=='1'}}
+	<div style="text-align:center; background-color:#fff;border-bottom-left-radius: 6px;border-bottom-right-radius: 6px;overflow:hidden;">
+	<div  class=" wxx_btn " style="display:inline-block;" onclick="synchronService('{{=it[i].taskid != null ? it[i].taskid:""}}')">
+			上传数据
+	</div>
+
+	</div>
+
+	{{?}}
+	</div>
+			{{ } }}
+	</script>
+	<script id="listView-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {
+        	var model=it[i];
+       		var time= model.date;
+       		if(time!=null&&time!=''){
+       		time=time.substring(0,time.lastIndexOf('-')).replace('-','年')+'月';
+       		}else{
+       		time='';
+       		}
+        }}
+				<div class="li_box">
+				{{? model.online!="true"}}
+				<input class="aui-pull-left aui-checkbox" taskid='{{=it[i].taskid != null ? it[i].taskid:""}}' type="checkbox"  style="display: none">
+				{{?}}
+				<li tapmode="active" onclick="openWaitTask('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}',
+       '{{=it[i].taskstatus != null ? it[i].taskstatus:""}}','{{=it[i].taskstate != null ? it[i].taskstate:""}}','{{=it[i].lon != null ? it[i].lon:""}}','{{=it[i].lat != null ? it[i].lat:""}}',
+       '{{=it[i].stationname != null ? it[i].stationname:""}}','{{=it[i].stationcode != null ? it[i].stationcode:""}}','{{=it[i].siteid != null ? it[i].siteid:""}}','{{=it[i].operators != null ? it[i].operators:""}}',
+       '{{=it[i].countyname != null ? it[i].countyname:""}}', '{{=it[i].deviceid != null ? it[i].deviceid:""}}','{{=it[i].signtime != null ? it[i].signtime:""}}','{{=it[i].online != null ? it[i].online:""}}');">
+			{{? api.pageParam.type=='XUNJIAN_TASK'}}
+			<div class="liTop" >
+				<div class="liTopIcon" style="padding-top: 3px;width: 18px;height: 18px;">
+					<!--<div class="{{=it[i].istimeout=="0" ? "greenPic" :"redPic"}}"></div>-->
+					{{? it[i].istimeout=='1'}}
+					<img src="../../image/red_com.png" width="18px" height="18px;"/>
+					{{??}}
+					<img src="../../image/green_com.png" width="18px" height="18px;"/>
+					{{?}}
+    			</div>
+    			<div class="liTopTitle" style="margin-left: 3px;">{{=it[i].taskname != null ? it[i].taskname:""}}{{=it[i].checkresut != null ? "("+it[i].checkresut+")":""}} </div>
+    			<div class="liTopProgress">进度:{{=it[i].finishcount != null ? it[i].finishcount:""}}/{{=it[i].projectcount != null ? it[i].projectcount:""}}</div>
+			</div>
+			<div class="liDown">
+				<div class="liDownPerson">巡检人:{{=it[i].taskusername != null ? it[i].taskusername:""}}</div>
+				<div class="liDownBegin">开始:{{=it[i].date != null ? it[i].date:""}}</div>
+				<div class="liDownEnd">结束:{{=it[i].inspectendtime != null ? it[i].inspectendtime:""}}</div>
+			</div>
+			{{?? api.pageParam.type=='NEW_XUNJIAN_TASK'}}
+				<div class="liTop">
+					<div class="liTopIcon" style="padding-top: 3px;width: 18px;height: 18px;">
+					<!--<div class="{{=it[i].istimeout=="0" ? "greenPic" :"redPic"}}"></div>-->
+					{{? it[i].taskstate=='1'}}
+					{{? it[i].istimeout=='1'}}
+					<img src="../../image/red_sign.png" width="18px" height="18px;"/>
+					{{??}}
+					<img src="../../image/green_sign.png" width="18px" height="18px;"/>
+					{{?}}
+					{{??}}
+					{{? it[i].istimeout=='1'}}
+					<img src="../../image/red_com.png" width="18px" height="18px;"/>
+					{{??}}
+					<img src="../../image/green_com.png" width="18px" height="18px;"/>
+					{{?}}
+					{{?}}
+    			</div>
+    			<div class="liTopTitle" style="margin-left: 3px;">{{=it[i].stationname != null ? it[i].stationname:""}}{{=it[i].checkresut != null ? "("+it[i].checkresut+")":""}}</div>
+    			<div class="liTopProgress">进度:{{=it[i].finishcount != null ? it[i].finishcount:""}}/{{=it[i].projectcount != null ? it[i].projectcount:""}}</div>
+			</div>
+			<div class="liDown">
+				<div class="liDownPerson" style="border-right: transparent;width: 50%">巡检人:{{=it[i].taskuser != null ? it[i].taskuser:""}}</div>
+				<div class="liDownBegin" style="float: right;width: 45%">执行时间:{{=time}}</div>
+			</div>
+			 {{?}}
+		</li>
+		{{? it[i].LX=='1'}}
+		<div style="text-align:center; background-color:#fff;border-bottom-left-radius: 6px;border-bottom-right-radius: 6px;overflow:hidden;">
+		<div  class=" wxx_btn " style="margin:10px 4px;display:inline-block;" onclick="synchronService('{{=it[i].taskid != null ? it[i].taskid:""}}')">
+				上传数据
+		</div>
+		{{? it[i].taskstate=='1'}}
+		<div  class=" wxx_btn " style="margin:10px 4px;display:inline-block;" onclick="onlinqd('{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].lon != null ? it[i].lon:""}}','{{=it[i].lat != null ? it[i].lat:""}}')">
+				签到
+		</div>
+		{{?}}
+		</div>
+
+		{{?}}
+		</div>
+        {{ } }}
+    </script>
+    <div id="" class="aui-content">
+    	<ul class="ccssoft_list_wxx" id="listView">
+
+    	</ul>
+			<ul class="ccssoft_list_wxx" id="listView2">
+
+    	</ul>
+			<div id="buttonGroup" class='buttonGroup'>
+					<button id="uploadBtn"  class="aui-btn aui-btn-success uploadBtn" onclick="synchron()">
+							离线数据
+					</button>
+			</div>
+
+			<div class='buttonGroup2'>
+					<button  class="aui-btn aui-btn-danger uploadBtn2" onclick="synchrondelete()">
+							删除本地
+					</button>
+			</div>
+    </div>
+
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+
+<script type="text/javascript" src="../../script/xunjian_wxx.js"></script>
+
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/home_frm.js"></script>
+
+<script type="text/javascript">
+
+		// 离线签到
+		function onlinqd(taskid,lon,lat){
+			api.confirm({
+					title: '提示',
+					msg: '离线签到',
+					buttons: ['确定', '取消']
+			}, function(ret, err) {
+					if(ret.buttonIndex=='1'){
+
+						api.pageParam.operateType="XUNJIAN";
+						api.pageParam.online=8;
+						api.pageParam.taskid=taskid;
+						api.pageParam.lon=lon;
+						api.pageParam.lat=lat;
+						api.openWin({
+						name : 'upStationSign_win',
+						url : '../bill/upStationSign_win.html',
+						bounces : false,
+						rect : {
+							x : 0,
+							y : 0,
+							w : 'auto',
+							h : 'auto'
+						},
+						reload : true,
+						pageParam : api.pageParam
+					});
+					}
+			});
+		}
+
+		var listView = null;
+
+    /**
+     *打开待办任务的详情
+     * readyStartTime 计划开始时间
+     */
+    function openWaitTask(readyStartTime, taskId, starttime, taskstatus,taskstate,lon,lat,stationname,stationcode,stationid,operators,county,deviceid,signtime,online) {
+        var fromNotifition = "N";
+        var user= $api.getStorage("user");
+				if(online=='true'&&$api.getStorage('offline')=='false'){
+					api.confirm({
+							title: '提示',
+							msg: '该任务已经离线,是否离线处理',
+							buttons: ['确定', '取消']
+					}, function(ret, err) {
+						var index = ret.buttonIndex;
+						if(index==1){
+
+							openWinList('xunjian/task_list_win0','离线巡检','NEW_XUNJIAN_TASK',true);
+
+						}
+					});
+				}else {
+					openPage_taskProjectList( taskId, starttime, fromNotifition, taskstatus, readyStartTime,api.pageParam.start_status,"",taskstate,lon,lat,stationname,stationcode,stationid,operators,county,api.pageParam.index_id,deviceid);
+				}
+
+    }
+
+		function openWaitTask2(readyStartTime, taskId, starttime, taskstatus,stationname,stationcode,stationid,operators,countyname,taskstate,deviceid) {
+        var fromNotifition = "N";
+        var user= $api.getStorage("user");
+          openPage_taskProjectList(taskId, starttime, fromNotifition, taskstatus, readyStartTime,api.pageParam.start_status,"",taskstate,"","",stationname,stationcode,stationid,operators,countyname,'2',deviceid);
+
+
+    }
+
+    apiready = function() {
+
+				shuaxin();
+    };
+
+		function shuaxin(){
+			// 判断当前网络连接状态 wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			var connectionType = api.connectionType;
+			console.log(connectionType);
+			if(api.pageParam.offline){
+				api.execScript({
+					name:'task_list_win0',
+					script : "$('#operator').text('删除');"
+				});
+				db = api.require('db');
+				db.openDatabase({
+		        name: 'xunjian',
+		        path: 'fs://xunjian/DB/inspection'
+		    }, function(ret, err) {
+		        if (ret.status) {
+							if (api.pageParam.start_status == 'Y') {
+								db.selectSql({
+										name: 'xunjian',
+										sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 1 OR taskstate = 2'
+								}, function(ret, err) {
+										if (ret.status) {
+												var onlinedata=ret.data;
+												for (var i = 0; i < onlinedata.length; i++) {
+													onlinedata[i].LX=1;
+												}
+												renderTemp('listView','listView-template',onlinedata);
+										} else {
+											api.alert({
+													title: '提示',
+													msg: '离线操作请先同步数据库',
+											}, function(ret, err) {
+													if(ret.buttonIndex==1){
+														api.closeWin();
+													}
+											});
+										}
+								});
+								db.selectSql({
+										name: 'xunjian',
+										sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 3'
+								}, function(ret, err) {
+										if (ret.status) {
+												var onlinedata=ret.data;
+												for (var i = 0; i < onlinedata.length; i++) {
+													onlinedata[i].LX=1;
+												}
+												renderTemp('listView2','listView-template2',onlinedata);
+										}
+								});
+							} else {
+								db.selectSql({
+										name: 'xunjian',
+										sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 0'
+								}, function(ret, err) {
+										if (ret.status) {
+												renderTemp('listView','listView-template',ret.data);
+										} else {
+											api.alert({
+												title: '提示',
+												msg: '离线操作请先同步数据库',
+											});
+										}
+								});
+							}
+		        } else {
+		            alert(JSON.stringify(err));
+		        }
+		    });
+				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			}else {
+				$api.setStorage("indexId", api.pageParam.index_id);
+				console.log(api.pageParam.type);
+				console.log(api.pageParam.start_status);
+
+				if (api.pageParam.type == "XUNJIAN_TASK") {
+					if (api.pageParam.start_status == 'Y') {
+						listView = new C.ApiListView({
+							listName: 'taskInfoList',
+							fn: $client.getProcessingTaskList
+						});
+					} else {
+						listView = new C.ApiListView({
+							listName: 'taskInfoList',
+							fn: $client.getUnstartTaskList
+						});
+					}
+				} else if (api.pageParam.type == "NEW_XUNJIAN_TASK") {
+					// wxx
+					if (api.pageParam.start_status == 'Y') {
+						listView = new C.ApiListView({
+							listName: 'taskInfoList',
+							fn: $client.getUnfinishTaskList,
+							limit:1000
+						});
+
+					} else {
+						listView = new C.ApiListView({
+							listName: 'taskInfoList',
+							fn: $client.getUnstartNewTaskList
+						});
+					}
+				}
+				listView.refresh();
+			}
+		}
+
+    function cb_queryWaitTaskList(opts) {
+    	 listView.setQueryOptions(opts);
+         listView.refresh();
+    }
+
+		/*jQuery事件: 离线按钮点击*/
+		function offline(){
+					if(api.pageParam.offline){
+						$('.buttonGroup2').toggle();
+					}else {
+						$('#buttonGroup').toggle();
+					}
+					$('.aui-content:visible .aui-checkbox').toggle();
+
+		}
+
+		/*jQuery事件: 取消按钮点击*/
+		function resetCheck(){
+			$('.aui-content:visible .aui-checkbox:checked').attr('checked', false);
+		}
+
+		// 同步数据到本地
+    function synchron() {
+			var taskids=[];
+			$('.aui-content:visible .aui-checkbox:checked').each(function(index) {
+					// remove($(this).parent().attr('pid'));
+					var taskid=$(this).attr('taskid');
+					taskids.push(taskid);
+			});
+			var stra = taskids.toString();
+        api.showProgress({
+            title: '努力同步中...',
+            text: '先喝杯茶...'
+        });
+        var userid = $api.getStorage('user').userid;
+        var opts = {
+            userid: userid,
+            start: 1,
+            limit: 100,
+						taskid:stra
+        };
+        $client.synchronization(opts, function(ret, err) {
+            // console.log('9999999999999999999999999');
+
+            if (ret.success) {
+                db_initwxx(ret)
+                api.hideProgress();
+                api.toast({
+                    msg: '同步数据到本地成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+								api.execScript({
+									name:'task_list_win0',
+									script : "$('#operator').click();"
+								});
+								// listView.refresh();
+            } else {
+                api.hideProgress();
+                api.toast({
+                    msg: '同步数据到本地失败，请重试',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        });
+    }
+
+		//删除本地数据
+    function synchrondelete() {
+			var size=$('.aui-content:visible .aui-checkbox:checked').size();
+			var taskids=[];
+			$('.aui-content:visible .aui-checkbox:checked').each(function(index) {
+					// remove($(this).parent().attr('pid'));
+					var taskid=$(this).attr('taskid');
+					taskids.push(taskid);
+			});
+			var strSql='';
+			for (var i = 0; i < taskids.length; i++) {
+				strSql=strSql+'taskid="'+taskids[i]+'" OR ';
+			}
+			strSql = strSql.substring(0,strSql.length-3);
+			console.log(strSql);
+			if(size>0){
+				api.confirm({
+						title: '提示',
+						msg: '是否删除选中任务',
+						buttons: ['确定', '取消']
+				}, function(ret, err) {
+						var index = ret.buttonIndex;
+						if(index==1){
+							var fs = api.require('fs');
+							var db = api.require('db');
+							db.selectSql({
+									name: 'xunjian',
+									sql: 'SELECT * FROM taskInfoList'
+							}, function(ret, err) {
+									console.log(getObj(ret));
+									if (ret.status) {
+											if (ret.data.length > 0) {
+													api.showProgress({
+															title: '正在删除...',
+															text: '先喝杯茶...'
+													});
+													db.selectSql({
+															name: 'xunjian',
+															sql: 'DELETE FROM taskInfoList WHERE '+strSql
+													}, function(ret, err) {
+															if (ret.status) {
+																db.selectSql({
+																		name: 'xunjian',
+																		sql: 'DELETE FROM inspstandRelProjInfoDetailList WHERE '+strSql
+																}, function(ret, err) {
+																		if (ret.status) {
+																			db.selectSql({
+																					name: 'xunjian',
+																					sql: 'DELETE FROM inspstandRelProjInfoList WHERE '+strSql
+																			}, function(ret, err) {
+																					if (ret.status) {
+																						api.hideProgress();
+																						api.toast({
+																								msg: '删除成功',
+																								duration: 2000,
+																								location: 'bottom'
+																						});
+
+																						db.selectSql({
+																								name: 'xunjian',
+																								sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 1 OR taskstate = 2'
+																						}, function(ret, err) {
+																								if (ret.status) {
+																									var onlinedata=ret.data;
+																									for (var i = 0; i < onlinedata.length; i++) {
+																										onlinedata[i].LX=1;
+																									}
+																									renderTemp('listView','listView-template',onlinedata);
+																									api.execScript({
+																										name:'task_list_win0',
+																										script : "$('#operator').click() ;"
+																									});
+																								}
+																						});
+																						db.selectSql({
+																								name: 'xunjian',
+																								sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 3'
+																						}, function(ret, err) {
+																								if (ret.status) {
+																										var onlinedata=ret.data;
+																										for (var i = 0; i < onlinedata.length; i++) {
+																											onlinedata[i].LX=1;
+																										}
+																										renderTemp('listView2','listView-template2',onlinedata);
+																								}
+																						});
+																					}
+																			});
+																		}
+																});
+															}
+													});
+											}
+									} else {
+											api.toast({
+													msg: '本地数据为空',
+													duration: 2000,
+													location: 'bottom'
+											});
+									}
+							})
+						}
+				});
+			}else {
+				api.toast({
+						msg: '请选择任务',
+						duration: 2000,
+						location: 'bottom'
+				});
+			}
+
+
+    }
+
+		// 同步本地到服务
+    var inspstandRelProjInfoDetailList, inspstandRelProjInfoList, taskInfoList;
+
+    function synchronService(taskid) {
+
+        var userid = $api.getStorage('user').userid;
+        db = api.require('db');
+        db.selectSql({
+            name: 'xunjian',
+            sql: 'SELECT * FROM taskInfoList'
+        }, function(ret, err) {
+            console.log(getObj(ret));
+            if (ret.status) {
+                if (ret.data.length > 0) {
+                    api.showProgress({
+                        title: '努力同步中...',
+                        text: '先喝杯茶...'
+                    });
+                    db.selectSql({
+                        name: 'xunjian',
+                        sql: 'SELECT * FROM inspstandRelProjInfoDetailList WHERE taskid="'+taskid+'"'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            if (ret.data) {
+                                inspstandRelProjInfoDetailList = ret.data;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                    db.selectSql({
+                        name: 'xunjian',
+                        sql: 'SELECT * FROM inspstandRelProjInfoList WHERE taskid="'+taskid+'"'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            if (ret.data) {
+                                inspstandRelProjInfoList = ret.data;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                    db.selectSql({
+                        name: 'xunjian',
+                        sql: 'SELECT * FROM taskInfoList WHERE taskid="'+taskid+'"'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            if (ret.data) {
+                                taskInfoList = ret.data;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                    setTimeout(function() {
+                        var opts = {
+                            inspstandRelProjInfoDetailList: inspstandRelProjInfoDetailList,
+                            inspstandRelProjInfoList: inspstandRelProjInfoList,
+                            taskInfoList: taskInfoList,
+                            userid: userid
+                        };
+                        console.log(getObj(opts));
+                        $client.synchronizationService(opts, function(ret, err) {
+                            // console.log('9999999999999999999999999');
+                            // console.log(getObj(ret));
+                            if (ret.success) {
+
+																db.selectSql({
+																		name: 'xunjian',
+																		sql: 'DELETE FROM taskInfoList WHERE  taskid="'+taskid+'"'
+																}, function(ret, err) {
+																		if (ret.status) {
+																			db.selectSql({
+																					name: 'xunjian',
+																					sql: 'DELETE FROM inspstandRelProjInfoDetailList WHERE taskid="'+taskid+'"'
+																			}, function(ret, err) {
+																					if (ret.status) {
+																						db.selectSql({
+																								name: 'xunjian',
+																								sql: 'DELETE FROM inspstandRelProjInfoList WHERE taskid="'+taskid+'"'
+																						}, function(ret, err) {
+																								if (ret.status) {
+																									api.hideProgress();
+									                                api.toast({
+									                                    msg: '同步本地到服务成功',
+									                                    duration: 2000,
+									                                    location: 'bottom'
+									                                });
+
+																									db.selectSql({
+																											name: 'xunjian',
+																											sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 1 OR taskstate = 2'
+																									}, function(ret, err) {
+																											if (ret.status) {
+																												var onlinedata=ret.data;
+																												for (var i = 0; i < onlinedata.length; i++) {
+																													onlinedata[i].LX=1;
+																												}
+																												renderTemp('listView','listView-template',onlinedata);
+																											}
+																									});
+
+																									db.selectSql({
+																											name: 'xunjian',
+																											sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 3'
+																									}, function(ret, err) {
+																											if (ret.status) {
+																													var onlinedata=ret.data;
+																													for (var i = 0; i < onlinedata.length; i++) {
+																														onlinedata[i].LX=1;
+																													}
+																													renderTemp('listView2','listView-template2',onlinedata);
+																											}
+																									});
+
+																								}
+																						});
+																					}
+																			});
+																		}
+																});
+
+                            } else {
+                                api.hideProgress();
+                                api.toast({
+                                    msg: '同步本地到服务失败，请重试',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        });
+                    }, 2000);
+
+                }
+            } else {
+                api.toast({
+                    msg: '本地数据为空，请先同步数据到本地',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        })
+    }
+		function onlineRefresh(){
+			var db = api.require('db');
+			db.selectSql({
+					name: 'xunjian',
+					sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 1 OR taskstate = 2'
+			}, function(ret, err) {
+					if (ret.status) {
+						var onlinedata=ret.data;
+						for (var i = 0; i < onlinedata.length; i++) {
+							onlinedata[i].LX=1;
+						}
+						renderTemp('listView','listView-template',onlinedata);
+						api.execScript({
+							name:'task_list_win0',
+							script : "$('#operator').text('删除') ;"
+						});
+					}
+			});
+			db.selectSql({
+					name: 'xunjian',
+					sql: 'SELECT * FROM taskInfoList  WHERE  taskstate = 3'
+			}, function(ret, err) {
+					if (ret.status) {
+							var onlinedata=ret.data;
+							for (var i = 0; i < onlinedata.length; i++) {
+								onlinedata[i].LX=1;
+							}
+							renderTemp('listView2','listView-template2',onlinedata);
+					}
+			});
+		}
+</script>
+</html>

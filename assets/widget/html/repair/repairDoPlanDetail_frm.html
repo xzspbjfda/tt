@@ -1,0 +1,1292 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<title>普通回单详情</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	<link rel="stylesheet" type="text/css" href="../bill/css/billRevertDetail.css" />
+	<style>
+	.item-table{
+		width: 100%;
+		border-collapse: collapse;
+		border: 1px solid #ccc;
+		font-size: 12px;
+		background-color: #fff;
+		text-align: center;
+	}
+	.item-table th{
+		border: 1px solid #ccc;
+		background-color: #db4537;
+		color: #fff;
+		height: 28px;
+	}
+	.item-table td{
+		height: 28px;
+		border: 1px solid #ccc;
+	}
+	.discountpriceInput{
+		width: 100%!important;
+		padding: 0!important;
+	}
+
+	</style>
+</head>
+<body>
+	<script id="dict-template1" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+        {{ } }}
+    </script>
+	<!--合同单价项目模板-->
+	<script id="item-template" type="text/html">
+		{{
+			for(var i=0, len=it.length; i< len; i++) {
+				var type="" ;
+				var discountprice="";
+				var taxpricetype="";
+				if( "1"==it[i].itemtype){
+					 type="按次";
+				}else if( "2"==it[i].itemtype){
+					 type="按月包干";
+				};
+				if(it[i].itemtype=='1' && $("#isNeedFeeId").val()=="2"){
+					discountprice=it[i].taxprice*it[i].amount;
+					taxpricetype=it[i].taxprice*it[i].amount;
+				}else{
+					discountprice=it[i].taxprice*it[i].amount;
+					taxpricetype=it[i].taxprice*it[i].amount;
+				}
+		}}
+		<tr class="tr_box">
+			<td class="type">
+				{{=type}}
+			</td>
+			<td style="text-align:left;">{{=it[i].paytype}}</td>
+			<td class="taxprice">{{=it[i].taxprice}}</td>
+			<td class="calprice">
+				{{=taxpricetype}}
+			</td>
+			<td>
+				<input id="discountprice" name="discountprice" class="aui-counter-input discountpriceInput" type="number" value='{{=discountprice}}' onchange="discountpriceAction(this);">
+			</td>
+			<td >
+				 <div class="aui-counter aui-info aui-pull-right">
+				 <div id="min_num" class="aui-counter-minus" onclick="minNum(this,'{{=it[i].id}}');"></div>
+				 <input id="numinfo" name="numinfo"  class="aui-counter-input amountInput" type="number" value='{{=it[i].amount}}' onchange="setBudgetTxt(this,'{{=it[i].id}}');">
+				 <div id="add_num" class="aui-counter-plus" onclick="addNum(this);"></div>
+				 </div>
+			</td>
+		</tr>
+		{{}}}
+	</script>
+	<!--下拉列表-->
+	<script id="m-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i < len; i++) {}}
+		<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+		{{ } }}
+	</script>
+	<!--图片模板-->
+	<script id="img-template" type="text/html">
+		<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col">
+			<div class=" aui-flex-item-2">
+				<img class="aui-img-object aui-pull-left" src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			<div class="aui-pull-left aui-flex-item-8">
+				{{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+				<p class='aui-ellipsis-1'>
+					经度:{{=it.lon}}
+				</p>
+				<p class='aui-ellipsis-1'>
+					纬度: {{=it.lat}}
+				</p>
+				<p>
+					地址:{{=it.photoaddress}}
+				</p>
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center">
+				<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">x</button>
+			</div>
+			{{?}}
+		</li>
+	</script>
+	<div id="wrap" >
+		<!--普通回单begin-->
+		<form>
+			<input id="projectid" name="projectid" type="hidden" value=""/>
+			<input id="contractid" name="contract" type="hidden" value=""/>
+			<input id="fixUser_Id" name="fixUserid" type="hidden" value=""/>
+			<input id="fixUser_Name" name="fixUser" type="hidden" value=""/>
+			<input id="fixCom" name="fixCom" type="hidden" value=""/>
+
+
+			<div id="billRevertDivId" style="overflow:auto;margin-bottom:55px;">
+				<div id="isStandStaHidDivId" class="cardDiv">
+					<div class="cardLabel">
+						维修工单号：
+					</div>
+					<div class="cardCon">
+						<input id="billId" name="billsn" type="text"  value="" disabled="disabled" style="height:35px; line-height:35px;">
+					</div>
+				</div>
+				<div  class="cardDiv">
+					<div class="cardLabel">
+						站址iID：
+					</div>
+					<div class="cardCon" style="padding-top: 10px;" id="showStationId">
+						aaa
+					</div>
+				</div>
+				<div  class="cardDiv">
+					<div class="cardLabel">
+						设备ID：
+					</div>
+					<div class="cardCon" style="padding-top: 10px;" id="showDeviceId">
+						bbb
+					</div>
+				</div>
+				<div  class="cardDiv">
+					<div class="cardLabel">
+						隐患项目ID：
+					</div>
+					<div class="cardCon" style="padding-top: 10px;" id="showProjectId">
+						ccc
+					</div>
+				</div>
+				
+
+				<div class="cardDiv">
+					<div class="cardLabel">
+						<font color="red">*</font>是否走代维费处理
+					</div>
+					<div class="cardCon">
+						<select id="isNeedFeeId" name="isNeedFee" class="required" data-valid="required" data-error="是否走代维费处理必选！"  value=""  onchange="isFreeDeal(this);">
+						<option value="2">否</option>
+						<option value="1">是</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="cardDiv">
+					<div class="cardLabel">
+						<font color="red" >*</font>维修方式：
+					</div>
+					<div class="cardCon">
+						<select onchange="onRepairWay(this)" id="repairwayId" name="fixType" class="required" data-valid="required" data-error="请选择维修方式！" >
+							<option value="">请选择</option>
+							<option value="1">紧急维修</option>
+							<option value="2">挂起</option>
+							<option value="3">更新改造</option>
+							<option value="4">计划性修缮</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="cardDiv" id='contractname_box' style='display:none;'>
+					<div class="cardLabel">
+						<font color="red" >*</font>合同名称：
+					</div>
+					<div class="cardCon">
+					<input id='contractname' name="contractname" class="required" data-valid="required" data-error="请选择合同名称！" readonly="readonly" onclick="addContract(this)" id="add_contract" type="text"   style="height:35px; line-height:35px;">
+					</div>
+				</div>
+
+				<div class="cardDiv" id="contractno_box" style='display:none;'>
+					<div class="cardLabel">
+						<font color="red" >*</font>合同编码：
+					</div>
+					<div class="cardCon">
+					<input id='contractno' name="contractno" type="text" class="required" data-valid="required" data-error="请选择合同编码！" value="" disabled="disabled" style="height:35px; line-height:35px;">
+					</div>
+				</div>
+
+				<div id="repair_com" class="cardDiv" style="display: none">
+					<div class="cardLabel">
+						<font color="red" >*</font>维修单位：
+					</div>
+					<div class="cardCon">
+						<input id="companyname" name="companyname" class="required" data-valid="required" data-error="请选择维修单位！" type="text"  value=""  disabled="disabled" style="height:35px; line-height:35px;">
+					</div>
+				</div>
+
+				<div id="repair_com_code" class="cardDiv" style="display: none">
+					<div class="cardLabel">
+						<font color="red" >*</font>维修单位编码：
+					</div>
+					<div class="cardCon">
+						<input id="companycode" name="companycode" class="required" data-valid="required" data-error="请选择维修单位编码！" type="text"  value=""  disabled="disabled" style="height:35px; line-height:35px;">
+					</div>
+				</div>
+
+				<!-- wxxxxxxxxxxxxxx -->
+				<div id="item_box" style="display:none;">
+					<li id="title_contract" class="aui-list-view-cell ccssoft-aui-list-view-divider" >
+						合同单价项目信息
+					</li>
+					<table class="item-table">
+					<thead>
+						<tr>
+							<th width='50'>计费方式</th>
+							<th width='100'>维修项目</th>
+							<th>含税价格(元)</th>
+							<th>结算价格(元)</th>
+							<th>折扣价格(元)</th>
+							<th>数量</th>
+						</tr>
+					</thead>
+
+					<tbody id="mainid"></tbody>
+				</table>
+					<div style="
+					border-color: #C0C0C0;
+					font-size: 14px;
+					font-family: Arial,Verdana,sans-serif;
+					color: #FFF;
+	background-color: #4A75B5;
+	 height:30px;padding-right:4px;padding-left:4px;
+	 border-radius:2px;line-height:30px;
+	 margin:4px auto;text-align:center; width:200px;"	onclick='addItem(this)' id="addItem">增加单价项目</div>
+				</div>
+				<!-- wxxxxxxxxxxxxxx -->
+
+				<div id="budget_id" class="cardDiv" style="display: none">
+					<div class="cardLabel">
+						<font color="red" >*</font>隐患处理预算：
+					</div>
+					<div class="cardCon">
+						<input id="budgetId" name="budget" type="text"  value="0"  disabled="disabled" style="height:35px; line-height:35px;">
+					</div>
+				</div>
+
+				<div id="repair_user" class="cardDiv" style="display: none">
+					<div class="cardLabel">
+						<font color="red" >*</font>维修人：
+					</div>
+					<div class="cardCon">
+						<select id="fixUserId" class="required" disabled='disabled'  data-valid="required" data-error="请选择维修人！" >
+							<option value="">请先填写合同名称</option>
+						</select>
+					</div>
+				</div>
+
+
+
+				<!-- zhangzhitao start -->
+				<div class="cardDiv" style="display:none;" id="completeLimitDateDiv">
+					<div class="cardLabel">
+						<font color="red" >*</font>修理完成时限：
+					</div>
+					<div class="cardCon">
+						<input type="date" name="completeLimitDate" id="completeLimitDate" class="required" data-valid="required" data-error="请填写修理完成时限！"/>
+					</div>
+				</div>
+				<div class="cardDiv" style="display:none;" id="moneyDateDiv">
+					<div class="cardLabel">
+						<font color="red" >*</font>预算金额：
+					</div>
+					<div class="cardCon">
+						<input type="number" name="discountprice" id="moneyDate"  class="required" data-valid="required" data-error="请填写预算金额！"/>
+					</div>
+				</div>
+				<div class="cardDiv" style="display:none;" id="deviceScoreDiv">
+					<div class="cardLabel">
+						设备健康度得分：
+					</div>
+					<div class="cardCon">
+						<input type="number" name="deviceScore" id="deviceScore"/>
+					</div>
+				</div> 
+
+				<div class="cardDiv" style="display:none;" id="regulationTypeDiv">
+					<div class="cardLabel">
+						<font color="red" >*</font>整治类型：
+					</div>
+					<div class="cardCon">
+						<select name="regulationType" onchange="selectRegulationType(this)" id="regulationType">
+
+						</select>
+					</div>
+				</div>
+				<div class="cardDiv" style="display:none;" id="regulationSchemeDiv">
+					<div class="cardLabel">
+						<font color="red" >*</font>整治方案：
+					</div>
+					<div class="cardCon">
+						<select name="regulationScheme" id="regulationScheme">
+							
+						</select>
+					</div>
+				</div>
+				
+			
+				<!-- zhangzhitao end -->
+				<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+					<div class="cardTextareaLabel">
+						<font color="red" >*</font>维修方式说明：
+					</div>
+					<div class="cardTextareaCon" style="background-color: #fff">
+						<textarea id="reliefDealInfoId" name="fixRemark" rows="4" class="noborder required" data-valid="required" data-error="请填写维修方式说明！" ></textarea>
+					</div>
+				</div>
+
+				<!--zhangning start  -->
+				<div class="cardDiv" style="display:none;" id="aintenanceLogoDiv">
+					<div class="cardLabel">
+						<font color="red">*</font>是否为可传导维修:
+					</div>
+					<div class="cardCon">
+						<input class="aui-radio" type="radio" name="aintenanceLogo"  value="是" ><div class="aui-radio-name">是</div>
+						<input class="aui-radio" type="radio" name="aintenanceLogo" value="否" checked="checked" style="margin-left: 10px;"><div class="aui-radio-name">否</div>
+					</div>
+				</div>
+				<div id="isshow_img" style="display: none;">
+					<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+						图片列表 ：
+					</li>
+					<ul id="list-view" class="aui-list-view" style="padding-bottom: 20px;">
+						<li class="aui-list-view-cell" data-win="list-image">
+							<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic(this)" />
+							<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+							<img style='display:none;' class='imgPath'  src=''/>
+						</li>
+					</ul>
+				</div>
+				<!-- 整治类型对应的专业评估明细 表格 只做展示  -->
+				<div id="regulationShowTb" style="display:none;" >
+					<li id="regulationTitle" class="aui-list-view-cell ccssoft-aui-list-view-divider">
+						
+					</li>
+					<table class="item-table">
+						<thead>
+							<!-- <tr>
+								<th>指标</th>
+								<th>站址等级</th>
+								<th>资产运行月</th>
+								<th>续航时长</th>
+								<th>响应时间</th>
+								<th>月均断电频次</th>
+								<th>单次退服时长</th>
+							</tr> -->
+						</thead>
+
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+	</div>
+	<!--普通回单end-->
+	<footer style="height:50px;">
+		<div class="cardButtonDiv">
+			<button class="billRevertCancelBtn"  onclick="api.closeWin()">
+				取消
+			</button>
+			<button id="submitBtn" class="billRevertOkBtn" onclick="initData();">
+				确定
+			</button>
+		</div>
+	</footer>
+	</form>
+	</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="script/billForm.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+<script>
+// 是否走代维费选择 根据选择的不同进行不同计算
+function isFreeDeal(e){
+	var fixTypeOptions =
+		"<option value=\"\">请选择</option>"+
+		"<option value=\"1\">紧急维修</option>"+
+		"<option value=\"2\">挂起</option>"+
+		"<option value=\"4\">计划性修缮</option>"
+		var isFree = $(e).val();
+		if ("2" == isFree) {
+			fixTypeOptions +="<option value=\"3\">更新改造</option>";
+		} else {
+			var textMsg;
+			textMsg='"是否走代维费处理"选择"是",维修项目无论按次还是包干,结算价格都按0计算,是否确认？';
+			$aui.dialog({
+				title: '提示',
+				text: textMsg
+			}, function(ret) {
+				if (ret.buttonIndex) {
+							api.toast({
+									msg: '维修方式已变更,请重新选择',
+									duration: 2000,
+									location: 'bottom'
+							});
+				}
+				$aui.hideDialog();
+			});
+		}
+		$('#repairwayId').html(fixTypeOptions);
+
+		// 刷新合同
+		console.log(JSON.stringify(shuArr[0]));
+		if(shuArr.length>0){
+			renderTemp('mainid', 'item-template', shuArr);
+			setBudgetTxt();
+		}
+
+
+}
+
+//添加单价项目
+function addItem(){
+	if($('#contractname').val()!=null && $('#contractname').val()!=''){
+		api.pageParam.winName = 'repairDoPlan_win';
+		api.pageParam.frameName = 'repairDoPlanDetail_frm';
+		api.pageParam.stationid = repairDetail.stationid;
+		api.pageParam.contractno = $('#contractno').val();
+		api.pageParam.contractname  = $('#contractname').val();
+		api.pageParam.consumercode  = $('#companycode').val();
+		api.pageParam.consumername = $('#companyname').val();
+
+		api.openWin({
+			name : 'item-list_win',
+			url : 'item-list_win.html',
+			pageParam : api.pageParam,
+			opaque : true,
+			bounces : false,
+			reload : true,
+			slidBackEnabled : true,
+			vScrollBarEnabled : false
+		});
+	}else {
+		api.toast({
+		    msg: '请先填写合同名称',
+		    duration: 2000,
+		    location: 'bottom'
+		});
+	}
+}
+	var repairPerson;
+	var repairDetail;
+	var idArr = new Array();
+	var shuArr= new Array();
+	var userNameArr=new Array();//wxx
+	var useridArr;
+	var dataArr = new Array();
+	var dwlist;
+	var shu;
+	var manlist;
+	var repairNameList;
+	var repairCompanyList;
+	var lastLocation;
+	apiready = function() {
+		lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+		repairDetail = $api.getStorage('repairDetail');//维修单信息
+		
+		var  regulationTypeList =  $api.getStorage('regulationTypeList');//整治类型字典
+		renderTemp('regulationType', 'dict-template1',regulationTypeList, false);
+		var  regulationSchemeList =  $api.getStorage('regulationSchemeList');//整治方案字典
+		renderTemp('regulationScheme', 'dict-template1',regulationSchemeList, false);
+		$('#billId').val(repairDetail.billsn);//维修单号
+		$('#projectid').val(repairDetail.projectid);
+		
+		console.log("repairDetail == >>"+JSON.stringify(repairDetail))
+
+		$("#showStationId").text(repairDetail.stationid);
+		$("#showDeviceId").text(repairDetail.deviceid == null ?  "" : repairDetail.deviceid);
+		$("#showProjectId").text(repairDetail.projectid == null ?  "" : repairDetail.projectid);
+
+		dwlist = $api.getStorage("dwPerson");//维修人列表
+		manlist = $api.getStorage("manPerson");//没用------------------------------
+		api.setStatusBarStyle({
+			style : 'light'
+		});
+
+		var billForm = new BillForm($('form'), $('#submitBtn'), function(data,callback){
+			console.log("callback == >>"+JSON.stringify(callback)+ "；data == >>"+JSON.stringify(data));
+	
+			
+			//维修方式选择“更新改造”，调用新接口  
+			if(data.fixType == 3) {
+				var opts = {
+					billsn: data.billsn,  // 工单号
+					fixType: data.fixType, 	//  维修方式
+					isNeedFee: data.isNeedFee, //  是否走代理费
+					regulationType: $("#regulationType").val(),  // 整治类型
+					regulationScheme: $("#regulationScheme").val(), // 整治方案
+					deviceScore: $("#deviceScore").val(), // 健康度得分
+					discountprice: $("#moneyDate").val(), //预算金额
+					fixRemark: data.fixRemark, // 方案说明
+					stationid: repairDetail.stationid, // 站址id
+					deviceid: repairDetail.deviceid=="null"?"":repairDetail.deviceid//设备id
+				};
+
+				console.log("请求参数："+JSON.stringify(opts));
+				console.log("更新改造流程");
+
+				$client.repairDoPlanRemouldIfExamine(opts,function(ret1,err) {
+					console.log("ret1 == >>" +JSON.stringify(ret1));
+					if(ret1 && ret1.success && ret1.data_info == "超出预算需要逐级审批！") {	//超出预算需要逐级审批
+						api.hideProgress();
+						$aui.dialog({
+							title : '超出预算需要逐级审批，是否提交数据！',
+							msg : '超出预算需要逐级审批，是否提交数据！'
+						}, function(ret) {
+							if(ret.buttonIndex == 1) {
+								api.showProgress({
+									title : '处理中'
+								});
+								$client.repairDoPlanRemould(opts,function (ret,err) {
+									if (ret && ret.success && imageUtil.getImageArray().length) {
+										imageUtil.upload(function(count) {
+											console.log("图片上传完成"+count);
+											api.execScript({
+												name: 'repair/repair-list_win',
+												frameName: 'repair-listCon_frm',
+												script: 'refreshList();'
+											});
+										});
+									}
+									callback(ret, err);
+								})
+							}
+						})
+					}else if(ret1 && ret1.success) {	//未超出预算 
+						$client.repairDoPlanRemould(opts,function (ret,err) {
+							if (ret && ret.success && imageUtil.getImageArray().length) {
+									imageUtil.upload(function(count) {
+										console.log("图片上传完成"+count);
+										api.execScript({
+											name: 'repair/repair-list_win',
+											frameName: 'repair-listCon_frm',
+											script: 'refreshList();'
+										});
+									});
+							}
+							callback(ret, err);
+						})
+					} else {
+						callback(ret1, err);
+					}
+				})
+			}else {
+				console.log("data =================>>>>"+JSON.stringify(data))
+				$client.repairDoPlan(data, function(ret,err){
+					console.log("88888888888888888888")
+					console.log(JSON.stringify(data));
+					console.log("99999999999999999")
+					console.log(JSON.stringify(ret));
+
+					if (ret && ret.success) {
+						if (imageUtil.getImageArray().length) {
+							imageUtil.upload(function(count) {
+								console.log("图片上传完成"+count);
+								api.execScript({
+									name: 'repair/repair-list_win',
+									frameName: 'repair-listCon_frm',
+									script: 'refreshList();'
+								});
+								callback(ret, err);
+							});
+						} else {
+							callback(ret, err);
+						}
+					}else{
+						callback(ret, err);
+					}
+				});
+			}
+		});
+		billForm.init();
+		var contractList = $api.getStorage("contractList");
+		// alert(JSON.stringify(contractList))
+		refreshList(JSON.stringify(contractList), 0);
+
+		imageUtil.init({
+			uploadFn: $client.uploadRepairPlanImage
+		});
+
+	};
+
+	//zhangzhitao输出对象
+	function t_outputObj(obj) {
+	    var description = "";
+	    for (var i in obj) {
+	        description += i + " = " + obj[i] + "\n";
+	    }
+	}
+	//政治类型
+	function selectRegulationType(that) {
+		var regulationType = $(that).val();
+		var opts= {
+			regulationType,
+			devicedcode:repairDetail.devicedcode,
+			stationcode: repairDetail.stationcode
+		};
+		$("#regulationShowTb").hide();
+		console.log("value == >>"+regulationType);
+		$client.getRegulationTypeDetail(opts,function(ret,err){
+			console.log(" response = >>"+JSON.stringify(ret));
+			var list = ret.list;
+			var tbodyHtml ="";
+			var theadHtml = "";
+			var tbTitle = "";
+			switch(regulationType) {
+				case "1":
+				$("#regulationShowTb").show();
+				tbTitle = "电池专业评估明细";
+				theadHtml = "<tr><th>指标</th><th>站址等级</th><th>资产运行月</th><th>续航时长</th><th>响应时间</th><th>月均断电频次</th><th>单次退服时长</th></tr>";
+				for(var i = 0 ; i < list.length ; i++) {
+					tbodyHtml += "<tr>";
+					tbodyHtml += "<td>"+(list[i].stat_month == null ? "-":list[i].stat_month)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operators_level == null ? "-" : list[i].operators_level)+"</td>"
+					tbodyHtml += "<td>"+(list[i].startusetime_battery == null ? "-" : list[i].startusetime_battery )+"</td>"
+					tbodyHtml += "<td>"+(list[i].dc_xhsccs == null ? "-" : list[i].dc_xhsccs)+"</td>"
+					tbodyHtml += "<td>"+(list[i].onstation_time == null ? "-" : list[i].onstation_time)+"</td>"
+					tbodyHtml += "<td>"+(list[i].cut_power_num_mon == null ? "-" : list[i].cut_power_num_mon)+"</td>"
+					tbodyHtml += "<td>"+(list[i].single_tf_time == null ? "-" : list[i].single_tf_time)+"</td>"
+					tbodyHtml += "</tr>"
+				}
+				break;
+				case "2": 
+				$("#regulationShowTb").show();
+				tbTitle = "空调专业评估明细";
+				theadHtml = "<tr><th>指标</th><th>站址等级</th><th>共享系统</th><th>资产运行月</th><th>空调是否可控</th><th>缺失信号量</th><th>高温故障告警频次（月均）机房</th></tr>";
+				for(var i = 0 ; i < list.length ; i++) {
+					tbodyHtml += "<tr>";
+					tbodyHtml += "<td>"+(list[i].stat_month == null ? "-":list[i].stat_month)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operators_level == null ? "-" : list[i].operators_level)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operator_num == null ? "-" : list[i].operator_num )+"</td>"
+					tbodyHtml += "<td>"+(list[i].is_kk == null ? "-" : list[i].is_kk)+"</td>"
+					tbodyHtml += "<td>"+(list[i].missing_semap == null ? "-" : list[i].missing_semap)+"</td>"
+					tbodyHtml += "<td>"+(list[i].cut_power_num_mon == null ? "-" : list[i].cut_power_num_mon)+"</td>"
+					tbodyHtml += "<td>"+(list[i].high_temper_alarm == null ? "-" : list[i].high_temper_alarm)+"</td>"  // todo 暂用
+					tbodyHtml += "</tr>"
+				}
+				
+				break;
+				case "3": 
+				$("#regulationShowTb").show();
+				tbTitle = "开关电源专业评估明细";
+				theadHtml = "<tr><th>指标</th><th>站址等级</th><th>共享系统</th><th>资产运行月</th><th>开关电源负载</th></tr>";
+				for(var i = 0 ; i < list.length ; i++) {
+					tbodyHtml += "<tr>";
+					tbodyHtml += "<td>"+(list[i].stat_month == null ? "-":list[i].stat_month)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operators_level == null ? "-" : list[i].operators_level)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operator_num == null ? "-" : list[i].operator_num )+"</td>"
+					tbodyHtml += "<td>"+(list[i].startusetime_air_switch == null ? "-" : list[i].startusetime_air_switch)+"</td>"
+					tbodyHtml += "<td>"+(list[i].switch_power_fz == null ? "-" : list[i].switch_power_fz)+"</td>"
+					tbodyHtml += "</tr>"
+				}
+				break;
+				case "4": 
+				$("#regulationShowTb").show();
+				tbTitle = "外市电专业评估明细";
+				theadHtml = "<tr><th>指标</th><th>站址等级</th><th>共享系统</th><th>当月累计停电时长</th></tr>";
+				for(var i = 0 ; i < list.length ; i++) {
+					tbodyHtml += "<tr>";
+					tbodyHtml += "<td>"+(list[i].stat_month == null ? "-":list[i].stat_month)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operators_level == null ? "-" : list[i].operators_level)+"</td>"
+					tbodyHtml += "<td>"+(list[i].operator_num == null ? "-" : list[i].operator_num )+"</td>"
+					tbodyHtml += "<td>"+(list[i].power_down_h == null ? "-" : list[i].power_down_h)+"</td>"
+					tbodyHtml += "</tr>"
+				}
+				break;
+			}
+			$("#regulationTitle").text(tbTitle);
+			$("#regulationShowTb thead").html(theadHtml);
+			$("#regulationShowTb tbody").html(tbodyHtml);
+			//回显健康度得分
+			var deviceScore ="";
+			if(list != null && list.length > 0) {
+				deviceScore = list[0].grade;
+			}
+			$("#deviceScore").val(deviceScore);
+		})
+	}
+
+	//选择维修方式时触发
+	function onRepairWay(e) {
+		var index = $(e).val();
+			// <option value="">请选择</option>
+			// 				<option value="1">紧急维修</option>
+			// 				<option value="2">挂起</option>
+			// 				<option value="3">更新改造</option>
+			// 				<option value="4">计划性修缮</option>
+			$("#moneyDateDiv").hide();
+			$("#moneyDate").removeClass("required");
+			$("#deviceScoreDiv").hide();
+			$("#regulationTypeDiv").hide();
+			$("#regulationSchemeDiv").hide();
+			$("#regulationShowTb").hide();
+			$('#isshow_img').hide();
+			// $("#deviceScore").removeClass("required")
+			$("#reliefDealInfoDivId .cardTextareaLabel").html('<font color="red" >*</font>维修方式说明：')
+		if (index == "1"||index == "4") {
+			$('#isshow_img').show();
+			$('#completeLimitDateDiv').show();
+			$('#budget_id').show();
+			$('#repair_user').show();
+			$('#item_box').show();
+			//$('#createobj_id').show();
+			$('#repair_com').show();
+			$('#contractname_box').show();
+			$('#contractno_box').show();
+			$('#repair_com_code').show();
+			$('#project_num').hide();
+			$('#title_contract').show();
+			$('#mainid').show();
+			$('#info_contract').show();
+			$('#aintenanceLogoDiv').show();
+			//	$('#fixUserId').removeAttr('data-valid');
+			$('#programCodeId').removeClass('required');
+			//$('#createObjId').addClass('required');
+			$('#fixUserId').addClass('required');
+			$('#executorDiv').show();
+
+			$('#contractname').addClass('required');
+			$('#companyname').addClass('required');
+			$('#companycode').addClass('required');
+			$('#contractno').addClass('required');
+			$('#completeLimitDate').addClass('required');
+			$('#fixComId').addClass('required');
+		} else if (index == "2") {
+			$('#completeLimitDateDiv').hide();
+			$('#budget_id').hide();
+			$('#item_box').hide();
+			$('#contractname_box').hide();
+			$('#contractname').removeClass('required');
+			$('#companyname').removeClass('required');
+			$('#companycode').removeClass('required');
+			$('#contractno').removeClass('required');
+			$('#completeLimitDate').removeClass('required');
+
+			$('#contractno_box').hide();
+			$('#repair_user').hide();
+			$('#repair_com').hide();
+			$('#repair_com_code').hide();
+			//$('#createobj_id').hide();
+			$('#project_num').hide();
+			$('#title_contract').hide();
+			$('#mainid').hide();
+			$('#info_contract').hide();
+			$('#fixUserId').removeClass('required');
+			$('#fixComId').removeClass('required');
+		//	$('#createObjId').removeClass('required');
+			$('#programCodeId').removeClass('required');
+			$('#executorDiv').hide();
+			$('#aintenanceLogoDiv').hide();
+		} else if (index == "3") {
+			$('#isshow_img').show();
+			selectRegulationType($("#regulationType"));
+			$("#reliefDealInfoDivId .cardTextareaLabel").html('<font color="red" >*</font>方案说明：')
+			$("#moneyDateDiv").show();
+			$("#moneyDate").addClass("required");
+			$("#deviceScoreDiv").show();
+			$("#regulationTypeDiv").show();
+			$("#regulationSchemeDiv").show();
+			// $("#deviceScore").addClass("required")
+
+			$('#completeLimitDateDiv').hide();
+			$('#budget_id').hide();
+			$('#repair_user').hide();
+			$('#item_box').hide();
+			$('#contractname_box').hide();
+			$('#contractno_box').hide();
+			$('#repair_com').hide();
+			$('#repair_com_code').hide();
+			//$('#createobj_id').hide();
+			$('#project_num').show();
+			$('#title_contract').hide();
+			$('#mainid').hide();
+			$('#info_contract').hide();
+			$('#aintenanceLogoDiv').hide();
+			$('#fixUserId').removeClass('required');
+			$('#fixComId').removeClass('required');
+			//$('#createObjId').removeClass('required');
+			$('#programCodeId').addClass('required');
+			$('#executorDiv').hide();
+			$('#contractname').removeClass('required');
+			$('#companyname').removeClass('required');
+			$('#companycode').removeClass('required');
+			$('#contractno').removeClass('required');
+			$('#completeLimitDate').removeClass('required');
+		} else {
+			$('#budget_id').hide();
+			$('#repair_user').hide();
+			$('#item_box').hide();
+			$('#contractname_box').hide();
+			$('#contractno_box').hide();
+			$('#repair_com_code').hide();
+			$('#repair_com').hide();
+			//$('#createobj_id').hide();
+			$('#project_num').hide();
+			$('#title_contract').hide();
+			$('#mainid').hide();
+			$('#info_contract').hide();
+			$('#executorDiv').hide();
+		}
+
+	}
+
+	//维修方式为 2(计划性修缮)时触发
+	function refreshUser() {
+		console.log(getObj(shu[0]));
+		var userJsonArr = new Array();
+	     useridArr = new Array();
+	    userNameArr = new Array();
+			$('#fixUserId').empty();
+			$('<option>').text('请选择').val('').appendTo('#fixUserId');
+			if (shu != null && shu.length > 0) {
+				for (var i = 0; i < shu.length; i++) {
+					var managerid = shu[i].manager_id;
+
+					var managername = shu[i].manager_name;
+					var companyname = shu[i].consumername;
+					if (managerid.indexOf(',') > 0) {
+						manageridArr = managerid.split(",");
+						managerNameArr = managername.split(",");
+						for (var j = 0; j < manageridArr.length; j++) {
+							var per = {};
+							per.companyname = companyname;
+							per.username = managerNameArr[j];
+							if (useridArr.indexOf(manageridArr[j]) == -1) {
+								useridArr.push(manageridArr[j]);
+								userNameArr.push(managerNameArr[j]);
+								userJsonArr.push(per);
+							}
+						}
+					} else {
+						if (useridArr.indexOf(managerid) == -1) {
+							var per = {};
+							per.companyname = companyname;
+							per.username = managername;
+							useridArr.push(managerid);
+							userNameArr.push(managername);
+							userJsonArr.push(per);
+						}
+					}
+				}
+				for (var i = 0, size = userJsonArr.length; i < size; i++) {
+					$('<option>').text(userJsonArr[i].username).val(userJsonArr[i].companyname).appendTo('#fixUserId');
+				}
+			}
+	}
+
+
+
+	//组织选择触发
+	function onSelectObj(e) {
+		var t_contractContent = $("#mainid").html();
+		//判断项目是否已选
+		if(t_contractContent!=null&&t_contractContent.length>0){
+			var index = $(e).val();
+			console.log(index);
+
+		}else {
+			alert("请先选择项目！");
+			$('#fixComId').val("");
+		}
+	}
+
+	//将
+	function onSelectUser(e) {
+		var userid = $(e).val();
+		$('#fixComId').val(userid);
+	}
+
+
+//添加
+	function addContract(e) {
+		api.pageParam.winName = 'repairDoPlan_win';
+		api.pageParam.frameName = 'repairDoPlanDetail_frm';
+		api.pageParam.stationid = repairDetail.stationid;
+		api.openWin({
+			name : 'contract-list_win',
+			url : 'contract-list_win.html',
+			pageParam : api.pageParam,
+			opaque : true,
+			bounces : false,
+			reload : true,
+			slidBackEnabled : true,
+			vScrollBarEnabled : false
+		});
+	}
+
+
+
+	function refreshList(str, num) {
+		//alert("@@@@: "+str);
+		shu = eval('(' + str + ')');
+		console.log("调用了 --------------------"+JSON.stringify(shu)+" ；shu.length"+shu.length)
+		//注意json格式
+		if (shu != null && shu != "undefined" && shu.length > 0) {
+			for (var i = 0; i < shu.length; i++) {
+				if (idArr.indexOf(shu[i].id) == -1) {
+					dataArr.push(shu[i]);
+					idArr.push(shu[i].id);
+					shuArr.push(shu[i]);
+					for (var i = 0; i < shuArr.length; i++) {
+						console.log(JSON.stringify(shuArr[i]));
+					}
+					renderTemp('mainid', 'item-template', shuArr);
+				} else {
+					for (var j = 0; j < idArr.length; j++) {
+						if (shu[i].id == idArr[j]) {
+							//								alert(idArr[j]);
+							if (num == 0) {//初始化進來執行
+								// alert("4444")
+								shuArr[j].amount = Number(shuArr[j].amount) + Number(shu[i].amount);
+							} else {//从合同返回刷新中执行
+								// alert("999")
+								$($('#mainid').find('.amountInput')[j]).val(Number($($('#mainid').find('.amountInput')[j]).val()) + 1);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		setBudgetTxt();
+	}
+
+	function refreshListcontract(str, num) {
+		$('#fixUserId').removeAttr('disabled');
+		//alert("@@@@: "+str);
+		shuArr2 = new Array();
+		shu2 = eval('(' + str + ')');
+		//注意json格式
+		if (shu2 != null && shu2.length > 0) {
+			for (var i = 0; i < shu2.length; i++) {
+					shuArr2.push(shu2[i]);
+			}
+		}
+		// wxxxxxxxxxxxxxx
+		if(shuArr2!= null && shuArr2.length>0){
+
+			$('#companyname').val(shuArr2[0].consumername);
+			$('#companycode').val(shuArr2[0].consumercode);
+			$('#contractname').val(shuArr2[0].contracttitle);
+			$('#contractno').val(shuArr2[0].contractno);
+		}
+		var modelwxx = $api.getStorage('repairDetail');
+		var consumercode = $('#companycode').val();
+		repairNameList =[];
+		repairCompanyList=[];
+		var opts={
+			stationid:modelwxx.stationid,
+			consumercode:consumercode
+		};
+		$client.getRepairPerson(opts,function(ret,err){
+			if(ret.success){
+					repairPerson = ret.list;
+					// console.log(getObj(repairPerson[0]));
+					if (repairPerson != null && repairPerson.length>0) {
+							for (var i = 0; i < repairPerson.length; i++) {
+									repairNameList.push(repairPerson[i].username);
+									repairCompanyList.push(repairPerson[i].companyname);
+							}
+							$('#fixUserId').empty();
+							$('<option>').text('请选择').val('').appendTo('#fixUserId');
+							if (repairNameList != null && repairNameList.length > 0) {
+								for (var i = 0; i < repairNameList.length; i++) {
+									$('<option>').text(repairNameList[i]).val(repairNameList[i]).appendTo('#fixUserId');
+								}
+							}
+					}
+			}
+		})
+		// wxxxxxxxxxxxxxx
+	}
+
+	$('#fixUserId').change(function(){
+		var repairName = $(this).val();
+		for (var i = 0; i < repairNameList.length; i++) {
+			if(repairName==repairNameList[i]){
+				$('#fixCom').val(repairCompanyList[i]);
+			}
+		}
+	});
+
+	function setBudgetTxt(e,id) {
+
+		var isNeedFeeId = $("#isNeedFeeId").val();
+		var numinfo=$(e).parents('tr').find('#numinfo');
+
+		if(e){
+			var BillingPriceDiv = $(e).parents('tr').find('.calprice');
+			var type = $(e).parents('tr').find('.type').html();
+			var TaxpriceDiv = $(e).parents('tr').find('.taxprice');
+			var amountDiv = $(e).parents('tr').find('.amountInput');
+			var discountpriceInputDiv = $(e).parents('tr').find('.discountpriceInput');
+		//区分是否走代维费根据不同选择计算不同价格
+			if(isNeedFeeId=='2'&&type=='按次'){
+				BillingPriceDiv.html(Number(TaxpriceDiv.text())*amountDiv.val());
+
+				discountpriceInputDiv.val(Number(TaxpriceDiv.text())*amountDiv.val());
+			}else{  //按月
+				BillingPriceDiv.html(Number(TaxpriceDiv.text())*amountDiv.val());
+
+				discountpriceInputDiv.val(Number(TaxpriceDiv.text())*amountDiv.val());
+			}
+		}
+
+		if (numinfo.val()<=0) {
+			var size = idArr.length;
+
+			for (var i = 0; i < size; i++) {
+					var idA = idArr[i];
+					if (idA == id) {
+						idArr.remove(i);
+						dataArr.remove(i);
+						shuArr.remove(i);
+						break;
+					}
+				}
+				$(event.target).parents('tr').remove();
+		}
+
+		var budget = 0;
+		if (dataArr != null && dataArr.length > 0) {
+
+				for (var i = 0; i < dataArr.length; i++) {
+
+						budget += Number($($('#mainid').find('.discountpriceInput')[i]).val());
+
+				}
+				$('#budgetId').val(budget);
+
+		}else {
+				$('#budgetId').val('0');
+		}
+	}
+
+	function minNum(e, id) {
+		var size = idArr.length;
+		if (Number($($(e).next('input')).val() <= 1)) {
+
+			for (var i = 0; i < size; i++) {
+					var idA = idArr[i];
+					if (idA == id) {
+						idArr.remove(i);
+						dataArr.remove(i);
+						shuArr.remove(i);
+						break;
+					}
+				}
+				$(event.target).parents('tr').remove();
+				setBudgetTxt(e);
+		} else {
+			// $($(e).next('input')).val(Number($($(e).next('input')).val()) - 0.1);
+			$($(e).next('input')).val((Number($($(e).next('input')).val())*10 - 1)/10);
+			setBudgetTxt(e);
+		}
+	}
+
+	function addNum(e) {
+	//	$($(e).prev('input')).val(Number($($(e).prev('input')).val()) + 0.1);
+	$($(e).prev('input')).val((Number($($(e).prev('input')).val())*10 + 1)/10);
+		setBudgetTxt(e);
+	}
+
+	function minNum2(e) {
+		if (Number($($(e).next('input')).val() > 0)) {
+			var num = Number($($(e).next('input')).val())-1;
+			$(e).next('input').val(num);
+			setBudgetTxt();
+		}
+	}
+
+	function addNum2(e) {
+		var pricesib=$(e).parents('tr').find('.calprice').text();//获取结算价格
+		console.log(pricesib);
+		console.log(Number(pricesib));
+		if($($(e).prev('input')).val()<Number(pricesib)){
+			$($(e).prev('input')).val(Number($($(e).prev('input')).val()) + 1);//允许增加
+			setBudgetTxt();
+		}else {
+			api.toast({
+					msg: '折扣价格不得高于结算价格',
+					duration: 2000,
+					location: 'bottom'
+			});
+		}
+
+	}
+
+	function discountpriceAction(e) {
+		var pricesib2=$(e).parents('tr').find('.calprice').text();//获取结算价格
+		if($(e).val()>Number(pricesib2)){
+			$(e).val(Number(pricesib2));
+			api.toast({
+					msg: '折扣价格不得高于结算价格',
+					duration: 2000,
+					location: 'bottom'
+			});
+		}
+		var totalCnt = $(e).val();//获取项目个数的值
+
+		if (totalCnt != parseInt(totalCnt)){//获取项目个数的值如果不是整数，弹出提醒并自动取整
+			api.toast({
+					msg: '请输入正确的正整数',
+					duration: 2000,
+					location: 'bottom'
+			});
+
+			$(e).val(parseInt(totalCnt));
+
+		}
+
+		setBudgetTxt();
+	}
+
+	function initData() {
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		// var textMsg;
+		// if($('#isNeedFeeId').val()=='1'){
+		// 	textMsg='"是否走代维费处理"选择"是",维修项目无论按次还是包干,结算价格都按0计算,是否确认？';
+		// }else {
+		// 	textMsg='是否提交问题核实数据?';
+		// }
+		// $aui.dialog({
+		// 	title: '提交确认',
+		// 	text: textMsg
+		// }, function(ret) {
+		// 	if (ret.buttonIndex) {
+		//
+		// 	}
+		// 	$aui.hideDialog();
+		// });
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+		var pos = $('#repairwayId').val();//维修方式
+		var username = $("#fixUserId").find("option:selected").text();//维修人
+		//$('#fixUserId').val("gztest");
+		var user = $api.getStorage('user');
+		console.log(getObj(user));
+		$('#fixUser_Name').val(username);
+		$('#fixCom').val(companyname);
+
+		if ("1" == pos && dataArr != null && dataArr.length > 0) {
+			for (var i = 0; i < dataArr.length; i++) {
+				dataArr[i].amount = $($('#mainid').find('.amountInput')[i]).val();
+				dataArr[i].calprice = $($('#mainid').find('.calprice')[i]).text();
+				dataArr[i].discountprice = $($('#mainid').find('.discountpriceInput')[i]).val();
+			}
+			$('#contractid').val(JSON.stringify(dataArr));
+			console.log('0000000000000000000000000000000000000000000000000000000000');
+			console.log(JSON.stringify(dataArr));
+		} else {
+			$('#contractid').val("");
+		}
+
+		for(var i=0;i< userNameArr.length;i++){
+			//alert("for tao:"+useridArr[i]);
+			if(username==userNameArr[i]){
+				$('#fixUser_Id').val(useridArr[i]);
+			}
+		}
+	}
+
+	/**
+	 * 添加图片
+	 */
+	 function addPic(e) {
+		var permission = 'camera';
+		var resultList = api.hasPermission({
+		    list: [permission]
+		});
+		if (resultList[0].granted) {
+		    // 已授权，可以继续下一步操作
+		} else {
+		    api.confirm({
+		        msg: '应用需要您的授权才能访问相机',
+		        buttons: ['取消', '去设置']
+		    }, function(ret) {
+		        if (ret.buttonIndex == 2) {
+		            api.requestPermission({
+		                list: [permission],
+		            }, function(res) {
+		                if (res.list[0].granted) {
+		                    // 已授权，可以继续下一步操作
+		                }
+		            });
+		        }
+		    });
+		}
+		if (!lastLocation || !lastLocation.status) {
+			api.toast({
+				msg: '暂未定位\n无法上传照片！'
+			});
+			window.setTimeout(function() {
+				api.closeWin();
+			}, 2000);
+		}
+		var lon1 = displaynum(lastLocation.lon);
+		var lat1 = displaynum(lastLocation.lat);
+		/////////////////////////////
+		var curentTime2 = CurentTime2();
+		$api.setStorage('newtime', curentTime2);
+		$api.setStorage('lon1', lon1);
+		$api.setStorage('lat1', lat1);
+		var lon1 = $api.getStorage('lon1');
+		var lat1 = $api.getStorage('lat1');
+		var user=$api.getStorage('user');
+		var newtime = $api.getStorage('newtime');
+		////////////////////////////
+		imageUtil.add('camera', function(ret, err) {
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			console.log('000000000000000000000000000000000000000000000');
+			console.log(JSON.stringify(ret));
+			var projectid = repairDetail.projectid;
+			var billsn = repairDetail.billsn;
+			//var oldret = ret.data.split(".");
+			//var newret = oldret[0]+"_shuiyin;3;"+user.userid+";"+projectid+";"+billsn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+			var newret=ret;
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			var imageInfo = {
+				userid: user.userid,
+				projectid: projectid,
+				projectname: "",
+				imgpath: newret,
+				billsn: billsn,
+				spare: "",
+				lon: lon1,
+				lat: lat1,
+				photoaddress: lastLocation.photoaddress,
+				phototime: (new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+				action:'3'
+			};
+			imageUtil.getImageArray().push(imageInfo);
+			// showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+			setTimeout(function(){
+				renderTemp('list-view', 'img-template', imageInfo,true);
+				$('#add').parent().insertAfter('#list-view li:last');
+			}, 1500);
+		},e,true);
+	}
+
+	/**
+	 *删除图片
+	 */
+	function removeImg(imgPath) {
+		var imageArray = imageUtil.getImageArray();
+		var size = imageArray.length;
+		for (var i = 0; i < size; i++) {
+			var data = imageArray[i];
+			if (data.imgpath == imgPath) {
+				imageArray.remove(i);
+				break;
+			}
+		}
+		$(event.target).parents('li').remove();
+	}
+</script>
+</html>

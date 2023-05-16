@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>电表装维</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" tapmode=""> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="showPopup()"><span class="aui-iconfont aui-icon-search"></span> </a>
+            <div class="aui-title">电表装维</div>
+        </header>
+
+    <script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/GPS.js"></script>
+    <script type="text/javascript" src="../home/script/home_frm.js"></script>
+    <script type="text/javascript" src="../../script/swipe.js"></script>
+    <script type="text/javascript" src="../../script/xunjian_db.js"></script>
+        <script type="text/javascript" src="../home/script/home_win.js"></script>
+        <script type="text/javascript">
+        var frmName = "ammeterSelStation_frm";
+
+
+            apiready = function() {
+                var header = $api.byId('header');
+                $api.fixIos7Bar(header);
+                var headerPos = $api.offset(header);
+
+                var body_h = $api.offset($api.dom('body')).h;
+              //  showlog("body:"+body_h+","+headerPos.h);
+                api.parseTapmode();
+                api.openFrame({
+                    name : frmName,
+                    url :  "ammeterSelStation_frm.html",
+                    bounces : false,
+                   // hScrollBarEnabled:false,
+                    pageParam : api.pageParam,
+                    rect : {
+                        x : 0,
+                        y : headerPos.h,
+                        w : headerPos.w,
+                        h : body_h - headerPos.h
+                    }
+                });
+
+                $api.addEvt($api.byId('back'), 'click', function() {
+                    api.closeWin();
+                });
+            };
+
+
+            // 打开查询工单页面
+            function showPopup() {
+
+//              api.pageParam.stationNameOpt = true;
+//              api.pageParam.stationCodeOpt = true;
+//              api.pageParam.unitOpt = true;
+//              api.pageParam.isroomfault = true;
+//              api.pageParam.winName = api.winName;
+//              api.pageParam.frameName = 'ammeterSelStation_frm';
+//              api.pageParam.callback = 'queryStationList';
+                var query_setting = {
+                    stationNameOpt : true,
+                    stationCodeOpt : true,
+                    unitOpt : true,
+                    status:true,
+                    isroomfault : api.pageParam.type=='createBill'?true:false,
+                    winName : api.winName,
+                    frameName : 'ammeterSelStation_frm',
+                    callback : 'cb_queryStationList'
+                }
+                api.openFrame({
+                    name : 'popup_query_frm',
+                    url : '../dialog/popup_query.html',
+                    rect : {
+                        x : 0,
+                        y : 0,
+                        w : 'auto',
+                        h : 'auto'
+                    },
+                    bounces : false,
+                    pageParam : query_setting
+                });
+            }
+        </script>
+    </body>
+</html>

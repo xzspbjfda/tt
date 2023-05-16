@@ -1,0 +1,300 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>出入站待办操作列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    <link rel="stylesheet" href="../../css/vueComponent.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css"/>
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css"/>
+    <link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css"/>
+    <link rel="stylesheet" href="../../css/lightForBillMenu.css">
+    <link rel="stylesheet" href="../../css/darkForBillMenu.css" disabled>
+    <link rel="stylesheet" type="text/css" href="../../css/billMenu.css"/>
+    <style>
+        input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="number"], input[type="week"], input[type="month"], input[type="time"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="search"], input[type="file"], input[type="color"], select, textarea {
+            outline: none;
+        }
+
+        html, body, #wrap, #header {
+            background: transparent;
+        }
+
+        #header {
+            height: 58px;
+        }
+
+        .shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            background: #333;
+            opacity: 0.6;
+            filter: alpha(opacity=60);
+        }
+
+        .menu-list li span {
+            text-indent: 1em;
+        }
+
+        .winDiv {
+            display: none;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        .winTitleDiv {
+            text-align: center;
+            font-size: 20px;
+            color: #FFFFFF;
+            background-color: #DB4537;
+            height: 35px;
+            line-height: 35px;
+            -webkit-border-radius: 10px 10px 0 0;
+            -moz-border-radius: 10px 10px 0 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .winButtonDiv {
+            background-color: #e0e0e0;
+            height: 50px;
+            width: 300px;
+            -webkit-border-radius: 0 0 10px 10px;
+            -moz-border-radius: 0 0 10px 10px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .winOkBtn {
+            width: 130px;
+            height: 40px;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #DB4537;
+            float: right;
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+
+        .winCancelBtn {
+            width: 130px;
+            height: 40px;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #3779d0;
+            float: left;
+            margin-left: 5px;
+            margin-top: 5px;
+        }
+
+        .menuListLi {
+            height: 40px;
+            line-height: 40px;
+            color: #46a3FF;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app" v-cloak>
+    <yt-mask :show.sync="popShow" @click-shadow="closeSelf">
+        <div id="header"></div>
+        <div id="standBillMenuMain" v-show="billInfo !== null">
+            <ul class="menu-list" style="z-index: 999999">
+                <li class="menuListLi" v-if="billInfo.status === '5'" @click="handle('accept')">接单</li>
+<!--                <li class="menuListLi" v-if="billInfo.status === '5'" @click="handle('transfer')">转派</li>-->
+                <li class="menuListLi" v-if="billInfo.status === '14'" @click="handle('audit')">审核</li>
+                <li class="menuListLi" v-if="billInfo.status === '6'" @click="handle('receipt')">回单</li>
+                <li class="menuListLi" @click="handle('transfer')">转派</li>
+            </ul>
+        </div>
+    </yt-mask>
+
+    <yt-confirm-dialog title="确定接单？" @decided="decidedAccept" @cancel="closeSelf" :show.sync="acceptDialogShow">
+        <template v-slot:content>
+            <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                <div class="aui-flex-item-5 " style=" height: 40px;line-height: 40px; text-align: right;">操作人：</div>
+                <div class="aui-flex-item-6"  style=" height: 40px;line-height: 40px; text-align: left;">{{operationUserName}}</div>
+            </div>
+        </template>
+    </yt-confirm-dialog>
+
+    <yt-confirm-dialog title="审核" @decided="decidedAudit" @cancel="closeSelf" :show.sync="auditDialogShow">
+        <template v-slot:content>
+            <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                <div class="aui-flex-item-5 " style=" height: 40px;line-height: 40px; text-align: right;">操作人：</div>
+                <div class="aui-flex-item-6"  style=" height: 40px;line-height: 40px; text-align: left;">{{operationUserName}}</div>
+            </div>
+            <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                <div class="aui-flex-item-5 " style="height: 40px;line-height: 40px; text-align: right;">审核是否通过：</div>
+                <div class="aui-flex-item-6"  style="height: 40px;line-height: 40px;text-align: left;">
+                    <label>
+                        <input v-model="auditState" value="Y" type="radio" name="auditState" checked>&nbsp;是
+                    </label>
+                    <label style="margin-left: 15%">
+                        <input v-model="auditState" value="N" type="radio" name="auditState">&nbsp;否
+                    </label>
+                </div>
+            </div>
+            <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                <div class="aui-flex-item-5 " style="height: 40px;line-height: 40px; text-align: right;"><span style="color: red">*</span>审核意见：</div>
+                <div class="aui-flex-item-12"  style="text-align: left;padding: 10px;height: 20vh"><textarea style="height: 100%" v-model="remark"></textarea></div>
+            </div>
+        </template>
+    </yt-confirm-dialog>
+</div>
+
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/theme.js"></script>
+<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/GPS.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/vueComponent.js"></script>
+
+<script type="text/javascript">
+
+    var app = new Vue({
+        el:'#app',
+        data:function (){
+            return {
+                popShow:true,
+                acceptDialogShow:false,
+                auditDialogShow:false,
+                operationUserName:"操作人",
+                auditState:"Y",
+                remark:"",
+                billInfo:{},
+            }
+        },
+        methods:{
+            goBack(){
+                // 关闭详情页
+                api.closeWin({name : 'detailGroupWin'});
+                // 通知列表页刷新
+                api.sendEvent({name: 'zcyygdAudit', extra: {state: 'auditOver'}});
+                this.closeSelf();
+            },
+            // 确定接单了属于是
+            decidedAccept:function(){
+                let _this = this;
+                request.post({
+                    url:"/worderAssetRun/receiveSelfTask.do",
+                    data:{
+                        id:this.billInfo.id
+                    },
+                    autoCloseProgress:false
+                },function(ret){
+                    if(ret.success && ret.data){
+                        if(ret.data.isSuccess){
+                            api.toast({msg:"接单成功！"});
+                            setTimeout(function(){
+                                _this.goBack();
+                                api.hideProgress();
+                            },2000)
+                        }else{
+                            api.hideProgress();
+                            api.toast({msg:ret.data.msg});
+                        }
+                    }else{
+                        api.hideProgress();
+                        api.toast({msg:ret.msg});
+                    }
+                })
+            },
+            decidedAudit:function(){
+                let _this = this;
+                if(!this.remark){
+                    return api.toast({msg:"请填写审核意见！"});
+                }
+                request.post({
+                    url:"/worderAssetRun/gaoCheck.do",
+                    data:{
+                        id:this.billInfo.id,
+                        isSuccessful:this.auditState,
+                        remark:this.remark
+                    },
+                    autoCloseProgress:false
+                },function(ret){
+                    if(ret.success && ret.data){
+                        if(ret.data.isSuccess){
+                            api.toast({msg:"审核成功！"});
+                            setTimeout(function(){
+                                _this.goBack();
+                                api.hideProgress();
+                            },2000)
+                        }else{
+                            api.hideProgress();
+                            api.toast({msg:ret.data.msg});
+                        }
+                    }else{
+                        api.hideProgress();
+                        api.toast({msg:ret.msg});
+                    }
+                })
+            },
+            handle:function(type){
+                if (type === "transfer"){
+                    api.openWin({
+                        name: 'transferSelectUserWin',
+                        url: 'transferSelectUserWin.html',
+                        opaque: true,
+                        bounces: false,
+                        reload: true,
+                        vScrollBarEnabled: false
+                    });
+                }else if(type === "receipt"){
+                    api.openWin({
+                        name: 'receiptWin',
+                        url: 'receiptWin.html',
+                        opaque: true,
+                        bounces: false,
+                        reload: true,
+                        vScrollBarEnabled: false
+                    });
+                }else if(type === "accept"){
+                    this.popShow = false;
+                    this.acceptDialogShow = true;
+                }else if(type === "audit"){
+                    this.popShow = false;
+                    this.auditDialogShow = true;
+                }
+            }
+        }
+    });
+
+    apiready = function() {
+        initHeader();
+        var user = $api.getStorage("user");
+        app.operationUserName = user.username;
+        app.billInfo = $api.getStorage("zzyygdDetailInfo");
+        // alert(JSON.stringify(app.billInfo))
+    }
+</script>
+</html>

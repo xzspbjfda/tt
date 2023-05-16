@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>title</title>
+        <link rel="stylesheet" href="../../css/api.css"/>
+        <link rel="stylesheet" href="../../css/common.css" />
+        <link rel="stylesheet" href="../../css/query.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/aui.css"/>
+        <style>
+          #searchHistory p{
+            text-align: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #efefef;
+          }
+
+        </style>
+    </head>
+    <style>
+        html, body {
+            height: auto;
+        }
+        body.active {
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+        .key-info{
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 28px;
+            padding: 2px 12px 0px 12px;
+            color:black;
+            position: relative;
+        }
+
+        .selectable-list-row.active{
+            background-color: #eda4a2;
+        }
+    </style>
+    <body>
+      <div id="searchHistory" style="width:100%;background-color:#fff;display:none;">
+
+      </div>
+        <div id="main">
+            <ul  id="listView" class="ccssoft_list"></ul>
+        </div>
+        <script id="listView-template" type="text/x-dot-template">
+            {{ keyList = it; }}
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+                <li onclick="keyClick({{=i}})" key-id="{{=it[i].id}}" class="selectable-list-row">
+                <div class="key-info">钥匙编码:{{=it[i].keyCode}}</div>
+                </li>
+            {{}}}
+        </script>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script src="../../script/common.js"></script>
+    <script src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+<!--    <script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.9.1/vconsole.min.js"></script>-->
+<!--    <script >-->
+<!--        var vConsole = new VConsole();-->
+<!--    </script>-->
+    <script type="text/javascript">
+        request.searchKeyList = function(params,callback){
+            service({
+                url:"/enterStationKey/list.do",
+                data:params
+            },callback)
+        }
+
+        var keyList = [];
+        apiready = function() {
+            initHeader();
+            if(!api.pageParam.stationId){
+                return api.toast({msg: "站点id不能为空！", duration: 1000, location: 'middle'});
+            }
+            listView = new C.ApiListView({
+                fn : request.searchKeyList,
+                newSystem: true,
+                callback:afterLoad,
+                debug:true
+            });
+            listView.setQueryOptions({stationId:api.pageParam.stationId});
+            listView.refresh();
+            // api.hideProgress();
+        };
+
+        function afterLoad(){
+            if(api.pageParam.selectedKeyInfo && api.pageParam.selectedKeyInfo.id){
+                $("[key-id='" + api.pageParam.selectedKeyInfo.id +"']").addClass("active").siblings().removeClass("active");
+            }
+        }
+
+        function keyClick(index) {
+            var keyInfo = keyList[index];
+            $(".selectable-list-row").eq(index).addClass("active").siblings().removeClass("active");
+            if(keyInfo){
+                api.execScript({
+                    // name : 'newCreateStandBill',
+                    // frameName : 'newCreateStandBillDetail',
+                    name : 'checkStandBill',
+                    frameName : 'churuzhanBillAudit',
+                    script : "onSelectKey(" + JSON.stringify(keyInfo) + ");"
+                });
+                api.closeWin();
+            }
+        }
+
+    </script>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>alarm-detail</title>
+    <link rel="stylesheet" href="../module/css/aui.css" />
+    <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+                class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">
+            告警详情
+        </div>
+    </header>
+    <div class="wrapper">
+        <div id="content">
+            <div class="box-cpn">
+                <h4 class="border-b" style="margin-bottom: 0">
+                    <strong class="text-blue margin-r-10">设备信息</strong>
+                    <strong class="text" id="name"></strong>
+                </h4>
+                <div class="padding-10 text">
+                    <div id="ROOMNAME">站址: </div>
+                    <div id="OBJID">FSUID: </div>
+                    <div id="OBJNAME">FSU名称: </div>
+                    <div id="PROVINCENAME">省份: </div>
+                    <div id="CITYNAME">城市: </div>
+                    <div id="COUNTRYNAME">区县: </div>
+                </div>
+            </div>
+            <div class="box-cpn">
+                <h4 class="">
+                    <strong class="text-blue margin-r-10">告警信息</strong>
+                </h4>
+                <div class="padding-10 text">
+                    <h4 style="margin: 0">
+                        <div class="point my-point-color"></div>
+                    </h4>
+                    <div class="point my-point-color"></div>
+                    <strong class="my-text-color margin-r-10 margin-l-30" id="_name"></strong></br>
+                    <div id="CAUSE">告警原因: </div>
+                    <div id="DETAILINFO">告警描述: </div>
+                    <div id="ID">告警编号: </div>
+                    <div id="MID">告警信号ID: </div>
+                    <div id="FIRSTALARMTIME">初次告警时间: </div>
+                    <div id="LASTALARMTIME">最后告警时间: </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript">
+    const cacheName = 'alarm-list-detail'
+    apiready = function () {
+        api.parseTapmode()
+        realInfo()
+    }
+    // 初始化页面
+    const param = JSON.parse(handleLocalStorage('get', cacheName))
+    console.log(JSON.stringify(param))
+
+    let data = JSON.parse(param.data)
+    let realData
+    // 根据param.data中的数据查询最新数据
+    function realInfo() {
+        api.showProgress({
+            title: '加载中',
+            modal: false
+        })
+        request({
+            url: '/app/alarm/active/list',
+            type: 'post',
+            data: {
+                pageNum: 1,
+                pageSize: 1,
+                id: data.ID
+            },
+            success: res => {
+                const data = res.data.resultList[0]
+                // 更新颜色
+                const ai = alarmInfo(data.ALARMLEVEL)
+                data._color = ai._color
+                data._name = ai._name
+                $('.my-point-color').addClass(`point-${ai._color}`)
+                $('.my-text-color').addClass(`text-${ai._color}`)
+                // 填充数据
+                setDatas(resove(data))
+                return api.hideProgress()
+            },
+            catch: res => api.hideProgress()
+        })
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html >
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+				<style>
+				.aui-content-wxx{
+					width: 100%;
+					margin: 0;
+				}
+				.aui-content-wxx ul{
+					background-color: #fff;
+					border-radius: 0;
+					overflow: hidden;
+					margin-bottom: 10px;
+					padding: 0 3%;
+				}
+				</style>
+	</head>
+	<body style="width: 100%">
+		6666
+		<script id="checkDetail-template" type="text/x-dot-template">
+			<ul class="aui-list-view">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>上站核实单信息</h2></div>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 工单编码</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.wo_sn != null ? it.wo_sn:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 工单状态</div>
+			<div class="aui-col-xs-7 aui-pull-right">
+			{{? it.status == '1' }}
+			待接单
+			{{?? it.status == '4' }}
+			待回单
+			{{?? it.status == '2' }}
+			是否上站
+			{{?? it.status == '3' }}
+			待签到
+			{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 派单人</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.dispatch_operator != null ? it.dispatch_operator:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 派单人联系方式</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.dispatch_operator_phone != null ? it.dispatch_operator_phone:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 派单时间</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.dispatch_time != null ? it.dispatch_time:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 所属省</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_provinceid != null ? it.st_provinceid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 所属市</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_cityid != null ? it.st_cityid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 所属区</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_countyid != null ? it.st_countyid:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 站址名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.st_name != null ? it.st_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 上站核实内容</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.wo_content != null ? it.wo_content:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 工单来源</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.fault_source != null ? it.fault_source:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 联系人</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.contacts != null ? it.contacts:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 联系人电话</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.contacts_phone != null ? it.contacts_phone:''}}</div>
+			</li>
+			</ul>
+		</script>
+		<div class="aui-content aui-content-wxx" id="checkDetail">
+
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script>
+		var opts = {};
+		apiready = function() {
+			var wo_id = api.pageParam.wo_id;
+			var wo_sn = api.pageParam.wo_sn;
+	  	if (wo_id != null && wo_id != '' && wo_id != 'undefined') {
+				opts.wo_id = wo_id;
+				opts.wo_sn = wo_sn;
+			}
+			$client.getStandCheckListDetail(opts, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+						//保存上站核实工单信息
+						$api.setStorage('standCheckDetail', ret.model);
+					  renderTemp('checkDetail', 'checkDetail-template', ret.model);
+						$api.setStorage('checkDetailAction', ret.verifyList);
+
+					} else {
+						api.toast({
+							msg : ret.data_info,
+							location : 'middle'
+						});
+						api.execScript({
+						 name : 'mainStandcheckDetail',
+						 script : 'cb_toggleMenu(false)'
+					 });
+					}
+				} else {
+					api.toast({
+						msg : err.msg,
+						location : 'middle'
+					});
+				}
+			 });
+		};
+	</script>
+</html>

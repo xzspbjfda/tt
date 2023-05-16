@@ -1,0 +1,103 @@
+/*********************************************/
+html{font-size: 12px;}
+body{background-color:#f5f5f5;font-size: 12px;font-size: 1rem;color: #666;height:100%;}
+p, a, input, select, span, em, i, textarea, form, div, table, td, th{font-family: "Microsoft Yahei";}
+input, textarea, button, a{-webkit-tap-highlight-color: rgba(0,0,0,0);}
+input, button, select, textarea{outline: none;-webkit-appearance: none;appearance: none;}
+a, a:hover, a:visited, a:link, a:active{cursor: pointer; text-decoration: none;}
+em, i{font-style: normal;}
+ul,li,ol{list-style: none;}
+*{margin: 0; padding: 0;}
+/****====================================================================================================****/
+header{background-color: #E25C5C; height: 3.4rem;position: fixed;left: 0;right: 0;top: 0;z-index: 9;}
+header > h1{font-size: 1.5rem;color: #fff;font-weight: normal;letter-spacing: 0.1rem;height: 3.4rem;line-height: 3.4rem;padding:0 3.5rem;text-align: center;}
+/****====================================================================================================****/
+.pb_content{position: absolute;left: 0;right: 0;top: 0;bottom: 0;overflow: auto;}
+/****============**============**============**============****/
+.pb_formdiv{background-color: #fff; border-bottom: 0.5rem solid #f5f5f5;padding:0.5rem 0;}
+/****============**============**============****/
+.pb_formdivtitle{border-bottom: 0.1rem solid #f5f5f5; font-size: 1.25rem; color: #E25C5C; height: 3.2rem; line-height: 3.2rem; padding: 0 1rem;}
+/****============**============****/
+.pb_formdivtitle > i{display: inline-block;height: 1.7rem;width: 1.7rem;line-height: 1.7rem;margin-right: 0.3rem;margin-top: 0.75rem;vertical-align: top;}
+.pb_formdivtitle > i > img{float: left;max-height: 100%;}
+/****============**============****/
+.pb_formdivdel{float: right; height: 1.32rem; width: 1.32rem; margin-top: 0.94rem;}
+.pb_formdivdel > img{float: left;max-height: 100%;}
+/****============**============**============****/
+.pb_formdivunit{font-size: 1.25rem;color:#333;line-height: 2.6rem;padding: 0.5rem 1rem;position: relative;}
+.pb_formlabel{color:#999;width: 8rem;position: absolute;left: 1rem;top: 0.5rem;}
+.pb_formdivunitcon{margin-left: 8.5rem;min-height: 2.6rem;/* text-align: right; */position: relative;}
+/****============**============**============****/
+.pb_forminput{background-color: #f6f8f9;border: 0;border-radius: 0.3rem;font-size: 1.25rem; height: 2.6rem;width: calc(100% - 2rem);line-height: 2.6rem;padding: 0 1rem;/* text-align: right; */position: relative;}
+textarea.pb_forminput { height: 7.8rem;}
+/****============**============****/
+input.pb_saomiaoinput{width: calc(100% - 3.5rem);padding-right: 2.5rem;}
+a.pb_saomiao{height: 1.32rem;width: 1.32rem;position: absolute;right: 0.6rem;top: 0.6rem;}
+a.pb_saomiao > img{float: left;max-width: 100%;}
+/****============**============****/
+select.pb_forminput{width: 100%;padding-right: 2.5rem;/* direction: rtl; */}
+select.pb_forminput option{/* direction: rtl; */}
+.pb_selectarrow{border: 0.6rem solid transparent; border-top: 0.6rem solid #242e3a; height: 0; width: 0; position: absolute; right: 0.6rem; top: 1rem;}
+/****============**============**============****/
+.pb_formsc{font-size: 0; text-align: left;}
+.pb_formsc > li{display: inline-block; width: 20%; vertical-align: top; position: relative;}
+/****============****/
+.pb_formsc > li > p{border-radius: 0.5rem;margin:0.5rem; overflow: hidden;position: relative;}
+.pb_formsc > li > p > img{float: left;max-height: 100%;max-width: 100%;}
+.pb_formsc > li > p > i{background-color: #000;opacity: 0.5;position: absolute;height: 100%;width: 100%;left: 0;top: 0;}
+.pb_formsc > li > p > i > img{float: left;max-height: 54%;max-width: 54%;margin-left: 23%;margin-top: 23%;}
+/****============****/
+.pb_formscdel{height: 1.34rem; width: 1.34rem; position: absolute; top: 0; right: 0;}
+.pb_formscdel > img{float: left;max-height: 100%;}
+/****============****/
+.pb_formscadd{background-color: #dee3e8;border-radius: 0.5rem;display: block;margin: 0.5rem;overflow: hidden;position: relative;}
+.pb_formscadd > img{float: left;max-height: 100%;max-width: 100%;}
+.pb_formscadd > i{position: absolute;height: 54%;width: 54%;left: 23%;top: 23%;}
+.pb_formscadd > i > img{float: left;height: 100%;width: 100%;}
+/****============**============**============**============****/
+.pb_hasbtnabs {margin-bottom: 6.6rem;}
+.pb_btnpar{background-color: #fff; box-shadow: 0 -0.4rem 0.6rem rgba(100,100,100,0.1); position: absolute; left: 0; bottom: 0; right: 0; text-align: center;}
+/****============**============**============****/
+.pb_btn{background-color: #E25C5C;border:1px solid #E25C5C; border-radius: 3.2rem; box-shadow: 0 0.4rem 0.6rem rgba(226,92,92,0.3); display: block; font-size: 1.34rem; color: #fff;width: 16rem; height: 3.2rem; line-height: 3.2rem;margin: 1rem auto;text-align: center;}
+.pb_btnnobg{background-color: #fff;border:1px solid #E25C5C; border-radius: 3.2rem; box-shadow: 0 0.4rem 0.6rem rgba(226,92,92,0.1); display: block; font-size: 1.34rem; color: #E25C5C;width: 16rem; height: 3.2rem; line-height: 3.2rem;margin: 1rem auto;text-align: center;}
+.pb_btnadd{background-color: #fff;border:1px solid #E25C5C;border-radius: 1rem;box-shadow: 0 0.4rem 0.6rem rgba(226,92,92,0.1);display: block;font-size: 1.34rem;color: #E25C5C;line-height: 2rem;padding: 0.5rem;margin: 1rem;text-align: center;}
+.pb_btnadd > i{display: inline-block;height: 2rem;width: 2rem;line-height: 2rem;vertical-align: top;}
+.pb_btnadd > i > img{float: left;height: 70%;width: 70%;margin-top: 10%;}
+
+/****20201107====================================================================================================****/
+.pb_close{width: 1.75rem;height: 1.75rem;position: absolute;right: 1rem;top: 0.825rem;}
+.pb_close:hover{opacity:0.5;}
+.pb_close > img{float: left;max-height: 100%;}
+.pb_contentRegister{padding: 4rem 0;}
+.pb_contentRegister > .pb_btn{width: 80%;margin: 1rem auto 4rem;}
+.pb_contentRegister > .pb_btnnobg{width: 80%;margin: 1rem auto 4rem;}
+/****20201107tan====================================================================================================****/
+.powerbindingtan{}
+.powerbindingtan:before{content: '';}
+.powerbindingtan_title{background-color: #E25C5C; height: 3.4rem;position: fixed;left: 0;right: 0;top: 0;z-index: 9;}
+.powerbindingtan_title > h1{font-size: 1.5rem;color: #fff;font-weight: normal;letter-spacing: 0.1rem;height: 3.4rem;line-height: 3.4rem;padding:0 3.5rem;text-align: center;}
+.pb_close{width: 1.75rem;height: 1.75rem;position: absolute;right: 1rem;top: 0.825rem;}
+.pb_close:hover{opacity:0.5;}
+.pb_close > img{float: left;max-height: 100%;}
+.powerbindingtan_btnpar{padding: 4rem 0;}
+.powerbindingtan_btnpar > .pb_btn{width: 80%;margin: 1rem auto 4rem;}
+.powerbindingtan_btnpar > .pb_btnnobg{width: 80%;margin: 1rem auto 4rem;}
+/****20201107tan====================================================================================================****/
+.powerbindingtan{background-color: #fff;border-radius: 1rem; box-shadow: 0 5px 5px rgba(0,0,0,0.1);width: 80%;position: fixed;left: 50%;top: 50%;transform: translate(-50%, -50%);}
+.powerbindingtan:before{content: '';background-color: rgba(0,0,0,0.1);width: 100vw;height: 100vh;position: fixed;left: 50%;top: 50%;transform: translate(-50%,-50%);}
+.powerbindingtan_title{background-color: #E25C5C;border-radius: 1rem 1rem 0 0;height: 3.4rem;position: relative;}
+.powerbindingtan_title > h1{font-size: 1.5rem;color: #fff;font-weight: normal;letter-spacing: 0.1rem;height: 3.4rem;line-height: 3.4rem;padding:0 3.5rem;text-align: center;}
+.powerbindingtan_title .pb_close{width: 1.75rem;height: 1.75rem;position: absolute;right: 1rem;top: 0.825rem;}
+.powerbindingtan_title .pb_close:hover{opacity:0.5;}
+.powerbindingtan_title .pb_close > img{float: left;max-height: 100%;}
+.powerbindingtan_btnpar{background-color: #fff;border-radius: 0 0 1rem 1rem;padding: 3.5rem 1rem;position: relative;}
+.powerbindingtan_btnpar > .pb_btn{display: inline-block;width: 40%;margin: 0 1rem;}
+.powerbindingtan_btnpar > .pb_btnnobg{display: inline-block;width: 40%;margin: 0 1rem;}
+/****====================================================================================================****/
+
+/****====================================================================================================****/
+/*=========================320*480=========================================*/
+@media screen and (min-height: 520px){}
+@media screen and (min-width: 480px) and (max-width: 600px){}
+@media screen and (min-width: 760px) and (max-width: 1024px){}
+@media screen and (min-width: 1024px){}

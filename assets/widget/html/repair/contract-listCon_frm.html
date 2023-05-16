@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>合同信息列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+		<style>
+			body.active {
+				background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+			}
+			.remember {
+				position: absolute;
+				left: 14px;
+				top: 5px;
+				cursor: pointer;
+				z-index: 1;
+				opacity: .01;
+			}
+			.remember:checked+ .checkbox {
+				background: #1abc9c url("../../image/login/checked.png") 1px 1px;
+				border-color: #1abc9c;
+			}
+			.remember+ .checkbox {
+				display: inline-block;
+				width: 22px;
+				height: 22px;
+				position: absolute;
+				left: 3px;
+				top: 5px;
+				border: 1px solid #9abbe3;
+				background: 0;
+				border-radius: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<script id="listView-template" type="text/x-dot-template">
+				{
+
+					{
+						for(var i=0, len=it.length; i < len; i++) {
+							var model = it[i];
+							var itemtype= model.itemtype;
+							var hiddentype="";
+							if("1"==itemtype){
+								hiddentype="按次";
+							} else if("2"==itemtype){
+								hiddentype="按月包干";
+							}
+						}
+					}
+				<li tapmode="active" model="{{=it[i]}}" num="{{=it[i].contractno}}" consumercode = "{{=it[i].consumercode}}" paytype="{{=it[i].paytype}}"  id="{{=it[i].id}}"  paymoney="{{=it[i].paymoney}}" itemtype="{{=it[i].itemtype}}"
+				 contractname="{{=it[i].contractname}}"contracttitle='{{=it[i].contracttitle}}' manager_id="{{=it[i].manager_id}}"  manager_name="{{=it[i].manager_name}}" consumername="{{=it[i].consumername}}">
+				<div class="top-title">
+					<input class="remember"  type="radio" name='remember' >
+					<span class="checkbox"></span>
+					<div style="margin-left: 27px">{{=model.contractno}}</div>
+				</div>
+				<div class="cj-l-into"><span style="border-right: 1px solid #ddd;" >{{=model.paytype}} </span><div class="cj-l-date">{{=hiddentype}}<span>{{=model.paymoney}}元</span></div></div>
+
+				</li>
+				{{} }
+			}
+			</script>
+			<ul class="ccssoft_list" id="listView"></ul>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/utils/ListUtil.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script>
+		var listView;
+		apiready = function() {
+			var opts = {
+				stationid : api.pageParam.stationid
+			};
+			listView = new C.ApiListView({
+				fn : $client.getRepairContractList,
+				listName : 'list'
+			});
+
+			console.log("数据：" + api.pageParam.stationid);
+			//api.pageParam.stationId
+			listView.setQueryOptions(opts);
+			listView.refresh();
+
+			listUtil.init();
+		}
+
+		function call_rollback() {
+			var list = [];
+			var map = null;
+			var resultid = '';
+			var count = 0;
+			var finishcount = 0;
+			var allpoint = 0;
+			$("input[type='radio']:checked").each(function(index) {
+
+				var contractno = $(this).parent().parent().attr('num');
+				var paytype = $(this).parent().parent().attr('paytype');
+				var id = $(this).parent().parent().attr('id');
+				var paymoney = $(this).parent().parent().attr('paymoney');
+				var itemtype = $(this).parent().parent().attr('itemtype');
+				var contractname = $(this).parent().parent().attr('contractname');
+				var manager_id = $(this).parent().parent().attr('manager_id');
+				var manager_name = $(this).parent().parent().attr('manager_name');
+				var consumername = $(this).parent().parent().attr('consumername');
+				var consumercode = $(this).parent().parent().attr('consumercode');
+				var contracttitle = $(this).parent().parent().attr('contracttitle');
+				map = {
+					contractno : contractno,
+					paytype : paytype,
+					id : id,
+					paymoney : paymoney,
+					itemtype : itemtype,
+					contractname : contractname,
+					manager_id : manager_id,
+					manager_name : manager_name,
+					consumername : consumername,
+					consumercode : consumercode,
+					amount : 1,
+					contracttitle:contracttitle
+				};
+				list.push(map);
+			});
+			//			var name="369";
+			//			alert(api.pageParam.frameName);
+			api.execScript({
+				name : api.pageParam.winName,
+				frameName : api.pageParam.frameName,
+				script : "refreshListcontract('" + JSON.stringify(list) + "');"
+			});
+			setTimeout(function() {
+				api.closeWin();
+			}, 1000);
+		}
+
+		function cb_queryBillList(opts) {
+			listView.setQueryOptions(opts);
+			listView.refresh();
+		}
+	</script>
+</html>

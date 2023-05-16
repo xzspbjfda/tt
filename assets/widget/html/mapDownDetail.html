@@ -1,0 +1,319 @@
+﻿﻿<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>api</title>
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" href="../css/query-list.css" />
+		<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+		<link rel="stylesheet" href="../script/ccssoft/css/ccssoft-lite.css" />
+	<style>
+	body{
+		margin: 0;
+		padding: 0;
+		background-color: #fff;
+	}
+	#dialog{
+		/*position: fixed;
+		bottom: 0;*/
+	}
+
+	ul, li {
+			margin: 0;
+			padding: 0;
+	}
+
+	.cj-l-title .subType {
+			display: block;
+			width: 200px;
+			height: 20px;
+			line-height: 20px;
+			color: #666;
+			text-align: right;
+			position: absolute;
+			top: 8px;
+			right: 0;
+			font-size: 12px;
+			font-weight: bold;
+	}
+
+
+	.cj-l-level{
+		/*width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		line-height: 18px;
+		text-align: center;
+		color: #fff;*/
+		/*margin: 0 4px;*/
+		/*vertical-align:top;*/
+		position: absolute;
+		left: 10px;
+		top:13px;
+	}
+
+	.ccssoft_list_wxx {
+	 background-color: #eff1f0;
+	 overflow: hidden;
+	 margin: 0 auto;
+	 margin-top: -20px;
+ }
+ .ccssoft_list_wxx li {
+		 list-style: none;
+		 padding:3px 10px 3px 10px;
+		 background: #fff;
+		 overflow: hidden;
+		 position: relative;
+ }
+
+ .ccssoft_list_wxx .showBox{
+		 text-align:center;
+		 font-size:12px;
+ }
+ .aui-content-wxx{
+	 width: 100%;
+	 margin: 0;
+ }
+ .aui-content-wxx ul{
+	 background-color: #fff;
+	 border-radius: 0;
+	 overflow: hidden;
+	 margin-bottom: 10px;
+	 padding: 0 3%;
+ }
+ .tit_Label{
+	padding: 0 10px;
+	border-radius: 20px;
+	color: #fff;
+	font-weight: normal;
+	margin-left: 10px;
+ }
+ .yysIcon{
+	width: 28px;
+ }
+ .yysText{
+	font-size: 12px;
+	display: inline-block;
+	height: 28px;
+	text-align: center;
+	width: 70%;
+ }
+ .yysText span{
+	color: red;
+ }
+ .cj-l-title {
+		 font-size: 14px;
+		 font-weight: bold;
+		 line-height: 20px;
+		 padding: 8px 70px 8px 32px;
+		 position: relative;
+ }
+ .tital_btn{
+	 width: 100%;
+	 height: 40px;
+	 background-color: #fff;
+	 border-radius: 4px;
+	 border: 1px solid #43acfe;
+	 color: #43acfe;
+	 margin: 10px auto;
+	 display: block;
+ }
+ .billNum{
+ 		font-size: 12px;
+		font-weight: bold;
+		margin-bottom: 6px;
+ }
+ #billNum{
+ 		color: #43acfe;
+ }
+	</style>
+	</head>
+	<body>
+		<script id="list-template" type="text/x-dot-template">
+			{{
+			var model = it;
+			var statusColor="#2d89ef";
+			var typeColor="red";
+			if(model.status == ""){
+			statusColor="#2d89ef";
+			}else if(model.status=="交维"){
+			statusColor="#3598eb";
+			}else if(model.status=="退网下线"){
+			statusColor="#d8544d";
+			}else if(model.status=="交维(未承载业务)"){
+			statusColor="#5B7A2C";
+			}else if(model.status=="交维(承载业务)"){
+			statusColor="#9DE35B";
+			}else if(model.status=="测试"){
+			statusColor="#FFCB00";
+			}
+			if(model.type==null || model.type=="null"){
+			model.type="";
+			}
+			else if(model.type=="室外站"){
+			typeColor="#0022D9";
+			}else if(model.type=="室内宏站"){
+			typeColor="#4F8B8A";
+			}else if(model.type=="室分"){
+			typeColor="#EDBD19";
+			}else if(model.type=="BBU"){
+			typeColor="#5F3388";
+			}else if(model.type=="RRU"){
+			typeColor="#F0D869";
+			}else if(model.type=="普通宏站"){
+			typeColor="#7EF0FE";
+			}else if(model.type=="拉远站"){
+			typeColor="#FFE493";
+			}else if(model.type=="室分系统"){
+			typeColor="#C5AFDA";
+			}
+			}}
+			<li tapmode="active">
+			<img class="tit_img cj-l-level" src="../image/bt_icon2.png" alt=""/>
+			<div class="cj-l-title">{{=model.name}}
+				<div class="subType">
+					{{?model.type}}
+					<span class="tit_Label" style="background-color:{{=typeColor}}">{{=model.type}}</span>
+					{{?}}
+					{{?model.status}}
+					<span class="tit_Label" style="background-color:{{=statusColor}}">{{=model.status}}</span>
+					{{?}}
+				</div>
+			</div>
+
+			<div class="billNum">工单数量：<span id="billNum">0</span></div>
+
+			<div class="aui-list-view">
+				<div class="aui-col-xs-4 aui-pull-left" style="line-height:30px;">
+					<img class="aui-pull-left yysIcon" src="../image/yd_icon.png" alt=""/>
+					<span class="aui-pull-left yysText" style='background-color:#f3fbff'>移动：
+					{{? model.operators_level =='BZ'}}
+						<span>标准</span>
+					{{?? model.operators_level == 'GJ'}}
+						<span>高级</span>
+					{{??}}
+						<span>无</span>
+					{{?}}
+					</span>
+				</div>
+				<div class="aui-col-xs-4 aui-pull-left" style="line-height:30px;">
+					<img class="aui-pull-left yysIcon" src="../image/lt_icon.png" alt=""/>
+					<span class="aui-pull-left yysText" style='background-color:#fff4f0'>联通：
+					{{? model.ltoperators_level =='BZ'}}
+						<span>标准</span>
+					{{?? model.ltoperators_level == 'GJ'}}
+						<span>高级</span>
+					{{??}}
+						<span>无</span>
+					{{?}}
+					</span>
+				</div>
+				<div class="aui-col-xs-4 aui-pull-left" style="line-height:30px;">
+					<img class="aui-pull-left yysIcon" src="../image/dx_icon.png" alt=""/>
+					<span class="aui-pull-left yysText" style='background-color:#f2efff'>电信：
+					{{? model.dxoperators_level =='BZ'}}
+						<span>标准</span>
+					{{?? model.dxoperators_level == 'GJ'}}
+						<span>高级</span>
+					{{??}}
+						<span>无</span>
+					{{?}}
+					</span>
+				</div>
+			</div>
+			</li>
+			<li>
+				<button class="tital_btn" type="button"  onclick="goGPS()">一键导航</button>
+			</li>
+
+		</script>
+		<div id="dialog">
+				<ul class="ccssoft_list_wxx" id="stationList"></ul>
+    </div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/third/jquery/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript" src="../script/client.api.js"></script>
+	<script type="text/javascript" src="../script/config.js"></script>
+	<script type="text/javascript" src="../script/navigate.js"></script>
+	<script type="text/javascript" src="../script/doT.min.js"></script>
+	<script type="text/javascript" src="../script/common.js"></script>
+
+
+
+	<script  type="text/javascript">
+				var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+        apiready = function(){
+                // $(document.body).on('touchend',function(e){
+                //         var dialog = $("#dialog")[0];
+                //         if(!$.contains(dialog, e.target)){
+                //                 setTimeout(function(){
+                //                         api.closeFrame();
+                //                 },200);
+                //         }
+                // });
+								console.log(JSON.stringify(api.pageParam))
+									renderTemp('stationList', 'list-template', api.pageParam.stationlistMap);
+									var data={
+										code:api.pageParam.stationlistMap.code
+									}
+									$client.getLocationBill(data,function(ret,err){
+										console.log(JSON.stringify(ret));
+										if (ret.success) {
+												$('#billNum').html(ret.listcount);
+										}
+									})
+        };
+
+				// 开始导航
+				function goGPS() {
+					var baiduNavigation = api.require('baiduNavigation');
+					baiduNavigation.start({
+						start: { // 起点信息.
+							position: { // 经纬度，与address配合可为空
+								lon: lastLocation.lon, // 经度.
+								lat: lastLocation.lat // 纬度.
+							},
+							title: "", // 描述信息
+							address: "" // 地址信息，与position配合为空
+						},
+						end: { // 终点信息.
+							position: { // 经纬度，与address配合可为空
+								lon: api.pageParam.stationlistMap.baidux, // 经度
+								lat: api.pageParam.stationlistMap.baiduy // 纬度
+							},
+							title: "", // 描述信息
+							address: "" // 地址信息，与position配合为空
+						}
+					}, function(ret, err) {
+						if (ret.status) {
+
+						} else {
+							var msg = "未知错误";
+							if (1 == err.code) {
+								msg = "获取地理位置失败";
+							}
+							if (2 == err.code) {
+								msg = "定位服务未开启";
+							}
+							if (3 == err.code) {
+								msg = "线路取消";
+							}
+							if (4 == err.code) {
+								msg = "退出导航";
+							}
+							if (5 == err.code) {
+								msg = "退出导航声明页面";
+							}
+							api.toast({
+								msg: msg,
+								location: 'bottom'
+							});
+						}
+					});
+				}
+
+	</script>
+</html>

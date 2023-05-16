@@ -1,0 +1,1335 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+        <link rel="stylesheet" type="text/css" href="css/billMenu.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+        <style>
+            body.active {
+                background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .cj-orange{
+              background-color: orange;
+            }
+            .cj-blue{
+              background-color: blue;
+            }
+            .cj-purple{
+              background-color: purple;
+            }
+            .cj-green{
+              background-color: green;
+            }
+
+            .cj-l-level2{
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              line-height: 18px;
+              text-align: center;
+              display: inline-block;
+              color: #fff;
+              margin: 0 4px;
+              vertical-align:top;
+            }
+
+            .cj-ash{
+              background-color: grey;
+            }
+
+            .ccssoft_list_wxx {
+             background-color: #eff1f0;
+             override: hidden;
+             width: 94%;
+             margin: 0 auto;
+           }
+           .ccssoft_list_wxx li {
+               list-style: none;
+               border-radius: 6px;
+               padding:3px 10px 3px 10px;
+               background: #fff;
+               overflow: hidden;
+               margin-bottom: 10px;
+               position: relative;
+           }
+
+           .ccssoft_list_wxx .showBox{
+               text-align:center;
+               font-size:12px;
+           }
+           #main{
+             overflow: hidden;
+             background-color: #eff1f0;
+           }
+           .cj-l-title-wxx{
+               font-size: 14px;
+               font-weight: bold;
+               line-height: 20px;
+               padding: 8px 70px 8px 0;
+               position: relative;
+               margin-left: 10px;
+           }
+           .liBTn{
+             border-top: 1px dashed #00a0c8;
+             padding: 8px;
+           }
+
+           .cj-l-title-wxx span {
+               display: block;
+               width: 90px;
+               height: 20px;
+               line-height: 20px;
+               color: #666;
+               text-align: right;
+               position: absolute;
+               top: 5px;
+               right: 0;
+               font-size: 12px;
+               font-weight: bold;
+           }
+           .cj-l-into-wxx {
+               font-size: 12px;
+               color: #666;
+               line-height: 20px;
+               padding: 3px 0;
+               position: relative;
+           }
+           .cj-l-date-wxx {
+               display: block;
+               position: absolute;
+               top: 3px;
+               right: 0;
+               width: 180px;
+               text-align: right;
+           }
+           .cj-l-date-wxx span {
+               margin-left: 7px;
+           }
+           .cj-l-date-wxx_w {
+               display: block;
+               position: absolute;
+               top: 3px;
+               right: 0;
+               width: 180px;
+               text-align: right;
+           }
+           .cj-l-date-wxx_w span {
+               margin-left: 7px;
+           }
+           .cj-l-date-wxx:after {
+               content: "";
+               display: block;
+               width: 1px;
+               height: 12px;
+               background: #e3e3e3;
+               position: absolute;
+               top: 4px;
+               left: 60px;
+           }
+           .cj-l-date-wxx-2{
+             display: block;;
+             width: 1px;
+             height: 12px;
+             background: #e3e3e3;
+             position: absolute;
+             right: -4px;
+             top:4px;
+           }
+
+           .cj-l_line{
+             position: absolute;
+             width:5px;
+             height: 18px;
+             left: -10px;
+             top: 9px;
+             border-radius: 10px;
+           }
+           .cj-l_line_box{
+             position: absolute;
+             width:5px;
+             height: 18px;
+             left: 0px;
+             top: 12px;
+             border-radius: 10px;
+             background: linear-gradient(#fe7a7d, #fe4f4f);
+           }
+           .cj-l_line_box2{
+             position: absolute;
+             width:5px;
+             height: 18px;
+             left: 0px;
+             top: 9px;
+             border-radius: 10px;
+             background: linear-gradient(#fe7a7d, #fe4f4f);
+           }
+           .cj-l_line1{
+             background: linear-gradient(#fe7a7d, #fe4f4f);
+           }
+            .LC_img{
+              height: 60px;
+              display: block;
+              margin: 0 auto;
+              background-color:#ccc;
+            }
+            .wxx_btn{
+              width: 118px;
+              height: 33px;
+              border-radius: 35px;
+              border: 1px solid #db4537;
+              line-height: 30px;
+              box-shadow: 0 3px 8px rgba(226,132,123,.5);
+              color: #db4537;
+              font-size: 14px;
+              text-align: center;
+              margin: 10px auto;
+            }
+            .none{
+              display: none;
+            }
+            .aui-flex-col{
+              height: 28px;
+              line-height: 28px;
+            }
+            .cj-l-into,.top-title{
+              height: 28px;
+              line-height: 28px;
+            }
+            .top-title span{
+              height: 30px;
+              line-height: 30px;
+            }
+            .liDown{
+              height: 30px;
+              line-height: 30px;
+              border: none;
+              /*margin-top: -10px;*/
+            }
+            .liDown div{
+              height: 30px;
+              line-height: 30px;
+            }
+            .liTop{
+              height: 30px;
+              line-height: 30px;
+            }
+            .top-title{
+              border: none;
+              font-size: 12px;
+            }
+            .bill_wxx_select{
+              padding: 6px 12px;
+              border-radius: 40px;
+              background-color: #fff;
+              display: inline-block;
+              margin-top: 10px;
+              margin-left: 10px;
+              color: #fe4f4f;
+            }
+            .aui-checkbox{
+    					margin: 0 4px 0 10px;
+    					top: 20px;
+    				}
+    				.buttonGroup {
+    						width: 100%;
+    						position: fixed;
+    						bottom: 5px;
+    						text-align: center;
+    						display: none;
+                justify-content:space-around;;
+    				}
+    				.buttonGroup2 {
+    						width: 94%;
+    						position: fixed;
+    						left: 50%;
+    						margin-left: -47%;
+    						bottom: 5px;
+    						text-align: center;
+    						overflow: hidden;
+    						display: none;
+    				}
+    				.uploadBtn{
+    					width: 43%;
+    					display: inline-block;
+    				}
+            .aui-checkbox:checked:before,
+            .aui-checkbox.aui-checked:before {
+            	position: absolute;
+            	left: 5px;
+            	top: -10px;
+            	font-size: 16px;
+            	display: inline-block;
+            	font-family: "auiicon";
+            	content: "\e645";
+            	color: #ffffff;
+            }
+            .aui-checkbox:checked:after,
+            .aui-checkbox.aui-checked:after {
+            	position: absolute;
+            	left: 5px;
+            	top: -10px;
+            	font-size: 16px;
+            	display: inline-block;
+            	font-family: "auiicon";
+            	content: "\e645";
+            	color: #ffffff;
+            	pointer-events: none;
+            }
+            .cj-l-title, .cj-f-title {
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 8px 70px 8px 32px;
+                position: relative;
+            }
+            .cj-f-title {
+                padding: 8px 70px 8px 0px;
+            }
+            .cj-ash{
+              background-color: grey;
+            }
+
+            .cj-l-title .subType {
+                display: block;
+                width: 150px;
+                height: 20px;
+                line-height: 30px;
+                color: #666;
+                text-align: right;
+                position: absolute;
+                top: 5px;
+                right: 0;
+                font-size: 12px;
+            }
+            .subType div{
+              display: inline-block;
+            }
+            .cj-l-into {
+                font-size: 12px;
+                color: #666;
+                line-height: 20px;
+                padding: 3px 0;
+                position: relative;
+                /*   padding-right: 210px;*/
+            }
+            .cj-l-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 140px;
+                text-align: right;
+            }
+            .cj-l-date span {
+                margin-left: 7px;
+            }
+            .cj-l-level{
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              line-height: 18px;
+              text-align: center;
+              color: #fff;
+              margin: 0 4px;
+              vertical-align:top;
+              position: absolute;
+              left: 10px;
+              top:13px;
+            }
+
+           .xunjian_box{
+             list-style: none;
+             border-radius: 6px;
+             padding: 3px 10px 3px 10px;
+             background: #fff;
+             overflow: hidden;
+             margin-bottom: 10px;
+             position: relative;
+           }
+           .li_box{
+             position: relative;
+             overflow:hidden;
+             box-sizing: border-box;
+           }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                var model = JSON.parse(it[i].stationMessage);
+                var billList = JSON.parse(it[i].billList);
+                var taskList = JSON.parse(it[i].taskList);
+                var hidderList = JSON.parse(it[i].hidderList);
+                var fadianlist = JSON.parse(it[i].fadianlist);
+                var standStationList = JSON.parse(it[i].standStationList);
+                var zndwTaskList = JSON.parse(it[i].zndwTaskList);
+
+                var statusColor="#2d89ef";
+                var typeColor="#0022D9";
+
+
+                var mark2;
+                var markColorClass2;
+                if("GJ"==model.basestationlevel){
+                    mark2='高';
+                    markColorClass2="cj-orange";
+                }else if ("BZ"==model.basestationlevel) {
+                    mark2='标';
+                    markColorClass2="cj-blue";
+                }else if ("GSHD"==model.basestationlevel) {
+                    mark2='山';
+                    markColorClass2="cj-purple";
+                }else if ("BKH"==model.basestationlevel) {
+                    mark2='免';
+                    markColorClass2="cj-green";
+                }else if ("KONG"==model.basestationlevel){
+                    mark2='';
+                    markColorClass2="cj-ash";
+                }
+
+                if(model.st_status == ""){
+                statusColor="#2d89ef";
+                }else if(model.st_status=="交维"){
+                statusColor="#00a300";
+                }else if(model.st_status=="退网下线"){
+                statusColor="#d8544d";
+                }else if(model.st_status=="存量"){
+                statusColor="#5B7A2C";
+                }else if(model.st_status=="工程"){
+                statusColor="#9DE35B";
+                }else if(model.st_status=="测试"){
+                statusColor="#FFCB00";
+                }
+                if(model.st_type==null || model.st_type=="null"){
+                model.st_type="";
+                }
+                else if(model.st_type=="室外站"){
+                typeColor="#0022D9";
+                }else if(model.st_type=="室内宏站"){
+                typeColor="#4F8B8A";
+                }else if(model.st_type=="室分"){
+                typeColor="#EDBD19";
+                }else if(model.st_type=="BBU"){
+                typeColor="#5F3388";
+                }else if(model.st_type=="RRU"){
+                typeColor="#F0D869";
+                }else if(model.st_type=="普通宏站"){
+                typeColor="#7EF0FE";
+                }else if(model.st_type=="拉远站"){
+                typeColor="#FFE493";
+                }else if(model.st_type=="室分系统"){
+                typeColor="#C5AFDA";
+                }
+                }}
+                <li>
+                <div tapmode="active" stationId="{{=model.st_id}}" onclick="openStationDetail('{{=model.st_code}}','{{=model.st_name}}');">
+                  <div class='cj-l-level {{=markColorClass2}}'>{{=mark2}}</div>
+
+                  <div class="cj-l-title">{{=model.st_name}}<div class="subType">{{=it[i].Kmtance != null ? it[i].Kmtance : 0}}km</div></div>
+                </div>
+ {{? billList.length>0}}
+                <div class="cj-l-title-wxx">
+                  故障工单
+                </div>
+                {{ for(var j=0, len2=billList.length; j < len2; j++) {
+                var model = billList[j];
+                var billstatus = model.billstatus;
+                var time= model.dispatch_time;
+                var businesstype=model.businesstype;
+                var faultType=model.faulttype;
+                var action=model.actionlist;
+                var alarmStatus="";
+                var alarmColor="";
+                var billStatusName="";
+                var billStatusImage='';
+                var billStatusImagenone="";
+
+
+                var billStatusColor = "";
+                if(billstatus == "ACCEPT"){
+                billStatusName = "待接单";
+
+                billStatusColor = "#22AADD";
+
+                }else if(billstatus == "SUPPORTCONFIRM"){
+                billStatusName = "待确认";
+                billStatusColor = "#fb8536";
+                billStatusImagenone="none";
+                }else if(billstatus == "REVERT"){
+                billStatusName = "待回单";
+                billStatusColor = "#B372F6";
+                }else if(billstatus == "REVERTED"){
+                billStatusName = "已回单";
+                billStatusColor = "#B372F6";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "AUDIT"){
+                billStatusName = "待审核";
+                billStatusColor = "#AED684";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "ELECTRIC_JUDGE"){
+                billStatusName = "待发电";
+                billStatusColor = "#7676BA";
+
+                }else if(billstatus == "ARCHIVE"){
+                billStatusName = "归档";
+                billStatusColor = "#953A6C";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "DEFINE"){
+                billStatusName = "待定位";
+                billStatusColor = "#00DB00";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "HANGUP"){
+                billStatusName = "挂起";
+                billStatusColor = "#F9F900";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "ISSTAND"){
+                billStatusName = "待上站";
+                billStatusColor = "#A79F00";
+
+                }else if(billstatus == "ARRIVE"){
+                billStatusName = "到站签到";
+                billStatusColor = "#04B88B";
+
+                }else if(billstatus == "ELECTRIC_BEGIN"){
+                billStatusName = "开始发电";
+                billStatusColor = "#8470FF";
+
+                }else if(billstatus == "ELECTRIC_END"){
+                billStatusName = "结束发电";
+                billStatusColor = "#8FBC8F";
+
+
+                }else if(billstatus == "CON_CONFIRM"){
+                billStatusName = "运营商确认";
+                billStatusColor = "#D067AC";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "CON_APPROVE"){
+                billStatusName = "是否认可";
+                billStatusColor = "#008AD4";
+                billStatusImagenone="none";
+
+                }
+
+
+
+
+                if("人工受单"==businesstype){
+                  alarmStatus="人工";
+
+                }else if("设备告警工单"==businesstype&&model.alarmactivecount=="0"){
+
+                  alarmStatus="告警已消除";
+                  alarmColor="#19743b";
+                }else{
+                  alarmStatus="告警未消除";
+                  alarmColor="#d8544d";
+
+                }
+
+                var mark;
+                var markColorClass;
+                if("GJ"==model.basestationlevel){
+                    mark='高';
+                    markColorClass="cj-orange";
+                }else if ("BZ"==model.basestationlevel) {
+                    mark='标';
+                    markColorClass="cj-blue";
+                }else if ("GSHD"==model.basestationlevel) {
+                    mark='山';
+                    markColorClass="cj-purple";
+                }else if ("BKH"==model.basestationlevel) {
+                    mark='免';
+                    markColorClass="cj-green";
+                }else if ("KONG"==model.basestationlevel){
+                    mark='';
+                    markColorClass="cj-ash";
+                }
+                }}
+
+
+                <div class='liBTn'  tapmode="active" billStatus="{{=model.billstatus}}" stationId="{{=model.stationid}}" billId="{{=model.billid}}" billSn="{{=model.billsn}}" onclick="openRest('{{=model.billsn}}','{{=model.billid}}','{{=model.stationid}}','{{=model.billstatus}}','{{=model.gradetype}}','故障');">
+                <div class="cj-l-into-wxx" style='color:#3e3e3e'>{{=model.billsn}}<div class="cj-l-date-wxx_w"><span style="color:{{=billStatusColor}}">{{=billStatusName}}</span></div></div>
+
+                <div class="cj-l-into-wxx">
+                  <span style="color:{{=alarmColor}};position:relative;" >{{=alarmStatus}}<div class="cj-l-date-wxx-2"></div> </span>
+                  <span style="margin-left: 2px;text-align:center;">
+                    {{=model.billtitle}}
+                  </span>
+                  <div class="cj-l-date-wxx"><span>{{=model.businesstype}}  </span></div>
+
+                </div>
+
+                </div>
+                {{  } }}
+{{?}}
+
+{{? fadianlist.length>0&&taskList.length+hidderList.length+billList.length<3}}
+                <div class="cj-l-title-wxx">
+                  停发电工单
+                </div>
+                  {{ for(var y=0, len5=fadianlist.length; y < len5; y++) {
+                  var model = fadianlist[y];
+                  var billstatus = model.billstatus;
+                  var time= model.dispatch_time;
+                  var businesstype=model.businesstype;
+                  var faultType=model.faulttype;
+                  var action=model.actionlist;
+                  var alarmStatus="";
+                  var alarmColor="";
+                  var billStatusName="";
+                  var billStatusImage='';
+                  var billStatusImagenone="";
+
+                  var billStatusColor = "";
+                  if(billstatus == "ACCEPT"){
+                  billStatusName = "待接单";
+
+                  billStatusColor = "#22AADD";
+
+
+                  }else if(billstatus == "SUPPORTCONFIRM"){
+                  billStatusName = "待确认";
+                  billStatusColor = "#fb8536";
+                  billStatusImagenone="none";
+                  }else if(billstatus == "REVERT"){
+                  billStatusName = "待回单";
+                  billStatusColor = "#B372F6";
+                  }else if(billstatus == "REVERTED"){
+                  billStatusName = "已回单";
+                  billStatusColor = "#B372F6";
+                  billStatusImagenone="none";
+
+                  }else if(billstatus == "AUDIT"){
+                  billStatusName = "待审核";
+                  billStatusColor = "#AED684";
+                  billStatusImagenone="none";
+
+                  }else if(billstatus == "ELECTRIC_JUDGE"){
+                  billStatusName = "待发电";
+                  billStatusColor = "#7676BA";
+
+                  }else if(billstatus == "ARCHIVE"){
+                  billStatusName = "归档";
+                  billStatusColor = "#953A6C";
+                  billStatusImagenone="none";
+
+                  }else if(billstatus == "DEFINE"){
+                  billStatusName = "待定位";
+                  billStatusColor = "#00DB00";
+                  billStatusImagenone="none";
+
+                  }else if(billstatus == "HANGUP"){
+                  billStatusName = "挂起";
+                  billStatusColor = "#F9F900";
+                  billStatusImagenone="none";
+
+                  }else if(billstatus == "ISSTAND"){
+                  billStatusName = "待上站";
+                  billStatusColor = "#A79F00";
+
+                  }else if(billstatus == "ARRIVE"){
+                  billStatusName = "到站签到";
+                  billStatusColor = "#04B88B";
+
+                  }else if(billstatus == "ELECTRIC_BEGIN"){
+                  billStatusName = "开始发电";
+                  billStatusColor = "#8470FF";
+
+                  }else if(billstatus == "ELECTRIC_END"){
+                  billStatusName = "结束发电";
+                  billStatusColor = "#8FBC8F";
+
+                  }else if(billstatus == "CON_CONFIRM"){
+                  billStatusName = "运营商确认";
+                  billStatusColor = "#D067AC";
+                  billStatusImagenone="none";
+
+                  }else if(billstatus == "CON_APPROVE"){
+                  billStatusName = "是否认可";
+                  billStatusColor = "#008AD4";
+                  billStatusImagenone="none";
+
+                  }
+
+
+
+                  if("人工受单"==businesstype){
+                    alarmStatus="人工";
+
+                  }else if("设备告警工单"==businesstype&&model.alarmactivecount=="0"){
+
+                    alarmStatus="告警已消除";
+                    alarmColor="#19743b";
+                  }else{
+                    alarmStatus="告警未消除";
+                    alarmColor="#d8544d";
+
+                  }
+
+                  var mark;
+                  var markColorClass;
+                  if("GJ"==model.basestationlevel){
+                      mark='高';
+                      markColorClass="cj-orange";
+                  }else if ("BZ"==model.basestationlevel) {
+                      mark='标';
+                      markColorClass="cj-blue";
+                  }else if ("GSHD"==model.basestationlevel) {
+                      mark='山';
+                      markColorClass="cj-purple";
+                  }else if ("BKH"==model.basestationlevel) {
+                      mark='免';
+                      markColorClass="cj-green";
+                  }else if ("KONG"==model.basestationlevel){
+                      mark='';
+                      markColorClass="cj-ash";
+                  }
+                  }}
+
+                  <div class='liBTn'  tapmode="active" billStatus="{{=model.billstatus}}" stationId="{{=model.stationid}}" billId="{{=model.billid}}" billSn="{{=model.billsn}}" onclick="openRest('{{=model.billsn}}','{{=model.billid}}','{{=model.stationid}}','{{=model.billstatus}}','{{=model.gradetype}}','发电');">
+                  <div class="cj-l-into-wxx" style='color:#3e3e3e'>{{=model.billsn}}<div class="cj-l-date-wxx_w"><span style="color:{{=billStatusColor}}">{{=billStatusName}}</span></div></div>
+
+                  <div class="cj-l-into-wxx">
+                    <span style="color:{{=alarmColor}};position:relative;" >{{=alarmStatus}}<div class="cj-l-date-wxx-2"></div> </span>
+                    <span style="margin-left: 2px; text-align:center;">
+                    {{=model.billtitle}}
+                    </span>
+                    <div class="cj-l-date-wxx"><span>{{=model.businesstype}} </span></div>
+                  </div>
+
+
+                  </div>
+                  {{  } }}
+{{?}}
+
+{{? zndwTaskList.length>0&&standStationList.length+fadianlist.length+taskList.length+hidderList.length+billList.length<3}}
+                    <div class="cj-l-title-wxx">
+                      代维调度
+                    </div>
+                    {{ for(var w=0, len8=zndwTaskList.length; w < len8; w++) {
+                    var zndwTask=zndwTaskList[w];
+                    var status = zndwTask.status;
+                    var processflagName = "";
+                    var pcolor = "";
+                    if(status=="5"){
+                    processflagName = "未领取";
+                    pcolor = "#22AADD";
+                    }else if(status=="6"){
+                    processflagName = "已领取";
+                    pcolor = "#B372F6";
+                  }else if(status=="7"){
+                    processflagName = "超时未领取";
+                    pcolor = "#E088CF";
+                  }else if(status=="8"){
+                    processflagName = "完成待确认";
+                    pcolor = "#AED684";
+                  }else if(status=="9"){
+                    processflagName = "超时未完成";
+                    pcolor = "#E088CF";
+                  }else if(status=="10"){
+                    processflagName = "未完成";
+                    pcolor = "#D088CF";
+                  }else if(status=="11"){
+                    processflagName = "已归档";
+                    pcolor = "#B372F6";
+                  }
+                    }}
+                     <div class="detailDiv liBTn" tapmode="active" org_name ="{{=zndwTask.org_name}}"
+                     add_man_code ="{{=zndwTask.add_man_code}}"
+                     update_user ="{{=zndwTask.update_user}}"
+                     col_cc ="{{=zndwTask.col_cc}}"
+                     c_org_name  ="{{=zndwTask.c_org_name}}"
+                     tangleicol  ="{{=zndwTask.tangleicol}}"
+                     work_time_limit ="{{=zndwTask.work_time_limit}}"
+                     task_type_name ="{{=zndwTask.task_type_name}}"
+                     ceshi_new_a  ="{{=zndwTask.ceshi_new_a}}"
+                     do_man_name  ="{{=zndwTask.do_man_name}}"
+                     ceshi_new_b  ="{{=zndwTask.ceshi_new_b}}"
+                     do_man_code  ="{{=zndwTask.do_man_code}}"
+                     task_type_id ="{{=zndwTask.task_type_id}}"
+                     rownum_  ="{{=zndwTask.rownum_}}"
+                     tl_ce_cola  ="{{=zndwTask.tl_ce_cola}}"
+                     a_org_id  ="{{=zndwTask.a_org_id}}"
+                     p_org_id ="{{=zndwTask.p_org_id }}"
+                     c_org_id ="{{=zndwTask.c_org_id }}"
+                     status="{{=zndwTask.status}}"
+                     a_org_name ="{{=zndwTask.a_org_name }}"
+                     task_name ="{{=zndwTask.task_name }}"
+                     site_id ="{{=zndwTask.site_id }}"
+                     task_score ="{{=zndwTask.task_score }}"
+                     ceshi_new ="{{=zndwTask.ceshi_new }}"
+                     self_task_name ="{{=zndwTask.self_task_name }}"
+                     utf ="{{=zndwTask.status}}"
+                     site_name ="{{=zndwTask.site_name }}"
+                     version_id ="{{=zndwTask.version_id}}"
+                     col_dd ="{{=zndwTask.col_dd }}"
+                     org_id ="{{=zndwTask.org_id }}"
+                     p_org_name ="{{=zndwTask.p_org_name }}"
+                     update_time ="{{=zndwTask.update_time }}"
+                     create_time ="{{=zndwTask.create_time }}"
+                     create_user ="{{=zndwTask.create_user }}"
+                     qlj_code_ ="{{=zndwTask.qlj_code_ }}"
+                     username="{{=zndwTask.username}}"
+                     id="{{=zndwTask.id}}"
+                     get_task_time="{{=zndwTask.get_task_time}}"
+                     do_end_time="{{=zndwTask.do_end_time}}" onclick="openStandBillDetailGen(this)"><!--1.dingxb-->
+                    <div class="aui-flex-col">
+                    <div class="aui-flex-item-9" style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;font-size:12px;"> {{=zndwTask.site_name ? zndwTask.site_name : '&nbsp;'}}</div>
+
+                    <div class="aui-flex-item-3 aui-text-right" style="color:{{=pcolor}};font-size:12px;">{{=processflagName}}</div>
+                    </div>
+                    <div class="aui-flex-col" style="font-size:12px;">
+                    <div class="aui-flex-item-9">{{=zndwTask.task_name  != null ? zndwTask.task_name :''}}</div>
+                    <div class="aui-flex-item-3 aui-text-right">分值：{{=zndwTask.task_score != null ? zndwTask.task_score :''}}</div>
+                    </div>
+                    <div class="aui-flex-col" style="font-size:12px;">
+                    <div class="aui-flex-item-9">工单创建时间：{{=zndwTask.create_time != null ? zndwTask.create_time:''}}</div>
+                    <div class="aui-flex-item-3 aui-text-right">{{=zndwTask.do_man_name  != null ? zndwTask.do_man_name  :''}}</div>
+                    </div>
+                    </div>
+                    {{ } }}
+{{?}}
+
+{{? hidderList.length>0&&billList.length<3}}
+                <div class="cj-l-title-wxx">
+                  日常维修
+                </div>
+                {{for(var k=0, len3=hidderList.length; k < len3; k++) {
+                 var model = hidderList[k];
+                var billstatus = model.bussinessid;
+                var grade= model.hiddengrade;
+                var source= model.hiddensource;
+                var type= model.hiddentype;
+                var gradeName="";
+                var hiddentype="";
+                var hiddenSrc="";
+                var billStatusName="";
+
+                var billStatusColor = "";
+
+                if("A"==grade){
+                gradeName="特别严重隐患";
+                }else if("B"==grade){
+                gradeName="严重隐患";
+                }else if("C"==grade){
+                gradeName="一般隐患";
+                }
+
+                if(type == "1"){
+                hiddentype = "开关电源";
+                }else if(type == "2"){
+                hiddentype = "蓄电池";
+
+                }else if(type == "3"){
+                hiddentype = "空调";
+
+                }else if(type == "4"){
+                hiddentype = "机房环境";
+
+                }else if(type == "5"){
+                hiddentype = "铁塔环境";
+
+                }else if(type == "6"){
+                hiddentype = "FSU";
+
+                }else if(type == "7"){
+                hiddentype = "其他设备";
+
+                }
+
+                   if(billstatus == "1"){
+                billStatusName = "待问题核实";
+                billStatusColor = "#22AADD";
+                }else if(billstatus == "2"){
+                billStatusName = "待方案制定";
+                billStatusColor = "#fb8536";
+                }else if(billstatus == "3"){
+                billStatusName = "待实施";
+                billStatusColor = "#B372F6";
+                }else if(billstatus == "4"){
+                billStatusName = "待验收";
+                billStatusColor = "#B372F6";
+                }else if(billstatus == "5"){
+                billStatusName = "待验收归档";
+                billStatusColor = "#AED684";
+                }else if(billstatus == "6"){
+                billStatusName = "挂起";
+                billStatusColor = "#7676BA";
+                }else if(billstatus == "7"){
+                billStatusName = "已归档";
+                billStatusColor = "#953A6C";
+                }else if(billstatus == "8"){
+                billStatusName = "待方案审核";
+                billStatusColor = "#930A6C";
+                }
+
+
+                if("1"==source){
+                  hiddenSrc="巡检发现";
+                }else if("2"==source){
+                  hiddenSrc="运营商申告";
+                }else if("3"==source){
+                  hiddenSrc="自有人员上站巡查";
+                }else if("4"==source){
+                  hiddenSrc="业主申告";
+                }else if("5"==source){
+                  hiddenSrc="告警发现";
+                }
+
+                }}
+                <div  tapmode="active" class='liBTn' onclick="openRest2('{{=model.billsn}}','{{=model.stationid}}','{{=model.bussinessid}}');">
+                <div class="top-title">
+                {{=model.billsn}}
+                {{=hiddentype}}
+                <span  style="color:{{=billStatusColor}}">{{=billStatusName}}</span>
+                </div>
+                <div class="cj-l-into">工单编号：{{=model.billsn}}</div>
+                <div class="cj-l-into">
+                <span style="margin-right:20px;" >{{=hiddenSrc}} </span>
+                <span style="margin-left: 2px;">{{=model.hiddencontent!=null?model.hiddencontent:''}}</span>
+                <div class="cj-l-date-wxx"><span>{{=gradeName}}</span></div>
+                </div>
+                </div>
+                {{  } }}
+{{?}}
+
+{{? standStationList.length>0&&fadianlist.length+taskList.length+hidderList.length+billList.length<3}}
+                    <div class="cj-l-title-wxx">
+                      出入站
+                    </div>
+                    {{ for(var q=0, len7=standStationList.length; q < len7; q++) {
+                    var processflag = standStationList[q].processflag;
+                    var standList=standStationList[q];
+                    var processflagName = "";
+                    var pcolor = "";
+                    if(processflag=="ACCEPT"){
+                    processflagName = "接单";
+                    pcolor = "#22AADD";
+                    }else if(processflag=="AUDIT"){
+                    processflagName = "审批";
+                    pcolor = "#1cc472";
+                    }else if(processflag=="COORDINATE"){
+                    processflagName = "协调上站";
+                    pcolor = "#7676BA";
+                    }else if(processflag=="REVERT"){
+                    processflagName = "回单";
+                    pcolor = "#B372F6";
+                    }else if(processflag=="ISPROMPT"){
+                    processflagName = "是否及时上站";
+                    pcolor = "#E088CF";
+                    }else if(processflag=="ISAGREE"){
+                    processflagName = "是否同意";
+                    pcolor = "#AED684";
+                    }else if(processflag=="SENISPROMPT"){
+                    processflagName = "最终确认";
+                    pcolor = "#E088CF";
+                    }else if(processflag=="PHONESIGN"){
+                    processflagName = "手机签到";
+                    pcolor = "#9fbe3b";
+                    }else if(processflag=="ARCHIVE"){
+                    processflagName = "归档";
+                    pcolor = "#953A6C";
+                    }else if(processflag=="CONFIRE"){
+                    processflagName = "上站确认";
+                    pcolor = "#fb8536";
+                    }else if(processflag=="LEAVECONFIRM"){
+                    processflagName = "离站确认";
+                    pcolor = "#3693fb";
+                    }
+                    }}
+                    <div  class="liBTn"  tapmode="active" applyId="{{=standList.applyid}}" stationId="{{=standList.stationid}}" stationName="{{=standList.stationname}}" isneedperson="{{=standList.isneedperson}}" applyisneedperson="{{=standList.applyisneedperson}}"  onclick="openStandBillDetail(this)">
+
+                    <div class="aui-flex-col" style="font-size:12px;">
+                    <div class="aui-flex-item-7"> {{=standList.applyid}}</div>
+                    {{?standList.isneedperson=="Y" || (standList.isneedperson == 'null' && standList.applyisneedperson=='Y')}}
+                    <div class="aui-flex-item-2 aui-text-right" style="color:#4AB518;">随工</div>
+                    {{?}}
+                    {{?standList.isneedperson=="N" || (standList.isneedperson == 'null' && standList.applyisneedperson=='N')}}
+                    <div class="aui-flex-item-2 aui-text-right" style="color:#F4AB15">不随工</div>
+                    {{?}}
+                    <div class="aui-flex-item-3 aui-text-right" style="color:{{=pcolor}}">{{=processflagName}}</div>
+                    </div>
+                    <div class="aui-flex-col" style="font-size:12px;">
+                    <div class="aui-flex-item-5" style="color:{{=standList.cause == '1'?'#ff3333':'#000'}}">
+
+                    {{? standList.cause == '1' }}
+                    抢修（紧急故障处理）
+                    {{?? standList.cause == '2' }}
+                    排障（一般故障处理）
+                    {{?? standList.cause == '3' }}
+                    施工（安装设备）
+                    {{?? standList.cause == '4' }}
+                    勘察
+                    {{?? standList.cause == '5' }}
+                    巡检
+                    {{?? standList.cause == '6' }}
+                    发电
+                    {{?? standList.cause == '7' }}
+                    检查
+                    {{?? standList.cause == '8' }}
+                    保障
+                    {{?? standList.cause == '99' }}
+                    其他
+                    {{??}}
+                    其它
+                    {{?}}
+
+                    </div>
+                    </div>
+                    <div class="aui-flex-col" style="font-size:12px;">
+                    <div class="aui-flex-item-9">申请上站时间：{{=standList.applystanddate != null ? standList.applystanddate:''}}</div>
+                    <div class="aui-flex-item-3 aui-text-right">{{=standList.contact_person != null ? standList.contact_person:''}}</div>
+                    </div>
+                    </div>
+                    {{ } }}
+{{?}}
+
+{{? taskList.length>0&&hidderList.length+billList.length<3}}
+                <div class="cj-l-title-wxx">
+                  巡检工单
+                </div>
+                {{ for(var u=0, len4=taskList.length; u < len4; u++) {
+                  var model=taskList[u];
+                  var time= model.date;
+                  if(time!=null&&time!=''){
+                  time=time.substring(0,time.lastIndexOf('-')).replace('-','年')+'月';
+                  }else{
+                  time='';
+                  }
+                }}
+                <div class="li_box">
+
+                <div class="xunjian_box liBTn" tapmode="active" onclick="openWaitTask('{{=model.date != null ? model.date:""}}','{{=model.taskid != null ? model.taskid:""}}','{{=model.starttime != null ? model.starttime:""}}',
+                '{{=model.taskstatus != null ? model.taskstatus:""}}','{{=model.taskstate != null ? model.taskstate:""}}','{{=model.lon != null ? model.lon:""}}','{{=model.lat != null ? model.lat:""}}',
+                '{{=model.stationname != null ? model.stationname:""}}','{{=model.stationcode != null ? model.stationcode:""}}','{{=model.siteid != null ? model.siteid:""}}','{{=model.operators != null ? model.operators:""}}',
+                '{{=model.countyname != null ? model.countyname:""}}', '{{=model.deviceid != null ? model.deviceid:""}}','{{=model.signtime != null ? model.signtime:""}}','{{=model.online != null ? model.online:""}}');">
+
+
+                <div class="liTop">
+                  <div class="liTopIcon" style="width: 14px;height: 14px;">
+
+                  {{? model.taskstate=='1'}}
+                  {{? model.istimeout=='1'}}
+                  <img src="../../image/red_sign.png" width="14px" height="14px;"/>
+                  {{??}}
+                  <img src="../../image/green_sign.png" width="14px" height="14px;"/>
+                  {{?}}
+                  {{??}}
+                  {{? model.istimeout=='1'}}
+                  <img src="../../image/red_com.png" width="14px" height="14px;"/>
+                  {{??}}
+                  <img src="../../image/green_com.png" width="14px" height="14px;"/>
+                  {{?}}
+                  {{?}}
+                  </div>
+                  <div class="liTopTitle" style="margin-left: 3px;font-size:12px;">{{=model.stationname != null ? model.stationname:""}}{{=model.checkresut != null ? "("+model.checkresut+")":""}}</div>
+                  <div class="liTopProgress">进度:{{=model.finishcount != null ? model.finishcount:""}}/{{=model.projectcount != null ? model.projectcount:""}}</div>
+                </div>
+                <div class="liDown">
+                <div class="liDownPerson" style="border-right: transparent;width: 50%">巡检人:{{=model.taskuser != null ? model.taskuser:""}}</div>
+                <div class="liDownBegin" style="float: right;width: 45%">执行时间:{{=time}}</div>
+                </div>
+
+                </div>
+
+                </div>
+                {{ } }}
+{{?}}
+
+                </li>
+                {{  } }}
+            </script>
+             <ul class="ccssoft_list_wxx" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../bill/script/bill-listCon.js"></script>
+    <script type="text/javascript" src="../../script/GPS.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script>
+        var listView;
+        /**
+         *打开该站址下工单
+         */
+        function openStationDetail(stationCode,stationname) {
+            var params = {
+                stationcode : stationCode,
+                stationname:stationname
+            }
+            api.closeWin({
+                name: 'allBillListWin'
+            });
+
+            api.openWin({
+                name : 'allBillListStationWin',
+                url : '../bill/all_bill_list_station_win.html',
+                opaque : true,
+                bounces : false,
+                reload : true,
+                pageParam : params,
+                vScrollBarEnabled : false
+            });
+        }
+
+        /**
+         *从查询条件跳转过来的信息
+         */
+        function cb_queryStationList(opts) {
+            opts.limit=100;
+            opts.stationListNum=opts.stationcode;
+            console.log(JSON.stringify(opts));
+            listView.setQueryOptions(opts);
+            listView.refresh();
+        }
+        //var stationposition=[]
+        apiready = function() {
+          var stationListNum=$api.getStorage('stationList');
+          var stationListType=$api.getStorage('stationListType');
+          var opt={
+              stationListNum:stationListNum,
+              stationListType:stationListType
+          };
+          
+          //console.log(JSON.stringify(opts));
+          
+            //console.log(getObj(opt));
+		console.log(getObj(opt));
+		//alert(1);
+            listView = new C.ApiListView({
+                listName : 'listOrder',
+                fn : $client.getAllWorkList,
+                limit:10000
+            });
+            listView.setQueryOptions(opt);
+
+            listView.refresh();
+            
+            return;
+            var opt2={
+              stationListNum:stationListNum,
+              stationListType:stationListType,
+              start:1,
+              limit:10000
+            }
+            console.log(getObj(opt2));
+            /*
+            $client.getAllWorkList(opt2,function(ret,err){
+             //alert(11)
+              var listmessage=ret.listOrder;
+              for (var i = 0; i < listmessage.length; i++) {
+                var stationMessageList=JSON.parse(listmessage[i].stationMessage)
+                stationposition.push({
+                  stationname: stationMessageList.st_name,
+                  lon: stationMessageList.st_lon,
+                  lat: stationMessageList.st_lat,
+                  site_id:Number(stationMessageList.st_id)
+                })
+              }
+             // console.log(JSON.stringify(stationposition));
+              $api.setStorage('stationposition', stationposition);
+            })*/
+
+        }
+
+
+        function openStandBillDetail(el) {
+          showlog("isneedperson=" + $api.attr(el, 'isneedperson') + '， applyisneedperson＝' + $api.attr(el, 'applyisneedperson'));
+          var applyId = $api.attr(el, 'applyId');
+          var stationId = $api.attr(el, 'stationId');
+          var stationName = $api.attr(el, 'stationName');
+          var pageParam = {};
+          pageParam.applyId = applyId;
+          pageParam.stationId = stationId;
+          pageParam.stationName = stationName;
+          //页面来源，这里表示从上站待办跳过来
+          pageParam.fromPage = "standBillListWin";
+          api.openWin({
+            name : 'mainStandBillDetail',
+            url : '../standBill/mainStandBillDetail.html',
+            opaque : true,
+            bounces : false,
+            reload : true,
+            pageParam : pageParam,
+            vScrollBarEnabled : false
+          });
+        }
+
+
+        function openRest2(billsn, stationid,bussinessid) {
+       	var opt = {
+       		billsn : billsn,
+       		stationId : stationid,
+       		bussinessid:bussinessid
+       	};
+       	api.openWin({
+       		name : 'mainRepairBillDetail',
+       		url : '../repair/mainRepairBillDetail.html',
+       		opaque : true,
+       		bounces : false,
+       		reload : true,
+       		pageParam : opt,
+       		vScrollBarEnabled : false
+       	});
+       }
+
+
+       /**
+        *打开代维调度的详情
+        * readyStartTime 计划开始时间
+        */
+       function openStandBillDetailGen(el) {
+         var a_org_id=$api.attr(el, 'a_org_id');
+         var b_org_id=$api.attr(el, 'b_org_id');
+         var c_org_id=$api.attr(el, 'c_org_id');
+         var p_org_id=$api.attr(el, 'p_org_id');
+         var org_id=$api.attr(el, 'org_id');
+         var status = $api.attr(el, 'status');
+         var id = $api.attr(el, 'id');
+         var task_name = $api.attr(el, 'task_name');
+         var site_id = $api.attr(el, 'site_id');
+         var site_name = $api.attr(el, 'site_name');
+         var work_time_limit = $api.attr(el, 'work_time_limit');
+         var task_score = $api.attr(el, 'task_score');
+         var do_man_name = $api.attr(el, 'do_man_name');
+         var tl_ce_cola = $api.attr(el, 'tl_ce_cola');
+         var tangleicol = $api.attr(el, 'tangleicol');
+         var col_cc = $api.attr(el, 'col_cc');
+         var col_dd = $api.attr(el, 'col_dd');
+         var ceshi_new_b = $api.attr(el, 'ceshi_new_b');
+         var utf = $api.attr(el, 'utf');
+         var ceshi_new_a = $api.attr(el, 'ceshi_new_a');
+         var ceshi_new  = $api.attr(el, 'ceshi_new');
+         var p_org_name = $api.attr(el, 'p_org_name');
+         var c_org_name = $api.attr(el, 'c_org_name');
+         var a_org_name = $api.attr(el, 'a_org_name');
+         var self_task_name = $api.attr(el, 'self_task_name');
+         var task_type_name = $api.attr(el, 'task_type_name');
+         var add_man_code  = $api.attr(el, 'add_man_code');
+         var update_user   = $api.attr(el, 'update_user');
+         var create_time   = $api.attr(el, 'create_time');
+         var update_time   = $api.attr(el, 'update_time');
+         var version_id   = $api.attr(el, 'version_id');
+         var create_user   = $api.attr(el, 'create_user');
+         var do_man_code   = $api.attr(el, 'do_man_code');
+         var get_task_time = $api.attr(el, 'get_task_time');
+         var do_end_time = $api.attr(el, 'do_end_time');
+         var pageParam = {};
+         pageParam.a_org_id = a_org_id;
+         pageParam.b_org_id = b_org_id;
+         pageParam.c_org_id = c_org_id;
+         pageParam.p_org_id = p_org_id;
+         pageParam.org_id = org_id;
+         pageParam.status = status;
+         pageParam.id = id;
+         pageParam.task_name = task_name;
+         pageParam.site_id = site_id;
+         pageParam.site_name = site_name;
+         pageParam.work_time_limit = work_time_limit;
+         pageParam.task_score = task_score;
+         pageParam.do_man_name = do_man_name;
+         pageParam.tl_ce_cola = tl_ce_cola;
+         pageParam.tangleicol = tangleicol;
+         pageParam.col_cc = col_cc;
+         pageParam.col_dd = col_dd;
+         pageParam.ceshi_new_b = ceshi_new_b;
+         pageParam.utf = utf;
+         pageParam.ceshi_new_a = ceshi_new_a;
+         pageParam.ceshi_new  = ceshi_new;
+         pageParam.p_org_name  = p_org_name;
+         pageParam.c_org_name  = c_org_name;
+         pageParam.a_org_name  = a_org_name;
+         pageParam.self_task_name  = self_task_name;
+         pageParam.task_type_name  = task_type_name;
+         pageParam.add_man_code  = add_man_code;
+         pageParam.update_user  = update_user;
+         pageParam.create_time  = create_time;
+         pageParam.update_time  = update_time;
+         pageParam.version_id  = version_id;
+         pageParam.create_user  = create_user;
+         pageParam.do_man_code  = do_man_code;
+         pageParam.type = api.pageParam.type;
+         pageParam.get_task_time = get_task_time;
+         pageParam.do_end_time = do_end_time;
+         // 超时状态不允许跳转操作
+         // if(status=='9'){
+         // 	api.toast({
+         // 			msg: '已超时!',
+         // 			duration: 2000,
+         // 			location: 'bottom'
+         // 	});
+         // }else {
+         //
+         // }
+         pageParam.fromPage = "allBillListWin";
+
+
+         api.openWin({
+           name : 'mainGenerationBillDetail',
+           url : '../generation/mainGenerationBillDetail.html',
+           opaque : true,
+           bounces : false,
+           reload : true,
+           pageParam : pageParam,
+           vScrollBarEnabled : false
+         });
+       }
+
+
+       /**
+        *打开待办任务的详情
+        * readyStartTime 计划开始时间
+        */
+       function openWaitTask(readyStartTime, taskId, starttime, taskstatus,taskstate,lon,lat,stationname,stationcode,stationid,operators,county,deviceid,signtime,online) {
+           var fromNotifition = "N";
+           var user= $api.getStorage("user");
+           api.pageParam.start_status='Y';
+   				if(online=='true'&&$api.getStorage('offline')=='false'){
+   					api.confirm({
+   							title: '提示',
+   							msg: '该任务已经离线,是否离线处理',
+   							buttons: ['确定', '取消']
+   					}, function(ret, err) {
+   						var index = ret.buttonIndex;
+   						if(index==1){
+
+   							openWinList('xunjian/task_list_win0','离线巡检','NEW_XUNJIAN_TASK',true);
+
+   						}
+   					});
+   				}else {
+   					openPage_taskProjectList( taskId, starttime, fromNotifition, taskstatus, readyStartTime,'Y',"",taskstate,lon,lat,stationname,stationcode,stationid,operators,county,api.pageParam.index_id,deviceid,signtime,online);
+   				}
+
+       }
+
+    </script>
+</html>

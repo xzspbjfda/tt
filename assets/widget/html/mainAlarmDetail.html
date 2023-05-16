@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>告警详情</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" href="../script/ccssoft/css/ccssoft-lite.css" />
+    <style>
+    	#header .openMenu-icon {
+		    display: inline-block;
+		    width: 40px;
+		    height: 40px;
+		    background: url(../image/actionbar_icon_add.png) no-repeat center center;
+		    -webkit-background-size: 14px 18px;
+		    background-size: 30px 30px;
+		    position: absolute;
+		    right: 0;
+		    bottom: 0;
+		}
+		.iconFont{
+			font-size: 22px;
+			color: #8f8f94;
+			height: 30px;
+			line-height: 30px;
+			display: inline-block;
+			margin-top:3px;			
+		}
+		.activeWarning p{
+			color: #DB4537;
+		}
+    </style>
+</head>
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>       
+        <div class="aui-title" id="header-title">告警详情</div>
+        <a id="openMenuId" class="openMenu-icon" style="display:none;" tapmode="" onclick="openMenu()"></a>
+    </header>
+    
+    <footer class="aui-nav" style="border-top:1px solid #ADADAD;" id="footer">
+        <ul class="aui-bar-tab">       	
+            <li class="activeWarning" id="tabbar1" tapmode onclick="randomSwitchBtn(this,'告警详情',0)">
+                <span class="iconFont">
+                	<img id="detailOverId" src="../image/widget_tab_icon_detail_over.png" width="25px" height="25px"/>
+                	<img id="detailNorId" style="display:none;" src="../image/widget_tab_icon_detail_nor.png" width="25px" height="25px"/>
+                </span>
+                <p>告警详情</p>
+            </li>
+            <li id="tabbar2" tapmode onclick="randomSwitchBtn(this,'站址信息',1)">
+                <span class="iconFont">
+                	<img id="stationNorId" src="../image/widget_tab_icon_station_nor.png" width="25px" height="25px"/>
+                	<img id="stationOverId" style="display:none;" src="../image/widget_tab_icon_station_over.png" width="25px" height="25px"/>
+                </span>
+                <p>站址信息</p>
+            </li>          
+        </ul>
+    </footer>
+</body>
+<script src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/debug.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/main.bill.detail.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		api.parseTapmode();
+	    var header = $api.byId('header');
+	    $api.fixIos7Bar(header); 
+	    var headerPos = $api.offset(header);
+	    var body_h = $api.offset($api.dom('body')).h;
+	    var footer_h = $api.offset($api.byId('footer')).h;
+	    //status bar style
+	    api.setStatusBarStyle({
+	        style : 'light'
+	    });
+	    
+	    //设置告警工单操作按钮的显隐
+	    var alarmLevel = api.pageParam.alarmlevel;
+	    var faultId = api.pageParam.faultid;
+	    if((alarmLevel =='3' || alarmLevel == '4') && faultId == null){
+	    	$('#openMenuId').show();
+	    } 
+	    api.pageParam.fromFlag = 'ALARM';
+	    
+        api.openFrameGroup ({
+	        name: 'alarm_footer_tab',
+	        scrollEnabled:true,
+	        rect:{x:0, y:headerPos.h, w:'auto', h:body_h - headerPos.h - footer_h},
+	        index:0,
+	        preload:0,            
+	        frames:
+	        [{
+	            name: 'alarmDetail', 
+	            url: 'alarmDetail.html', 
+	            pageParam : api.pageParam,
+	            bounces:false
+	        },{
+	            name: 'stationDetail', 
+	            url: '../station/stationDetail_frm.html',
+	            pageParam : api.pageParam, 
+	            bounces:false
+	        }]
+	    }, function(ret, err){
+	        var footer = $api.byId('footer');
+	        var footerAct = $api.dom(footer, '.aui-bar-tab li.activeWarning');
+	        $api.removeCls(footerAct, 'activeWarning');
+	        var name = ret.name;
+	        var index = ret.index;
+	        if(index==0){
+	            $api.text($api.byId('header-title'),'告警详情');
+	            $api.addCls($api.byId('tabbar1'), 'activeWarning');
+	            $('#detailOverId').show();
+	        	$('#detailNorId').hide();
+	        	$('#stationOverId').hide();
+	        	$('#stationNorId').show();	
+	        }else if(index==1){
+	            $api.text($api.byId('header-title'),'站址信息');
+	            $api.addCls($api.byId('tabbar2'), 'activeWarning');
+	            $('#detailOverId').hide();
+	        	$('#detailNorId').show();
+	        	$('#stationOverId').show();
+	        	$('#stationNorId').hide();
+	        }
+	    })
+	};
+	
+	// 打开菜单
+	function openMenu(){
+	    api.openFrame({
+	        name: 'alarmMenu',
+	        url: 'alarmMenu.html',
+	        bounces: false,
+	        rect: {
+	            x: 0,
+	            y: 0,
+	            w: 'auto',
+	            h: 'auto'
+	        },
+	        pageParam:api.pageParam,
+	        reload: true
+	    });
+	}
+		
+	function closeWin(){
+	    api.closeWin();
+	}
+
+	function randomSwitchBtn(obj, name, index) {
+	    $api.text($api.byId('header-title'),name);
+	    var footer = $api.byId('footer');
+	    var footerAct = $api.dom(footer, '.aui-bar-tab li.activeWarning');
+	    $api.removeCls(footerAct, 'activeWarning');
+	    $api.addCls(obj, 'activeWarning');
+	    if(index==0){
+	    	$('#detailOverId').show();
+	    	$('#detailNorId').hide();
+	    	$('#stationOverId').hide();
+	    	$('#stationNorId').show();
+	    }else if(index==1){
+	    	$('#detailOverId').hide();
+	    	$('#detailNorId').show();
+	    	$('#stationOverId').show();
+	    	$('#stationNorId').hide();
+	    }
+	    api.setFrameGroupIndex({
+	        name: 'alarm_footer_tab',
+	        index: index,
+	        scroll:true
+	    });
+	}
+
+</script>
+</html>

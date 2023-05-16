@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" href="css/home.css" />
+
+    <style>
+        body {
+            background-color: #fff;
+        }
+
+        div.weatherc {
+            position: absolute;
+            left: 0%;
+            top: 0px;
+            z-index: 999999;
+            height: 45px;
+            width: 81px;
+            margin-top: 70px;
+            margin-left: 0%;
+        }
+
+        div.weatherc2 {
+            position: absolute;
+            left: 0%;
+            top: 0px;
+            z-index: 999999;
+            height: 43px;
+            width: 80px;
+            margin-right: 0%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        /*清除浮动*/
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: " ";
+        }
+
+        .clearfix:after {
+            clear: both;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        .wrapper h4 {
+            padding: 0px 0 0px 15px;
+            margin: 8px 0 8px 15px;
+            border-left: 4px solid #db4537;
+        }
+
+        .dz-table {
+            width: 94%;
+            margin: 0 auto;
+            padding-top: 6px;
+            font-size: 14px;
+        }
+
+        .dz-table>thead {
+            background: #db4537;
+            color: #fff;
+        }
+
+        .dz-table>thead td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .dz-table>tbody td {
+            padding: 5px;
+            text-align: center;
+            border-bottom: 2px solid #fff;
+        }
+        .dz-table>tbody tr{
+          background:#F7F7F7;
+        }
+        .dz-table>tbody tr:hover{
+          background:#ffdfdd;
+        }
+
+        .dian_bg {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #db4537;
+            color: #fff;
+            display: inline-block;
+        }
+
+        .red {
+            color: #db4537;
+        }
+
+        .today_data_w {
+            width: 120px !important;
+        }
+
+        .tqshow {
+            width: 120px !important;
+        }
+
+        .show {
+            display: block;
+            ;
+        }
+
+        .Hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!--停发电列表   start-->
+    <script id="img-template-show" type="text/html">
+
+        {{ for(var i=0, len=it.length; i
+        < len; i++) {}} <tr>
+            <td>
+                <div class="dian_bg">{{=(i+1)}}</div>
+            </td>
+            {{?it[i].countyname !=undefined||it[i].countyname !=null}}
+            <td>{{=it[i].countyname}}</td>
+            {{??}} {{?it[i].cityname !=undefined ||it[i].countyname !=null}}
+            <td>{{=it[i].cityname}}</td>
+            {{??}}
+            <td>{{=it[i].provincename}}</td>
+            {{?}} {{?}}
+            <td class="red">{{=it[i].break_station}}</td>
+            <td class="red">{{=it[i].power_cut}}</td>
+            </tr>
+            {{ } }}
+
+    </script>
+    <!--停发电列表 end-->
+
+    <table class="dz-table" cellspacing="0">
+        <thead>
+            <tr>
+                <td>序号</td>
+                <td>省市</td>
+                <td>站址断站</td>
+                <td>停电统计</td>
+                <td>发电中</td>
+            </tr>
+        </thead>
+        <tbody id="list-view" class="aui-list-view"></tbody>
+    </table>
+</body>
+<script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/GPS.js"></script>
+<script type="text/javascript" src="./script/home_frm.js"></script>
+<script type="text/javascript" src="../../script/swipe.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+
+<script type="text/javascript"></script>
+<script>
+    apiready = function() {
+        $client.getOutStandTime({
+
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    $('#list-view').empty();
+                    renderTemp('list-view', 'img-template-show', ret.alarmlist, true);
+                } else {
+                    showToast(ret.data_info);
+                }
+            } else {
+                showToast(err.msg);
+            }
+        });
+    }
+</script>
+
+</html>

@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>人工派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" href="../../script/agile/css/flat/flat.component.css">
+	<link rel="stylesheet" href="../../script/agile/css/flat/flat.color.css">
+	<link rel="stylesheet" type="text/css" href="../../css/standBillRevertDetail.css" />
+	<style>
+	.cardCon2 {
+            width: 60%;
+            float: left;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 0px;
+            margin-top: 10px;
+        }
+        .saomabtn{
+          width: 100px;
+          text-align: center;
+          font-size: 14px;
+          background-color: #3779d0;
+          border: none;
+          color: #fff;
+          display: inline-block;
+          border-radius: 3px;
+          padding:5px 0;
+          margin-top: 4px;
+        }
+        .removebtn{
+          position: absolute;
+          right: 0;
+          top: 10px;
+          width: 20px!important;
+          height: 20px;
+          padding: 0;
+          margin: 0;
+        }
+        .foot-tip{color: #cc0033; font-size: 18px; text-align:center; width:100%; display:inline-block}
+        .aui-title{color:#fff}
+	</style>
+</head>
+<body>
+
+	<script id="img-template" type="text/x-dot-template">
+        <li class="aui-list-view-cell aui-img aui-col-xs-4">
+        <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+        <button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+        </li>
+    </script>
+    <div id="wrap">
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<a class="aui-pull-left" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+			<div class="aui-title" id="header-title">
+				图片上传
+			</div>
+			<a class="aui-pull-right" tapmode onclick="submitForm()"> <span class="aui-iconfont aui-icon-upload"></span> </a>
+		</header>
+		<script id="img-template" type="text/x-dot-template">
+			<li class="aui-list-view-cell aui-img aui-col-xs-4" onclick="imageUtil.show('{{=it.imgpath}}')">
+			<img class="aui-img-object" src="{{=it.imgpath}}">
+			</li>
+		</script>
+		<ul id="list-view" class="aui-list-view aui-grid-view">
+			<li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+				<img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+			</li>
+			<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+			<img style='display:none;' class='imgPath'  src=''/>
+		</ul>
+		<span class="foot-tip" id="foot-tip">请务必在</span>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+<script type="text/javascript" src="../../script/cache.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script>
+	var imageUtil;
+	var imgArray = new Array();
+	apiready = function() {
+		var header = $api.byId('header');
+        $api.fixIos7Bar(header);
+		imageUtil.init({
+	          uploadFn : $client.uploadCreateBillImage
+	      });
+		//status bar style
+		api.setStatusBarStyle({
+			style : 'light'
+		});
+		
+		var orderlink = api.pageParam.orderlink;
+		var pageTitle = "";
+		var tipText ="";
+		if (orderlink=='3'){
+			pageTitle = "施工前照片上传";
+			tipText = "请务必在施工前上传照片";
+		} else if (orderlink=='4'){
+			pageTitle = "施工中照片上传";
+			tipText = "施工中请上传照片";
+		} else if (orderlink=='5'){
+			pageTitle = "离站照片上传";
+			tipText = "离站请上传照片";
+		}
+		$api.text($api.byId('header-title'),pageTitle);
+		$api.text($api.byId('foot-tip'),tipText);
+		
+		var user=$api.getStorage('user');
+	};
+	/**
+	 * 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	 */
+	function addPic(e) {
+		var permission = 'camera';
+		var resultList = api.hasPermission({
+		    list: [permission]
+		});
+		if (resultList[0].granted) {
+		    // 已授权，可以继续下一步操作
+		} else {
+		    api.confirm({
+		        msg: '应用需要您的授权才能访问相机',
+		        buttons: ['取消', '去设置']
+		    }, function(ret) {
+		        if (ret.buttonIndex == 2) {
+		            api.requestPermission({
+		                list: [permission],
+		            }, function(res) {
+		                if (res.list[0].granted) {
+		                    // 已授权，可以继续下一步操作
+		                }
+		            });
+		        }
+		    });
+		}  
+		var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+		var lon1 = displaynum(lastLocation.lon);
+		var lat1 = displaynum(lastLocation.lat);
+		if (!lastLocation || !lastLocation.status) {
+			api.toast({
+				msg : '暂未定位\n无法上传照片！'
+			});
+		}else {
+			var curentTime2 = CurentTime2();
+			$api.setStorage('newtime', curentTime2);
+			$api.setStorage('lon1', lon1);
+			$api.setStorage('lat1', lat1);
+			var lon1 = $api.getStorage('lon1');
+			var lat1 = $api.getStorage('lat1');
+			var user=$api.getStorage('user');
+				
+			var imgRet = null;
+			imageUtil.add('camera', function(ret, err) {
+				imgRet = ret;
+				var imgModel = {
+						userid : user.userid,
+						orderno: api.pageParam.billSn,
+						imgpath : ret,
+						phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+						lon : lon1,
+						lat : lat1,
+						photoaddress : lastLocation.photoaddress
+				}
+            			//console.log("ss///////////////////////////////////////"+getObj(imgModel));
+				imageUtil.getImageArray().push(imgModel);
+				//console.log(JSON.stringify(imageUtil.getImageArray()));
+				//showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+	  
+				imageUtil.upload(function(count) {
+					count.imgFlag=imgRet
+					imgArray.push(count);
+					//alert(JSON.stringify(count));
+					var tpl = $api.byId('img-template').text;
+					var tempFn = doT.template(tpl);
+					$('#addPic').before(tempFn(imgModel));
+					$new = $('#addPic').prev();
+					$new.css('height', $new.css('width'));
+				});
+          
+			},e,true,false);
+		}
+	}
+
+      /**
+       *删除图片
+       */
+	function removeImg(imgPath) {
+		var imageArray = imageUtil.getImageArray();
+		var size = imageArray.length;
+		var imgFlag ="";
+		for (var i = 0; i < size; i++) {
+			var data = imageArray[i];
+			if (data.imgpath == imgPath) {
+				imageArray.remove(i);
+				break;
+			}
+		}
+		for (var i=0; i<imgArray.length; i++){
+			if (imgArray[i].imgFlag==imgPath){
+				imgArray.remove(i);
+				break;
+			}
+		}
+		$(event.target).parents('.picBox').find('#add').show();
+		$(event.target).parents('li.aui-img').remove();
+		// 删除本地缓存图片其一
+		alert("删除本地缓存图片");
+	}
+	
+      /*
+	 * 上传服务器
+	 */
+	function submitForm() {
+		if (imgArray.length==0){
+			api.alert({
+    				msg : "至少上传1张照片."
+    			});
+    			return;
+		}
+		api.confirm({
+			title : '上传提醒',
+			msg : '照片上传后不能再进行修改，确认要上传吗?',
+			buttons : ['确定', '取消']
+		}, function(ret, err) {
+			if (ret.buttonIndex == 1) {
+				api.showProgress({
+					title : '加载中',
+					modal : false
+				});
+				var user=$api.getStorage('user');
+					var opts = {};
+					
+					opts.billid = api.pageParam.billid;
+					opts.orderno = api.pageParam.billSn;
+					opts.userid = user.userid;
+					opts.username = user.username;
+					opts.orderlink = api.pageParam.orderlink;
+					opts.imgarr = "{img: " + JSON.stringify(imgArray) + "}";
+					opts.operatingCost  = 0;
+					
+					request.saveBillImage = function (opts,callback) {
+						service({
+							url: "/enterStationAttachBean/upload.do",
+							data: opts
+			           		},callback)
+					}
+					
+					request.saveBillImage(opts,function(ret, err) {
+						api.hideProgress();
+						if (ret) {
+							if (ret.success) {
+								if (opts.orderlink=='3'){
+									api.toast({
+					                            	msg : "成功保存施工前记录",
+					                            	duration : 3000,
+					                            	location : 'middle'
+									});
+									/*api.execScript({
+										name : 'newstationbilldetail_frm',
+										script : 'refreshList();'
+									});*/
+							                api.execScript({
+							                    frameName: 'standBillDetail_frm',
+							                    script: 'refreshFrame();'
+							                });
+									setTimeout(function() {
+										api.closeFrame();
+									}, 1100);
+								} else if (opts.orderlink=='4'){
+									api.toast({
+					                            	msg : "成功保存施工中记录",
+					                            	duration : 3000,
+					                            	location : 'middle'
+									});
+									/*api.execScript({
+										name : 'newstationbilldetail_frm',
+										script : 'refreshList();'
+									});*/
+						                api.execScript({
+						                    frameName: 'standBillDetail_frm',
+						                    script: 'refreshFrame();'
+						                });
+									setTimeout(function() {
+										api.closeFrame();
+									}, 1100);
+								} else if (opts.orderlink=='5'){
+									api.toast({
+					                            	msg : "成功保存离站记录",
+					                            	duration : 3000,
+					                            	location : 'middle'
+									});
+									// 离站照片上传
+									/*api.execScript({
+										name : 'newstationbilldetail_frm',
+										script : 'openLeaveStationConfirmFrm()'
+									});*/
+									api.execScript({
+										name:'mainStandBillDetail',
+										script: 'openLeaveStationConfirmFrm()'
+									});
+									setTimeout(function() {
+										api.closeFrame();
+									}, 1100);
+								}
+							}
+						}
+						//api.hideProgress();
+					});
+			} else if (ret.buttonIndex == 2) {
+				//api.closeFrame();
+			}
+		});
+	}
+</script>
+</html>

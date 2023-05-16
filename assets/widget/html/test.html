@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<style type="text/css">
+		.black_overlay {
+			position: absolute;
+			top: 0%;
+			left: 0%;
+			width: 100%;
+			height: 100%;
+			z-index: 1001;
+		}
+		.white_content {
+			display: none;
+			position: absolute;
+			top: 25%;
+			left: 25%;
+			width: 30%;
+			height: 50%;
+			padding: 16px;
+			border: 1px solid black;
+			background-color: white;
+			z-index: 1002;
+			overflow: auto
+		}
+		a{
+		    font-family:"微软雅黑";
+		    font-size:18px;
+		    color:white;
+		}
+	</style>
+	
+	<body>
+		<img id="imgId" src="../image/user_center_bg_1.png" width="500" height="500" />
+		<input type="button" value="生成图片" onclick="getCoordinate()"/>
+		<canvas id="canvasId" src="" width="500" height="500"  ></canvas>
+		<img id="newImgId" src="" width="500" height="500"  />
+		<div id="canvasDivId">
+			
+		</div>
+	</body>
+	<script type="text/javascript">
+		function convertImageToCanvas() {
+			var image = document.getElementById("imgId");
+			var canvas = document.createElement("canvas");
+			var newImg = document.getElementById("newImgId");
+			canvas.width = image.width;
+			canvas.height = image.height;
+			var cxt = canvas.getContext("2d");
+			cxt.drawImage(image, 0, 0);
+			cxt.font="20px Georgia";
+			cxt.fillText("Hello World!",10,450);
+			document.getElementById("canvasDivId").innerHTML = canvas;
+			alert(canvas);
+			
+			//return canvas;
+		}
+		function convertCanvasToImage(canvas) {
+			var image = new Image();
+			image.src = canvas.toDataURL("image/png");
+			return image;
+		}
+		
+		function getCoordinate(){
+			if(navigator.geolocation != null){
+	        	navigator.geolocation.getCurrentPosition(locationSuccess);
+	        }else{
+	        	api.toast({msg: "该浏览器不支持navigator.geolocation", location: 'middle'});
+	        	return false;
+	        }
+	        return true;
+		}
+		var lonX = 0;
+		var latY = 0;
+		function locationSuccess(position){
+			var user = $api.getStorage('user');
+			var userid = user.userid;
+			var currentLon = position.coords.longitude;
+			var currentLat = position.coords.latitude;
+			if(currentLon != lonX && currentLat != latY ){
+				lonX = currentLon;
+				latY = currentLat;
+				$client.getUserLocation(userid,lonX,latY, function(ret, err) {});
+			}
+		}
+
+	</script>
+</html>

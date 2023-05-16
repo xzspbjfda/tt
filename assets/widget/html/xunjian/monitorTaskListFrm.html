@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>巡检任务列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+        <style>
+             body.active{
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+        </style>
+    </head>
+    <body>
+	<script id="listView-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) { }}     
+        <li tapmode="active" onclick="openWaitTask('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}','{{=it[i].taskstatus != null ? it[i].taskstatus:""}}');">
+			<div class="liTop">
+				<div class="liTopIcon">
+					<div class="{{=it[i].istimeout=="0" ? "greenIconCls" :"redIconCls"}}"></div>
+    			</div>
+    			{{? api.pageParam.type=='XUNJIAN_MONITOR'}}
+    			<div class="liTopTitle">{{=it[i].taskname != null ? it[i].taskname:""}}</div>
+    			{{?? api.pageParam.type=='NEW_XUNJIAN_MONITOR'}}
+    			<div class="liTopTitle">{{=it[i].stationname != null ? it[i].stationname:""}}</div>
+    			{{?}}
+    			<div class="liTopProgress">进度:{{=it[i].finishnum != null ? it[i].finishnum:""}}/{{=it[i].countnum != null ? it[i].countnum:""}}</div>
+			</div>
+			<div class="liDown">
+				<div class="liDownBegin" style="width: 45%;text-align:left; "><span style="color: #000000;font-weight:550 ;">运维ID:</span>{{=it[i].stationcode != null ? it[i].stationcode:""}}</div>
+				
+				<div class="liDownEnd" style="width: 53%;text-align:left;"><span style="color: #000000;font-weight:550 ;">实际开始:</span>{{=it[i].starttime != null ? it[i].starttime:""}}</div>
+			</div>	
+			<div class="lastDown">
+			<div class="liDownBegin" style="width: 45%;text-align:left;margin-top: 0px;"><span style="color: #000000;font-weight:550 ;">巡检人:</span>{{=it[i].taskuser != null ? it[i].taskuser:""}}</div>
+				<div class="liDownBegin" style="width: 53%;text-align:left;margin-top: 0px;"><span style="color: #000000;font-weight:550 ;">实际结束:</span>{{=it[i].endtime != null ? it[i].endtime:""}}</div>
+			</div>
+		</li>
+        {{ } }}
+    </script>
+        <div id="" class="aui-content">
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+ <script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+    var mainplayid;
+        //是否能够编辑项目
+        var editEnabled = true;
+        var finishCount = 0;
+        var selectProjectId;
+        var listView;
+        apiready = function() {
+        	var type=$api.getStorage("modelType");
+        if ("XUNJIAN_MONITOR" == type) {
+            listView = new C.ApiListView({
+             listName:'taskInfoList',
+              fn : $client.getXunjianMonitirTaskList,
+            });
+        	}else  if ("NEW_XUNJIAN_MONITOR" == type) {
+        	listView = new C.ApiListView({
+             listName:'taskInfoList',
+              fn : $client.getMonitirTaskNewList,
+            });
+        	}
+            //任务ID
+            mainplayid = api.pageParam.mainplayid ? api.pageParam.mainplayid : "";
+            listView.setQueryOptions({
+                mainplanid : mainplayid,
+            });
+            listView.refresh();
+        };
+        /**
+         *打开待办任务项目列表
+         */
+       function openWaitTask(readyStartTime, taskId, starttime, taskstatus) {
+			var isMonitor="Y";
+            openPage_taskProjectList(taskId, starttime, "", taskstatus, readyStartTime,api.pageParam.start_status,isMonitor,"");
+    }
+ /**
+         *刷新页面
+         */
+        function refreshList(id, count) {
+            listView.refresh();
+        }
+
+
+/**
+         *从查询条件跳转过来的信息
+         */
+        function cb_queryXJtaskList(opts) {
+            listView.setQueryOptions(opts);
+            listView.refresh();
+        }
+      
+    </script>
+</html>

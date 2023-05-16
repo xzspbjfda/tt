@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html >
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>工单详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<style>
+		.aui-content-wxx{
+			width: 100%;
+			margin: 0;
+		}
+		.aui-content-wxx ul{
+			background-color: #fff;
+			border-radius: 0;
+			overflow: hidden;
+			margin-bottom: 10px;
+			padding: 0 3%;
+		}
+		.aui-card-list-content-padded div{
+			overflow: hidden;
+		}
+		</style>
+	</head>
+	<body style="width: 100%">
+		<script id="billDetail-template" type="text/x-dot-template">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>受理信息</h2></div>
+			<ul class="aui-list-view">
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 维修单号</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.billsn != null ? it.model.billsn:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 受理时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.createtime != null ? it.model.createtime:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 工单类型</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.createtype == '1' }}
+							人工受理
+						{{?? it.model.createtype == '2'}}
+							系统生成
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患来源</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.hiddensource == '1' }}
+							巡检发现
+						{{?? it.model.hiddensource == '2'}}
+							运营商申告
+						{{?? it.model.hiddensource == '3'}}
+							自有人员上站巡查
+						{{?? it.model.hiddensource == '4'}}
+							业主申告
+						{{?? it.model.hiddensource == '5'}}
+							告警发现
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 站址名称</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.stationname != null ? it.model.stationname:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 运维ID</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.stationcode != null ? it.model.stationcode:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 对象类型</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.objtype == '1' }}
+							铁塔
+						{{?? it.model.objtype == '2'}}
+							动力及配套
+						{{?? it.model.objtype == '3'}}
+							机房及配套
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患等级</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.hiddengrade == 'A' }}
+							特別严重
+						{{?? it.model.hiddengrade == 'B'}}
+							严重
+						{{?? it.model.hiddengrade == 'C'}}
+							一般
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患内容</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.hiddencontent != null ? it.model.hiddencontent:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患描述</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.hiddenremark != null ? it.model.hiddenremark:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 维修类别</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.fixcontentname  != null ? it.model.fixcontentname  :''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 设备名称</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.devicename != null ? it.model.devicename:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 设备型号</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.devicecode != null ? it.model.devicecode:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 共享情况</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.sharetype == '1001' }}
+							移动
+						{{?? it.model.sharetype == '1002' }}
+							联通
+						{{?? it.model.sharetype == '1003' }}
+							电信
+						{{?? it.model.sharetype == '1001,1002' || it.model.sharetype == '1002,1001' }}
+							移动,联通
+						{{?? it.model.sharetype == '1001,1003' || it.model.sharetype == '1003,1001' }}
+							移动,电信
+						{{?? it.model.sharetype == '1002,1003' || it.model.sharetype == '1003,1002' }}
+							联通,电信
+						{{?? it.model.sharetype == '1001,1002,1003' || it.model.sharetype == '1003,1002,1001' }}
+							移动,联通,电信
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 发现人</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.userid != null ? it.model.userid:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 发现人电话</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.userphone != null ? it.model.userphone:''}}</div>
+				</li>
+				{{? it.imgList1 != null && it.imgList1.length>0 }}
+					{{ for(var i=0, len=it.imgList1.length; i < len; i++) {}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 现场照片{{=i+1}}</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							{{? it.imgList1[i].path.substring(it.imgList1[i].path.length-3).toUpperCase() == 'JPG' || it.imgList1[i].path.substring(it.imgList1[i].path.length-3).toUpperCase() == 'GIF' || it.imgList1[i].path.substring(it.imgList1[i].path.length-3).toUpperCase() == 'PNG' || it.imgList1[i].path.substring(it.imgList1[i].path.length-3).toUpperCase() == 'PEG' }}
+								<img class="aui-img-object aui-pull-left" src="{{=it.imgList1[i].url}}" height="73" width="48" onclick="openImg('{{=it.imgList1[i].url}}');"></img>
+							{{??}}
+								{{? it.imgList1[i].IMAGENAME!=null}}
+								-
+								{{??}}
+								-
+								{{?}}
+							{{?}}
+						</div>
+					</li>
+					{{ } }}
+				{{??}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 现场照片</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							无
+						</div>
+					</li>
+				{{? }}
+			</ul>
+
+		 	<!--问题核实信息-->
+		 	{{? it.model.isquestconfirm =='N'}}
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>问题核实信息</h2></div>
+				<ul class="aui-list-view" >
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 隐患是否属实</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							{{? it.model.isquestconfirm == 'Y' }}
+								是
+							{{??}}
+								否
+							{{?}}
+						</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 填写原因</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.confirmreason != null ? it.model.confirmreason:''}}</div>
+					</li>
+		 	{{??}}
+            {{? it.model.bussinessid !='1'}}
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>问题核实信息</h2></div>
+
+				<ul class="aui-list-view" >
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 隐患等级</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							{{? it.model.c_hiddengrade == 'A' }}
+								特別严重
+							{{?? it.model.c_hiddengrade == 'B'}}
+								严重
+							{{?? it.model.c_hiddengrade == 'C'}}
+								一般
+							{{?}}
+						</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 隐患内容</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.c_hiddencontent != null ? it.model.c_hiddencontent:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 隐患描述</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.c_hiddenremark != null ? it.model.c_hiddenremark:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 设备名称</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.c_devicename != null ? it.model.c_devicename:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 设备型号</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.c_devicecode != null ? it.model.c_devicecode:''}}</div>
+					</li>
+								<!--     <li class="aui-list-view-cell border_b" >
+								<div class="aui-col-xs-3 aui-pull-left red">• 维修人</div>
+								<div class="aui-col-xs-7 aui-pull-right">{{=it.model.fixuser != null ? it.model.fixuser:''}}</div>
+								</li>
+								<li class="aui-list-view-cell border_b" >
+								<div class="aui-col-xs-3 aui-pull-left red">• 维修人单位</div>
+								<div class="aui-col-xs-7 aui-pull-right">{{=it.model.fixcom != null ? it.model.fixcom:''}}</div>
+								</li> -->
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 是否走代维费处理</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							{{? it.model.isneedfee == '1' }}
+								是
+							{{?? it.model.isneedfee == '2'}}
+								否
+							{{?}}
+						</div>
+					</li>
+								<!--<li class="aui-list-view-cell border_b" >
+								<div class="aui-col-xs-3 aui-pull-left red">• 隐患处理预算</div>
+								<div class="aui-col-xs-7 aui-pull-right">{{=it.model.totalfee != null ? it.model.totalfee:''}}</div>
+								</li>-->
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 维修方式说明</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.fixremark != null ? it.model.fixremark:''}}</div>
+					</li>
+					{{? it.imgList2 != null && it.imgList2.length>0 }}
+						{{ for(var i=0, len=it.imgList2.length; i < len; i++) {}}
+						<li class="aui-list-view-cell border_b" >
+							<div class="aui-col-xs-4 aui-pull-left red">• 现场照片{{=i+1}}</div>
+							<div class="aui-col-xs-7 aui-pull-right">
+								{{? it.imgList2[i].path.substring(it.imgList2[i].path.length-3).toUpperCase() == 'JPG' || it.imgList2[i].path.substring(it.imgList2[i].path.length-3).toUpperCase() == 'GIF' || it.imgList2[i].path.substring(it.imgList2[i].path.length-3).toUpperCase() == 'PNG' || it.imgList2[i].path.substring(it.imgList2[i].path.length-3).toUpperCase() == 'PEG' }}
+									<img class="aui-img-object aui-pull-left" src="{{=it.imgList2[i].url}}" height="73" width="48" onclick="openImg('{{=it.imgList2[i].url}}');"></img>
+								{{??}}
+									{{? it.imgList2[i].IMAGENAME!=null}}
+										-
+									{{??}}
+										-
+									{{?}}
+								{{?}}
+							</div>
+						</li>
+						{{ } }}
+					{{??}}
+						<li class="aui-list-view-cell border_b" >
+							<div class="aui-col-xs-4 aui-pull-left red">• 现场照片</div>
+							<div class="aui-col-xs-7 aui-pull-right">
+								无
+							</div>
+						</li>
+					{{? }}
+				</ul>
+            {{?}}
+
+             <!--制定计划信息-->
+			 <!--1待核实，2方案制定，3组织实施，4验收，5归档，6挂起, 8方案审核-->
+            {{? it.model.bussinessid !=null && it.model.bussinessid !='1' && it.model.bussinessid !='1' && it.model.bussinessid !='2' }}
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>方案制定信息</h2></div>
+
+				<ul class="aui-list-view" >
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 维修方式</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							{{? it.model.fixtype == '1' }}
+								紧急维修
+							{{?? it.model.fixtype == '4'}}
+								计划性修缮
+							{{?? it.model.fixtype == '3'}}
+								更新改造
+							{{?}}
+						</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 隐患处理预算</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.p_totalfee != null ? it.model.p_totalfee:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 维修人</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.p_fixuser != null ? it.model.p_fixuser:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 维修单位</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.p_fixcom != null ? it.model.p_fixcom:''}}</div>
+					</li>
+					{{?it.model.fixtype == '3' }}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 项目编码</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.programcode != null ? it.model.programcode:''}}</div>
+					</li>
+					{{?}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 维修方式说明</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.p_fixremark != null ? it.model.p_fixremark:''}}</div>
+					</li>
+					{{? it.contractList1 != null && it.contractList1.length>0 }}
+						<li class="aui-list-view-cell border_b" >
+							{{ for(var i=0, len=it.contractList1.length; i < len; i++) {}}
+							<section class="aui-content-padded">
+								<div class="aui-card-list">
+									<div class="aui-card-list-header">
+										<b>{{=it.contractList1[i].contractname}}</b>
+									</div>
+									<div class="aui-card-list-content-padded">
+										<div class="aui-col-xs-12">
+											<div class="aui-col-xs-4 aui-pull-left blue">合同编号1：</div>
+											<div class="aui-col-xs-8 aui-pull-left">{{=it.contractList1[i].contractno}}</div>
+										</div>
+										<div class="aui-col-xs-12" style="width:100%">
+											<div class="aui-col-xs-4 aui-pull-left blue">计费方式：</div>
+											<div class="aui-col-xs-8 aui-pull-left">
+												{{? it.contractList1[i].itemtype == '1' }}
+													按次
+												{{?? it.contractList1[i].itemtype == '2'}}
+													包干
+												{{?}}
+											</div>
+										</div>
+										<div class="aui-col-xs-12" style="width:100%">
+											<div class="aui-col-xs-4 aui-pull-left blue">维修项目：</div>
+											<div class="aui-col-xs-8 aui-pull-left">{{=it.contractList1[i].paytype}}</div>
+										</div>
+										<div class="aui-col-xs-12">
+											<div class="aui-col-xs-4 aui-pull-left blue">含税价格：</div>
+											<div class="aui-col-xs-8 aui-pull-left">
+												{{=it.contractList1[i].taxprice}} 元
+											</div>
+										</div>
+										<div class="aui-col-xs-12">
+											<div class="aui-col-xs-4 aui-pull-left blue">不含税价：</div>
+											<div class="aui-col-xs-8 aui-pull-left">
+												{{? it.contractList1[i].notaxprice != null }}
+													{{=it.contractList1[i].notaxprice}} 元
+												{{??}}
+													-
+												{{?}}
+											</div>
+										</div>
+										<div class="aui-col-xs-12">
+											<div class="aui-col-xs-4 aui-pull-left blue">数量：</div>
+											<div class="aui-col-xs-8 aui-pull-left">{{=it.contractList1[i].amount}}</div>
+										</div>
+										<div class="aui-col-xs-12">
+											<div class="aui-col-xs-4 aui-pull-left blue">结算价格：</div>
+											<div class="aui-col-xs-8 aui-pull-left">{{=it.contractList1[i].calprice}} 元</div>
+										</div>
+										<div class="aui-col-xs-12">
+											<div class="aui-col-xs-4 aui-pull-left blue">折扣价格：</div>
+											<div class="aui-col-xs-8 aui-pull-left">{{=it.contractList1[i].discountprice}} 元</div>
+										</div>
+									</div>
+								</div>
+							</section>
+							{{? }}
+						</li>
+					{{? }}
+				</ul>
+            {{?}}
+                         <!--组织实施信息-->
+            {{? it.model.bussinessid =='4' }}
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>组织实施信息</h2></div>
+
+				<ul class="aui-list-view" >
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 维修实施人</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.dutyuser != null ? it.model.dutyuser:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 联系方式</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.dutyphone != null ? it.model.dutyphone:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 配件序列号</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.partserial != null ? it.model.partserial:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 实际处理费用</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.totalfee != null ? it.model.totalfee:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 实际处理成本</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.realcost != null ? it.model.realcost:''}}</div>
+					</li>
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-3 aui-pull-left red">• 实施说明</div>
+						<div class="aui-col-xs-7 aui-pull-right">{{=it.model.impl_remark != null ? it.model.impl_remark:''}}</div>
+					</li>
+
+				</ul>
+            {{?}}
+              <!--结论验收信息-->
+            {{? it.model.bussinessid =='5'||it.model.bussinessid =='7' }}
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>结论验收信息</h2></div>
+
+            <ul class="aui-list-view" >
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-3 aui-pull-left red">• 参与验收人</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.acceptuser != null ? it.model.acceptuser:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-3 aui-pull-left red">• 联系电话</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.acceptphone != null ? it.model.acceptphone:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-3 aui-pull-left red">• 验收结论</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.acceptresult == 'Y' }}
+							合格
+						{{?? it.model.acceptresult == 'N'}}
+							不合格
+						{{?}}
+					</div>
+				</li>
+
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-3 aui-pull-left red">• 质保期</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.quality != null ? it.model.quality:''}}
+						{{? it.model.quality == '1' }}
+							三个月
+						{{?? it.model.quality == '2'}}
+							半年
+						{{?? it.model.quality == '3'}}
+							一年
+						{{?? it.model.quality == '4'}}
+							两年
+						{{?? it.model.quality == '5'}}
+							三年
+						{{?? it.model.quality == '6'}}
+							五年
+						{{?? it.model.quality == '7'}}
+							其他
+						{{?}}
+					</div>
+				</li>
+
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-3 aui-pull-left red">• 验收说明</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.acceptremark != null ? it.model.acceptremark:''}}</div>
+				</li>
+
+            </ul>
+            {{?}}
+            {{?}}
+		</script>
+		<script id="billDetail-template2" type="text/x-dot-template">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>隐患信息</h2></div>
+			<ul class="aui-list-view">
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患编码</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.yhcode != null ? it.model.yhcode:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 站址名称</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.stationname != null ? it.model.stationname:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 站址运维ID</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.stationcode != null ? it.model.stationcode:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 共享情况</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.sharetype == '1001' }}
+							移动
+						{{?? it.model.sharetype == '1002' }}
+							联通
+						{{?? it.model.sharetype == '1003' }}
+							电信
+						{{?? it.model.sharetype == '1001,1002' || it.model.sharetype == '1002,1001' }}
+							移动,联通
+						{{?? it.model.sharetype == '1001,1003' || it.model.sharetype == '1003,1001' }}
+							移动,电信
+						{{?? it.model.sharetype == '1002,1003' || it.model.sharetype == '1003,1002' }}
+							联通,电信
+						{{?? it.model.sharetype == '1001,1002,1003' || it.model.sharetype == '1003,1002,1001' }}
+							移动,联通,电信
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患来源</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.hiddensource == '1' }}
+							巡检发现
+						{{?? it.model.hiddensource == '2'}}
+							运营商申告
+						{{?? it.model.hiddensource == '3'}}
+							自有人员上站巡查
+						{{?? it.model.hiddensource == '4'}}
+							业主申告
+						{{?? it.model.hiddensource == '5'}}
+							告警发现
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 发现人员</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.finduser != null ? it.model.finduser:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 发现人电话</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.findphone != null ? it.model.findphone:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 发现时间</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.findtime != null ? it.model.findtime:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 对象类型</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.objtype == '1' }}
+							铁塔
+						{{?? it.model.objtype == '2'}}
+							动力及配套
+						{{?? it.model.objtype == '3'}}
+							机房及配套
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患设备</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.devname != null ? it.model.devname:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患内容</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.hiddencontent != null ? it.model.hiddencontent:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患等级</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.model.hiddengrade == 'A' }}
+							特別严重
+						{{?? it.model.hiddengrade == 'B'}}
+							严重
+						{{?? it.model.hiddengrade == 'C'}}
+							一般
+						{{?}}
+					</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患描述</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.model.hiddenremark != null ? it.model.hiddenremark:''}}</div>
+				</li>
+				{{? it.attachList != null && it.attachList.length>0 }}
+					{{ for(var i=0, len=it.attachList.length; i < len; i++) {}}
+						<li class="aui-list-view-cell border_b" >
+							<div class="aui-col-xs-4 aui-pull-left red">• 现场照片{{=i+1}}</div>
+							<div class="aui-col-xs-7 aui-pull-right">
+								{{? it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'JPG' || it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'GIF' || it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'PNG' || it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'PEG' }}
+									<img class="aui-img-object aui-pull-left" src="{{=it.attachList[i].url}}" height="73" width="48" onclick="openImg('{{=it.attachList[i].url}}');"></img>
+								{{??}}
+									{{? it.attachList[i].imagename!=null}}
+										-
+									{{??}}
+										-
+									{{?}}
+								{{?}}
+							</div>
+						</li>
+					{{ } }}
+				{{??}}
+					<li class="aui-list-view-cell border_b" >
+						<div class="aui-col-xs-4 aui-pull-left red">• 现场照片</div>
+						<div class="aui-col-xs-7 aui-pull-right">
+							无
+						</div>
+					</li>
+				{{? }}
+            </ul>
+		</script>
+		<div class="aui-content aui-content-wxx">
+			<ul class="aui-list-view" id="standBillDetail"></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script>
+		var opts = {};
+		apiready = function() {
+			var billsn = api.pageParam.billsn;
+			var isfix = api.pageParam.isfix;
+			opts.billsn = billsn;
+			opts.isfix = isfix;
+			api.showProgress({
+				title : '加载中',
+				modal : false
+			});
+			// wxx
+			console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ==>>"+JSON.stringify(opts))
+			$client.getRepairBillDetail(opts, function(ret, err) {
+				//console.log(getObj(ret));
+				console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+				if (ret) {
+					if (ret.success) {
+						$api.setStorage("regulationSchemeList", ret.regulationSchemeList);
+						$api.setStorage("regulationTypeList", ret.regulationTypeList);
+						if(isfix == "Y"){
+							for (var i = 0; i < ret.dwlist.length; i++) {
+								//console.log(getObj(ret.dwlist[i]));
+							}
+							//console.log("--------------------------------------")
+							var fixTypeList=$api.getStorage("fixTypeList");//计费方式字典数据
+							ret.fixTypeList=fixTypeList;
+							$api.setStorage('parolData', ret.model);
+							//console.log(getObj(ret));
+							//console.log(JSON.stringify(fixTypeList));
+							console.log(JSON.stringify(ret));
+	
+							$api.setStorage('repairDetail', ret.model);
+							var dwlist=ret.dwlist;
+							var amlist=ret.amlist;
+							$api.setStorage("dwPerson", dwlist);
+							$api.setStorage("manPerson", amlist);
+							$api.setStorage("contentlist", ret.contentlist);
+							$api.setStorage("contractList", ret.contractList1);
+							
+							$api.setStorage("billModel", ret.model);
+							
+							renderTemp('standBillDetail', 'billDetail-template', ret);
+						}else if(isfix == "N"){
+							console.log("testtttttttt")
+							console.log(JSON.stringify(ret))
+							$api.setStorage('repairDetail', ret.model);
+							$api.setStorage('DeviceList', ret.DeviceList);
+							renderTemp('standBillDetail', 'billDetail-template2', ret);
+						}
+					} else {
+						api.toast({
+							msg : ret.data_info,
+							location : 'middle'
+						});
+					}
+				} else {
+					api.toast({
+						msg : err.msg,
+						location : 'middle'
+					});
+				}
+				api.hideProgress();
+			});
+		};
+
+		/**
+         *打开图片
+         */
+		 function openImg(imgPath) {
+            window.event.stopPropagation();
+            showlog("openImg:" + imgPath);
+            // var module = api.require('imageBrowser');
+            // module.openImages({
+            //     imageUrls : [imgPath],
+            //     showList : false
+            // });
+			var pageParam = {
+				images: [imgPath]
+			};
+			// api.openFrame({
+			// 	name: 'imageViewer',
+			// 	url:'../photoViewer/mainFrame.html',
+			// 	pageParam : pageParam
+			// })
+			api.openWin({
+				name: 'imageViewer',
+				url:'../photoViewer/mainFrame.html',
+				pageParam : pageParam
+			})
+        }
+
+		function initView(model, dwlist,amlist) {
+			var count=0;
+			var userid = $api.getStorage('user') ? $api.getStorage('user').userid : null;
+
+			if("1"==model.bussinessid&&dwlist!=null&&dwlist.length>0){
+				for(var i=0;i<dwlist.length;i++){
+					if(userid==dwlist[i].userid){
+						count++;
+					}
+				}
+
+				if(count==0){
+				api.toast({
+						msg : '该工单不是您本人所维护的工单，不能进行相关的操作'
+					});
+					api.execScript({
+						name : 'mainRepairBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+			}else if("2"==model.bussinessid&&amlist!=null&&amlist.length>0){
+				for(var i=0;i<amlist.length;i++){
+					if(userid==amlist[i].userid){
+						count++;
+					}
+				}
+
+				if(count==0){
+				api.toast({
+						msg : '该工单不是您本人所维护的工单，不能进行相关的操作'
+					});
+					api.execScript({
+						name : 'mainRepairBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+			}else if("3"==model.bussinessid){
+				if(userid!=model.curruser){
+					api.toast({
+						msg : '该工单不是您本人所维护的工单，不能进行相关的操作'
+					});
+					api.execScript({
+						name : 'mainRepairBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+			}else if(("4"==model.bussinessid||"6"==model.bussinessid)&&amlist!=null&&amlist.length>0){
+
+				if("N"==model.isquestconfirm){
+					for(var i=0;i<amlist.length;i++){
+					if(userid==amlist[i].userid){
+						count++;
+					}
+				}
+
+				if(count==0){
+				api.toast({
+						msg : '该工单不是您本人所维护的工单，不能进行相关的操作'
+					});
+					api.execScript({
+						name : 'mainRepairBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+
+				}else{
+
+				if(userid!=model.currmanager){
+					api.toast({
+						msg : '该工单不是您本人所维护的工单，不能进行相关的操作'
+					});
+					api.execScript({
+						name : 'mainRepairBillDetail',
+						script : 'cb_toggleMenu(false)'
+					});
+				}
+				}
+			}
+		}
+
+		//获取区域经理
+		function getAreaman(ret, billModel) {
+			var userNameList = new Array;
+			var userIdList = new Array;
+			$client.getAreaManagers({
+				siteid : billModel.stationid
+			}, function(ret1, err) {
+				if (ret1) {
+					if (ret1.success) {
+						var areaManagers = ret1.list;
+						for (var i = 0, size = areaManagers.length; i < size; i++) {
+							//						$('<option>').text(areaManagers[i].username).val(areaManagers[i].userid).appendTo('#areaManagerId');
+							userNameList.push(areaManagers[i].username);
+							userIdList.push(areaManagers[i].userid);
+						}
+						//						var userInfoId = listToStr(userIdList);
+						//											alert(userInfoId);
+						billModel.st_areamanager = listToStr(userIdList);
+						billModel.st_areamanager_name = listToStr(userNameList);
+						initView(ret, billModel);
+						api.parseTapmode();
+					} else {
+						initView(ret, billModel);
+						api.parseTapmode();
+					}
+				} else {
+					initView(ret, billModel);
+					api.parseTapmode();
+				}
+			});
+		}
+
+		//把list转为字符串
+		function listToStr(stringList) {
+			if (stringList == null) {
+				return null;
+			}
+			var result = "";
+			var flag = false;
+			for (var i = 0; i < stringList.length; i++) {
+				var string = stringList[i];
+				if (flag) {
+					//	                result.append(",");
+					result += ",";
+				} else {
+					flag = true;
+				}
+				result += string;
+			}
+			return result.toString();
+		}
+
+		function cb_openBillPicDetail() {
+			//          pageParam.billId = api.pageParam.billId;
+			//          pageParam.billSn = api.pageParam.billSn;
+			api.openFrame({
+				name : 'standPicDetail_frm',
+				url : 'standPicDetail_frm.html',
+				bounces : false,
+				pageParam : opts
+			});
+		}
+	</script>
+</html>

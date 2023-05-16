@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>fsu-restart</title>
+	<link rel="stylesheet" href="../module/css/aui.css" />
+	<link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+				class="aui-iconfont aui-icon-left"></span>
+		</a>
+		<div class="aui-title">
+			远程控制
+		</div>
+	</header>
+	<div class="wrapper">
+		<div id="content">
+			<div class="box-cpn">
+				<h4 class="border-b" style="margin-bottom: 0">
+					<strong class="text-blue margin-r-10">设备信息</strong>
+				</h4>
+				<div class="padding-10 text">
+					<div id="devType">设备类型: </div>
+					<div id="deviceName">设备名称: </div>
+					<div id="deviceId">设备ID: </div>
+					<div id="midName">信号名称: </div>
+					<div id="fsuId">所属FSUID: </div>
+				</div>
+			</div>
+			<div class="box-cpn">
+				<h4 class="">
+					<strong class="text-blue margin-r-10">位置信息</strong>
+				</h4>
+				<div class="padding-10 text">
+					<div id="provinceName">省分: </div>
+					<div id="cityName">地市: </div>
+					<div id="countryName">区县: </div>
+					<div id="stationname">站址名称: </div>
+					<div id="stationId">站址ID: </div>
+				</div>
+			</div>
+			<div class="box-cpn hidden-info" style="display: none">
+				<h4 class="">
+					<strong class="text-blue margin-r-10">远程控制记录</strong>
+				</h4>
+				<div class="padding-10 text">
+					<div id="operator">操作人: </div>
+					<div id="createTime">操作时间: </div>
+					<div id="status"></div>
+				</div>
+			</div>
+			<div class="box-cpn">
+				<h4 class="">
+					<strong class="text-blue margin-r-10">信号信息</strong>
+				</h4>
+				<div class="padding-10 text">
+					<div id="thValue">信号值: </div>
+					<div id="rstatus">状态: </div>
+				</div>
+				<div class="hidden-btn" style="display: none;text-align: center;margin-bottom: 10px">
+					<label>切换状态 <input id="check" type="checkbox" class="aui-switch" onchange="openSharebox()"></label>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../module/script/aui-sharebox.js"></script>
+<script type="text/javascript" src="../module/script/aui-dialog.js"></script>
+<script type="text/javascript">
+	const cacheName = 'equip-control'
+	apiready = function () {
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		api.parseTapmode()
+		realInfo()
+	}
+	// 初始化页面
+	const param = JSON.parse(handleLocalStorage('get', cacheName + '-operate')) || { type: 'operate', data: '{}' }
+	if (param.type === 'operate') {
+		$('.hidden-btn').show()
+	} else {
+		$('.hidden-info').show()
+	}
+	console.log(JSON.stringify(param))
+	const dialog = new auiDialog()
+	const sharebox = new auiSharebox()
+
+	let data = JSON.parse(param.data)
+	let realData
+	// 设置初始状态
+	let checkBox
+
+	function realInfo() {
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		request({
+			url: '/app/signal/list',
+			type: 'post',
+			data: {
+				pageNum: 1,
+				pageSize: 1,
+				fsuId: data.fsuid,
+				mid: data.mid,
+				before: data.statusName,
+				after: data.statusName == '在线' ? '离线' : '在线',
+				deviceId: data.deviceId
+			},
+			success: res => {
+				console.log('远程调整详情'+JSON.stringify(res))
+				realData = res.data.resultList[0] || {}
+				realData.createTime = data.createTime
+				realData.operator = data.operator
+				realData.status = data.status
+				realData.info = data.info
+				// 填充数据
+				setDatas(resove(realData))
+				$('#status').empty()
+				$('#status').append(`执行结果: ${data.statusName}`)
+				checkBox = data.rstatus === '开启' ? true : false
+				toggleCheckBox()
+				return api.hideProgress()
+			},
+			catch: res => api.hideProgress()
+		})
+	}
+
+	// 点击确定 回调方法
+	function shareboxCallback() {
+		const pwd = $('#pwd').val()
+		const localPwd = $api.getStorage('LOGIN_PASSWORD')
+		let html = '<div style="text-align: center;margin-top:10px;height:50px" class="aui-sharebox-btn">'
+		if (!pwd || pwd.length === 0) {
+			html += '未输入密码！</div>'
+		} else if (!localPwd || localPwd.length === 0) {
+			html += '未登录</div>'
+		} else if (localPwd != pwd) {
+			html += '密码错误！</div>'
+		} else {
+			return control()
+		}
+		setTimeout(() => {
+			openSharebox(html)
+		}, 1000)
+	}
+
+	function shareboxClose() {
+		toggleCheckBox()
+	}
+
+
+	function toggleCheckBox() {
+		const dom = $('#rstatus')
+		dom.empty()
+		checkBox ? dom.append('状态: 开启') : dom.append('状态: 关闭')
+		checkBox ? $("input[type=checkbox]").prop("checked", "checked") : $("input[type=checkbox]").removeAttr("checked")
+	}
+
+	// 发送请求
+	function control() {
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		request({
+			url: '/app/remoteRestart/control',
+			type: 'post',
+			data: {
+				type: 4,
+				targetId: data.fsuId,
+				info: data.deviceId,
+				mid: data.mid,
+				before: data.statusName == '在线' ? 1 : 0,
+				after: data.statusName == '在线' ? 0 : 1,
+				operator: $api.getStorage('LOGIN_USERNAME'),
+				targetInfo: JSON.stringify(data)
+			},
+			success: res => {
+				console.log(JSON.stringify(res))
+				api.hideProgress()
+				setTimeout(() => {
+					openSharebox('<div style="text-align: center;margin-top:10px;height:50px" class="aui-sharebox-btn">已发送远程控制指令，请稍后查看结果！</div>')
+				}, 1000)
+			},
+			catch: res => {
+				api.hideProgress()
+				setTimeout(() => {
+					openSharebox('<div style="text-align: center;margin-top:10px;height:50px" class="aui-sharebox-btn">发送远程控制指令失败！</div>')
+				}, 1000)
+			}
+		})
+	}
+</script>
+
+</html>

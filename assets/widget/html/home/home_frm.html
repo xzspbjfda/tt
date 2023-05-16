@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+  <title>首页</title>
+  <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+  <link rel="stylesheet" href="../../css/aui.css" />
+  <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+  <link rel="stylesheet" href="css/home.css" />
+
+  <style>
+    div.weatherc {
+      position: absolute;
+      left: 0%;
+      top: 0px;
+      z-index: 999999;
+      height: 45px;
+      width: 81px;
+      margin-top: 70px;
+      margin-left: 0%;
+    }
+
+    div.weatherc2 {
+      position: absolute;
+      left: 0%;
+      top: 0px;
+      z-index: 999999;
+      height: 43px;
+      width: 80px;
+      margin-right: 0%;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    /*清除浮动*/
+    .clearfix:before,
+    .clearfix:after {
+      display: table;
+      content: " ";
+    }
+
+    .clearfix:after {
+      clear: both;
+    }
+
+    .clearfix {
+      zoom: 1;
+    }
+
+    .wrapper h4 {
+      padding: 0px 0 0px 15px;
+      margin: 8px 0 8px 15px;
+      border-left: 4px solid #db4537;
+    }
+
+    .dz-table {
+      width: 94%;
+      margin: 0 auto;
+      font-size: 14px;
+    }
+
+    .dz-table>thead {
+      background: #db4537;
+      color: #fff;
+    }
+
+    .dz-table>thead td {
+      padding: 5px;
+      text-align: center;
+    }
+
+    .dz-table>tbody td {
+      padding: 5px;
+      text-align: center;
+      border-bottom: 2px solid #fff;
+    }
+
+    .dz-table>tbody tr {
+      background: #F7F7F7;
+    }
+
+    .dz-table>tbody tr:hover {
+      background: #ffdfdd;
+    }
+
+    .dian_bg {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #db4537;
+      color: #fff;
+      display: inline-block;
+    }
+
+    .red {
+      color: #db4537;
+    }
+
+    .today_data_w {
+      width: 120px !important;
+
+    }
+
+    .tqshow {
+      width: 120px !important;
+
+    }
+
+    .show {
+      display: block;
+      ;
+    }
+
+    .Hide {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <script id="banner-template" type="text/x-dot-template">
+			<div>
+				<img src="../../image/home_viewpage_01.png" />
+				<label><div class="blur"></div></label>
+			</div>
+			<div>
+				<img src="../../image/home_viewpage_02.png" />
+				<label><div class="blur"></div></label>
+			</div>
+			<div>
+				<img src="../../image/home_viewpage_03.png" />
+				<label><div class="blur"></div></label>
+			</div>
+		</script>
+
+  <!--展示人员列表   start-->
+  <script id="img-template-show" type="text/html">
+
+			{{
+        var faluescount=0;
+        var orderscount=0;
+        var fdingscount=0;
+        for(var i=0, len=it.length; i < len; i++) {
+        var orderListVal=JSON.stringify(it[i].orderList);
+        var orderingListVal=JSON.stringify(it[i].orderingList);
+        var falueListVal=JSON.stringify(it[i].falueList);
+        faluescount=faluescount+parseInt(it[i].falues);
+        orderscount=orderscount+parseInt(it[i].orders);
+        fdingscount=fdingscount+parseInt(it[i].fding);
+      }}
+			<tr onclick='gostatioinList({{=orderListVal}},{{=orderingListVal}},{{=falueListVal}},"{{=it[i].parentorgid}}","{{=it[i].accounttype}}")'>
+
+			<td>{{=it[i].name}}</td>
+
+			<td class="red">{{=it[i].falues}}</td>
+      <td class="red">{{=it[i].orders}}</td>
+			<td class="red">{{=it[i].fding}}</td>
+			</tr>
+			{{ } }}
+      <tr>
+        <td style="background:#ffdfdd;">合计</td>
+        <td class="red">{{=faluescount}}</td>
+        <td class="red">{{=orderscount}}</td>
+        <td class="red">{{=fdingscount}}</td>
+      </tr>
+
+		</script>
+
+  <div id='slide' class='swipe' style="display:none;">
+    <div class='swipe-wrap' id="banner-content"></div>
+    <ul id="pointer">
+      <li>
+        <a class="active"></a>
+      </li>
+      <li>
+        <a></a>
+      </li>
+      <li>
+        <a></a>
+      </li>
+    </ul>
+  </div>
+  <div class="wrapper">
+
+    <div id="billCheckId" style="display: none;">
+      <h4>工单监控</h4>
+      <ul class="clearfix">
+
+        <li id="monitorLiId" class="home_gv_prework" style="position:relative;display:none;">
+          <!-- <div id="monitorTip" class="cellTip">
+                        0
+                    </div> -->
+          <a tapmode="active" onclick="openWinList('bill/bill-list_win','监控箱','GET_BILL_MONITOR_LIST')"
+            style="font-size: 12px">故障工单</a>
+        </li>
+
+
+
+        <li id="taskMonitorNewId" style="position:relative;display:none;" class="home_gv_xunjian_monitor_new">
+          <a tapmode="active" onclick="openWinList('xunjian/monitorListWin','巡检监控箱','NEW_XUNJIAN_MONITOR')"
+            style="font-size: 12px">巡检工单</a>
+        </li>
+        <!--1556 zhangqiankun  2019-08-19  begin-->
+        <li id="allElectBillCount" class="home_gv_prework" style="position:relative;">
+          <a tapmode="active" onclick="openWinList('bill/bill-list_win1','停发电工单','GET_BILL_FD')"
+            style="font-size: 12px">停发电工单</a>
+        </li>
+        <li id="userListClaimedCount" class="home_gv_prework" style="position:relative;">
+          <a tapmode="active" onclick="openWinList('generation/generationBillListWin1','代维调度','')"
+            style="font-size: 12px">调度工单</a>
+        </li>
+        <li id="taskNewTip" class="home_gv_prework" style="position:relative;">
+          <a tapmode="active" onclick="openWinList('xunjian/task_list_win1','巡检任务','NEW_XUNJIAN_TASK',false)"
+            style="font-size: 12px">巡检任务</a>
+        </li>
+        <li id="standStaPreBillTip" class="home_gv_prework" style="position:relative;">
+          <a tapmode="active" onclick="openWinList('standBill/standBillListWin','上站待办','STATION_BILL_WAITLIST')"
+            style="font-size: 12px">上站待办</a>
+        </li>
+        <li id="repairBillIdTip" class="home_gv_prework" style="position:relative;">
+          <a tapmode="active" onclick="openWinList('repair/repair-list_win1','日常修理','')"
+            style="font-size: 12px">日常维修</a>
+        </li>
+        <!--1556 zhangqiankun  2019-08-19  begin-->
+        <li id="emergencyID" style="position:relative;" class="home_gv_prework Hide">
+          <a tapmode="active" onclick="openWinList('emergency/emergency-list_win','应急物资')"
+            style="font-size: 12px">应急物资管理</a>
+        </li>
+
+        <li id="" style="position:relative;" class="home_gv_prework">
+          <a tapmode="active" onclick="openWinList('submission/submission-list_win','应急信息报送')"
+            style="font-size: 12px">应急信息报送</a>
+        </li>
+      </ul>
+    </div>
+    <div id="fsuDivId" style="display: none;">
+      <h4>动环监控</h4>
+      <ul class="clearfix">
+
+        <li id="gvFsuLiId" style="position:relative;display:none;" class="home_gv_fsu">
+          <a tapmode="active" onclick="openWinList('station/station-list','站址列表','')" style="font-size: 12px">动环监控</a>
+        </li>
+
+        <li id="alarmLiId" style="position:relative;display:none;" class="home_gv_alarm">
+          <a tapmode="active" onclick="openWinList('alarm/alarm-list_win','告警列表','ALARMLIST')"
+            style="font-size: 12px">告警管理</a>
+        </li>
+        <li id="fsuMgmt" style="position:relative;display: none">
+          <a tapmode="active" onclick="openWinList('fsuManagement/index','FSU管理','')"
+            style="background-image: url(../../image/btn_EquipmentTraffic.png);font-size: 12px">FSU管理</a>
+        </li>
+        <!-- <li style="position:relative">
+            <a tapmode="active" onclick="openWinList('fsuManagement/index','FSU管理','')"
+              style="background-image: url(../../image/btn_EquipmentTraffic.png);font-size: 12px">FSU管理</a>
+          </li> -->
+        <!-- <li id="fsuTest" style="position:relative;" class="home_gv_fsu">
+                <a tapmode="active" onclick="openWinList('fsuManagement/test','FSU测试','')" style="font-size: 12px">FSU测试</a>
+            </li> -->
+      </ul>
+    </div>
+    <div id="dzDivId" style="display: none;">
+      <h4>
+        停发电管理
+        <img style="width:20px;float: right;margin-right:16px;margin-top:2px; transition: all 0.3s ease-out;"
+          onclick="refresh(this)" src="../../image/fresh.png" alt="">
+        <img style="width:20px;float: right;margin-right:16px;margin-top:2px;" onclick="Map()" src="../../image/map.png"
+          alt="">
+      </h4>
+      <div>
+        <table class="dz-table" cellspacing="0">
+          <thead>
+            <tr>
+              <td>省市</td>
+              <td>断站</td>
+              <td>停电</td>
+              <td>发电中</td>
+            </tr>
+          </thead>
+          <tbody id="list-view" class="aui-list-view"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/GPS.js"></script>
+<script type="text/javascript" src="./script/home_frm.js"></script>
+<script type="text/javascript" src="../../script/swipe.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+
+<script type="text/javascript"></script>
+<script>
+
+  // function Jpush() {
+  //   var uzmoduledemo = api.require('modulePush');
+  //   var param = { userName: user.userid };
+  //   uzmoduledemo.startActivity(param);
+  // }
+
+  function Map() {
+    api.openWin({
+      name: 'map',
+      url: 'nearbyMapWin.html',
+      reload: true,
+      bounces: false,
+      vScrollBarEnabled: false,
+      pageParam: {}
+    });
+  }
+
+  function showHIde(e) {
+    if (e) {
+      $('#emergencyID').show();
+    }
+  }
+  var deg = 0;
+  function refresh(e) {
+    deg += 360
+    $(e).css("transform", "rotate(" + deg + "deg)")
+
+    api.showProgress({
+      title: '更新中...'
+    });
+    $client.FdManagerOrg({
+
+    }, function (ret, err) {
+      console.log(JSON.stringify(ret));
+      if (ret) {
+        if (ret.success) {
+          $('#list-view').empty();
+          renderTemp('list-view', 'img-template-show', ret.resultList, true);
+          if (ret.resultList.length > 0) {
+            $api.byId('dzDivId').style.display = "";
+
+          }
+        } else {
+          showToast(ret.data_info);
+        }
+      } else {
+        showToast(err.msg);
+      }
+    });
+    api.hideProgress();
+  }
+
+  function goPowertable() {
+    api.openWin({
+      name: 'powerTableWin',
+      url: '../powerTable/power-table_win.html',
+      reload: true,
+      bounces: false,
+      vScrollBarEnabled: false,
+      pageParam: {}
+    });
+  }
+
+  function gostatioinList(orderList, orderingList, falueList, parentorgid, accounttype) {
+    api.openWin({
+      name: 'powerstation',
+      url: '../powerTable/stationList/powerstation-list.html',
+      reload: true,
+      bounces: false,
+      vScrollBarEnabled: false,
+      pageParam: {
+        orderList: orderList,
+        parentorgid: parentorgid,
+        accounttype: accounttype,
+        orderingList: orderingList,
+        falueList: falueList
+      }
+    });
+  }
+</script>
+
+</html>

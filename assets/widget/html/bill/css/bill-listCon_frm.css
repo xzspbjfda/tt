@@ -1,0 +1,113 @@
+.ccssoft_list {
+    padding-top: 5px;
+}
+.ccssoft_list li {
+    list-style: none;
+    padding: 8px;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.ccssoft_list li:hover {
+    background: #f9e9df;
+}
+.ccssoft_list li.acitve {
+    background: #f9e9df;
+}
+.cj-l-title, .cj-f-title {
+    border-bottom: 1px solid #e3e2e2;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 8px 70px 8px 0;
+    position: relative;
+}
+.top-title{
+    border-bottom: 1px dashed #00a0c8;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    height: 20px;
+    position: relative;
+}
+.cj-f-title {
+    padding: 8px 70px 8px 0px;
+}
+/*.cj-l-title:before {
+    content: "";
+    display: block;
+    width: 18px;
+    height: 18px;
+    background: #999;
+    border-radius: 20px;
+    position: absolute;
+    top: 10px;
+    left: 5px;
+}*/
+.ccssoft_list .cj-green .cj-l-title:before {
+    background: #1ac36b;
+}
+.ccssoft_list .cj-red .cj-l-title:before {
+    background: #ff3333;
+}
+
+.top-title span{
+ display: block;
+    width: 90px;
+    height: 20px;
+    line-height: 20px;
+    color: #666;
+    text-align: right;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.cj-l-title span, .cj-f-title span {
+    display: block;
+    width: 90px;
+    height: 20px;
+    line-height: 20px;
+    color: #666;
+    text-align: right;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    font-size: 12px;
+    font-weight: bold;
+}
+.cj-l-into {
+    font-size: 12px;
+    color: #666;
+    line-height: 20px;
+    padding: 3px 0;
+    position: relative;
+    /*   padding-right: 210px;*/
+}
+.cj-l-date {
+    display: block;
+    position: absolute;
+    top: 3px;
+    right: 0;
+    width: 200px;
+    text-align: right;
+}
+.cj-l-date span {
+    margin-left: 2px;
+}
+.cj-l-date:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 12px;
+    background: #ddd;
+    position: absolute;
+    top: 4px;
+    left: 14px;
+}
+
+.cj-f-date {
+    color: #009688;
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>告警详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    </head>
+    <style>
+        .liLeft {
+            width: 35%;
+            float: left;
+        }
+        .liRight {
+            width: 65%;
+            float: left;
+            padding-left: 20px;
+            color: #666;
+        }
+    </style>
+    <body>
+    	<script id="alarmDetail-template" type="text/x-dot-template">
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">故障单ID</div>
+			<div class="liRight">{{=it.id != null?it.id:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">站址编码</div>
+			<div class="liRight">{{=it.site_id != null?it.site_id:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+            		<div class="liLeft">站址名称</div>
+           		<div class="liRight">{{=it.site_name != null?it.site_name:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">设备编码</div>
+			<div class="liRight">{{=it.object_id != null?it.object_id:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">设备名称</div>
+			<div class="liRight">{{=it.object_name != null?it.object_name:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">告警来源</div>
+			<div class="liRight">{{=it.system_name != null?it.system_name:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">告警内容</div>
+			<div class="liRight">{{=it.alarm_title != null?it.alarm_title:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">告警说明</div>
+			<div class="liRight">{{=it.alarm_note != null?it.alarm_note:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">告警等级</div>
+			<div class="liRight">
+				{{? it.alarm_severity == '1' }}一级告警{{?}}
+				{{? it.alarm_severity == '2' }}二级告警{{?}}
+				{{? it.alarm_severity == '3' }}三级告警{{?}}
+				{{? it.alarm_severity == '4' }}四级告警{{?}}
+			</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">重要程度</div>
+			<div class="liRight">{{=it.importance != null?it.importance:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">备注</div>
+			<div class="liRight">{{=it.mark != null?it.mark:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">告警时间</div>
+			<div class="liRight">{{=it.alarm_date != null?it.alarm_date:''}}</div>
+		</li>
+		<li class="aui-list-view-cell" >
+			<div class="liLeft">告警恢复时间</div>
+			<div class="liRight">{{=it.alarm_end_time != null?it.alarm_end_time:''}}</div>
+		</li>
+		
+    	</script>
+        <div class="aui-content">
+            <ul class="aui-list-view" id="alarmDetail"></ul>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script>
+        apiready = function() {
+            var alarmId = api.pageParam.id;
+            var user = $api.getStorage('user');
+            var userid = user.userid;
+            api.showProgress({
+                title : '加载中',
+                modal : true
+            });
+            $client.getZndwAlarmDetail(userid, alarmId, function(ret, err) {
+                if (ret) {
+                    if (ret.success) {
+                        //var strs = $api.jsonToStr(ret);
+                        //alert(ret.model.st_id);
+                        console.log(JSON.stringify(ret));
+                        console.log("==================================");
+                        var content = $api.byId('alarmDetail');
+                        var tpl = $api.byId('alarmDetail-template').text;
+                        var tempFn = doT.template(tpl);
+                        content.innerHTML = tempFn(ret.alarmList[0]);
+                        $api.setStorage("alarmModel", ret.alarmList[0]);
+                        api.parseTapmode();
+                    } else {
+                        api.toast({
+                            msg : ret.data_info,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : err.msg,
+                        location : 'bottom'
+                    });
+                }
+                api.hideProgress();
+            });
+        };
+    </script>
+</html>

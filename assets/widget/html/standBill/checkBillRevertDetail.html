@@ -1,0 +1,407 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>上站核实回单</title>
+        <link rel="stylesheet" href="../../css/powerbinding.css" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/standBillRevertDetail.css" />
+        <style>
+            .textareaCls {
+                background-color: white;
+                border: solid 1px #c8c7cc;
+                width: 100%;
+                height: 100%;
+            }
+            .cardCon1 {
+                font-size: 14px;
+                width: 90%;
+                /*width:90%;*/
+                height: 45px;
+                float: right;
+                border-radius: 4px;
+                overflow: hidden;
+                margin-right: 4px;
+                /*margin-left:82px;*/
+            }
+            .cardLabel1 {
+                font-size: 14px;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+      <script id="dict-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {}}
+          <option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+        {{ } }}
+      </script>
+      <script id="img-template" type="text/x-dot-template">
+    				<li class="aui-list-view-cell aui-img aui-col-xs-4">
+    				<img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+    				<button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+    				</li>
+    		</script>
+        <div id="wrap">
+                <div style="overflow:auto;margin-bottom:55px;margin-top:5px;">
+                    <div class="aui-cotent">
+                        <div class="aui-form">
+                            <div class="aui-input-row" >
+                                <span class="aui-input-addon" >上站处理措施:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <div class="cardCon1">
+                                    <textarea name="treamentmeasures" id="treamentmeasures" rows="2"  class="textareaCls required" data-valid="required" data-error="请填写上站配合事宜简述"></textarea>
+                                </div>
+                            </div>
+                            <div class="aui-input-row" >
+                                <span class="aui-input-addon">
+                                    <div class="cardLabel1">
+                                      派发是否准确:&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div> </span>
+                                    <div class="cardCon1">
+                                        <select id="sendisaccuracy" name="sendisaccuracy" onchange="onRevertWay(this)" class="required" data-valid="required" style="background-color:#FFFFFF;width:100%;height:100%;" >
+                                            <option value="1" selected="selected">准确</option>
+                                            <option value="2">不准确</option>
+                                        </select>
+                                  </div>
+                            </div>
+                            <div class="aui-input-row" id="errorreasonDiv" >
+                              <span class="aui-input-addon" >
+                                  <div class="cardLabel1">
+                                    派发不准确原因:
+                                  </div> </span>
+                              <div class="cardCon1">
+                                <textarea name="errorreason" id="detail" rows="2"  class="textareaCls"></textarea>
+                              </div>
+                            </div>
+                            <div class="aui-input-row" style="display: none;" id="deviceChange">
+                              <span class="aui-input-addon">
+                                  <div class="cardLabel1">
+                                    设备变动情况:&nbsp;&nbsp;&nbsp;&nbsp;
+                                  </div> 
+                              </span>
+                                <div class="cardCon1">
+                                      <select id="devicechange" name="devicechange" onchange="deviceChange(this)" class="required" data-valid="required" style="background-color:#FFFFFF;width:100%;height:100%;" >
+                                         
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="aui-input-row"  style="display: none;" id="deviceChangeReason">
+                              <span class="aui-input-addon">
+                                  <div class="cardLabel1">
+                                    设备变动原因:&nbsp;&nbsp;&nbsp;&nbsp;
+                                  </div> 
+                              </span>
+                                <div class="cardCon1">
+                                      <select id="devicechangereason" name="devicechangereason"  data-valid="required" style="background-color:#FFFFFF;width:100%;height:100%;" >
+                                         
+                                      </select>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="cardDiv2">
+                              <div class="cardLabel" style="width:100%;text-align:left">
+                                上传照片：
+                              </div>
+                              <div class="cardCon2">
+                                <ul id="list-view" class="aui-list-view aui-grid-view">
+                                    <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+                                        <img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+                                    </li>
+                                    <canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+                                    <img class='imgPath' style="display:none;"  src=''/>
+                                </ul>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer style="height:50px;">
+                        <div class="cardButtonDiv" style="width: 100%;">
+                            <button class="okBtn" onclick="RevertFunc();" style="width: 100%;color:#fff;">
+                                确定
+                            </button>
+                        </div>
+                    </footer>
+                </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/jquery-validate.js"></script>
+    <script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+    <script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+    <script>
+        var checkDetail;
+        var imageUtil;
+        var jsonArray = new Array();
+        apiready = function(){
+            $("#errorreasonDiv").hide();
+            $("#deviceChangeReason").hide();
+            $("#deviceChange").hide();
+              imageUtil.init({
+                  uploadFn : $client.uploadCheckListImage
+              });
+              // 判断工单是否为资源核查类型
+              checkDetail = $api.getStorage('standCheckDetail');
+              console.log("哈哈哈哈哈 detail ==>>"+JSON.stringify(checkDetail));
+              if(checkDetail.fault_source == "资源核查") { //判断是否是资源核查类型
+                  $("#deviceChange").show();
+                  var deviceChange = sortItemCode($api.getStorage("deviceChange"));
+                  renderTemp('devicechange', 'dict-template',deviceChange, true);
+                  
+                  renderTemp('devicechangereason', 'dict-template', $api.getStorage("deviceChangeReason"), true);
+              }
+        };
+
+        function sortItemCode (itemList) {
+          return itemList.sort((a, b)=> a.itemcode.localeCompare(b.itemcode, 'zh'));
+          // return ;
+
+        }
+        function onRevertWay(e){
+          var index = $(e).val();
+          if(index == "2"){
+            $("#errorreasonDiv").show();
+          }else{
+            $("#errorreasonDiv").hide();
+          }
+        }
+
+        function deviceChange(e) {
+          if($(e).val()  != 1) { // 是否设备变更，如果变更 那么需要选择 变更原因
+            $("#devicechangereason option:first").prop('selected', 'selected');
+            $("#deviceChangeReason").show();
+              
+          }else {
+              $("#deviceChangeReason").hide();
+          }
+        }
+        //回单提交
+        function RevertFunc(){
+          
+          var fromPage = api.pageParam.fromPage;
+          checkDetail = $api.getStorage('standCheckDetail');
+          console.log("哈哈哈哈== >>"+JSON.stringify(checkDetail))
+          var paramJson = {};
+          var treamentmeasures = $api.byId('treamentmeasures'); //处理措施
+          var sendisaccuracy = $api.byId('sendisaccuracy'); //派发是否准确
+          var errorreason = $api.byId('detail'); //派发不准确原因
+
+          var devicechange = $api.byId('devicechange'); // 设备变更情况
+          var devicechangereason = $api.byId('devicechangereason');  //设备变更原因
+
+          if(treamentmeasures.value =="" || treamentmeasures.value == null){
+              api.toast({
+                msg : "处理措施不能为空....",
+                location : 'middle'
+              });
+              return;
+            }
+            if(sendisaccuracy.value == 2 && (errorreason.value == "" || errorreason.value == null)) { // 判断如果选择 不准确 那么原因必填
+              api.toast({
+                msg : "不准确原因不能为空....",
+                location : 'middle'
+              });
+              return;
+            }
+            if(sendisaccuracy.value == 2 && errorreason.value.length > 200) {
+              api.toast({
+                msg : "派发不准确原因不能超过200字....",
+                location : 'middle'
+              });
+              return;
+            }
+          paramJson['status'] = checkDetail.status;
+          paramJson['wosn'] = checkDetail.wo_sn;
+          paramJson['woId'] = checkDetail.wo_id;
+          paramJson['imgArr'] = jsonArray;
+          paramJson['faultsource'] = checkDetail.fault_source;
+
+          paramJson['cityCode'] = checkDetail.cityid;
+          paramJson['siteId'] = checkDetail.site_id;
+          
+          paramJson['sendisaccuracy'] = sendisaccuracy.value; //判断是否准确
+          paramJson['treamentmeasures'] = treamentmeasures.value;
+          if(sendisaccuracy.value == 2) {  //派发不准确 获取原因
+            paramJson['errorreason'] = errorreason.value;
+          }else {
+            paramJson['errorreason'] = '';
+          }
+          
+          paramJson['devicechange'] = (devicechange.value == null || devicechange.value=="null")?"":devicechange.value;
+          if(devicechange.value != 1) {  //设备有变动，那么获取设备变动原因
+            paramJson['devicechangereason'] =  (devicechangereason.value == null || devicechangereason.value=="null")? "" : devicechangereason.value;
+          }else {
+            paramJson['devicechangereason'] = '';
+          }
+
+
+          console.log("paramJson == >>"+JSON.stringify(paramJson));
+          // api.showProgress({
+          //     title: '消除AI事件中...'
+          // });
+            $client.revertStand(paramJson,function(ret, err) {
+              if (ret) {
+                if (ret.success) {
+                  console.log("hhhhh = >>"+JSON.stringify(ret))
+                  // api.hideProgress;
+                  if(ret.data_info != null && ret.data_info != "" && ret.data_info != "正常") {
+                      api.toast({
+                        msg : ret.data_info,
+                        duration : 2000,
+                        location : 'middle'
+                    });
+                  }else {
+                    api.toast({
+                      msg : "回单成功",
+                      duration : 1000,
+                      location : 'middle'
+                    });
+                  }
+                  
+                  window.setTimeout(function() {
+                      //刷新页面的list
+                      if (fromPage == 'standOnCheckWin') {
+                              api.sendEvent({
+                                   name: 'standOnCheckFrm',
+                                   extra: {
+                                       state: 'no'
+                                   }
+                             });
+                      }
+                      api.closeWin({
+                          name : 'mainStandcheckDetail'
+                      });
+                      api.closeWin();
+                      //此时最顶层win为工单详情
+                  }, 1500);
+              } else {
+                  api.toast({
+                    msg : ret.errorMsg,
+                    location : 'middle'
+                  });
+                }
+              } else {
+                api.toast({
+                  msg : '接口访问失败',
+                  location : 'middle'
+                });
+              }
+              // api.hideProgress();
+             });
+          };
+
+
+        function closeWin(name) {
+            if (name == null || name == '' || name == 'undefined') {
+                api.closeWin();
+            } else {
+                api.closeWin({
+                    name : name
+                });
+            }
+        }
+
+        /**
+       * 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+       */
+      function addPic(e) {
+        var permission = 'camera';
+var resultList = api.hasPermission({
+    list: [permission]
+});
+if (resultList[0].granted) {
+    // 已授权，可以继续下一步操作
+} else {
+    api.confirm({
+        msg: '应用需要您的授权才能访问相机',
+        buttons: ['取消', '去设置']
+    }, function(ret) {
+        if (ret.buttonIndex == 2) {
+            api.requestPermission({
+                list: [permission],
+            }, function(res) {
+                if (res.list[0].granted) {
+                    // 已授权，可以继续下一步操作
+                }
+            });
+        }
+    });
+}
+        var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+        var lon1 = displaynum(lastLocation.lon);
+        var lat1 = displaynum(lastLocation.lat);
+        if (!lastLocation || !lastLocation.status) {
+          api.toast({
+            msg : '暂未定位\n无法上传照片！'
+          });
+        }else {
+          var curentTime2 = CurentTime2();
+          $api.setStorage('newtime', curentTime2);
+          $api.setStorage('lon1', lon1);
+          $api.setStorage('lat1', lat1);
+          var lon1 = $api.getStorage('lon1');
+          var lat1 = $api.getStorage('lat1');
+          var user=$api.getStorage('user');
+
+          imageUtil.add('camera', function(ret, err) {
+              var imgModel = {
+                  userid : user.userid,
+                  businessid : "上站核实",
+                  imgpath : ret,
+                  phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+                  lon : lon1,
+                  lat : lat1,
+                  photoaddress : lastLocation.photoaddress
+              };
+              console.log("ss///////////////////////////////////////"+getObj(imgModel));
+              imageUtil.getImageArray().push(imgModel);
+            showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+
+            imageUtil.upload(function(count) {
+
+              jsonArray.push(count);
+            });
+
+            var tpl = $api.byId('img-template').text;
+            var tempFn = doT.template(tpl);
+
+                $('#addPic').before(tempFn(imgModel));
+                $new = $('#addPic').prev();
+                $new.css('height', $new.css('width'));
+
+          },e,true,false);
+        }
+      }
+
+      /**
+       *删除图片
+       */
+      function removeImg(imgPath) {
+        var imageArray = imageUtil.getImageArray();
+        var size = imageArray.length;
+        for (var i = 0; i < size; i++) {
+          var data = imageArray[i];
+          if (data.imgpath == imgPath) {
+            imageArray.remove(i);
+            break;
+          }
+        }
+        $(event.target).parents('.picBox').find('#add').show();
+        $(event.target).parents('li.aui-img').remove();
+        // 删除本地缓存图片其一
+        deleteImgArr(imgPath);
+      }
+    </script>
+</html>

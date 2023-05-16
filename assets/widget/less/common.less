@@ -1,0 +1,53 @@
+@default-red: #db4537;
+#header {
+    background-color: @default-red;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+
+    .icon(@dir) {
+        font-size: 25px;
+        line-height: 44px;
+        position: absolute;
+        display: inline-block;
+        width: 40px;
+        height: 44px;
+    }
+    .right-icon {
+        right: 0;
+        .icon(right);
+    }
+    .left-icon {
+        left: 0;
+        .icon(left);
+    }
+    .img-icon(@url){
+    	background: url(@url) no-repeat center center;
+        -webkit-background-size: 14px 18px;
+        background-size: 36px 36px;
+    }
+    .back-icon {
+    	.img-icon('../image/icon_arrow.png')
+        .left-icon;
+    }
+    .menu-icon{
+
+    	background: url(../image/actionbar_icon_add.png) no-repeat center center;
+    -webkit-background-size: 14px 18px;
+            background-size: 30px 30px;
+        .right-icon;
+    }
+    .action-icon{
+    	background: url(../image/drawer_menu_icon_setting_nor.png) no-repeat center center;
+    -webkit-background-size: 14px 18px;
+            background-size: 30px 30px;
+            .right-icon;
+    }
+    .openDoor-icon{
+		background: url(../image/icons/png/icon_openDoor.png) no-repeat center center;
+    -webkit-background-size: 14px 18px;
+            background-size: 30px 30px;
+            .right-icon;
+    }
+}

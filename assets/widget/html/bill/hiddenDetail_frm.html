@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>工单详情</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/list-format.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<style>
+		.aui-content-wxx {
+			width: 100%;
+			margin: 0;
+		}
+
+		.aui-content-wxx ul {
+			background-color: #fff;
+			border-radius: 0;
+			overflow: hidden;
+			margin-bottom: 10px;
+			padding: 0 3%;
+		}
+	</style>
+</head>
+
+<body style="width: 100%">
+	<script id="billDetail-template" type="text/x-dot-template">
+			<ul class="aui-list-view">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>隐患上报信息</h2></div>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患编码</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.yhcode != null ? it.yhcode:''}}</div>
+				</li>
+				
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 维修工单ID</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=(it.fixbillsn != null && it.fixbillsn != "null")  ? it.fixbillsn:'无'}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 站址名称</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.stationname != null ? it.stationname:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 站址编码</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.stationid != null ? it.stationid:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 当前状态</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.hiddenstatus}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 隐患等级</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.hiddengrade != null ? it.hiddengrade:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 来源</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.hiddensource != null ? it.hiddensource:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 发现时间</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.findtime != null ? it.findtime:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患设备</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.devname != null ? it.devname:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 隐患内容</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.hiddencontent != null ? it.hiddencontent:''}}</div>
+				</li>
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 隐患说明</div>
+					<div class="aui-col-xs-7 aui-pull-right">{{=it.hiddenremark != null ? it.hiddenremark:''}}</div>
+				</li>
+				{{? it.attachList != null && it.attachList.length>0 }}
+				{{ for(var i=0, len=it.attachList.length; i < len; i++) {}}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 现场照片</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						{{? it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'JPG' || it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'GIF' || it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'PNG' || it.attachList[i].path.substring(it.attachList[i].path.length-3).toUpperCase() == 'PEG' }}
+							<img class="aui-img-object aui-pull-left" src="{{=it.attachList[i].url}}" height="73" width="48" onclick="openImg('{{=it.attachList[i].url}}');"></img>
+						{{??}}
+							{{? it.attachList[i].IMAGENAME!=null}}
+							-
+							{{??}}
+							-
+							{{?}}
+						{{?}}
+					</div>
+				</li>
+				{{ } }}
+			{{??}}
+				<li class="aui-list-view-cell border_b" >
+					<div class="aui-col-xs-4 aui-pull-left red">• 现场照片</div>
+					<div class="aui-col-xs-7 aui-pull-right">
+						无
+					</div>
+				</li>
+			{{? }}
+			</ul>
+	
+		</script>
+	<div class="aui-content aui-content-wxx" id="standBillDetail">
+
+	</div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script>
+	var opts = {};
+	apiready = function () {
+		console.log("h")
+		var applyId = api.pageParam.applyId;
+		var isHistory = api.pageParam.isHistory;
+		if (applyId != null && applyId != '' && applyId != 'undefined') {
+			opts.applyid = applyId;
+			opts.stationname = api.pageParam.stationName;
+		}
+
+		if (isHistory != null && isHistory != '' && isHistory != 'undefined') {
+			opts.ishistory = isHistory;
+		}
+		// api.showProgress({
+		// 	title: '加载中',
+		// 	modal: false
+		// });
+		initView(api.pageParam);
+	};
+	function openImg(imgPath) {
+		console.log("imgPath=="+imgPath);
+		window.event.stopPropagation();
+		showlog("openImg:" + imgPath);
+		// var module = api.require('imageBrowser');
+		// module.openImages({
+		// 	imageUrls : [imgPath],
+		// 	showList : false
+		// });
+		var pageParam = {
+			images: [imgPath]
+		};
+		// api.openFrame({
+		// 	name: 'imageViewer',
+		// 	url:'../photoViewer/mainFrame.html',
+		// 	pageParam : pageParam
+		// })
+		api.openWin({
+			name: 'imageViewer',
+			url:'../photoViewer/mainFrame.html',
+			pageParam : pageParam
+		})
+	}
+
+	function initView(billModel) {
+		var ownerid = api.pageParam.relproid;
+		var opt= {
+			ownerid
+		}
+		//回显图片
+		$client.getHiddenImage(opt, function(ret, err) {
+			billModel.attachList = ret.attachList;
+			renderTemp('standBillDetail', 'billDetail-template', billModel);
+			console.log("返回值的值==》》"+JSON.stringify(ret));
+        });
+
+	
+		//$api.setStorage("standBillModel", billModel);
+		//将处理流程存入缓存
+		//$api.setStorage("standBillAction", ret.actionList);
+
+		
+	}
+
+
+
+
+
+</script>
+
+</html>

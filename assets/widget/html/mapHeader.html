@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>地图</title>
+        <link rel="stylesheet" type="text/css" href="../css/aui-win.css" />
+        <link rel="stylesheet" href="../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" tapmode onclick="back();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">地图</div>
+        </header>
+        <script src="../script/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../script/api.js"></script>
+        <script type="text/javascript" src="../script/common.js"></script>
+        <script type="text/javascript" src="../script/debug.js"></script>
+        <script type="text/javascript">
+            apiready = function() {
+                initHeader();
+                api.openFrame({
+                    name : 'mapDetail_frm',
+                    url : 'mapDetail.html',
+                    bounces : false,
+                    pageParam : api.pageParam,
+                    rect : frameRect()
+                });
+           			api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+						api.closeWin();
+				});
+			};
+			
+			function back(){//返回就關閉gps
+                
+						api.closeWin();
+			}
+        </script>
+    </body>
+</html>

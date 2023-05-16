@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>巡检任务项目列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+		<link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+		<style>
+			ul, li {
+				margin: 0;
+				padding: 0;
+			}
+			.ccssoft_list li {
+				list-style: none;
+				padding: 8px;
+				border-bottom: 1px solid #e3e2e2;
+				background: #fff;
+				overflow: hidden;
+				margin-bottom: 10px;
+			}
+			.ccssoft_list li:hover {
+				background: #f9e9df;
+			}
+			.liTopLeft span {
+				display: block;
+				width: 20%;
+				height: 20px;
+				line-height: 20px;
+				text-align: right;
+				position: absolute;
+				top: 5px;
+				right: 0;
+				font-size: 12px;
+				font-weight: normal;
+			}
+			.liTop {
+				width: 100%;
+			}
+			.liTopLeft {
+				font-size: 16px;
+				font-weight: bold;
+				line-height: 20px;
+				padding: 5px 60px 5px 0px;
+				position: relative;
+			}
+			.liTopRight {
+				width: 20%;
+				height: 20px;
+				line-height: 20px;
+				float: left;
+				font-size: 12px;
+				color: #666;
+			}
+			.liDown {
+				width: 100%;
+				height: 30px;
+				line-height: 30px;
+				border-top: 1px #E3E2E2 solid;
+			}
+			.liDownLeft {
+				width: 85%;
+				height: 14px;
+				line-height: 14px;
+				float: left;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-size: 14px;
+				color: #999;
+				margin-top: 8px;
+				border-right: 1px #E3E2E2 solid;
+			}
+			.aui-list-check {
+				position: relative;
+				border-top: 1px #E3E2E2 solid;
+				overflow: hidden;
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+				-webkit-touch-callout: none;
+			}
+			.aui-list-check:after {
+				display: block;
+				content: '';
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				-webkit-transform-origin: 0 0;
+				-webkit-transform: scale(1);
+				pointer-events: none;
+			}
+			.liDownRight {
+				width: 15%;
+				height: 14px;
+				line-height: 14px;
+				font-size: 14px;
+				float: left;
+				text-align: right;
+				color: #999;
+				margin-top: 8px;
+			}
+			.greyIconCls {
+				position: absolute;
+				left: 0;
+				height: 18px;
+				width: 18px;
+				border-radius: 9px;
+				background-color: #8f9693;
+			}
+			.greenIconCls {
+				position: absolute;
+				left: 0;
+				height: 18px;
+				width: 18px;
+				border-radius: 9px;
+				background-color: green;
+			}
+			.picCount {
+				margin-left: 10px;
+			}
+			.ccssoft_list_wxx {
+				background-color: #eff1f0;
+				override: hidden;
+				margin: 0 auto;
+			}
+			.ccssoft_list_wxx li {
+				list-style: none;
+				padding:3px 10px 3px 10px;
+				background: #fff;
+				overflow: hidden;
+				margin-bottom: 10px;
+				position: relative;
+			}
+			.ccssoft_list_wxx .showBox{
+				text-align:center;
+				font-size:12px;
+			}
+			#main{
+				margin-top: 10px;
+				overflow: hidden;
+				background-color: #eff1f0;
+			}
+			.cj-l-title-wxx{
+				font-size: 16px;
+				font-weight: bold;
+				line-height: 20px;
+				padding: 8px 70px 8px 0;
+				position: relative;
+			}
+			.liBTn{
+				border-top: 1px dashed #00a0c8;
+				padding: 8px;
+			}
+
+			.cj-l-title-wxx span {
+				display: block;
+				width: 90px;
+				height: 20px;
+				line-height: 20px;
+				color: #666;
+				text-align: right;
+				position: absolute;
+				top: 5px;
+				right: 0;
+				font-size: 12px;
+				font-weight: bold;
+			}
+			.cj-l-into-wxx {
+				font-size: 12px;
+				color: #666;
+				line-height: 20px;
+				padding: 3px 0;
+				position: relative;
+			}
+			.cj-l-date-wxx {
+				display: block;
+				position: absolute;
+				top: 3px;
+				right: 0;
+				width: 180px;
+				text-align: right;
+			}
+			.cj-l-date-wxx span {
+				margin-left: 7px;
+			}
+			.cj-l-date-wxx_w {
+				display: block;
+				position: absolute;
+				top: 3px;
+				right: 0;
+				width: 180px;
+				text-align: right;
+			}
+			.cj-l-date-wxx_w span {
+				margin-left: 7px;
+			}
+			.cj-l-date-wxx:after {
+				content: "";
+				display: block;
+				width: 1px;
+				height: 12px;
+				background: #e3e3e3;
+				position: absolute;
+				top: 4px;
+				left: 60px;
+			}
+			.cj-l-date-wxx-2{
+				display: block;;
+				width: 1px;
+				height: 12px;
+				background: #e3e3e3;
+				position: absolute;
+				right: -4px;
+				top:4px;
+			}
+
+			.cj-l_line{
+				position: absolute;
+				width:5px;
+				height: 18px;
+				left: -10px;
+				top: 9px;
+				border-radius: 10px;
+			}
+			.cj-l_line_box{
+				position: absolute;
+				width:5px;
+				height: 18px;
+				left: 0px;
+				top: 12px;
+				border-radius: 10px;
+				background: linear-gradient(#fe7a7d, #fe4f4f);
+			}
+			.cj-l_line_box2{
+				position: absolute;
+				width:5px;
+				height: 18px;
+				left: 0px;
+				top: 9px;
+				border-radius: 10px;
+				background: linear-gradient(#fe7a7d, #fe4f4f);
+			}
+			.cj-l_line1{
+				background: linear-gradient(#fe7a7d, #fe4f4f);
+			}
+			.LC_img{
+				height: 60px;
+				display: block;
+				margin: 0 auto;
+				background-color:#ccc;
+			}
+			.wxx_btn{
+			width: 118px;
+			height: 33px;
+			border-radius: 35px;
+			border: 1px solid #db4537;
+			line-height: 30px;
+			box-shadow: 0 3px 8px rgba(226,132,123,.5);
+			color: #db4537;
+			font-size: 14px;
+			text-align: center;
+			margin: 10px auto;
+			}
+			.none{
+			display: none;
+			}
+			.aui-flex-col{
+			height: 28px;
+			line-height: 28px;
+			}
+			.cj-l-into,.top-title{
+			height: 28px;
+			line-height: 28px;
+			}
+			.top-title span{
+			height: 30px;
+			line-height: 30px;
+			}
+			.top-title{
+			border: none;
+			font-size: 12px;
+			}
+			.bill_wxx_select{
+			padding: 6px 12px;
+			border-radius: 40px;
+			background-color: #fff;
+			display: inline-block;
+			margin-top: 10px;
+			margin-left: 10px;
+			color: #fe4f4f;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="fix-template" type="text/x-dot-template">
+			<li>
+				<div class="cj-l-title-wxx">
+				  <div class="cj-l_line cj-l_line1"></div>
+				  日常维修
+				</div>
+				{{ for(var i=0, len3=it.length; i < len3; i++) {
+				 var model = it[i];
+				var billstatus = model.bussinessid;
+				var grade= model.hiddengrade;
+				var source= model.hiddensource;
+				var type= model.hiddentype;
+				var gradeName="";
+				var hiddentype="";
+				var hiddenSrc="";
+				var longTime="";
+				var billStatusName="";
+			
+				var billStatusColor = "";
+			
+				if("A"==grade){
+				gradeName="特别严重隐患";
+				}else if("B"==grade){
+				gradeName="严重隐患";
+				}else if("C"==grade){
+				gradeName="一般隐患";
+				}
+			
+				if(type == "1"){
+				hiddentype = "开关电源";
+				}else if(type == "2"){
+				hiddentype = "蓄电池";
+			
+				}else if(type == "3"){
+				hiddentype = "空调";
+			
+				}else if(type == "4"){
+				hiddentype = "机房环境";
+			
+				}else if(type == "5"){
+				hiddentype = "铁塔环境";
+			
+				}else if(type == "6"){
+				hiddentype = "FSU";
+			
+				}else if(type == "7"){
+				hiddentype = "其他设备";
+			
+				}
+			
+				   if(billstatus == "1"){
+				billStatusName = "待问题核实";
+				billStatusColor = "#22AADD";
+				}else if(billstatus == "2"){
+				billStatusName = "待方案制定";
+				billStatusColor = "#fb8536";
+				}else if(billstatus == "3"){
+				billStatusName = "待实施";
+				billStatusColor = "#B372F6";
+				}else if(billstatus == "4"){
+				billStatusName = "待验收";
+				billStatusColor = "#B372F6";
+				}else if(billstatus == "5"){
+				billStatusName = "待验收归档";
+				billStatusColor = "#AED684";
+				}else if(billstatus == "6"){
+				billStatusName = "挂起";
+				billStatusColor = "#7676BA";
+				}else if(billstatus == "7"){
+				billStatusName = "已归档";
+				billStatusColor = "#953A6C";
+				}else if(billstatus == "8"){
+				billStatusName = "待方案审核";
+				billStatusColor = "#930A6C";
+				}
+			
+			
+				if("1"==source){
+					hiddenSrc="巡检发现";
+				}else if("2"==source){
+					hiddenSrc="运营商申告";
+				}else if("3"==source){
+                    hiddenSrc="自有人员上站巡查";
+                }else if("4"==source){
+                    hiddenSrc="业主申告";
+                }else if("5"==source){
+                    hiddenSrc="告警发现";
+                }
+			
+				}}
+				<div  tapmode="active" class='liBTn' onclick="openRest('{{=model.billsn}}','{{=model.stationid}}','{{=model.bussinessid}}','{{=model.lon}}','{{=model.lat}}','{{=model.isfix}}');">
+				<div class="top-title">
+				{{=model.billsn}}
+				{{=hiddentype}}
+				<span  style="color:{{=billStatusColor}}">{{=billStatusName}}</span>
+				</div>
+				<div class="cj-l-into">工单编号：{{=model.billsn}}</div>
+				<div class="cj-l-into">
+				<span style="margin-right:20px;" >{{=hiddenSrc}} </span>
+				<span style="margin-left: 2px;">{{=model.hiddencontent!=null?model.hiddencontent:''}}</span>
+				<div class="cj-l-date-wxx"><span>{{=gradeName}}</span></div>
+				</div>
+				</div>
+				{{  } }}
+			</li>
+		</script>
+		<script id="listView-template" type="text/x-dot-template">
+			{{ var finishCount = 0; }}
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			if(it[i].isfinish=="Y")
+			{finishCount +=1;}
+			var checktype = it[i].result_type;
+			var objTypeClass = "";
+			var objTypeName = "";
+
+			var desc = it[i].item_desc;
+			var type=desc.substring(0, desc.indexOf('：'));
+			var major=desc.substring(desc.indexOf("：")+1,desc.indexOf("：", desc.indexOf("：")+1));
+
+			if(type.indexOf('铁')!=-1){
+			objTypeName = type;
+			objTypeClass ="ccssoft_color_carrot";
+			}else if(type == "机房及配套"){
+			objTypeName = type;
+			objTypeClass="ccssoft_color_violet";
+			}else{
+			objTypeName = it[i].parent_name;
+			objTypeClass="ccssoft_color_hui";
+			}
+
+			}}
+			<li result_type="{{=it[i].result_type}}" item_desc="{{=it[i].item_desc}}" resultid="{{=it[i].result_id}}" remark="{{=it[i].remark}}" detail_id="{{=it[i].detail_id}}" weight="{{=it[i].weight}}"
+			item_id="{{=it[i].item_id}}" item_name="{{=it[i].item_name}}" points="{{=it[i].points}}" parent_name="{{=it[i].parent_name}}">
+			<!--<li onclick="openProject('{{=it[i].result_type}}','{{=it[i].item_desc}}','{{=it[i].remark}}','{{=it[i].detail_id}}','{{=it[i].weight}}','{{=it[i].item_id}}','{{=it[i].item_name}}');">-->
+			<div class="liTop" >
+			<div class="liTopLeft">{{=it[i].item_name != null ? it[i].item_name:""}}<span class="{{=objTypeClass}}">{{=objTypeName}}</span></div>
+			</div>
+			 {{? checkobject == '3' }}
+			<div class="liDown">
+			<div class="liDownLeft">{{=major}}</div>
+			<div class="liDownRight">
+			<i class="aui-iconfont aui-icon-pic" ></i>
+			<span class="picCount">{{=it[i].imagecount != null ? it[i].imagecount:"0"}}</span>
+			</div>
+			</div>
+			{{?}}
+			{{? shu!=null&&shu.length>0&&checktype==null}}
+			{{ for(var j=0, clen=shu.length; j < clen; j++) {
+			}}
+			{{? shu[j].detailid == it[i].detail_id}}
+
+			<div id="radioid" class="aui-list-check" checkstatus="{{=shu[j].checkstatus}}">
+			<input class="aui-radio" type="radio" name="resultType{{=i}}"  value="Y" {{=(it[i].result_type&&it[i].result_type == 'Y'||shu[j].checkstatus=='Y')?'checked="checked"':''}} ><div class="aui-radio-name">满足</div>
+			<input class="aui-radio" type="radio" name="resultType{{=i}}" value="N" {{=(it[i].result_type&&it[i].result_type == 'N'||shu[j].checkstatus=='N')?'checked="checked"':''}}  style="margin-left: 10px;"><div class="aui-radio-name">不满足</div>
+			 {{? checkobject == '3' }}
+			<input class="aui-radio" type="radio" name="resultType{{=i}}" value="V" {{=(it[i].result_type&&it[i].result_type == 'V'||shu[j].checkstatus=='V')?'checked="checked"':''}}  style="margin-left: 10px;"><div class="aui-radio-name">不涉及</div>
+			{{??}}
+			<div class="liDownRight"  style="float: right">
+			<i class="aui-iconfont aui-icon-pic" ></i>
+			<span class="picCount">{{=it[i].imagecount != null ? it[i].imagecount:"0"}}</span>
+			</div>
+			{{?}}
+			</div>
+
+			{{?}}
+			{{ } }}
+			{{??}}
+			<div id="radioid" class="aui-list-check"  >
+			<input class="aui-radio" type="radio" name="resultType{{=i}}"  value="Y" {{=(it[i].result_type&&it[i].result_type == 'Y')?'checked="checked"':''}} ><div class="aui-radio-name">满足</div>
+			<input class="aui-radio" type="radio" name="resultType{{=i}}" value="N" {{=(it[i].result_type&&it[i].result_type == 'N')?'checked="checked"':''}}  style="margin-left: 10px;"><div class="aui-radio-name">不满足</div>
+			{{? checkobject == '3' }}
+			<input class="aui-radio" type="radio" name="resultType{{=i}}" value="V" {{=(it[i].result_type&&it[i].result_type == 'V')?'checked="checked"':''}}  style="margin-left: 10px;"><div class="aui-radio-name">不涉及</div>
+			{{??}}
+			<div class="liDownRight"  style="float: right">
+			<i class="aui-iconfont aui-icon-pic" ></i>
+			<span class="picCount">{{=it[i].imagecount != null ? it[i].imagecount:"0"}}</span>
+			</div>
+			{{?}}
+			</div>
+			{{?}}
+			</li>
+			{{ } }}
+		</script>
+		<div id="main">
+			<ul class="ccssoft_list_wxx" id="fix-listView"></ul>
+		</div>
+		<div id="" class="aui-content">			
+			<ul class="ccssoft_list" id="listView"></ul>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/utils/SaveDataUtil.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript">
+		var taskid, stattime, fromflag, taskstatus, readyStartTime, start_status, isMonitor;
+		//是否能够编辑项目
+		var editEnabled;
+		var finishCount = 0;
+		var selectProjectId;
+		var listView;
+		var size = 0;
+		var allresult = 0;
+		var distance;
+		var shu;
+		var checkobject;
+		var projectList = null;
+		var checkModel = $api.getStorage("checkModel");
+		
+		apiready = function() {				
+
+			if(api.pageParam.start_status == 0){
+				var opts = {
+					stationId: api.pageParam.stationid,
+					start:1,
+					limit:200,
+					bussinessid:'4,5'
+				}
+				$client.getRepairBillList(opts, function(ret, err){
+					if(ret.status=="OK"){
+						if(ret.billInfoList.length>0){
+							$('#fix-listView').show(0);
+							renderTemp('fix-listView', 'fix-template', ret.billInfoList);
+						}else {
+							$('#fix-listView').hide(0);
+						}
+					} else {
+						if(ret.data_info){
+							api.toast({
+								msg : ret.data_info
+							});
+						}
+					}
+				})
+			}				
+					
+			if (!debug) {
+				db_init();
+			}
+			console.log('项目id：' + checkModel.project_id);
+			var sql=getSqlData();
+			checkobject=api.pageParam.check_object;
+			editEnabled = api.pageParam.editEnabled;
+			console.log(api.pageParam.projectid+"   "+api.pageParam.createid+"   "+api.pageParam.createtime+"   "+api.pageParam.check_object);
+			listView = new C.ApiListView({
+				fn : $client.getCheckProjectList,
+				callback : load_callback,
+				checkList : shu,
+				limit : 1000
+			});
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			// var opts={
+			// 	projectid : api.pageParam.projectid,
+			// 	createid : api.pageParam.createid,
+			// 	createtime : api.pageParam.createtime,
+			// 	checkobject : api.pageParam.check_object
+			// }
+			// $client.getCheckProjectList(opts,function(ret){
+			// 	alert(getObj(ret))
+			// })
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+			listView.setQueryOptions({
+				projectid : api.pageParam.projectid,
+				createid : api.pageParam.createid,
+				createtime : api.pageParam.createtime,
+				checkobject : api.pageParam.check_object
+			});
+			listView.refresh();
+			/*
+			 * jQuery事件:list-item点击
+			 */
+			$('#listView').on('click', 'li', function() {
+				var result_type = $(this).attr('result_type');
+				var item_desc = $(this).attr('item_desc');
+				var remark = $(this).attr('remark');
+				var detail_id = $(this).attr('detail_id');
+				var weight = $(this).attr('weight');
+				var item_id = $(this).attr('item_id');
+				var item_name = $(this).attr('item_name');
+				var parent_name = $(this).attr('parent_name');
+				var status = $(this).find("#radioid").attr('checkstatus');
+				console.log("选中值："+status);
+				openProject(result_type, item_desc, remark, detail_id, weight, item_id, item_name,status,parent_name);
+			});
+			$('#listView').on('click', '.aui-list-check', function(event) {
+				//			             alert("單選");
+				//				$("input[type='radio']:checked").val();
+				//				$("input[name='resulttype']").attr('checked','true');
+				if (event.stopPropagation) {//如果提供了事件对象，则这是一个非IE浏览器
+					event.stopPropagation();
+				} else {
+					//兼容IE的方式来取消事件冒泡
+					window.event.cancelBubble = true;
+				}
+				//			               return false;
+			});
+		};
+
+		function getSqlData(){
+
+		var user = $api.getStorage('user');
+			db_getCheckData(user.userid, api.pageParam.projectid, function(ret1, err) {
+				if (ret1 && ret1 != "undefined") {
+					//判断是否有未上传的图片
+					if (ret1.length) {
+						shu = eval('(' + ret1[0].checkstr + ')');
+						$api.setStorage('projectid', ret1[0].projectid);
+						$api.setStorage('checkStr', ret1[0].checkstr);
+						$api.setStorage('checksqlid', ret1[0].id);
+						$api.setStorage('statuslist', ret1);
+						//注意json格式
+						console.log('插入数据：' + shu[0].checkstatus + ':' + ret1.length);
+					} else {
+						console.log('shuku数据：' + ret1);
+					}
+				} else {
+					console.log('插入数据：' + err);
+				}
+			});
+		}
+		/**
+		 *打开待办任务的详情
+		 */
+		function openProject(resultType, desc, remark, detailid, weigth, itemid, itemname, iscontent,parent_name) {
+			saveCheckStatus();//保存状态
+			api.pageParam.resultType = resultType;
+			api.pageParam.desc = desc;
+			api.pageParam.remark = remark;
+			api.pageParam.detailid = detailid;
+			api.pageParam.weigth = weigth;
+			api.pageParam.itemid = itemid;
+			api.pageParam.itemname = itemname;
+			api.pageParam.iscontent = iscontent;
+			api.pageParam.editEnabled = editEnabled;
+			api.pageParam.parent_name=parent_name;
+			api.openWin({
+				name : "check_projectDetail",
+				url : "checkProjectDetail_win.html",
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : api.pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+
+		/**
+		 *加载完成后的回调函数
+		 */
+		function load_callback(ret, status) {
+			var count = 0;
+			var result;
+			projectList = ret.list
+			saveDataUtil.init({
+				saveFn : db_saveCheckData,
+				delFn : db_removeCheckData
+			});
+//			saveDataUtil.getDataArray()=[];
+			if (saveDataUtil.getDataArray() && saveDataUtil.getDataArray()) {
+			saveDataUtil.getDataArray().splice(0,saveDataUtil.getDataArray().length);
+			}
+			if (projectList != null) {
+				$api.setStorage("itemList", projectList);
+				size = projectList.length;
+				console.log('集合数：'+size);
+				for (var i = 0; i < projectList.length; i++) {
+					var checkInfo = {
+						detailid : projectList[i].detail_id,
+						checkstatus : projectList[i].result_type,
+					};
+					saveDataUtil.getDataArray().push(checkInfo);
+				}
+			}
+			if (editEnabled) {
+				$("input[type='radio']:checked").each(function(index) {
+				var result_type = $(this).parent().parent().attr('result_type');
+//				console.log("選中狀態:"+result_type);
+					//修改前逻辑 JJ	if(result_type!=null&&result_type!=""&&result_type!="null"){
+					if(result_type!=null&&result_type!=""&&result_type!="null" && api.pageParam.start_status=='2'){
+//					console.log("已經完成");
+					count++;
+					resultid = $(this).parent().parent().attr('resultid');
+					$(this).attr("disabled", 'true').siblings().click(function() {
+						return false;
+					});
+					}
+					if(api.pageParam.start_status=='0' && $(this).val()=="N"){
+						$(this).attr("disabled", 'true').siblings().click(function() {
+							return false;
+						});
+					}
+				});
+				$("input[type='radio']").change(function(index) {
+					//			alert("yyyyyy:"+$(this).val()+"oooooo:"+this.value);
+					//				if(editEnabled){
+					var result_type = $(this).parent().parent().attr('result_type');
+					//修改前逻辑 JJ if ($(this).val() == "N" && (result_type == null || result_type == 'null')) {
+					if ($(this).val() == "N" ) {
+						//					alert("不满足");
+						$(this).removeAttr('checked');
+						//				alert("选择值："+result_type);
+						var item_desc = $(this).parent().parent().attr('item_desc');
+						var remark = $(this).parent().parent().attr('remark');
+						var detail_id = $(this).parent().parent().attr('detail_id');
+						var weight = $(this).parent().parent().attr('weight');
+						var item_id = $(this).parent().parent().attr('item_id');
+						var item_name = $(this).parent().parent().attr('item_name');
+						var parent_name = $(this).parent().parent().attr('parent_name');
+
+						openProject(result_type, item_desc, remark, detail_id, weight, item_id, item_name, 'N',parent_name);
+					} else {//保存状态
+						var checkInfo = {
+							detailid : $(this).parent().parent().attr('detail_id'),
+							checkstatus : $(this).val()
+						};
+						var dataArray = saveDataUtil.getDataArray();
+						var size = dataArray.length;
+//						console.log('保存集合：' + size);
+						for (var i = 0; i < size; i++) {
+							var data = dataArray[i];
+							if (data.detailid == checkInfo.detailid) {
+								dataArray.remove(i);
+								//											console.log('删除成功：');
+								saveDataUtil.getDataArray().push(checkInfo);
+							}
+						}
+					}
+				});
+				if (shu != null && shu.length > 0) {
+					for (var i = 0; i < shu.length; i++) {
+						if (shu[i].checkstatus != null || shu[i].checkstatus != '') {
+							var checkInfo = {
+								detailid : shu[i].detailid,
+								checkstatus : shu[i].checkstatus
+							};
+
+						var dataArray = saveDataUtil.getDataArray();
+						var size = dataArray.length;
+//						console.log('保存集合：' + size);
+						for (var j = 0; j < size; j++) {
+							var data = dataArray[j];
+							if (data.detailid == checkInfo.detailid) {
+								dataArray.remove(j);
+								//											console.log('删除成功：');
+								saveDataUtil.getDataArray().push(checkInfo);
+							}
+						}
+						}
+					}
+				}
+			} else {
+				api.toast({
+					msg : '该任务还没激活,不能进行任务操作'
+				});
+				$("input[type='radio']").each(function(index) {
+					$(this).attr("disabled", 'true');
+					//			$(this).removeAttr("checked");
+					//				$(this).click(function() {
+					////				api.toast({
+					////	                msg:'该任务还没激活,不能进行任务操作'
+					////              });
+					//					return false;
+				});
+			}
+			console.log("总数：" + count + "项目数：" + api.pageParam.resultcount);
+			if (count == api.pageParam.totalcount) {
+				for (var i = 0; i < projectList.length; i++) {
+					result = projectList[i].points;
+					allresult += parseInt(result);
+				}
+				api.confirm({
+					title : '确认提示',
+					msg : '已全部检查完成，是否提交现场检查结果？',
+					buttons : ['取消', '确认']
+				}, function(ret, err) {
+					if (ret.buttonIndex == 2) {
+						showMask("加载中...");
+						$client.confirmResult({
+							resultid : resultid,
+							allpoints : allresult
+						}, function(ret, err) {
+							hideMask();
+							api.execScript({
+								name : "check_list_win",
+								frameName : 'unfinishList',
+								script : 'listView.refresh();'
+							});
+							api.execScript({
+								name : "check_list_win",
+								frameName : "finishList",
+								script : 'listView.refresh();'
+							});
+							setTimeout(function() {
+								api.closeWin({
+								});
+							}, 300);
+						});
+					}
+				});
+			}
+
+
+		}
+		
+		function openRest(billsn, stationid, bussinessid, stationlon, stationlat, isfix) {
+	        var opt = {
+	            billsn : billsn,
+	            stationId : stationid,
+	            bussinessid:bussinessid,
+	            stationlon:stationlon,
+	            stationlat:stationlat,
+	            isfix:isfix
+	            };
+	        api.openWin({
+	            name : 'mainRepairBillDetail',
+	            url : '../repair/mainRepairBillDetail.html',
+	            opaque : true,
+	            bounces : false,
+	            reload : true,
+	            pageParam : opt,
+	            vScrollBarEnabled : false
+	        });
+	    }
+
+		/**
+		 *刷新页面
+		 */
+		function refreshList(id, count) {
+			getSqlData();
+			listView.refresh();
+		}
+
+		function call_rollback() {
+			var list = [];
+			var map = null;
+			var resultid = '';
+			var count = 0;
+			var finishcount = 0;
+			var allpoint = 0;
+			var itemList = $api.getStorage("itemList");
+			size=itemList.length;
+			$("input[type='radio']:checked").each(function(index) {
+				var result_type = $(this).parent().parent().attr('result_type');
+				var points = $(this).parent().parent().attr('points');
+				var detailid = $(this).parent().parent().attr('detail_id');
+				resultid = $(this).parent().parent().attr('resultid');
+				if (result_type == null || result_type == 'null') {
+					var weight = $(this).parent().parent().attr('weight');
+					//                     alert("数值："+this.value+"  详情id"+detailid);
+					count++;
+					allpoint += parseInt(weight);
+					map = {
+						detailid : detailid,
+						points : weight,
+						resulttype : this.value
+					};
+				} else {
+					finishcount++;
+					allpoint += parseInt(points);
+					map = {
+						detailid : detailid,
+						points : points,
+						resulttype : result_type
+					};
+				}
+				list.push(map);
+				//                     alert("集合："+list[0].resulttype);
+			});
+			//                  alert("不选中："+(size-count));
+			console.log('项目总数：'+size);
+			var opts = {
+				list : list,
+				resultid : resultid,
+				allpoints : allpoint
+			};
+			console.log(size+"::"+finishcount+"::"+count);
+			if (size - finishcount - count > 0) {
+				api.alert({
+					title : '提示信息',
+					msg : '还有' + (size - count - finishcount) + '项没有选择，必须每项都选择才能提交'
+				});
+			} else {
+				api.confirm({
+					title : '确认提示',
+					msg : '已全部检查完成，是否提交现场检查结果？？',
+					buttons : ['取消', '确认']
+				}, function(ret, err) {
+					if (ret.buttonIndex == 2) {
+						showMask("加载中...");
+						$client.saveScencCheckList(opts, function(ret, err) {
+							hideMask();
+							if (ret) {
+								if (ret.success) {
+									api.toast({
+										msg : '提交成功!'
+									});
+									//刪除數據庫記錄
+									var parm = {
+										projectid : api.pageParam.projectid
+									}
+									saveDataUtil.delTheRecord(parm);
+									api.execScript({
+										name : 'check_list_win',
+										script : 'refreshCheckList(' + 0 + ');'
+									});
+									window.setTimeout(function() {
+										api.closeWin();
+									}, 2000)
+								} else {
+									api.toast({
+										msg : ret.data_info
+									});
+								}
+							} else {
+								api.toast({
+									msg : ret.data_info
+								});
+							}
+						});
+					}
+				});
+			}
+		}
+
+		function back() {
+			saveCheckStatus();
+			api.closeWin();
+		}
+
+		function saveCheckStatus() {
+			var parm = {
+				projectid : api.pageParam.projectid
+			}
+			saveDataUtil.save(parm, function(num) {
+				console.log('ceshi:' + saveDataUtil.getDataArray().length);
+			});
+		}
+	</script>
+</html>

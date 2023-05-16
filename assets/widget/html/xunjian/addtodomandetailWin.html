@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>包站人员详情信息</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            #header .openMenu-icon {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                background: url(../../image/actionbar_icon_add.png) no-repeat center center;
+                -webkit-background-size: 14px 18px;
+                background-size: 30px 30px;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
+            .iconFont {
+                font-size: 22px;
+                color: #8f8f94;
+                height: 30px;
+                line-height: 30px;
+                display: inline-block;
+                margin-top: 3px;
+            }
+            .activeWarning p {
+                color: #DB4537;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title">
+                包站人员详情信息
+            </div>
+            <a id="menuBtn" class="aui-pull-right" tapmode onclick="openMenu()"> <span class="aui-iconfont aui-icon-add"></span> </a>
+        </header>
+
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../bill/script/main.bill.detail.js"></script>
+    <script type="text/javascript">
+        apiready = function() {
+            initHeader();
+            //如果是已办工单或者历史工单进入工单详情,则屏蔽操作按钮
+            var status = api.pageParam.status;
+            var user= $api.getStorage('user');
+            // wxxxxx
+            if ((user.loginname!=api.pageParam.do_man_code&&api.pageParam.do_man_code!='null')||status==8||status==11) {
+                $('#menuBtn').hide();
+            }
+
+            api.openFrameGroup({
+                name : 'generationBill_footer_tab',
+                scrollEnabled : true,
+                rect : frameRect(),
+                index : 0,
+                preload : 0,
+                frames : [{
+                    name : 'addtodomanlistdetailFrm',
+                    url : 'addtodomanlistdetailFrm.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }]
+                // , {
+                //     name : 'stationDetail_frm',
+                //     url : '../station/stationDetail_frm.html',
+                //     pageParam : api.pageParam,
+                //     bounces : false
+                // }
+                // , {
+                //     name : 'standBillBugFlowDetail',
+                //     url : 'standBillBugFlowDetail.html',
+                //     pageParam : api.pageParam,
+                //     bounces : false
+                // }]
+            }, function(ret, err) {
+                var $curTab = $('#footer li:eq('+ret.index+')');
+                $curTab.addClass('activeWarning').find('img:hidden').show().siblings().hide();
+                $curTab.siblings('.activeWarning').removeClass('activeWarning').find('img:hidden').show().siblings().hide();
+                // $('.aui-title').text($curTab.find('p').text());
+            });
+            /*
+             * jQuery事件:tab切换
+             */
+            $('#footer li').click(function() {
+                api.setFrameGroupIndex({
+                    name : 'generationBill_footer_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+            });
+        };
+        // 打开菜单
+        function openMenu() {
+            api.openFrame({
+                name : 'generationBillMenu',
+                url : 'generationBillMenu.html',
+                bounces : false,
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                pageParam : api.pageParam,
+                reload : true
+            });
+        }
+
+        function cb_toggleMenu(status) {
+            if (status) {
+                $('#menuBtn').show();
+            } else {
+                $('#menuBtn').hide();
+            }
+        }
+    </script>
+</html>

@@ -1,0 +1,283 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>性能查询</title>
+        <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../../css/main-bill-detail.css" />
+        <link rel="stylesheet" href="../../../css/signalRealData.css"/>
+    </head>
+    <body class="clearfix">
+        <div id="wrap">
+            <header id="header" style="position:fixed;top:0;left:0;z-index: 99">
+                <div class="queryRealData header active titlebar">
+                    <a class="aui-iconfont aui-icon-left left-icon" tapmode onclick="api.closeWin()"></a>
+                    <a class="aui-iconfont aui-icon-refresh right-icon" tapmode onclick="refresh()"></a>
+                    <h1>信号性能</h1>
+                </div>
+            </header>
+            <script id="deviceList-template" type="text/x-dot-template">
+                {{for(var i = 0,len = it.length;i<len;i++){
+                var device = it[i];
+                var signallist = device.signallist;
+                }}
+                <ul class="aui-list-view" deviceCode = "{{=device.devicecode}}" extratype="{{=device.extratype}}">
+                <li class="aui-list-view-cell title">
+                {{=device.name}}
+                </li>
+                <div class="semaphoreList">
+                {{for(var j = 0,slen = signallist.length;j<slen;j++){
+                var signal = signallist[j];
+                }}
+                <li class="aui-list-view-cell" data-win="list_arrow" signalId = "{{=signal.id}}" extratype="{{=signal.extratype}}" onclick="devSignalReal(this)">
+                <div class="aui-arrow-right">
+                <p class="left">
+                {{=signal.name}}
+                </p>
+                <p class="right" style="padding-right: 15px;">
+                {{=signal.unit}}
+                </p>
+                <p class="right" style="padding-right: 4px;">
+                </p>
+                </div>
+                </li>
+                {{}}}
+                </div>
+                </ul>
+                {{}}}
+            </script>
+            <div id="queryRealData" class="aui-content"  style="overflow-y: auto;margin-top:40px;"></div>
+            <div id="graphBox" style="display: none;">
+                <div id="graphTitle">
+                    停电过程的电压趋势图
+                </div>
+                <div id="container" style="width:100%;height:300px;margin:0 auto;"></div>
+            </div>
+    </body>
+    <script src="../../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../../script/api.js"></script>
+    <script type="text/javascript" src="../../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../../script/debug.js"></script>
+    <script type="text/javascript" src="../../../script/common.js"></script>
+    <script type="text/javascript" src="../../../script/config.js"></script>
+    <script type="text/javascript" src="../../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../../script/aui-alert.js"></script>
+    <!--<script type="text/javascript" src="../../../script/highcharts.js"></script>-->
+    <script src="../../../script/echarts/build/dist/echarts.js"></script>
+    <script>
+        var queryOpt = {};
+        var fsuInfo;
+        apiready = function() {
+            //初始化状态栏
+            initHeader();
+            //初始化设备信号量列表
+            initSignalRealData();
+            refreshMultMidValue();
+            //          interval = window.setInterval(refreshMultMidValue(), 10000);
+            var test_param = api.pageParam.test_param;
+            //          var test_param = '2015-11-09 22:00:00 23.333;2015-11-10 22:00:00 23.333;2015-11-11 22:00:00 23.333;2015-11-11 23:00:00 22;2015-11-12 00:00:00 29.333;2015-11-12 01:00:00 32;';
+            if (test_param && test_param != 'null') {
+                var dateArr = new Array();
+                var valArr = new Array();
+                var params = test_param.split(';');
+                for (var i = 0, size = params.length; i < size; i++) {
+                    var param = params[i].split(' ');
+                    dateArr.push((param[0] + ' ' + param[1]).substr(2, 14));
+                    valArr.push(param[2]);
+                }
+                $('#graphBox').show();
+                openLineChart(dateArr, valArr);
+            }
+        };
+        /*
+         * 初始化设备信号量列表
+         */
+        function initSignalRealData() {
+//          var fsuInfo = $api.strToJson(api.pageParam.fsuInfo);
+            fsuInfo = $api.getStorage('fsuInfo');
+            var deviceid = '';
+            var devicelist = fsuInfo.devicelist;
+            var signallist = fsuInfo.signallist;
+            for (var i = 0, size1 = devicelist.length; i < size1; i++) {
+                var device = devicelist[i];
+                device.signallist = [];
+                //              deviceid += device.devicecode + '|';
+                //              var signalInfo = device.devicecode + '|';
+                var signalInfo = "";
+                for (var j = 0, size2 = signallist.length; j < size2; j++) {
+                    var signal = signallist[j];
+                    if (signal.extratype == device.extratype) {
+                        device.signallist.push(signal);
+                        //                      signalInfo += signal.id + '_'d;
+                        signalInfo += device.devicecode + '|' + signal.id + ',';
+                    }
+                }
+                //              if (signalInfo.length > 0) {
+                //                  signalInfo = signalInfo.substr(0, signalInfo.length - 1) + ',';
+                //                  deviceid += signalInfo;
+                //              } else {
+                //                  deviceid = deviceid.substr(0, deviceid.length - 1) + ',';
+                //              }
+                deviceid += signalInfo;
+            }
+            deviceid = deviceid.substr(0, deviceid.length - 1);
+            queryOpt = {
+                fsuid : fsuInfo.fsu.fsuid,
+                fsuip : fsuInfo.fsu.innerip,
+                deviceid : deviceid
+            };
+            renderTemp('queryRealData', 'deviceList-template', fsuInfo.devicelist);
+        }
+
+        /*
+         * 打开折线图
+         */
+        function openLineChart(dateArr, valArr) {
+            // 路径配置
+            require.config({
+                paths : {
+                    echarts : '../../../script/echarts/build/dist'
+                }
+            });
+            require(['echarts', 'echarts/chart/line'], function(ec) {
+                var myChart = ec.init(document.getElementById('container'));
+                var option = {
+                    tooltip : {
+                        trigger : 'axis'
+                    },
+                    legend : {
+                        data : ['电压']
+                    },
+                    toolbox : {
+                        show : false,
+                        feature : {
+                            mark : {
+                                show : true
+                            },
+                            magicType : {
+                                show : true,
+                                type : ['line', 'bar']
+                            },
+                            restore : {
+                                show : true
+                            }
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [{
+                        type : 'category',
+                        boundaryGap : true,
+                        axisLabel : {
+                            formatter : function(value) {
+                                return value;
+                            }
+                        },
+                        data : dateArr
+                    }],
+                    yAxis : [{
+                        type : 'value',
+                        axisLabel : {
+                            formatter : '{value} V'
+                        }
+                    }],
+                    series : [{
+                        name : '电压',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : valArr,
+                    }]
+                };
+                // 为echarts对象加载数据
+                myChart.setOption(option);
+            });
+        }
+
+        function refresh() {
+            refreshMultMidValue();
+        }
+
+        function refreshMultMidValue() {
+            api.showProgress({
+                title : '加载中...'
+            });
+            $client.getMidRealMultData(queryOpt, function(ret, err) {
+                if (ret) {
+                    if (ret.status === 'OK') {
+                        var deviceInfoList = ret.list;
+                        for (var i = 0, size = deviceInfoList.length; i < size; i++) {
+                            var deviceid = deviceInfoList[i].deviceid;
+                            var mid = deviceInfoList[i].mid;
+                            var value = deviceInfoList[i].value;
+                            if (deviceid != '' && mid != '') {
+                                var $cell = $('[deviceCode=' + deviceid + '] [signalid=' + mid + '] .right:eq(1)');
+                            }
+                            if (isExist($cell) && $cell != null) {
+                                $cell.text(value);
+                            }
+                        }
+                    } else {
+                        api.toast({
+                            msg : ret.data_info,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : '访问接口失败！',
+                        location : 'bottom'
+                    });
+                }
+                api.hideProgress();
+            });
+            //          window.setTimeout(function() {
+            //              api.hideProgress();
+            //          }, 1000);
+        }
+
+        function devSignalReal(target) {
+            //设备名
+            var deviceName = $(target).parent().siblings('.title').text();
+            //中间量
+            var measuredval = $(target).find('p.right:eq(1)').text();
+            //信号量
+            var semaphorename = $(target).find('p.left').text();
+            var deviceCode = $(target).parents('ul').attr('deviceCode');
+            var semaphoreId = $(target).attr('signalId');
+            //          $('[signalId]').each(function() {
+            //              semaphoreId += $(this).attr('signalId') + '_';
+            //          });
+            var pageParam = {
+                stationId : api.pageParam.stationId,
+                semaphoreId : semaphoreId,
+                deviceName : deviceName,
+                measuredval : measuredval,
+                semaphorename : semaphorename,
+                deviceCode : deviceCode,
+                devFsuId : fsuInfo.fsu.fsuid
+            };
+            //          api.pageParam.semaphoreId = semaphoreId.substr(0, semaphoreId.length - 1);
+            //          api.pageParam.deviceName = deviceName;
+            //          api.pageParam.measuredval = measuredval;
+            //          api.pageParam.semaphorename = semaphorename;
+            //          api.pageParam.deviceCode = deviceCode;
+            //          api.pageParam.devFsuId = fsuInfo.fsu.fsuid;
+            api.openWin({
+                name : 'devSignalReal',
+                url : '../../station/devSignalReal.html',
+                pageParam : pageParam,
+                vScrollBarEnabled : false,
+                bounces : false
+            });
+        }
+    </script>
+</html>

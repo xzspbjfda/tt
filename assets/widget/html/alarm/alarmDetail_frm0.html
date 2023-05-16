@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>告警详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    </head>
+    <style>
+        .liLeft {
+            width: 35%;
+            float: left;
+        }
+        .liRight {
+            width: 65%;
+            float: left;
+            padding-left: 20px;
+            color: #666;
+        }
+    </style>
+    <body>
+        <script id="alarmDetail-template" type="text/x-dot-template">
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">故障单ID</div>
+            <div class="liRight">{{=(it.faultId != null&& it.faultId!="undefined")?it.faultId:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">站址编码</div>
+            <div class="liRight">{{=it.staCode != null?it.staCode:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">站址名称</div>
+            <div class="liRight">{{=it.staName != null?it.staName:''}}</div>
+            </li>
+              <li class="aui-list-view-cell" >
+            <div class="liLeft">运维ID</div>
+            <div class="liRight">{{=it.staCode != null?it.staCode:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备编码</div>
+            <div class="liRight">{{=it.deviceId != null?it.deviceId:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备名称</div>
+            <div class="liRight">{{=it.subObjName != null?it.subObjName:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">指标名称</div>
+            <div class="liRight">{{=it.alarmCause != null?it.alarmCause:''}}</div>
+            </li>
+
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警类别</div>
+            <div class="liRight">{{=it.alarmType != null?it.alarmType:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警对象类型</div>
+            <div class="liRight">{{=it.alarmObjType != null?it.alarmObjType:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警等级</div>
+              <div class="liRight">{{=it.alarmLevelName != null?it.alarmLevelName:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警来源</div>
+              <div class="liRight">{{=it.alarmSou != null?it.alarmSou:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警内容</div>
+              <div class="liRight">{{=it.detailInfo != null?it.detailInfo:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">首次告警时间</div>
+              <div class="liRight">{{=it.firstAlarmTime != null?it.firstAlarmTime:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警次数</div>
+              <div class="liRight">{{=it.times != null?it.times:''}}</div>
+            </li>
+
+
+
+
+
+
+
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警说明</div>
+            <div class="liRight">{{=it.signal_shuoming != null?it.signal_shuoming:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">告警现场描述</div>
+            <div class="liRight">{{=it.signal_explain != null?it.signal_explain:''}}</div>
+            </li>
+
+
+
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">是否转故障</div>
+            <div class="liRight">{{=it.ifconvertfault == 'Y'?'是':'否'}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">是否已恢复</div>
+            <div class="liRight">{{=it.ifrecover == 'Y'?'是':'否'}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备类型</div>
+            <div class="liRight">{{=it.devicename != null?it.devicename:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备型号</div>
+            <div class="liRight">{{=it.r_device_model != null?it.r_device_model:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备厂家</div>
+            <div class="liRight">{{=it.r_device_factory != null?it.r_device_factory:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备状态</div>
+            <div class="liRight">{{=it.r_device_status != null?it.r_device_status:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备代维公司</div>
+            <div class="liRight">{{=it.r_device_uygur != null?it.r_device_uygur:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备启用时间</div>
+            <div class="liRight">{{=it.r_device_startusetime != null?it.r_device_startusetime:''}}</div>
+            </li>
+            <li class="aui-list-view-cell" >
+            <div class="liLeft">设备资产编码</div>
+            <div class="liRight">{{=it.r_device_nature != null?it.r_device_nature:''}}</div>
+            </li>
+        </script>
+        <div class="aui-content">
+            <ul class="aui-list-view" id="alarmDetail"></ul>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script>
+        apiready = function() {
+            var faultId = api.pageParam.faultId;
+            console.log("传过来的详细参数"+getObj(api.pageParam));
+            console.log(""+api.pageParam.faultId);
+            renderTemp('alarmDetail','alarmDetail-template',api.pageParam);
+            var user = $api.getStorage('user');
+            var userid = user.userid;
+            // api.showProgress({
+            //     title : '加载中',
+            //     modal : true
+            // });
+            // $client.getAlarmDetail(userid, alarmId, function(ret, err) {
+            //     if (ret) {
+            //         if (ret.success) {
+            //             //var strs = $api.jsonToStr(ret);
+            //             //alert(ret.model.st_id);
+            //             var content = $api.byId('alarmDetail');
+            //             var tpl = $api.byId('alarmDetail-template').text;
+            //             var tempFn = doT.template(tpl);
+            //             content.innerHTML = tempFn(ret.model);
+            //             $api.setStorage("alarmModel", ret.model);
+            //             api.parseTapmode();
+            //         } else {
+            //             api.toast({
+            //                 msg : ret.data_info,
+            //                 location : 'bottom'
+            //             });
+            //         }
+            //     } else {
+            //         api.toast({
+            //             msg : err.msg,
+            //             location : 'bottom'
+            //         });
+            //     }
+            //     api.hideProgress();
+            // });
+        };
+    </script>
+</html>

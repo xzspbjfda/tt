@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>操作系统GPS信息管理</title>
+</head>
+<body></body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript" src="../../../script/GPS.js"></script>
+<script type="text/javascript" src="../../../script/MyGps.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/constant.js"></script>
+<script type="text/javascript" src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../../script/client.api.js"></script>
+<script type="text/javascript" src="../../../script/config.js"></script>
+<!-- <script type="text/javascript" src="http://119.23.46.106:6230/gs_native.js"></script> -->
+<!--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=99avsbGkeHnmuKG2fj2RwvwS"></script>-->
+<!--
+调用操作系统本身的GPS管理插件
+-->
+<script type="text/javascript">
+    //最后一次采集的经纬度信息
+    var lastLocation = {
+        status: false, //操作成功状态值
+        longitude: 0, //经度
+        latitude: 0, //纬度
+        timestamp: 0, //时间戳
+        photoaddress: null //地名
+    };
+    var _baiduModule = null;
+	var gpsPush = null;
+    //百度定位模块
+    /**
+     *android下的定位，启用百度定位
+     */
+    function _androidStartLocation(win_name, frm_name) {
+        if ("main_bill_detail_win" == win_name) {
+            api.toast({
+                msg: '收到'
+            });
+        }
+        console.log("主页面：" + win_name);
+        _baiduModule.getLocation({
+                accuracy: '10m',
+                autoStop: false,
+                filter: 1
+            },
+            function (ret, err) {
+
+                if (ret && ret.status == true) {
+                    //alert('定位类型:' + ret.locationType);
+                    console.log("bMap组件");
+                    ret.time = unix_to_datetime(ret.timestamp);
+                    _handlerResult(ret, err, win_name, frm_name);
+                }
+            });
+    }
+
+
+    /**
+     *IOS定位则调用系统原生API
+     */
+    function _iosStartLocation(win_name, frm_name) {
+        api.startLocation({
+                accuracy: '10m',
+                autoStop: true,
+                filter: 1
+            },
+            function (ret, err) {
+                if (ret && ret.status == true) {
+                    // ios要把  GCJ-02 to WGS-84   安卓不用转
+                    if (ret.latitude != null && ret.longitude != null && ret.latitude > 0 && ret.longitude > 0) {
+                        var locationtime = new Date(ret.timestamp);
+                        console.log("原始经度：" + ret.longitude + "   原始纬度：" + ret.latitude + "时间：" + unix_to_datetime(ret.timestamp) + "时间戳：" + ret.timestamp);
+                        var xyJson = GPS.gcj_decrypt_exact(ret.latitude, ret.longitude);
+                        ret.lat = xyJson.lat;
+                        ret.lon = xyJson.lon;
+                        ret.time = unix_to_datetime(ret.timestamp);
+                        showlog("lat:" + ret.lat + ",lon:" + ret.lon);
+                        _handlerResult(ret, err, win_name, frm_name);
+                    }
+                }
+            });
+    }
+
+    function unix_to_datetime(unix) {
+        var now = new Date(parseInt(unix)).toLocaleTimeString();
+        now = now.substring(now.indexOf(" "));
+        return now;
+    }
+
+    /**
+     *处理结果
+     */
+    function _handlerResult(ret, err, win_name, frm_name) {
+        lastLocation = ret;
+        error = err;
+        console.log("调用GPS结果:" + ret.status);
+        console.log("数据,经度:" + lastLocation.lon + ",纬度:" + lastLocation.lat);
+        _geodecoding(win_name, frm_name);
+    }
+
+    /*
+     * 逆地理编码
+     */
+    function _geodecoding(win_name, frm_name) {
+        var wgs_lon;
+        var wgs_lat;
+        var wgs = GPS.wgs_tobd(lastLocation.lat, lastLocation.lon);
+        wgs_lon = wgs.lon;
+        wgs_lat = wgs.lat;
+        /*if (api.systemType == "ios") {
+            var wgs = GPS.wgs_tobd(lastLocation.lat, lastLocation.lon);
+            wgs_lon = wgs.lon;
+            wgs_lat = wgs.lat;
+            console.log("经度测试数据：" + wgs_lon + ",,," + wgs_lon);
+        } else {
+            wgs_lon = lastLocation.lon;
+            wgs_lat = lastLocation.lat;
+        }*/
+        _baiduModule.getNameFromCoords({
+
+                lon: wgs_lon,
+                lat: wgs_lat
+            },
+            function (ret, err) {
+                if (ret.status) {
+                    // alert(ret.address);
+                    console.log("0000000000000000000000000000000000000000");
+                    console.log(ret.address);
+
+                    if (api.systemType == 'android') {
+                        //先转为gcj02再转为wgs84
+                        var gcj = bd09togcj02(lastLocation.lon, lastLocation.lat);
+                        var wgs = gcj02towgs84(gcj[0], gcj[1]);
+
+                        lastLocation.lat = wgs.lat;
+                        lastLocation.lon = wgs.lon;
+                    }
+                    lastLocation.photoaddress = ret.address;
+
+                    // setTimeout(function(){
+                      // saveLocation();
+                      console.log("测试数据：" + lastLocation.lon + " 定位类型：" + lastLocation.locationType);
+                      $api.setStorage("LAST_GPS_LOCATION", lastLocation);
+                      $api.setStorage("LAST_GPS_LOCATION1", lastLocation);
+                      console.log(getObj(lastLocation));
+                      console.log(lastLocation.photoaddress);
+                    // },1000)
+                }
+                else {
+                    var errMsg;
+                    switch (err.code) {
+                        case 1:
+                            errMsg = '检索词有岐义';
+                            break;
+                        case 2:
+                            errMsg = '检索地址有岐义';
+                            break;
+                        case 3:
+                            errMsg = '没有找到检索结果';
+                            break;
+                        case 4:
+                            errMsg = 'key错误';
+                            break;
+                        case 5:
+                            errMsg = '网络连接错误';
+                            break;
+                        case 6:
+                            errMsg = '网络连接超时';
+                            break;
+                        case 7:
+                            errMsg = '还未完成鉴权，请在鉴权通过后重试';
+                            break;
+                        default:
+                            errMsg = '未知错误';
+                            break;
+                    }
+                    showlog(errMsg);
+                }
+                invoke(win_name, frm_name);
+            });
+    }
+
+    /**
+     *开始定位
+     */
+    function startLocation(win_name, frm_name) {
+    	  var user = $api.getStorage('user');
+    	  
+	 /*if (_baiduModule == null) {
+            _baiduModule = api.require('bMap');
+             _baiduModule.stopLocation();
+        }*/
+        if (gpsPush==null){
+        	if (api.systemType == "android") {
+        		gpsPush =  api.require('apicloud');
+        	} else {
+        		gpsPush =  api.require('apicloud');
+        	}
+        	try{
+			gpsPush.init({mainClass: 'com.uzmap.pkg.EntranceActivity', apiUrl: $client.getGpsUploadLocation()});
+			gpsPush.startKeep({start: true});
+			gpsPush.setUploadSecond({second: 300});
+			gpsPush.setAccountId({id: user.userid});
+			gpsPush.autoUploadLocation({auto: true});
+			
+			//window.setInterval(function(){
+			//	gpsPush.getLocation(function(ret){
+			//		//alert(JSON.stringify(ret));
+			//		console.log("gps组件:" + ret);
+			//		ret.status = true;
+			//		 _handlerResult(ret, {}, win_name, frm_name);
+			//	});
+			//}, 1000 * 10);
+			
+			//for (var o in gpsPush){
+			//	alert(o);
+			//}
+		} catch(e){
+			console.log(e);
+		}
+        }
+	  //return ;
+        if (_baiduModule == null) {
+            _baiduModule = api.require('bMap');
+        }
+        _baiduModule.stopLocation();
+        console.log("开始定位");
+        //记录当次采集时间
+        if (api.systemType == "android") {
+            _androidStartLocation(win_name, frm_name);
+            console.log("调用百度定位进行获取GPS");
+        } else if (api.systemType == "ios") {
+            console.log("调用IOS原生进行获取GPS,不是高德");
+            _iosStartLocation(win_name, frm_name);
+        }
+    }
+
+
+    /**
+     *保存经纬度信息
+     */
+    function saveLocation() {
+        console.log("测试数据：" + lastLocation.lon + " 定位类型：" + lastLocation.locationType);
+        $api.setStorage("LAST_GPS_LOCATION", lastLocation);
+        $api.setStorage("LAST_GPS_LOCATION1", lastLocation);
+        console.log(getObj(lastLocation));
+        console.log(lastLocation.photoaddress);
+    }
+
+    /**
+     *回调函数
+     */
+    function invoke(win_name, frm_name) {
+        var script = "gps_invoke();";
+        if (typeof (frm_name) != "undefined" && frm_name != null && frm_name != "") {
+            // console.log("win_name:" + win_name + ",frm_name:" + frm_name);
+            api.execScript({
+                name: win_name,
+                frameName: frm_name,
+                script: script
+            });
+        } else {
+            console.log("win_name:" + win_name);
+            api.execScript({
+                name: win_name,
+                script: script
+            });
+            console.log("api.execScript:finish");
+        }
+    }
+
+    apiready = function () {
+    };
+</script>
+
+</html>

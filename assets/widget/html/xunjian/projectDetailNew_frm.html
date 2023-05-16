@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html>
+	<!--巡检项目详情的新模块代码-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>巡检项目详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	</head>
+	<style>
+		.ziyiframe {
+			width: 100%;
+			min-height: 340px;
+		}
+		.jia1{
+			position: absolute;
+			left: 0;
+			z-index: 10;
+		}
+		.jia2{
+			position: absolute;
+			left: 64px;
+			z-index: 10;
+		}
+		.jia3{
+			position: absolute;
+			left: 0;
+			z-index: 11;
+			width: 20px;
+		}
+		.red2{
+			color: #F26166;
+		}
+		.ccssoft-aui-list-view-divider2 {
+		    padding-top: 6px;
+		    padding-bottom: 6px;
+		    margin-left: 10px;
+		    font-weight: 500;
+		    background-color: #fff4f0;
+		}
+		.tit_img2{
+				width: 12px;
+				margin-right: 10px;
+		}
+	</style>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].hiddencontent}}">{{=it[i].hiddencontent}}</option>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<form enctype = "multipart/form-data">
+				<ul id="list-view-1" class="aui-list-view"></ul>
+				<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 资源核查-->
+				<li class="aui-list-view-cell border_b ccssoft-aui-list-view-divider2" id='ziyuanName'>
+
+				</li>
+				<iframe class='ziyiframe' id='ziyiframe' src='' frameborder="0" ></iframe>
+				<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+				<ul id="list-view" class="aui-list-view"></ul>
+			</form>
+		</div>
+		<div style="height:50px;"></div>
+		<div id="downloadBtn" class="fixed_bottom" style="display: none;">
+			<button class="outline center aui-btn aui-btn-success" onclick="downloadPic();">
+				下载图片
+			</button>
+		</div>
+		<!--项目详情-->
+		<script id="parol-template" type="text/html">
+			<li class="aui-list-view-cell">
+				<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>站址信息</h2></div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 站址名
+			</div>
+			<div  id="stationName" class="item-right">{{=it.stationname}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 站址编码
+			</div>
+			<div  id="stationName" class="item-right">{{=it.deviceid || ''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 运维ID
+			</div>
+			<div id="stationCode" class="item-right">{{=it.stationcode}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 共享运营商
+			</div>
+			<div id="stationSource" class="item-right">
+			{{? it.operators == '1001' }}
+			移动
+			{{?? it.operators == '1002' }}
+			联通
+			{{?? it.operators == '1003' }}
+			电信
+			{{?? it.operators == '1001,1002' }}
+			移动,联通
+			{{?? it.operators == '1001,1003' }}
+			移动,电信
+			{{?? it.operators == '1002,1003' }}
+			联通,电信
+			{{?? it.operators == '1001,1002,1003' }}
+			移动,联通,电信
+			{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 管理区域
+			</div>
+			<div  id="deviceName" class="item-right">{{=it.county}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 网格名称
+			</div>
+			<div id="area_grid_name" class="item-right">{{=it.area_grid_name != null?it.area_grid_name:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 巡检模块
+			</div>
+			<div id="province" class="item-right">{{=it.modularname}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" data-win="list_arrow">
+			<div class="item-left red">
+			• 专业
+			</div>
+			<div id="province" class="item-right">{{=it.modularname}}</div>
+			</li>
+			<!--<input type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput">
+			<input accept="image/*" type="file">-->
+		</script>
+		<script id="listView-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var model=it[i];
+			var grade ="";
+			var devnameNew = model.devname;
+			var hiddengrade=model.hiddengrade;
+			if("A"==hiddengrade){
+			grade="特别严重"
+			}else if("B"==hiddengrade){
+			grade="严重"
+			}else if("C"==hiddengrade){
+			grade="一般"
+			}
+			}}
+			<div id='modelid' class="formtest">
+			<input type="hidden" name="id" value="{{=model.id}}" />
+			<li class="aui-list-view-cell">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>隐患检查</h2></div>
+			</li>
+			<li class="aui-list-view-cell border_b" style="position:relative;">
+			<div class="item-left red">
+			• 巡检项目
+			</div>
+			<div class="item-right">{{=model.projectname ? model.projectname : ''}}</div>
+			{{? model.isfinish == 'Y'&&model.total_checkstate==0&&model.index_id!='2'&&model.isMonitor!='Y'}}
+			<span style="position:absolute;right:10px; top:6px;" class="curStatus" onclick="backUp('{{=model.id}}')">清空</span>
+			{{?}}
+			</li>
+			<li class="aui-list-view-cell border_b">
+			<div class="item-left red">
+			• 巡检要求
+			</div>
+			<div id="projectRequirement" class="item-right">{{=model.request ? model.request : '无'}}</div>
+			</li>
+			<li class="aui-switch-body" style="padding:5px 15px;">
+			<div id="tips_id" class="aui-switch-title red aui-flex-middle" style="width: 33%;color: red">
+			• {{=model.datadisplay ? model.datadisplay : '无'}}
+			</div>
+			{{? model.filltype == '1'}}
+			<input id="text_id" name="actualfill" type="text" class="required textareaborder" data-valid="actualfill" data-error="{{=model.datadisplay}}必填" value="{{=(model.actualfill!=null && model.actualfill!= 'null')?model.actualfill:''}}" class="textareaborder" style="width:50%;margin: 0px;" {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} >
+			<span style="margin-left: 8px;color: red;">
+			{{? model.fillunit == '1' }}
+			个
+			{{?? model.fillunit == '2' }}
+			V
+			{{?? model.fillunit== '3' }}
+			A
+			{{?}}
+			</span>
+			{{?? model.filltype == '2'}}
+			<input id="text_id" name="actualfill" type="text" class="required textareaborder" data-valid="actualfill" data-error="{{=model.datadisplay}}必填" value="{{=(model.actualfill!=null && model.actualfill!= 'null')?model.actualfill:''}}" class="textareaborder" style="width:50%;margin: 0px;" {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} >
+			<span style="margin-left: 8px;color: red;">
+			{{? model.fillunit == '1' }}
+			个
+			{{?? model.fillunit == '2' }}
+			V
+			{{?? model.fillunit == '3' }}
+			A
+			{{?}}
+			</span>
+			{{?? model.filltype == '3'}}
+			<input id="isStanderid" name="actualfill" type="checkbox" onclick="changeYH(this)"  value="{{=model.actualfill?model.actualfill:'N'}}" {{=((model.actualfill&&model.actualfill == 'Y')||model.actualfill == '符合规范')?'checked="checked"':''}}  class="aui-switch aui-pull-right" {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}}>
+			{{?}}
+			</li>
+			<li class="isshow" data-win="list-image" style="padding:5px 15px;padding-right:22px;">
+			<textarea id="remark" name="remark" class="required" placeholder='请填写巡检描述（必填）' data-valid="isStander" data-error="巡检描述必填！" {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}}  style="width:100%;height:100px; margin-bottom:0px;">{{=(model.remark!=null && model.remark!= 'null')?model.remark:''}}</textarea>
+			</li>
+			<li class="isshow" data-win="list-image" style="padding:5px 15px;padding-right:22px;">
+			<textarea id="remarkTwo" name="remarkTwo" placeholder='请填写备注（选填）' {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}}  style="width:100%;height:100px; margin-bottom:0px;">{{=(model.remarkTwo!=null && model.remarkTwo!= 'null')?model.remarkTwo:''}}</textarea>
+			</li>
+			<li class="aui-switch-body" style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px" >
+				<div class="aui-switch-title red">
+					• 是否存在隐患
+				</div>
+				<div id="isYinHuan" class="aui-pull-right" onclick="isChange(this,{{=i}})" style="position:relative;">
+
+					<input  name="ishidden{{=i}}" id="yhYbtn" class="aui-radio" type="radio" value="Y" {{=(model.ishidden&&model.ishidden == 'Y')?'checked':''}}  {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} /><div class="aui-radio-name">&nbsp;&nbsp;是       &nbsp;&nbsp;&nbsp;&nbsp;</div>
+					<input  name="ishidden{{=i}}" id="yhNbtn" class="aui-radio" type="radio"  value="N" {{=(model.ishidden != 'Y')?'checked':''}}  {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} /><div class="aui-radio-name">&nbsp;&nbsp;否       </div>
+				</div>
+			</li>
+
+			<!-- 一码到底  start 需添加以下代码-->
+				<li class="aui-switch-body" style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px;{{=(model.ishidden&&model.ishidden == 'Y')?'':'display:none;'}}">
+					<div class="aui-switch-title red" style="width: 33%;">
+						• 设备名称
+					</div>
+					<input id="deviceName{{=i}}" name="deviceName" type="hidden" value="" />
+					<select id="deviceId{{=i}}" index="{{=i}}" name="deviceId" class="textareaborder"
+							style="width:55%;margin: 0px;padding:0;padding-left:10px;" value="{{=model.deviceid}}" onchange="fillInfo(this)" >
+					<option value="">请选择</option>
+					</select>
+					<img src="../../image/pb_saomiao.png" style="width: 30px;height: 30px;vertical-align:middle;margin-top: -1%;"
+						 onclick="goScanCode('{{=i}}')">
+				</li>
+				<li class="aui-switch-body " style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px;{{=(model.ishidden&&model.ishidden == 'Y')?'':'display:none;'}}">
+					<div class="aui-switch-title red" style="width: 33%;">
+						• 设备型号
+					</div>
+					<input id="deviceModel{{=i}}" readonly name="deviceModel" type="text"  class="textareaborder change" style="width:65%;margin: 0px;padding : 0px,3px;"  value=""  />
+				</li>
+				<li class="aui-switch-body " style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px;{{=(model.ishidden&&model.ishidden == 'Y')?'':'display:none;'}}">
+					<div class="aui-switch-title red" style="width: 33%;">
+						• 设备运维ID
+					</div>
+					<input  id="deviceCode{{=i}}" readonly name="deviceCode" type="text"  class="textareaborder change" style="width:65%;margin: 0px;padding : 0px,3px;"  value=""  />
+				</li>
+				<li class="aui-switch-body " style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px;{{=(model.ishidden&&model.ishidden == 'Y')?'':'display:none;'}}">
+					<div class="aui-switch-title red" style="width: 33%;font-size:0.92rem;">
+						• 资源资产编码
+					</div>
+					<input id="res_code{{=i}}" readonly name="res_code" type="text"  class="textareaborder change" style="width:65%;margin: 0px;padding : 0px,3px;"  value="" />
+				</li>
+			<!-- 一码到底  end -->
+
+
+
+			<li class="aui-switch-body" style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px">
+			<div class="aui-switch-title red" style="width: 33%;">
+			• 隐患内容
+
+			</div>
+			<select id="hiddencontentid" name="hiddencontent" v-id="hiddencontent{{=i}}" class="textareaborder"  style="width:65%;margin: 0px;padding:0;padding-left:10px;"  value="{{=model.hiddencontent}}"  onchange="selectHiddenContent(this)" {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled="disabled"':''}}>
+			<option value="">请选择</option>
+			</select>
+			</li>
+			<li class="aui-switch-body " style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px">
+			<div class="aui-switch-title red" style="width: 33%;">
+			• 隐患等级
+			</div>
+			<input id="hiddengradeid" name="hiddengrade" type="text"  class="textareaborder change" disabled="disabled"  style="width:65%;margin: 0px;padding : 0px,3px;"  value="{{=(grade!=null&&grade!='null')?grade:''}}" {{=(!model.editEnabled || (model.isFinish && model.isFinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} />
+			</li>
+
+			<li class="aui-switch-body equipment" style="width: 100%;height:30px;padding:5px 15px;margin-top: 15px; {{=(model.ishidden&&model.ishidden == 'Y')?'':'display:none;'}}">
+			<div class="aui-switch-title red" style="width: 33%;">
+			• 隐患设备
+			</div>
+			<input id="devnameNew" name="devnameNew" type="text"  class="textareaborder" disabled="disabled"  style="width:65%;margin: 0px;padding : 0px,3px;"  value="{{=(devnameNew!=null&&devnameNew!='null')?devnameNew:''}}" {{=(!model.editEnabled || (model.isFinish && model.isFinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} />
+			</li>
+
+			<li class="isshow" data-win="list-image" style="padding:5px 15px;padding-right:22px;margin-top: 15px;">
+			<textarea  name="hiddenremark" class="required" placeholder='请填写隐患描述，无隐患则不需要填写' data-valid="isShidden||hasImage" data-error="存在隐患,<隐患内容>不能为空！||存在隐患,上传图片不能为空！" {{=(!model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1")?'disabled=true':''}} style="width:100%;height:100px; margin-bottom:0px;">{{=(model.hiddenremark!=null && model.hiddenremark!= 'null')?model.hiddenremark:''}}</textarea>
+			</li>
+			<li class="aui-list-view-cell border_b ccssoft-aui-list-view-divider2">
+			<img class="tit_img2" src="../../image/yuan.png" alt=""/>抽检结果
+			</li>
+			<li style="width: 100%;padding:5px 15px;margin-top: 15px">
+			<span class="red">• 总部抽检：</span>
+			{{? model.group_checkresult=='0'}}
+			未抽检
+			{{?? model.group_checkresult=='1'}}
+			合格
+			{{?? model.group_checkresult=='2'}}
+			不合格  <div class="red2">原因：{{=it[i].group_reason != null ? it[i].group_reason:""}}</div>  <div class="red2">时间：{{=it[i].group_checktime != null ? it[i].group_checktime:""}}</div>
+			{{?}}
+			</li>
+			<li class="aui-switch-body" style="width: 100%;padding:5px 15px;margin-top: 15px">
+			<span class="red">• 省份抽检：</span>
+			{{? model.province_checkresult=='0'}}
+			未抽检
+			{{?? model.province_checkresult=='1'}}
+			合格
+			{{?? model.province_checkresult=='2'}}
+			不合格  <div class="red2">原因：{{=it[i].province_reason != null ? it[i].province_reason:""}}</div>  <div class="red2">时间：{{=it[i].province_checktime != null ? it[i].province_checktime:""}}</div>
+			{{?}}
+			</li>
+			<li class="aui-switch-body" style="width: 100%;padding:5px 15px;margin-top: 15px">
+			<span class="red">• 地市抽检：</span>
+			{{? model.city_checkresult=='0'}}
+			未抽检
+			{{?? model.city_checkresult=='1'}}
+			合格
+			{{?? model.city_checkresult=='2'}}
+			不合格  <div class="red2">原因：{{=it[i].city_reason != null ? it[i].city_reason:""}}</div> <div class="red2"> 时间：{{=it[i].city_checktime != null ? it[i].city_checktime:""}}</div>
+			{{?}}
+			</li>
+			<li class="aui-list-view-cell border_b ccssoft-aui-list-view-divider2">
+			{{? !model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1"}}
+				{{? model.ishidden&&model.ishidden == 'Y'}}
+					<img class="tit_img2" src="../../image/yuan.png" alt=""/>隐患照片列表
+				{{??}}
+					<img class="tit_img2" src="../../image/yuan.png" alt=""/>巡检照片列表
+				{{?}}
+			{{??}}
+				<img class="tit_img2" src="../../image/yuan.png" alt=""/>图片列表
+			{{?}}
+			</li>
+			<div id="mainid" name="mainname"></div>
+			{{? !model.editEnabled || (model.isfinish && model.isfinish == "Y")||model.isMonitor=="Y"||model.taskstate=="1"}}
+			<li class="aui-list-view-cell border_b" data-win="list-image" style="display: none">
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic(this)"/>
+			</li>
+			{{??}}
+			<li class="aui-list-view-cell border_b" data-win="list-image"  >
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic(this)"/>
+			<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+			<img style='display:none;' class='imgPath'  src=''/>
+			</li>
+			{{?}}
+			</div>
+			{{  } }}
+		</script>
+		<!--图片模板-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell border_b aui-img aui-flex-col">
+			<div class=" aui-flex-item-2">
+			<img class="aui-img-object aui-pull-left" style='width:50px;height:50px;' src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			<div class="aui-pull-left aui-flex-item-8">
+			{{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+			<p class='aui-ellipsis-1'>
+			经度:{{=it.lon}}
+			</p>
+			<p class='aui-ellipsis-1'>
+			纬度: {{=it.lat}}
+			</p>
+			<p >
+			地址:{{=it.photoaddress}}
+			</p>
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">X</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+	</body>
+	<!-- third -->
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/template-native.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script src="../../script/GPS.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+		<script type="text/javascript" src="../../script/DES3.js"></script>
+	<script>
+		function changeYH(e){
+			console.log(JSON.stringify(api.deviceName));
+			var phonetype=api.deviceName;
+			var val =$(e).val();
+			if(val=='Y'){
+				$(e).parent().parent('.formtest').find('#yhYbtn').click();
+
+				$(e).parent().parent('.formtest').find('#yhYbtn').attr("disabled", true);
+				$(e).parent().parent('.formtest').find('#yhNbtn').attr("disabled", true);
+
+			}else {
+				$(e).parent().parent('.formtest').find('#yhYbtn').attr("disabled", false);
+				$(e).parent().parent('.formtest').find('#yhNbtn').attr("disabled", false);
+				$(e).parent().parent('.formtest').find('#yhNbtn').click();
+
+			}
+
+		}
+		var taskid, projectid, projectname, isFinish, isMonitor, objtype, devname, taskstate,modularid;
+		var imageUtil;
+		var user;
+		var isExist = 0;
+		var jsonArray = new Array();
+		var modelType = $api.getStorage("modelType");
+		var lastLocation;
+		var submission = 'ONLY_SUBMIT_TEXT';
+		var hiddenList;
+		var model;
+		var offline=$api.getStorage('offline');
+
+		apiready = function() {
+			user = $api.getStorage('user');
+			lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			initHeader();
+			db_init();
+			imageUtil.init({
+				uploadFn : $client.uploadProjectImage,
+				saveFn : db_saveXunjianPic
+			});
+			formUtil.init({
+				rules : {
+					actualfill : function(value, errorMsg, el) {
+						if (model.filltype == '1' || model.filltype == '2') {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					},
+					isStander : function(value, errorMsg, el) {
+						if (model.filltype == '3') {
+							var isStander = $('input[id=isStanderid]').is(':checked');
+							if (!($('input[id=isStanderid]').is(':checked'))) {
+								if (value == '') {
+									if (!formUtil.getHasError()) {
+										formUtil.setHasError(true);
+										return errorMsg;
+									}
+								}
+							}
+						}
+					},
+					isShidden : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					},
+					hasImage : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (!imageUtil.getImageArray().length) {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					}
+				}
+			});
+			projectid = api.pageParam.projectid;
+			projectname = api.pageParam.projectname || '';
+			taskid = api.pageParam.taskid;
+			isMonitor = api.pageParam.isMonitor;
+			objtype = api.pageParam.objtype;
+			devname = api.pageParam.devname;
+			modularname = api.pageParam.modularname;
+			isFinish = api.pageParam.isFinish || 'N';
+			editEnabled = api.pageParam.editEnabled;
+			taskstate = api.pageParam.taskstate;
+			modularid = api.pageParam.modularid;
+			console.log('/////////////////////////////');
+			console.log(JSON.stringify(api.pageParam));
+			loadProjectDetail(taskid, projectid);
+			/*jQuery委托事件*/
+			$('form').on('click', 'input[type=checkbox]', function() {
+				if ($(this).is(':checked')) {
+					$(this).val('Y');
+				} else {
+					$(this).val('N');
+				}
+			});
+
+
+			// body: {
+			// 		eomsid: user.userid,
+			// 		code:api.pageParam.stationcode,
+			// 		resTypeId:3493,
+			// 		paramData:{
+			// 			name:user.username,
+			// 			account:user.loginname,
+			// 			tele_phone:user.mobilephone,
+			// 			company:userInfo.orgnames
+			// 		}
+			// }
+		};
+		function saveLocal() {
+			imageUtil.save(function(num) {
+				var length = imageUtil.getImageArray().length;
+				if (num) {
+					//刷新首页的图片上传模块头标
+					api.execScript({
+						name : 'home_win',
+						frameName : 'home_frm',
+						script : 'setofflineUploadCount();'
+					});
+					setTimeout(function() {
+						//刷新单个列表项
+						api.execScript({
+							name : 'xunjian_projectList',
+							frameName : 'projectListFrm',
+							script : 'refreshList();'
+						});
+						api.hideProgress();
+						removeiframe();
+						api.closeWin();
+					}, 2000);
+				}
+			});
+		}
+
+		/**
+		 *加载巡检项目详情
+		 */
+		function loadProjectDetail(taskid, projectid) {
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx离线操作
+			var connectionType = api.connectionType;
+			if(offline=='true'){
+				$('#ziyuanName').hide(0);
+				$('#ziyiframe').hide(0);
+				showMask("加载中...");
+				db = api.require('db');
+				db.openDatabase({
+						name: 'xunjian',
+						path: 'fs://xunjian/DB/inspection'
+				}, function(ret, err) {
+						if (ret.status) {
+								db.selectSql({
+										name: 'xunjian',
+										sql: 'SELECT * FROM inspstandRelProjInfoDetailList  WHERE  taskid = "'+taskid+'" AND modularid = "'+modularid+'"'
+								}, function(ret, err) {
+										if (ret.status) {
+												// alert(JSON.stringify(ret.data))
+												showUi(ret);
+										} else {
+											api.toast({
+													msg: '操作本地数据库失败',
+													duration: 2000,
+													location: 'bottom'
+											});
+										}
+								});
+						} else {
+							api.toast({
+									msg: '访问本地数据库失败',
+									duration: 2000,
+									location: 'bottom'
+							});
+						}
+				});
+			}else {
+				showMask("加载中...");
+                console.log('.......................$client.getProjectDetail.........................');
+				$client.getProjectDetail({
+					type : modelType,
+					taskid : taskid,
+					modularid : api.pageParam.modularid
+				}, function(ret, err) {
+					hideMask();
+					if (ret) {
+						if (ret.success) {
+							console.log('.......................showUi.........................');
+							console.log(getObj(ret));
+							showUi(ret);
+						} else {
+							showToast(ret.data_info);
+						}
+					} else {
+						showToast(err.msg);
+					}
+				});
+			};
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		}
+
+		function getContent(ret1) {
+			$client.getHiddenContentList({
+				objtype : objtype,
+				devname : devname
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+						hiddenList = ret.list;
+						showUi(ret1, hiddenList);
+					} else {
+						showUi(ret1);
+						showToast(ret.data_info);
+					}
+				} else {
+					showUi(ret1);
+					showToast(err.msg);
+				}
+			});
+		}
+
+		function isChange(target,i) {
+			// alert(i);
+//			var val = $('input[name="ishidden"+i]:checked').attr('value');
+			var val = $(target).children('.aui-radio:checked').val();
+			var hiddenid = $(target).parent().parent('.formtest').children('.aui-switch-body').find("[name='hiddencontent']");
+			var gradeid = $(target).parent().parent('.formtest').children('.aui-switch-body').find("[name='hiddengrade']");
+			var deviceNameId = $(target).parent().parent('.formtest').children('.aui-switch-body').find("[name='deviceNameId']");
+			var equipment = $(target).parent().parent('.formtest').children('.equipment');
+
+
+			var deviceId = $("#deviceId"+i);
+			var deviceName = $("#deviceName"+i);
+			var deviceModel = $("#deviceModel"+i);
+			var deviceCode = $("#deviceCode"+i);
+			var res_code = $("#res_code"+i);
+
+			console.log('是否存在隐患：' + val);
+			//		api.toast({
+			//	        msg:'值：'+val
+			//      });
+			if (api.systemType == "ios") {
+				if (val == "N") {
+					console.log("测试3");
+					console.log(val);
+					$(hiddenid).attr("disabled", true);
+					$(deviceNameId).attr("disabled", true);
+					$(deviceNameId).val('');
+					$(hiddenid).val("");
+					$(gradeid).val("");
+					$(equipment).hide();
+
+					$(deviceId).attr("disabled", true);
+					$(deviceName).attr("disabled", true);
+					$(deviceModel).attr("disabled", true);
+					$(deviceCode).attr("disabled", true);
+					$(res_code).attr("disabled", true);
+
+					$(deviceId).val("");
+					$(deviceName).val("");
+					$(deviceModel).val("");
+					$(deviceCode).val("");
+					$(res_code).val("");
+
+					$(deviceId).parent().hide();
+					$(deviceName).parent().hide();
+					$(deviceModel).parent().hide();
+					$(deviceCode).parent().hide();
+					$(res_code).parent().hide();
+
+				} else {
+
+					console.log(val);
+					console.log("测试4");
+					$(hiddenid).removeAttr("disabled");
+					$(deviceNameId).removeAttr("disabled");
+					$(equipment).show();
+
+					$(deviceId).removeAttr("disabled");
+					$(deviceName).removeAttr("disabled");
+					$(deviceModel).removeAttr("disabled");
+					$(deviceCode).removeAttr("disabled");
+					$(res_code).removeAttr("disabled");
+
+					$(deviceId).parent().show();
+					$(deviceName).parent().show();
+					$(deviceModel).parent().show();
+					$(deviceCode).parent().show();
+					$(res_code).parent().show();
+				}
+//				console.log("api.systemVersion:"+api.systemVersion);
+			} else if(api.systemType == "android") {
+				console.log("api.systemVersion:"+api.systemVersion);
+				var version = api.systemVersion;
+//				console.log("version:"+version.substring(0,version.indexOf(".")));
+					if (val == "N") {
+					console.log(val);
+//					console.log("测试1");
+					$(hiddenid).attr("disabled", true);
+					$(deviceNameId).attr("disabled", true);
+					$(deviceNameId).val('');
+					$(equipment).hide();
+					$(hiddenid).val("");
+					$(gradeid).val("");
+
+					$(deviceId).attr("disabled", true);
+					$(deviceName).attr("disabled", true);
+					$(deviceModel).attr("disabled", true);
+					$(deviceCode).attr("disabled", true);
+					$(res_code).attr("disabled", true);
+
+					$(deviceId).val("");
+					$(deviceName).val("");
+					$(deviceModel).val("");
+					$(deviceCode).val("");
+					$(res_code).val("");
+
+					$(deviceId).parent().hide();
+					$(deviceName).parent().hide();
+					$(deviceModel).parent().hide();
+					$(deviceCode).parent().hide();
+					$(res_code).parent().hide();
+				} else {
+					console.log("隐患条目"+i+" ====> val = "+val);
+//					console.log("测试2");
+					$(hiddenid).removeAttr("disabled");
+					$(deviceNameId).removeAttr("disabled");
+					$(equipment).show();
+
+					$(deviceId).removeAttr("disabled");
+					$(deviceName).removeAttr("disabled");
+					$(deviceModel).removeAttr("disabled");
+					$(deviceCode).removeAttr("disabled");
+					$(res_code).removeAttr("disabled");
+
+					$(deviceId).parent().show();
+					$(deviceName).parent().show();
+					$(deviceModel).parent().show();
+					$(deviceCode).parent().show();
+					$(res_code).parent().show();
+				}
+			}
+		}
+
+		function selectHiddenContent(e) {
+			var val = $(e).val();
+			console.log("lkyyyyyyyyyyyyyyyy=============",val);
+			//			$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('123');
+			for (var i = 0; i < model[0].hiddenlist.length; i++) {
+				if (val == '' || val == null) {
+					$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('');
+				} else {
+					if (val == model[0].hiddenlist[i].hiddencontent) {
+						if ("A" == model[0].hiddenlist[i].hiddengrade) {
+							console.log('A');
+							$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('特别严重');
+							return;
+						} else if ("B" == model[0].hiddenlist[i].hiddengrade) {
+						console.log('B');
+							$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('严重');
+							return;
+						} else if ("C" == model[0].hiddenlist[i].hiddengrade) {
+						console.log('C');
+							$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('一般');
+							return;
+						} else {
+						console.log('D');
+							$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('');
+						}
+					} else {
+					console.log('E');
+	//					$api.byId('hiddengradeid').value = '';
+					}
+				}
+
+			}
+		}
+
+		function showUi(ret) {
+			hideMask();
+			var connectionType = api.connectionType;
+			if(offline=='true'||offline==true){
+				model = ret.data;
+			}else {
+				model = ret.list;
+			}
+
+			// wxx
+			console.log('33333333333333333333333333333333');
+			// console.log(JSON.stringify(model[0].hiddenlist));
+			console.log(getObj(model[0]));
+
+			console.log(getObj(model[1]));
+
+			// console.log(getObj(model[0].hiddenlist[0]));
+
+			// wxx
+			$.extend(model, api.pageParam);
+			//			script : 'refreshBillList(' + 1 + ');'
+			//			var ischeck= 'Y';
+			//			var
+			api.execScript({
+				name : 'projectDetailNew_win',
+				script : 'initView(' + model[0].total_checkstate + ');'
+			});
+			var type = $api.getStorage("modelType");
+			model.modeltype = type;
+			for (var i = 0; i < model.length; i++) {
+				model[i].editEnabled = api.pageParam.editEnabled;
+				model[i].isMonitor = api.pageParam.isMonitor;
+				model[i].index_id = api.pageParam.index_id;
+				//				var pos=api.pageParam.index_id;
+			}
+			console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+			console.log(JSON.stringify(api.pageParam));
+			$api.setStorage('parolData', api.pageParam);
+
+			renderTemp('list-view-1', 'parol-template', api.pageParam, false);
+			renderTemp('list-view', 'listView-template', model, true);
+
+			//读取设备
+			getDevList(api.pageParam.stationid)
+
+			// 获取资源返回页面wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			var userInfo = $api.getStorage('userInfo');
+			//alert('http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?code='+api.pageParam.deviceid+'&resTypeId='+resTypeId+'&company="'+userInfo.orgnames+'"&paramData={"name":"'+user.username+'","account":"'+user.loginname+'","tele_phone":"'+user.mobilephone+'"}');
+
+			if(objtype!=''&&objtype!=undefined&&objtype=='1'&&devname=='环境'){
+				$('#ziyuanName').text('铁塔');
+				 var ziyiframe = document.getElementById('ziyiframe');
+				 var resTypeId = '8843';
+				 //需要加密的明文拼接
+				 var plaintext='code='+api.pageParam.deviceid+'&resTypeId='+resTypeId+'"&paramData={"name":"'+user.username+'","account":"'+user.loginname+'","tele_phone":"'+user.mobilephone+'"}';
+					//对明文加密
+				 plaintext=encrypt(plaintext)
+				 //将密文以url的形式获取资源信息
+				 ziyiframe.src='http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?param='+plaintext;
+				 console.log('http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?param='+plaintext);
+				//测试使用
+				//  var text='code=532926500000000019&resTypeId=8843&paramData={"name":"SB","account":"31011300000024","tele_phone":"18960840556"}'
+				//  text=encrypt(text);
+				//  ziyiframe.src='http://123.126.34.170:7029/IRES-V2/tower-h5/index.html?param='+text
+				//测试使用
+			}else if (devname=='空调') {
+				$('#ziyuanName').text('空调');
+				var resTypeId = '3533';
+				var ziyiframe = document.getElementById('ziyiframe');
+				var plaintext='code='+api.pageParam.deviceid+'&resTypeId='+resTypeId+'&company="'+userInfo.orgnames+'"&paramData={"name":"'+user.username+'","account":"'+user.loginname+'","tele_phone":"'+user.mobilephone+'"}';
+				plaintext=encrypt(plaintext)
+				ziyiframe.src='http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?param='+plaintext;
+			}else if (devname=='开关电源') {
+				$('#ziyuanName').text('开关电源');
+				var resTypeId = '3510';
+				var ziyiframe = document.getElementById('ziyiframe');
+				var plaintext='code='+api.pageParam.deviceid+'&resTypeId='+resTypeId+'&company="'+userInfo.orgnames+'"&paramData={"name":"'+user.username+'","account":"'+user.loginname+'","tele_phone":"'+user.mobilephone+'"}';
+				plaintext=encrypt(plaintext)
+				ziyiframe.src='http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?param='+plaintext;
+			}else if (devname=='交流配电') {
+				$('#ziyuanName').text('交流配电');
+				var resTypeId = '3493';
+				var ziyiframe = document.getElementById('ziyiframe');
+				var plaintext='code='+api.pageParam.deviceid+'&resTypeId='+resTypeId+'&company="'+userInfo.orgnames+'"&paramData={"name":"'+user.username+'","account":"'+user.loginname+'","tele_phone":"'+user.mobilephone+'"}';
+				plaintext=encrypt(plaintext)
+				ziyiframe.src='http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?param='+plaintext;
+			}else if (objtype!=''&&objtype!=undefined&&objtype=='2'&&modularname.indexOf("蓄电池") != -1) {
+				$('#ziyuanName').text('蓄电池');
+				var resTypeId = '3521';
+				var ziyiframe = document.getElementById('ziyiframe');
+				var plaintext='code='+api.pageParam.deviceid+'&resTypeId='+resTypeId+'&company="'+userInfo.orgnames+'"&paramData={"name":"'+user.username+'","account":"'+user.loginname+'","tele_phone":"'+user.mobilephone+'"}';
+				plaintext=encrypt(plaintext);
+				ziyiframe.src='http://120.52.40.44:1039/IRES-V2/tower-h5/index.html?param='+plaintext;
+			}else {
+				$('#ziyuanName').hide(0);
+				$('#ziyiframe').hide(0);
+			}
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			for (var i = 0; i < model.length; i++) {
+				if (model[i].hiddenlist != null && model[i].hiddenlist.length > 0) {
+					$("[name='hiddencontent']").empty();
+					$('<option>').text('请选择').val('').appendTo("[name='hiddencontent']");
+					var tpl = $api.byId('dict-template').text;
+					var tempFn = doT.template(tpl);
+					if (true) {
+						var connectionType = api.connectionType;
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx离线操作
+						if(offline=='true'){
+							model[i].hiddenlist=JSON.parse(model[i].hiddenlist);
+						}
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						$("[name='hiddencontent']").append(tempFn(model[i].hiddenlist));
+						api.parseTapmode();
+						//						return;
+					}
+				}
+			}
+			for (var i = 0; i < model.length; i++) {
+				$('div li select').eq(i).val(model[i].hiddencontent);
+				var hiddenDiv = $($('.formtest')[i]).find("[name='hiddencontent']");
+				if (model[i].ishidden != "Y") {
+					$(hiddenDiv).attr("disabled", "disabled");
+				} else {
+					$(hiddenDiv).removeAttr("disabled");
+				}
+			}
+
+			//回显隐患内容
+            reViewHiddenContent();
+			//				renderTemp('list-view', 'listView-template', model, true);
+			var imgList = ret.imgList;
+			var historyUrl = imageUtil.getDownloadList();
+			if (imgList && imgList.length > 0) {
+				for (var i = 0, size = imgList.length; i < size; i++) {
+					var imageUrl = imgList[i];
+					jsonArray.push(imgList[i].ownerid);
+					historyUrl.push(imageUrl);
+				}
+				//							$('#add').parent().hide();
+			}
+			if (isFinish == "Y") {
+				$('#downloadBtn').show();
+			}
+			if (isMonitor == "Y" && isFinish != "Y") {
+				showToast("您查看是巡检监控模块，不能进行操作！");
+			} else if (!editEnabled) {
+				showToast("巡检项目未激活！");
+			} else if ("1" == taskstate) {
+				showToast("该巡检任务还没签到，不能进行操作！");
+			}
+		}
+
+		function displaynum(x) {
+			var num = new Number(x);
+			return num.toFixed(6);
+		}
+
+		/**
+		 * 添加图片
+		 */
+		function addPic(e) {
+			var permission = 'camera';
+			var resultList = api.hasPermission({
+					list: [permission]
+			});
+			if (resultList[0].granted) {
+					// 已授权，可以继续下一步操作
+			} else {
+					api.confirm({
+							msg: '应用需要您的授权才能访问相机',
+							buttons: ['取消', '去设置']
+					}, function(ret) {
+							if (ret.buttonIndex == 2) {
+									api.requestPermission({
+											list: [permission],
+									}, function(res) {
+											if (res.list[0].granted) {
+													// 已授权，可以继续下一步操作
+											}
+									});
+							}
+					});
+			}
+			var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			//		$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('');
+			//		alert("測試："+$(e).parent().parent('.formtest').find('input[name="id"]').val());
+			if (!lastLocation || !lastLocation.status) {
+				api.toast({
+					msg : '暂未定位\n无法上传照片！'
+				});
+				window.setTimeout(function() {
+					removeiframe();
+					api.closeWin();
+				}, 3000);
+			}
+
+			var picid = $(e).parent().parent('.formtest').find("[name='mainname']");
+			var insert = $(picid).children("li").last();
+			var ii = $(picid).children("li").eq(-2);
+
+			var curentTime2 = CurentTime2();
+			$api.setStorage('newtime', curentTime2);
+
+
+			imageUtil.add('camera', function(ret, err) {
+
+				////////////////////////////////////////////
+				var user=$api.getStorage('user');
+				var projectid=$(e).parent().parent('.formtest').find('input[name="id"]').val();
+				var newtime = $api.getStorage('newtime');
+				///////////////////////////////
+
+				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx修改打水印照片预览地址
+				// var oldret = ret.data.split(".");
+				// var newret = oldret[0]+"_shuiyin;"+user.userid+";"+projectid+";"+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+				var imageInfo = {
+					userid : user.userid,
+					projectid : $(e).parent().parent('.formtest').find('input[name="id"]').val(),
+					projectname : projectname,
+					imgpath : ret,
+					modeltype : modelType,
+					lon : lon1,
+					lat : lat1,
+					photoaddress : lastLocation.photoaddress,
+					phototime : (new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+				};
+				imageUtil.getImageArray().push(imageInfo);
+				showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+
+				console.log(getObj(imageInfo))
+						var tpl = $api.byId('img-template').text;
+						var tempFn = doT.template(tpl);
+						$(picid).append(tempFn(imageInfo));
+						api.parseTapmode();
+				//								renderTemp('mainid', 'img-template', imageInfo, true);
+				//				$($(e).parent(".aui-switch-body").next(".aui-switch-body").find(".change")[0]).val('特别严重');
+				//				$(e).parent('.aui-list-view-cell border_b').insertAfter(insert);//picid '#modelid li:last'
+			},e,true);
+		}
+
+		/*
+		 * 下载图片
+		 */
+		function downloadPic() {
+			//		var picid = $(e).parent().parent('.formtest').find("[name='mainname']");
+			//		$($('.formtest')[i]).children(".aui-switch-body,.isshow")
+			imageUtil.download(function(imageData, ret, err) {
+				console.log(getObj(ret));
+				if (ret) {
+					if (ret.status) {
+						console.log("图片路径：" + ret.url);
+						var imageInfo = {
+							imgpath : ret.url,
+							lon : imageData.lon,
+							lat : imageData.lat,
+							phototime : imageData.phototime,
+							photoaddress : imageData.photoaddress,
+							isDel : false
+						};
+						imageUtil.getImageArray().push(imageInfo);
+						for (var i = 0; i < model.length; i++) {
+							if (model[i].id == imageData.ownerid) {
+								var down = $($('.formtest')[i]).find("[name='mainname']");
+								var tpl = $api.byId('img-template').text;
+								var tempFn = doT.template(tpl);
+								if (true) {
+									$(down).append(tempFn(imageInfo));
+									api.parseTapmode();
+									return;
+								}
+								$(down).empty().append(tempFn(imageInfo));
+								api.parseTapmode();
+							}
+						}
+						//						renderTemp('list-view', 'img-template', imageInfo, true);
+					} else {
+						api.toast({
+							msg : '加载图片失败！'
+						});
+					}
+				} else {
+					api.toast({
+						msg : '缓存图片失败！'
+					});
+				}
+			});
+		}
+
+		/**
+		 *删除图片
+		 */
+		function removeImg(imgPath) {
+			var imageArray = imageUtil.getImageArray();
+			var size = imageArray.length;
+			for (var i = 0; i < size; i++) {
+				var data = imageArray[i];
+				if (data.imgpath == imgPath) {
+					imageArray.remove(i);
+					break;
+				}
+			}
+			$(event.target).parents('li').remove();
+		}
+
+		function call_upload(result) {
+			if (result == '提交文本和图片') {
+				submission = 'BOTH_SUBMIT_TEXT_IMAGE';
+				submitData();
+			} else if (result == '仅提交文本') {
+				submission = 'ONLY_SUBMIT_TEXT';
+				submitData();
+			}
+		}
+
+		function submitData() {
+			isExist = 0;
+			var list = [];
+			for (var i = 0; i < model.length; i++) {
+				// alert(i);
+				var opts = {};
+				//				alert($($('.formtest')[i]));
+				$($('.formtest')[i]).children(".aui-switch-body,.isshow").find("input,select,textarea").each(function() {
+					var name = $(this).attr('name');
+					var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+					if ($(this).attr('type') == 'radio') {
+						val = $("input[type='radio']:checked").eq(i).val();
+						opts['ishidden'] = val;
+					}else{
+						opts[name] = val;
+					}
+				});
+				if (opts['actualfill'] == '' || opts['actualfill'] == 'null') {
+					if (model[i].filltype == '3' && model[i].isfinish != 'Y') {
+						api.toast({
+							msg : '第' + (i + 1) + "项" + model[i].datadisplay + '必选'
+						});
+						return;
+					} else if (model[i].isfinish != 'Y') {
+						if (model[i].datadisplay == '' || model[i].datadisplay == null) {
+							api.toast({
+								msg : '第' + (i + 1) + "项" + '无' + '必填'
+							});
+						} else {
+							api.toast({
+								msg : '第' + (i + 1) + "项" + model[i].datadisplay + '必填'
+							});
+						}
+
+						return;
+					}
+				}
+				// console.log("model[i]========================",getObj(model[i]));
+				// console.log("opts['hiddencontent']========================",opts['hiddencontent']);
+				// console.log("opts['remark']========================",opts['remark']);
+				// console.log("model[i].isfinish========================",model[i].isfinish);
+				// if (model[i].filltype == '3' && opts['actualfill'] == 'N' && (opts['remark'] == '' || opts['remark'] == 'null') && model[i].isfinish != 'Y') {
+				if ( (opts['remark'] == '' || opts['remark'] == 'null') && model[i].isfinish != 'Y') {
+					api.toast({
+						msg : '第' + (i + 1) + "项巡检描述必填"
+					});
+					return;
+				}
+				if ((opts['ishidden'] == '' || opts['ishidden'] == 'null') && model[i].isfinish != 'Y') {
+					api.toast({
+						msg : '第' + (i + 1) + "项是否存在隐患必选"
+					});
+					return;
+				} else if (opts['ishidden'] == 'Y' && (opts['hiddencontent'] == '' || opts['hiddencontent'] == 'null') && model[i].isfinish != 'Y') {
+					api.toast({
+						msg : '第' + (i + 1) + "项隐患内容必选"
+					});
+					return;
+				} else if (opts['ishidden'] == 'Y' && (opts['hiddenremark'] == '' || opts['hiddenremark'] == 'null') && model[i].isfinish != 'Y') {
+					api.toast({
+						msg : '第' + (i + 1) + "项存在隐患,隐患描述必填"
+					});
+					return;
+				}
+				var iscc = 0;
+				var imageArr = imageUtil.getImageArray();
+				if (opts['ishidden'] == 'Y') {
+					if (imageArr.length && imageArr.length > 0) {
+						for (var j = 0; j < imageArr.length; j++) {
+							if (imageArr[j].projectid == model[i].id) {++iscc;
+							}
+						}
+						if (iscc == 0 && model[i].isfinish != 'Y') {
+							api.toast({
+								msg : '第' + (i + 1) + "项存在隐患,巡检图片不能为空"
+							});
+							return;
+						}
+					} else if (model[i].isfinish != 'Y') {
+						api.toast({
+							msg : '第' + (i + 1) + "项存在隐患,巡检图片不能为空"
+						});
+						return;
+					}
+				}
+				opts['id'] = model[i].id;
+				opts['dispalyname'] = model[i].datadisplay;
+				opts['unitname'] = model[i].fillunit;
+				opts['filltype'] = model[i].filltype;
+				opts['taskid'] = model[i].taskid;
+				opts['projectname'] = model[i].projectname;
+				opts['isFinish'] = 'Y';
+				console.log('隐患等级：'+opts['hiddengrade']);
+				if ("特别严重" == opts['hiddengrade']) {
+					opts['hiddengrade'] = 'A';
+				} else if ("严重" == opts['hiddengrade']) {
+					opts['hiddengrade'] = 'B';
+				} else if ("一般" == opts['hiddengrade']) {
+					opts['hiddengrade'] = 'C';
+				}
+				if ("1" == opts['unitname']) {
+					resultData = '个';
+				} else if ("2" == opts['unitname']) {
+					resultData = 'V';
+				} else if ("3" == opts['unitname']) {
+					resultData = 'A';
+				} else {
+					resultData = '';
+				}
+				if ("1" == opts['filltype']) {
+					opts['result'] = opts['actualfill']
+				} else if ("2" == opts['filltype']) {
+					opts['result'] = opts['dispalyname'] + opts['actualfill'] + resultData;
+				} else if ("3" == opts['filltype']) {
+					opts['isStander'] = opts['actualfill']
+					if ("Y" == opts['actualfill']) {
+						opts['result'] = "符合要求"
+					} else if ("N" == opts['actualfill']) {
+						opts['result'] = "不符合要求"
+					} else {
+						opts['result'] = "";
+					}
+				}
+				list.push(opts);
+				if (model[i].isfinish != 'Y' && jsonArray.indexOf(model[i].id) != -1) {++isExist;
+				}
+			}
+			//
+			if (isExist > 0) {
+
+				api.confirm({
+					title : '提交确认',
+					msg : "该巡检项目已经存在图片，请您选择'覆盖'或者'保留'原有的图片",
+					buttons: ['覆盖','保留','取消']
+				}, function(ret) {
+					if (ret.buttonIndex == 1) {
+						var opt = {
+							list : list,
+							isdelete : "Y"
+						};
+						console.log('90909090090900909090909090909090909090909009090090909090909090909090');
+						console.log(JSON.stringify(opt));
+						uploadData(opt);
+					}else if (ret.buttonIndex == 2) {
+						var opt = {
+							list : list,
+							isdelete : "N"
+						};
+						console.log('90909090090900909090909090909090909090909009090090909090909090909090222222222222222222');
+						console.log(JSON.stringify(opt));
+						uploadData(opt);
+					}
+				});
+			} else {
+				api.confirm({
+					title : '提交确认',
+					msg : '是否提交巡检项目详情?'
+				}, function(ret) {
+					if (ret.buttonIndex == 2) {
+						var opt = {
+							list : list,
+							isdelete : "Y"
+						};
+						console.log('909090900909009090909090909090909090909090090900909090909090909090903333333333333333333333');
+						console.log(JSON.stringify(opt));
+						uploadData(opt);
+						showMask("提交中…");
+					}
+				});
+			}
+		}
+// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx提交接口
+		/**
+		 *获取当前时间
+		 */
+		function CurentTime(){
+				var now = new Date();
+
+				var year = now.getFullYear();       //年
+				var month = now.getMonth() + 1;     //月
+				var day = now.getDate();            //日
+
+				var hh = now.getHours();            //时
+				var mm = now.getMinutes();          //分
+				var ss = now.getSeconds();           //秒
+
+				var clock = year + "-";
+
+				if(month < 10)
+						clock += "0";
+
+				clock += month + "-";
+
+				if(day < 10)
+						clock += "0";
+
+				clock += day + " ";
+
+				if(hh < 10)
+						clock += "0";
+
+				clock += hh + ":";
+				if (mm < 10) clock += '0';
+				clock += mm + ":";
+
+				if (ss < 10) clock += '0';
+				clock += ss;
+				return(clock);
+		}
+// 提交接口
+		function uploadData(opt) {
+			//-------------dxb------------------
+			//初始化参数
+			var taskId = api.pageParam.taskid;					//获取任务id
+			var user = $api.getStorage('user');					//获取登陆实体
+			var userId = user.userid;										//获取userid
+			opt.handleUserId=userId;										//将userid写入查询参数中
+			var modularid=api.pageParam.modularid;			//获取模块id
+			opt.modileId=modularid;											//将模块id写入查询参数中
+			opt.taskId=taskId;													//将taskid写入查询参数中
+			//设置参数，用来判断是否有人提交模块
+			var opts={
+				handleUserId:userId,
+				taskId:taskId,
+				moduleId:modularid
+			}
+			//通过userid,taskid,moduleid在A表中查询，模块id是否已经存在，如果存在，给用户提示，如果不存在，正常执行
+			$client.ifmodhasexist(opts,function(ret,err){
+					if(ret){
+						var msg='';
+						if(ret.flag=='error'){			//模块已被提交
+							msg='该模块已经被提交';
+							api.toast({
+								msg:msg,
+								duration:2000,
+								location:"bottom"
+							});
+						}else if(ret.flag=="false"){	//模块写入A表失败
+							msg='模块提交失败';
+							api.toast({
+								msg:msg,
+								duration:2000,
+								location:"bottom"
+							});
+						}else if(ret.flag=="true"){		//模块写入A表成功
+							// msg='模块提交成功';
+						}
+
+					}else if(err){
+						api.toast({
+							msg:"操作异常",
+							duration:2000,
+							location:"bottom"
+						});
+					}
+			});
+//----------------------dxb------------------------------------------
+			// showMask("提交中…");
+			var connectionType = api.connectionType;
+			if(offline=='true'){
+				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx离线操作
+				var strSql='';
+				for (var i = 0; i < opt.list.length; i++) {
+					(function(i) {
+						var id = opt.list[i].id
+						var remark = opt.list[i].remark;
+						var ishidden = opt.list[i].ishidden;
+						var hiddengrade = opt.list[i].hiddengrade;
+						var hiddencontent = opt.list[i].hiddencontent;
+						var hiddenremark = opt.list[i].hiddenremark;
+						var actualfill =opt.list[i].actualfill;
+						var endtime = CurentTime();
+						var str = 'UPDATE inspstandRelProjInfoDetailList SET isfinish = "Y",actualfill = "'+actualfill+'", endtime = "'+endtime+'", remark = "'+remark+'" ,ishidden = "'+ishidden+'" ,hiddengrade = "'+hiddengrade+'" ,hiddencontent = "'+hiddencontent+'" ,hiddenremark = "'+hiddenremark+'" WHERE id = "'+id+'";';
+						// strSql+=str;
+						// alert(strSql)
+						db = api.require('db');
+						db.openDatabase({
+								name: 'xunjian',
+								path: 'fs://xunjian/DB/inspection'
+						}, function(ret, err) {
+								if (ret.status) {
+										db.executeSql({
+												name: 'xunjian',
+												sql: str
+										}, function(ret, err) {
+												hideMask();
+												if (ret.status) {
+
+												} else {
+													api.toast({
+															msg: '提交失败',
+															duration: 2000,
+															location: 'bottom'
+													});
+												}
+										});
+								} else {
+									api.toast({
+											msg: '访问本地数据库失败',
+											duration: 2000,
+											location: 'bottom'
+									});
+								}
+						});
+					})(i);
+				}
+				db.executeSql({
+						name: 'xunjian',
+						sql: 'UPDATE inspstandRelProjInfoList SET isfinish = "Y"  WHERE  taskid = "'+taskid+'" AND modularid = "'+modularid+'"'
+				}, function(ret, err) {
+					if (ret.status) {
+						if (imageUtil.getImageArray().length) {
+							// 离线状态只能保存在本地
+								saveLocal();
+								api.execScript({
+									name : 'xunjian_projectList',
+									frameName : 'projectListFrm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									removeiframe();
+									api.closeWin();
+								}, 1000);
+						} else {
+							api.execScript({
+								name : 'xunjian_projectList',
+								frameName : 'projectListFrm',
+								script : 'refreshList();'
+							});
+							setTimeout(function() {
+								api.hideProgress();
+								removeiframe();
+								api.closeWin();
+							}, 1100);
+						}
+					}else {
+						api.toast({
+								msg: '操作失败',
+								duration: 2000,
+								location: 'bottom'
+						});
+					}
+				});
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			}else {
+				// alert(JSON.stringify(opt))
+				$client.saveProjectList(opt, function(ret, err) {
+					if (ret) {
+						if (ret.success) {
+							if (imageUtil.getImageArray().length) {
+								if (submission == 'ONLY_SUBMIT_TEXT') {
+									saveLocal();
+								} else {
+									imageUtil.upload(function(count) {
+										api.execScript({
+											name : 'xunjian_projectList',
+											frameName : 'projectListFrm',
+											script : 'refreshList();'
+										});
+										setTimeout(function() {
+											removeiframe();
+											api.closeWin();
+										}, 1000);
+									});
+								}
+							} else {
+								api.toast({
+									msg : '提交成功!'
+								});
+								api.execScript({
+									name : 'xunjian_projectList',
+									frameName : 'projectListFrm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									api.hideProgress();
+									removeiframe();
+									api.closeWin();
+								}, 2000);
+							}
+						} else {
+							api.toast({
+								msg : ret.data_info
+							});
+						}
+					} else {
+						api.toast({
+							msg : ret.data_info
+						});
+					}
+				});
+			}
+		}
+
+		function call_validate() {
+			if (formUtil.validate()) {
+				select();
+			}
+		}
+
+		/**
+		 *  选择提交方式：1.提交文本和图片，2. 仅提交文本
+		 */
+		function select() {
+			//			$aui.dialog({
+			//				title : '提交确认',
+			//				text : '是否提交巡检项目详情?'
+			//			}, function(ret) {
+			//				if (ret.buttonIndex) {
+			var optList = ['提交文本和图片', '仅提交文本'];
+			var cbTarget = {
+				name : api.winName,
+				frameName : 'projectDetailNew_frm',
+				cbFn : 'call_upload'
+			};
+			$api.setStorage('optList', optList);
+			$api.setStorage('cbTarget', cbTarget);
+			api.openFrame({
+				name : 'popup_select_frm',
+				url : '../dialog/popup_select.html',
+				pagePara : api.pageParam,
+				bounces : false
+			});
+			//				}
+			//				$aui.hideDialog();
+			//			});
+		}
+
+		/*
+		 * 巡检任务详情回滚
+		 */
+		function backUp(id) {
+			var opts = {
+				id : id
+			};
+			api.confirm({
+				title : '清空确认',
+				msg : '确认清空该巡检任务吗？'
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx离线操作
+					var connectionType = api.connectionType;
+					if(offline=='true'){
+						api.showProgress({
+							title : '清空中'
+						});
+						db = api.require('db');
+						db.openDatabase({
+								name: 'xunjian',
+								path: 'fs://xunjian/DB/inspection'
+						}, function(ret, err) {
+								if (ret.status) {
+										db.executeSql({
+												name: 'xunjian',
+												sql: 'UPDATE inspstandRelProjInfoDetailList SET isfinish = "N", endtime = ""  WHERE  id = "'+id+'"'
+										}, function(ret, err) {
+												hideMask();
+												if (ret.status) {
+													db.executeSql({
+															name: 'xunjian',
+															sql: 'UPDATE inspstandRelProjInfoList SET isfinish = "N"  WHERE  taskid = "'+taskid+'" AND modularid = "'+modularid+'"'
+													}, function(ret, err) {
+														if (ret.status) {
+															window.setTimeout(function() {
+																var pageParam = {};
+																$.extend(pageParam, api.pageParam);
+																pageParam.isFinish = 'N';
+																pageParam.isrollback = "Y";
+																api.openWin({
+																	name : 'projectDetailNew_win',
+																	url : 'projectDetailNew_win.html',
+																	pageParam : pageParam,
+																	reload : true
+																});
+															}, 200);
+														}else {
+															api.toast({
+																	msg: '操作失败',
+																	duration: 2000,
+																	location: 'bottom'
+															});
+														}
+													});
+												} else {
+													api.toast({
+															msg: '清空失败',
+															duration: 2000,
+															location: 'bottom'
+													});
+												}
+										});
+								} else {
+									api.toast({
+											msg: '访问本地数据库失败',
+											duration: 2000,
+											location: 'bottom'
+									});
+								}
+						});
+					// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+					}else {
+						api.showProgress({
+							title : '清空中'
+						});
+						$client.getProjectItemRollback(opts, function(ret, err) {
+							if (ret) {
+								if (ret.success) {
+									window.setTimeout(function() {
+										var pageParam = {};
+										$.extend(pageParam, api.pageParam);
+										pageParam.isFinish = 'N';
+										pageParam.isrollback = "Y";
+										api.openWin({
+											name : 'projectDetailNew_win',
+											url : 'projectDetailNew_win.html',
+											pageParam : pageParam,
+											reload : true
+										});
+									}, 200);
+								} else {
+									api.toast({
+										msg : ret.data_info
+									});
+								}
+							} else {
+								api.toast({
+									msg : err.msg
+								});
+							}
+							api.hideProgress();
+						});
+					}
+				}
+			});
+		}
+
+		function call_rollback() {
+			var modelType = $api.getStorage("modelType");
+			var user = $api.getStorage('user');
+			var _userId = user.userid;
+			var _taskId = api.pageParam.taskid;
+			var _projectid = api.pageParam.projectid;
+			showlog('taskId = ' + _taskId + " _projectid = " + _projectid);
+			var opts = {
+				taskId : _taskId,
+				ID : api.pageParam.modularid,
+			};
+			api.confirm({
+				title : '清空确认',
+				msg : '确认重置整个巡检任务吗？'
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					api.showProgress({
+						title : '重置中'
+					});
+					var connectionType = api.connectionType;
+					if(offline=='true'){
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx离线操作
+						db.openDatabase({
+								name: 'xunjian',
+								path: 'fs://xunjian/DB/inspection'
+						}, function(ret, err) {
+								if (ret.status) {
+									db.selectSql({
+											name: 'xunjian',
+											sql: 'SELECT * FROM inspstandRelProjInfoDetailList  WHERE  taskid = "'+taskid+'" AND modularid = "'+modularid+'"'
+									}, function(ret, err) {
+											if (ret.status) {
+													for (var i = 0; i < ret.data.length; i++) {
+														(function(i) {
+															var id = ret.data[i].id;
+															var endtime = CurentTime();
+															var str = 'UPDATE inspstandRelProjInfoDetailList SET isfinish = "N" WHERE id = "'+id+'";';
+															db = api.require('db');
+															db.executeSql({
+																	name: 'xunjian',
+																	sql: str
+															}, function(ret, err) {
+																	hideMask();
+																	if (ret.status) {
+
+																	} else {
+																		api.toast({
+																				msg: '提交失败',
+																				duration: 2000,
+																				location: 'bottom'
+																		});
+																	}
+															});
+														})(i);
+														db.executeSql({
+																name: 'xunjian',
+																sql: 'UPDATE inspstandRelProjInfoList SET isfinish = "N"  WHERE  taskid = "'+taskid+'" AND modularid = "'+modularid+'"'
+														}, function(ret, err) {
+															if (ret.status) {
+																if (imageUtil.getImageArray().length) {
+																	// 离线状态只能保存在本地
+																		saveLocal();
+																		api.execScript({
+																			name : 'xunjian_projectList',
+																			frameName : 'projectListFrm',
+																			script : 'refreshList();'
+																		});
+																		setTimeout(function() {
+																			removeiframe();
+																			api.closeWin();
+																		}, 2000);
+																} else {
+																	api.execScript({
+																		name : 'xunjian_projectList',
+																		frameName : 'projectListFrm',
+																		script : 'refreshList();'
+																	});
+																	setTimeout(function() {
+																		api.hideProgress();
+																		removeiframe();
+																		api.closeWin();
+																	}, 2000);
+																}
+															}else {
+																api.toast({
+																		msg: '操作失败',
+																		duration: 2000,
+																		location: 'bottom'
+																});
+															}
+														});
+													}
+											} else {
+												api.toast({
+														msg: '操作本地数据库失败',
+														duration: 2000,
+														location: 'bottom'
+												});
+											}
+									});
+								}else{
+									api.toast({
+											msg: '访问本地数据库失败',
+											duration: 2000,
+											location: 'bottom'
+									});
+								}
+						})
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+					}else {
+						$client.getProjectRollback(opts, function(ret, err) {
+							console.log("-------------ddd-------------");
+							console.log(JSON.stringify(opts));
+							console.log("-------------ddd-------------");
+
+							if (ret) {
+								if (ret.success) {
+									window.setTimeout(function() {
+										var pageParam = {};
+										$.extend(pageParam, api.pageParam);
+										pageParam.isFinish = 'N';
+										pageParam.isrollback = "Y";
+										api.openWin({
+											name : 'projectDetailNew_win',
+											url : 'projectDetailNew_win.html',
+											pageParam : pageParam,
+											reload : true
+										});
+									}, 200);
+								} else {
+									api.toast({
+										msg : ret.data_info
+									});
+								}
+							} else {
+								api.toast({
+									msg : err.msg
+								});
+							}
+						});
+					}
+					api.hideProgress();
+				}
+			});
+		}
+		/**
+		 *获取当前时间
+		 */
+		function CurentTime(){
+        var now = new Date();
+
+        var year = now.getFullYear();       //年
+        var month = now.getMonth() + 1;     //月
+        var day = now.getDate();            //日
+
+        var hh = now.getHours();            //时
+        var mm = now.getMinutes();          //分
+        var ss = now.getSeconds();           //秒
+
+        var clock = year + "-";
+
+        if(month < 10)
+            clock += "0";
+
+        clock += month + "-";
+
+        if(day < 10)
+            clock += "0";
+
+        clock += day + " ";
+
+        if(hh < 10)
+            clock += "0";
+
+        clock += hh + ":";
+        if (mm < 10) clock += '0';
+        clock += mm + ":";
+
+        if (ss < 10) clock += '0';
+        clock += ss;
+        return(clock);
+		}
+		// 移除iframe
+		function removeiframe(){
+			$('#ziyiframe').remove();
+		}
+
+
+		/************************************一码到底**************************************/
+		var devlist;
+		/**
+		 * 获取设备列表
+		 */
+		function getDevList(stationId){
+
+			//为了方便开发暂时写死
+			// stationId = '2973847'
+
+			var opts = {
+				areaId : stationId
+			}
+			$client.getDevListPlus(opts, function(ret, err) {
+				if (ret) {
+					console.log("===========开始获取本站设备==================")
+
+					if (ret.success) {
+						console.log(JSON.stringify(ret))
+						if (undefined != ret.deviceList && ret.deviceList.length ){
+							console.log("设备列表获取成功===>"+JSON.stringify(ret.deviceList))
+							/*renderTemp('devList', 'devList-template', ret.deviceList);*/
+
+                            devlist = ret.deviceList;
+
+                            $("select[id^='deviceId").each(function(){
+                                var thisid=  $(this).attr("value");
+                                var html = "";
+                                devlist.forEach(function (item,index) {
+                                    if(item.id ==  thisid){
+                                        html += '<option name="'+item.id+'" value="'+item.id+'" selected>'+item.name+'</option>';
+                                    }else{
+                                        html += '<option name="'+item.id+'" value="'+item.id+'" >'+item.name+'</option>';
+                                    }
+                                })
+                                $(this).append(html);
+                                $(this).trigger("change");
+                            })
+
+						}
+						else{
+							console.log("没获取到")
+							// $('body').addClass('active');
+						}
+
+					} else {
+						api.toast({
+							msg: ret.data_info,
+							location: 'bottom'
+						});
+					}
+				} else {
+					api.toast({
+						msg: '获取站址设备列表失败',
+						location: 'bottom'
+					});
+				}
+			});
+		}
+
+		/**
+		 * 开启扫码
+		 */
+		function goScanCode(index){
+
+			var permission = 'camera';
+			var resultList = api.hasPermission({
+				list: [permission]
+			});
+			if (resultList[0].granted) {
+				// 已授权，可以继续下一步操作
+			} else {
+				api.confirm({
+					msg: '应用需要您的授权才能访问相机',
+					buttons: ['取消', '去设置']
+				}, function(ret) {
+					if (ret.buttonIndex == 2) {
+						api.requestPermission({
+							list: [permission],
+						}, function(res) {
+							if (res.list[0].granted) {
+								// 已授权，可以继续下一步操作
+							}
+						});
+					}
+				});
+			}
+			var FNScanner = api.require('FNScanner');
+			FNScanner.openScanner({
+				autorotation: true
+			}, function(ret, err) {
+				if (ret) {
+					//  alert(JSON.stringify(ret));
+					if (ret.eventType=="success") {
+						var EWM=ret.content;
+						console.log("EWM ======= > "+EWM)
+						if(!compare(null, EWM, index)){
+							api.toast({
+								msg : '未查询到该设备!'
+							});
+						}
+					}else {
+						/*api.toast({
+							msg : '请扫描二维码!'
+						});*/
+					}
+
+				} else {
+					api.toast({
+						msg : '获取信息出错!'
+					});
+				}
+			});
+
+		}
+
+		//填补信息
+		function fillInfo(obj) {
+            console.log("进入后立即触发 ======= > "+$(obj).val())
+
+			var index_ = $(obj).attr("index")
+			if($(obj).val() == ""){
+				$("#deviceModel"+index_).val('');
+				$("#deviceCode"+index_).val('');
+				$("#res_code"+index_).val('');
+				$("#deviceName"+index_).val('');
+			}
+			compare($(obj).val(), null, index_);
+		}
+
+
+		function compare(id, rfid, index_) {
+
+			var hasDev = false;
+
+            if(undefined == devlist || devlist.length == 0){
+                return hasDev;
+            }
+
+			if(rfid != null){
+				console.log("rfid 不为空======= > "+rfid)
+
+				var html = ""
+				for(var i = 0; i < devlist.length; i++){
+					if(devlist[i].rfid_code == rfid){
+
+
+						$("#deviceId"+index_ ).find("option").each(function(){
+							console.log("option -- value"+$(this).val())
+							$(this).removeAttr("selected");
+							if($(this).val() == devlist[i].id){
+								console.log("已匹配-------success")
+								$(this).attr("selected",true);
+								console.log("selected ====== "+$(this).attr("selected"));
+
+								$("#deviceId"+index_ ).attr("value",devlist[i].id);
+								html += '<option name="'+devlist[i].id+'" value="'+devlist[i].id+'" selected>'+devlist[i].name+'</option>';
+								hasDev =true;
+							}
+						})
+					}else{
+						html += '<option name="'+devlist[i].id+'" value="'+devlist[i].id+'" >'+devlist[i].name+'</option>';
+					}
+				}
+
+				if(hasDev){
+					$("#deviceId"+index_ ).html(html)
+					$("#deviceId"+index_ ).trigger("change");
+				}
+
+
+			}else{
+				console.log("id =======> "+id)
+
+				devlist.forEach(function (item,index) {
+					// console.log("item.id ======= > "+item.id)
+                    // console.log(" ======= > 获取信息");
+					if(item.id == id){
+                        console.log(" ======= > 匹配成功回显  #deviceModel"+index_);
+                        $("#deviceModel"+index_).val(item.model);
+                        $("#deviceCode"+index_).val(item.devicecode);
+                        $("#res_code"+index_).val(item.res_code);
+                        $("#deviceName"+index_).val(item.name);
+
+					}
+				})
+			}
+
+			return hasDev;
+
+		}
+
+		/*******隐患内容回显******/
+        function reViewHiddenContent(){
+            $("select[v-id^='hiddencontent").each(function(){
+
+                var thisValue = $(this).attr("value");
+
+                $(this).find("option").each(function(){
+
+                    if(thisValue == $(this).val()){
+                        $(this).attr("selected","selected");
+                        return false;
+                    }
+                })
+
+            })
+        }
+
+	</script>
+</html>

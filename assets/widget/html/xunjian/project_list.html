@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>巡检项目列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" href="../../script/agile/css/agile.layout.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.component.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.color.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .ccssoft_list li {
+                list-style: none;
+                padding: 8px;
+                border-bottom: 1px solid #e3e2e2;
+                background: #fff;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .ccssoft_list li:hover {
+                background: #f9e9df;
+            }
+            .cj-l-title, .cj-f-title {
+                border-bottom: 1px solid #e3e2e2;
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 8px 50px 8px 32px;
+                position: relative;
+            }
+            .cj-l-title:before {
+                content: ".";
+                display: block;
+                width: 18px;
+                height: 18px;
+                background: #999;
+                border-radius: 20px;
+                position: absolute;
+                top: 10px;
+                left: 5px;
+            }
+            .ccssoft_list .cj-green .cj-l-title:before {
+                background: #1ac36b;
+            }
+            .ccssoft_list .cj-red .cj-l-title:before {
+                background: #ff3333;
+            }
+            .ccssoft_list .cj-grey .cj-l-title:before {
+                background: #8f9693;
+            }
+            .cj-l-title span, .cj-f-title span {
+                display: block;
+                width: 54px;
+                height: 20px;
+                line-height: 20px;
+                /*    color: #666;*/
+                text-align: right;
+                position: absolute;
+                top: 5px;
+                right: 0;
+                font-size: 12px;
+                font-weight: normal;
+            }
+            .cj-l-into {
+                font-size: 12px;
+                color: #666;
+                line-height: 20px;
+                padding: 3px 0;
+                position: relative;
+                margin-left: 10px;
+                /*   padding-right: 210px;*/
+            }
+            .cj-l-date {
+                display: block;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                width: 40px;
+                text-align: right;
+            }
+            .cj-l-date span {
+                margin-left: 7px;
+            }
+            .cj-l-date:after {
+                content: "";
+                display: block;
+                width: 1px;
+                height: 12px;
+                background: #ddd;
+                position: absolute;
+                top: 4px;
+                left: 2px;
+            }
+            .cj-l-date i {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="section_container">
+            <section id="xunjian_projectlist_section" data-role="section" class="active">
+                <header id="header">
+                    <div class="titlebar">
+                        <a  onclick="back();"><i class="iconfont iconline-arrow-left"></i></a>
+                        <h1>巡检项目列表</h1>
+                    </div>
+                </header>
+                <article data-role="article" id="main_article" data-scroll="pulldown" class="active" style="top:44px;bottom:0px;overflow:hidden;">
+                    <div class="scroller">
+                        <ul class="ccssoft_list" id="listView"></ul>
+                    </div>
+                </article>
+            </section>
+        </div>
+        <script id="listView-template" type="text/x-dot-template">
+            {{ var finishCount = 0; }}
+            {{ for(var i=0, len=it.length; i < len; i++) {
+            if(it[i].isfinish=="Y")
+            finishCount +=1;
+            var objType = it[i].objtype;
+            var objTypeClass = "";
+            var objTypeName = "";
+            if(objType == "1"){
+            objTypeName = "铁塔";
+            objTypeClass ="ccssoft_color_carrot";
+            }else if(objType == "2"){
+            objTypeName = "动力环境";
+            objTypeClass="ccssoft_color_green";
+            }else if(objType == "3"){
+            objTypeName = "室分系统";
+            objTypeClass="ccssoft_color_pink";
+            }else if(objType == "4"){
+            objTypeName = "机房";
+            objTypeClass="ccssoft_color_violet";
+            }
+            }}
+            <li class="{{=it[i].isfinish=="Y" ? "cj-green" :"cj-grey"}}" onclick="openProject('{{=it[i].id}}','{{=it[i].projectname}}','{{=it[i].isfinish}}');">
+            <div class="cj-l-title">{{=it[i].projectname != null ? it[i].projectname:""}}<span class="{{=objTypeClass}}">{{=objTypeName}}</span></div>
+            <div class="cj-l-into">{{=it[i].devname != null ? it[i].devname:""}}</div><div class=""><i class="iconfont iconline-image" ></i><span>{{=it[i].imagecount}}</span></div>
+            </li>
+            {{ } }}
+        </script>
+    </body>
+    <!-- third -->
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script src="../../script/third/jquery/jquery.mobile.custom.min.js"></script>
+    <script src="../../script/third/iscroll/iscroll-probe.js"></script>
+    <script src="../../script/third/arttemplate/template-native.js"></script>
+    <!-- agile -->
+    <script type="text/javascript" src="../../script/agile/js/agile.js"></script>
+    <!-- bridge -->
+    <script type="text/javascript" src="../../script/bridge/exmobi.js"></script>
+    <script type="text/javascript" src="../../script/bridge/agile.exmobi.js"></script>
+    <!-- app -->
+    <script type="text/javascript" src="../../script/app/js/app.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        var taskid, stattime, fromflag, taskstatus, readyStartTime;
+        var editEnabled = true;
+        //是否能够编辑项目
+        var finishCount = 0;
+        var selectProjectId;
+        var listView;
+        /**
+         *打开待办任务的详情
+         */
+        function openProject(projectid, projectname, isFinish) {
+            //  selectProjectId = projectid;
+            waitDuck(function() {
+                openPage_project_detail(taskid, projectid, projectname, isFinish, editEnabled);
+            });
+        }
+
+        /**
+         *加载完成后的回调函数
+         */
+        function load_callback(ret, status) {
+            if (ret && ret.success) {
+                projectList = ret.list;
+                //巡检任务已经完成，不需要弹出窗口
+                if (taskstatus == "Y") {
+                    return;
+                }
+                //
+                //                C.confirm("提示", "任务已完成，是否结束巡检？",function(){
+                //                 showlog("ok");
+                //                },function(){
+                //                   showlog("cancle");
+                //                 });
+                // showlog("currentPage:"+ret.currentPage+"("+typeof(ret.currentPage)+"),need:"+ ret.needConfirm+"("+typeof(ret.needConfirm)+")");
+                if (readyStartTime != "") {
+                    //判断计划时间是否大于现在，如果是，提示用户巡检计划未激活
+                    var readyDate = Date.parse(readyStartTime);
+                    var nowDate = new Date();
+                    var a = readyDate - nowDate;
+                    if (a > 0) {
+                        editEnabled = false;
+                        showToast("巡检计划尚未激活，无法提交项目!");
+                        return;
+                    }
+                }
+                //   showToast(readyStartTime);
+                //开始时间为空，要弹出窗口给用户确认是否开始巡检
+                if (starttime == null || starttime == "") {
+                    C.confirm("提示", "a是否开始巡检？", function(ret) {
+                        starttime = "start";
+                        $client.startXunjianTask({
+                            taskid : taskid
+                        });
+                    }, function() {
+                        editEnabled = false;
+                        showToast("巡检项目未激活！");
+                    });
+                } else if (ret.currentPage == 1 && ret.needConfirm && ret.needConfirm == "true") {
+                    C.confirm("提示", "任务已完成，是否结束巡检？", function(ret) {
+                        $client.stopXunjianTask({
+                            taskid : taskid
+                        }, function(ret, err) {
+                            api.execScript({
+                                name : "task_list_win",
+                                script : 'refreshList();'
+                            });
+                            setTimeout(function() {
+                                api.closeWin({
+                                });
+                            }, 300);
+                        });
+                    });
+                }
+            }
+        }
+
+        /**
+         *刷新页面
+         */
+        function refreshList() {
+            listView.refresh();
+        }
+
+        apiready = function() {
+            initHeader();
+            listView = new C.ApiListView({
+                fn : $client.getXunjianProjectList,
+                callback : load_callback,
+                limit : 1000
+            });
+            taskid = api.pageParam.taskid ? api.pageParam.taskid : "CA665B59F48A3AB46EC2AAF17E8FDD50";
+
+            //任务ID
+            starttime = api.pageParam.starttime ? api.pageParam.starttime : "";
+            //开始时间
+            fromflag = api.pageParam.fromflag ? api.pageParam.fromflag : "Y";
+            //来自通知栏？
+            taskstatus = api.pageParam.taskstatus ? api.pageParam.taskstatus : "";
+            //计划开始时间
+            readyStartTime = api.pageParam.readyStartTime ? api.pageParam.readyStartTime : "";
+            // showlog(getObj(api.pageParam),"error");
+            //  showlog("taskstatus:"+taskstatus);
+            listView.setQueryOptions({
+                taskid : taskid,
+                fromflag : fromflag
+            });
+            setTimeout(function() {
+                listView.refresh();
+            }, 300);
+        };
+    </script>
+</html>

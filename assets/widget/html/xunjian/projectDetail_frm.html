@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+	<!--巡检项目详情的新模块代码-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>巡检项目详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	</head>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].hiddencontent}}">{{=it[i].hiddencontent}}</option>
+			{{ } }}
+		</script>
+		<script id="m-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<form>
+				<ul id="list-view" class="aui-list-view"></ul>
+			</form>
+		</div>
+		<div style="height:50px;"></div>
+		<div id="downloadBtn" class="fixed_bottom" style="display: none;">
+			<button class="outline center aui-btn aui-btn-success" onclick="downloadPic();">
+				下载图片
+			</button>
+		</div>
+		<!--项目详情-->
+		<script id="parol-template" type="text/html">
+			<input type="hidden" name="id" value="{{=it.projectid}}" />
+			<input type="hidden" name="dispalyname" value="{{=it.datadisplay}}" />
+			<input type="hidden" name="unitname" value="{{=it.fillunit}}" />
+			<input type="hidden" name="filltype" value="{{=it.filltype}}" />
+			<input type="hidden" name="taskid" value="{{=it.taskid}}" />
+			<input type="hidden" name="isFinish" value="Y" />
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			站址信息
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			站址编码
+			</div>
+			<div  id="stationName" class="item-right">{{=it.st_deviceid || ''}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			站址名
+			</div>
+			<div  id="stationName" class="item-right">{{=it.sitename}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			运维ID
+			</div>
+			<div id="stationCode" class="item-right">{{=it.sitecode}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			站址来源
+			</div>
+			<div id="stationSource" class="item-right">{{=it.st_sitesource || '&nbsp;'}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			设备名
+			</div>
+			<div  id="deviceName" class="item-right">{{=it.devname}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			所属省份
+			</div>
+			<div id="province" class="item-right">{{=it.province}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			所属地市
+			</div>
+			<div id="city" class="item-right">{{=it.city}}</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div class="item-left">
+			所属区县
+			</div>
+			<div id="country" class="item-right">{{=it.county}}</div>
+			</li>
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			巡检要求
+			</li>
+			<li id="projectRequirement" style="min-height: 30px;padding:5px 20px;">{{=it.request ? it.request : '无'}}</li>
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			记录填写
+			</li>
+			{{? it.modeltype == 'XUNJIAN_TASK' }}
+			<li class="aui-list-view-cell aui-switch-body">
+			<div id="tipsId" class="aui-switch-title">
+			是否符合要求
+			</div>
+			<input id="isStander" name="isStander" type="checkbox"  value="{{=it.isstander?it.isstander:'N'}}" {{=(it.isstander&&it.isstander == 'Y')?'checked="checked"':''}}  class="aui-switch aui-pull-right" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}}>
+			</li>
+			{{?? it.modeltype == 'NEW_XUNJIAN_TASK'||it.modeltype == 'NEW_XUNJIAN_MONITOR'}}
+			<li class="aui-list-view-cell aui-switch-body">
+			<div id="tips_id" class="aui-switch-title aui-flex-middle" style="width: 33%;color: red">
+			{{=it.datadisplay}}
+			</div>
+			{{? it.filltype == '1'}}
+			<input id="text_id" name="actualfill" type="text" class="required textareaborder" data-valid="actualfill" data-error="{{=it.datadisplay}}必填" value="{{=(it.actualfill!=null && it.actualfill!= 'null')?it.actualfill:''}}" class="textareaborder" style="width:50%;margin: 0px;" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}} >
+			<span style="margin-left: 8px;color: red;">
+			{{? it.fillunit == '1' }}
+			个
+			{{?? it.fillunit == '2' }}
+			V
+			{{?? it.fillunit == '3' }}
+			A
+			{{?}}
+			</span>
+			{{?? it.filltype == '2'}}
+			<input id="text_id" name="actualfill" type="text" class="required textareaborder" data-valid="actualfill" data-error="{{=it.datadisplay}}必填" value="{{=(it.actualfill!=null && it.actualfill!= 'null')?it.actualfill:''}}" class="textareaborder" style="width:50%;margin: 0px;" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}} >
+			<span style="margin-left: 8px;color: red;">
+			{{? it.fillunit == '1' }}
+			个
+			{{?? it.fillunit == '2' }}
+			V
+			{{?? it.fillunit == '3' }}
+			A
+			{{?}}
+			</span>
+			{{?? it.filltype == '3'}}
+			<input id="isStanderid" name="actualfill" type="checkbox"  value="{{=it.actualfill?it.actualfill:'N'}}" {{=(it.actualfill&&it.actualfill == 'Y')?'checked="checked"':''}}  class="aui-switch aui-pull-right" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}}>
+			{{?}}
+			</li>
+			{{?}}
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div class="item-left">
+			巡检备注
+			</div>
+			<div class="item-right">
+			<textarea id="remark" name="remark" class="required" data-valid="isStander" data-error="巡检备注必填！" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}}  style="width:100%;height:100px; margin-bottom:0px;">{{=(it.remark!=null && it.remark!= 'null')?it.remark:''}}</textarea>
+			</div>
+			</li>
+			<li class="aui-list-view-cell aui-switch-body">
+			<div class="aui-switch-title">
+			是否存在隐患
+			</div>
+			<input id="isYinHuan" name="isShidden" type="checkbox" value="{{=it.isshidden?it.isshidden:'N'}}" {{=(it.isshidden&&it.isshidden == 'Y')?'checked="checked"':''}} class="aui-switch aui-pull-right" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}} onchange="isChange(this)" >
+			</li>
+			{{? it.modeltype == 'NEW_XUNJIAN_TASK' ||it.modeltype == 'NEW_XUNJIAN_MONITOR'}}
+			<li class="aui-list-view-cell aui-switch-body">
+			<div class="aui-switch-title" style="width: 33%;">
+			隐患内容
+			</div>
+			<select id="hiddencontentid" name="hiddencontent" class="textareaborder"  style="width:65%;margin: 0px;padding : 0px;"  value=""  onchange="selectHiddenContent(this)" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}}>
+			<option value="">请选择</option>
+			</select>
+			</li>
+			<li class="aui-list-view-cell aui-switch-body">
+			<div class="aui-switch-title" style="width: 33%;">
+			隐患等级
+			</div>
+			<input id="hiddengradeid" name="hiddengrade" type="text"  class="textareaborder" disabled="disabled"  style="width:65%;margin: 0px;padding : 0px,3px;"  value="" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}} />
+			</li>
+			{{?}}
+			<li class="aui-list-view-cell" data-win="list-image">
+			<div class="item-left">
+			隐患备注
+			</div>
+			<div class="item-right">
+			{{? it.modeltype == 'NEW_XUNJIAN_TASK' ||it.modeltype == 'NEW_XUNJIAN_MONITOR'}}
+			<textarea  name="hiddenremark" class="required" data-valid="isShidden||hasImage" data-error="存在隐患,<隐患内容>不能为空！||存在隐患,上传图片不能为空！" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}} style="width:100%;height:100px; margin-bottom:0px;">{{=(it.hiddenremark!=null && it.hiddenremark!= 'null')?it.hiddenremark:''}}</textarea>
+			{{??it.modeltype == 'XUNJIAN_TASK' }}
+			<textarea id="shiddenContent" name="shiddensource" class="required" data-valid="isShidden||hasImage" data-error="存在隐患,<隐患内容>不能为空！||存在隐患,上传图片不能为空！" {{=(!it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1")?'disabled=true':''}} style="width:100%;height:100px; margin-bottom:0px;">{{=(it.shiddensource!=null && it.shiddensource!= 'null')?it.shiddensource:''}}</textarea>
+			{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			图片列表
+			</li>
+			{{? !it.editEnabled || (it.isFinish && it.isFinish == "Y")||it.isMonitor=="Y"||it.taskstate=="1"}}
+			<li class="aui-list-view-cell" data-win="list-image" style="display: none">
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic()"/>
+			</li>
+			{{??}}
+			<li class="aui-list-view-cell" data-win="list-image"  >
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic()"/>
+			</li>
+			{{?}}
+			<!--<input type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput">
+			<input accept="image/*" type="file">-->
+		</script>
+		<!--图片模板-->
+		<!--<li class="aui-list-view-cell aui-img">
+		<img class="aui-img-object aui-pull-left" src="../image/demo2.png">
+		<div class="aui-img-body">
+		图文列表
+		<p>图文列表缩略图在左边的样式，默认大小为80PX，文字介绍内容可以为一行也可以为两行，超出部分自动省略</p>
+		</div>
+		</li>-->
+		<!--图片模板-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col">
+			<div class=" aui-flex-item-2">
+			<img class="aui-img-object aui-pull-left" src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			<div class="aui-pull-left aui-flex-item-8">
+			{{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+			<p class='aui-ellipsis-1'>
+			经度:{{=it.lon}}
+			</p>
+			<p class='aui-ellipsis-1'>
+			纬度: {{=it.lat}}
+			</p>
+			<p >
+			地址:{{=it.photoaddress}}
+			</p>
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">X</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+	</body>
+	<!-- third -->
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/template-native.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script src="../../script/GPS.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+	<script>
+		var taskid, projectid, projectname, isFinish, isMonitor, objtype, devname, taskstate;
+		var imageUtil;
+		var user;
+		var modelType = $api.getStorage("modelType");
+		var lastLocation;
+		var submission = 'ONLY_SUBMIT_TEXT';
+		var hiddenList;
+		var model;
+		apiready = function() {
+			user = $api.getStorage('user');
+			lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			initHeader();
+			if (!debug) {
+				db_init();
+			}
+			imageUtil.init({
+				uploadFn : $client.uploadProjectImage,
+				saveFn : db_saveXunjianPic
+			});
+			formUtil.init({
+				submitFn : $client.saveXunjinProjectResult,
+				btnObj : $('#submitBtn'),
+				callback : function(ret, err) {
+					if (ret && ret.success) {
+						if (imageUtil.getImageArray().length) {
+							if (submission == 'ONLY_SUBMIT_TEXT') {
+								saveLocal();
+							} else {
+								imageUtil.upload(function(count) {
+									api.execScript({
+										name : 'xunjian_projectList',
+										frameName : 'projectListFrm',
+										script : 'refreshList();'
+									});
+									setTimeout(function() {
+										api.closeWin();
+									}, 1000);
+								});
+							}
+						} else {
+							api.toast({
+								msg : '提交成功!'
+							});
+							api.execScript({
+								name : 'xunjian_projectList',
+								frameName : 'projectListFrm',
+								script : 'refreshList();'
+							});
+							setTimeout(function() {
+								api.hideProgress();
+								api.closeWin();
+							}, 1100);
+						}
+					} else {
+						showToast("上传失败!");
+					}
+				},
+				rules : {
+
+					actualfill : function(value, errorMsg, el) {
+
+						if(model.filltype=='1'||model.filltype=='2'){
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+							}
+						}
+						}
+					},
+					isStander : function(value, errorMsg, el) {
+
+						if(model.filltype=='3'){
+
+						var isStander = $('input[id=isStanderid]').is(':checked');
+						if (!($('input[id=isStanderid]').is(':checked'))) {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+						}
+					},
+
+
+
+					isShidden : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (value == '') {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					},
+					hasImage : function(value, errorMsg, el) {
+						if ($('input[name=isShidden]').is(':checked')) {
+							if (!imageUtil.getImageArray().length) {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					}
+				}
+			});
+			projectid = api.pageParam.projectid;
+			projectname = api.pageParam.projectname || '';
+			taskid = api.pageParam.taskid;
+			isMonitor = api.pageParam.isMonitor;
+			objtype = api.pageParam.objtype;
+			devname = api.pageParam.devname;
+			isFinish = api.pageParam.isFinish || 'N';
+			editEnabled = api.pageParam.editEnabled;
+			taskstate = api.pageParam.taskstate;
+			loadProjectDetail(taskid, projectid);
+			/*jQuery委托事件*/
+			$('form').on('click', 'input[type=checkbox]', function() {
+				if ($(this).is(':checked')) {
+					$(this).val('Y');
+				} else {
+					$(this).val('N');
+				}
+			});
+		};
+		function saveLocal() {
+			imageUtil.save(function(num) {
+				var length = imageUtil.getImageArray().length;
+				if (num) {
+					//刷新首页的图片上传模块头标
+					api.execScript({
+						name : 'home_win',
+						frameName : 'footer_tab_1',
+						script : 'setofflineUploadCount();'
+					});
+					setTimeout(function() {
+						//刷新单个列表项
+						api.execScript({
+							name : 'xunjian_projectList',
+							frameName : 'projectListFrm',
+							script : 'refreshList();'
+						});
+						api.hideProgress();
+						api.closeWin();
+					}, 2000);
+				}
+			});
+		}
+
+		/**
+		 *加载巡检项目详情
+		 */
+		function loadProjectDetail(taskid, projectid) {
+			showMask("加载中...");
+			$client.getProjectDetail({
+				type : modelType,
+				taskid : taskid,
+				projectid : projectid
+			}, function(ret, err) {
+				hideMask();
+				if (ret) {
+					if (ret.success) {
+						if ("NEW_XUNJIAN_TASK" == modelType || "NEW_XUNJIAN_MONITOR" == modelType) {
+							getContent(ret);
+						} else {
+							showUi(ret);
+						}
+					} else {
+						showToast(ret.data_info);
+					}
+				} else {
+					showToast(err.msg);
+				}
+			});
+		}
+
+		function getContent(ret1) {
+			$client.getHiddenContentList({
+				objtype : objtype,
+				devname : devname
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+						hiddenList = ret.list;
+						showUi(ret1, hiddenList);
+					} else {
+						showUi(ret1);
+						showToast(ret.data_info);
+					}
+				} else {
+					showUi(ret1);
+					showToast(err.msg);
+				}
+			});
+		}
+
+		function isChange(target) {
+			var val = $(target).val();
+			console.log('是否存在隐患：' + val);
+			//		api.toast({
+			//	        msg:'值：'+val
+			//      });
+			if (api.systemType == "ios") {
+				if (val == "Y") {
+					$('#hiddencontentid').attr("disabled", true);
+					$('#hiddencontentid').val("");
+					$('#hiddengradeid').val("");
+				} else {
+					$('#hiddencontentid').removeAttr("disabled");
+				}
+			} else {
+				if (val == "N") {
+					$('#hiddencontentid').attr("disabled", true);
+					$('#hiddencontentid').val("");
+					$('#hiddengradeid').val("");
+				} else {
+					$('#hiddencontentid').removeAttr("disabled");
+				}
+			}
+		}
+
+		function selectHiddenContent(target) {
+			var val = $(target).val();
+			//			hiddenList.
+			for (var i = 0; i < hiddenList.length; i++) {
+				if (val == hiddenList[i].hiddencontent) {
+					if ("A" == hiddenList[i].hiddengrade) {
+						$api.byId('hiddengradeid').value = '特别严重';
+					} else if ("B" == hiddenList[i].hiddengrade) {
+						$api.byId('hiddengradeid').value = '严重';
+					} else if ("C" == hiddenList[i].hiddengrade) {
+						$api.byId('hiddengradeid').value = '一般';
+					} else {
+						$api.byId('hiddengradeid').value = '';
+					}
+				}
+			}
+			//hiddengradeid
+		}
+
+		function showUi(ret, hiddenList) {
+			hideMask();
+			model = ret.model;
+			$.extend(model, api.pageParam);
+			var type = $api.getStorage("modelType");
+			model.modeltype = type;
+			renderTemp('list-view', 'parol-template', model, false);
+			var imgList = ret.imgList;
+			var historyUrl = imageUtil.getDownloadList();
+			//						if (api.pageParam.isFinish && api.pageParam.isMonitor == 'Y'||'1'==taskstate) {
+			//							$('#add').parent().hide();
+			//						}
+			if (model.isshidden != "Y") {
+				$('#hiddencontentid').attr("disabled", "disabled");
+			} else {
+				$('#hiddencontentid').removeAttr("disabled");
+			}
+			if (imgList && imgList.length > 0) {
+				for (var i = 0, size = imgList.length; i < size; i++) {
+					var imageUrl = imgList[i];
+					historyUrl.push(imageUrl);
+				}
+				//							$('#add').parent().hide();
+				$('#downloadBtn').show();
+			}
+			if (isMonitor == "Y" && isFinish != "Y") {
+				showToast("您查看是巡检监控模块，不能进行操作！");
+			} else if (!editEnabled) {
+				showToast("巡检项目未激活！");
+			} else if ("1" == taskstate) {
+				showToast("该巡检任务还没签到，不能进行操作！");
+			}
+			//						var hiddenGradeList=$api.getStorage("hiddenGradeList");
+			//				if (hiddenGradeList != null && hiddenGradeList.length > 0) {
+			//				$('#hiddengradeid').empty();
+			//				$('<option>').text('请选择').val('').appendTo('#hiddengradeid');
+			//				renderTemp('hiddengradeid', 'm-template', hiddenGradeList, true);
+			//			}
+			//						alert("集合："+hiddenList);
+			if (hiddenList != null && hiddenList.length > 0) {
+				$('#hiddencontentid').empty();
+				$('<option>').text('请选择').val('').appendTo('#hiddencontentid');
+				renderTemp('hiddencontentid', 'dict-template', hiddenList, true);
+				var grade = model.hiddengrade;
+				if ("A" == grade) {
+					$('[name=hiddengrade]').val("特别严重");
+				} else if ("B" == grade) {
+					$('[name=hiddengrade]').val("严重");
+				} else if ("C" == grade) {
+					$('[name=hiddengrade]').val("一般");
+				}
+				for (var i = 0; i < hiddenList.length; i++) {
+					if (hiddenList[i].hiddencontent == model.hiddencontent) {
+						$('[name=hiddencontent]').val(model.hiddencontent);
+					}
+				}
+			}
+		}
+
+		function displaynum(x) {
+			var num = new Number(x);
+			return num.toFixed(6);
+		}
+
+		/**
+		 * 添加图片
+		 */
+		function addPic() {
+			if (!lastLocation || !lastLocation.status) {
+				api.toast({
+					msg : '暂未定位\n无法上传照片！'
+				});
+				window.setTimeout(function() {
+					api.closeWin();
+				}, 2000);
+			}
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			imageUtil.add('camera', function(ret, err) {
+				var imageInfo = {
+					userid : user.userid,
+					projectid : projectid,
+					projectname : projectname,
+					imgpath : ret.data,
+					modeltype : modelType,
+					lon : lon1,
+					lat : lat1,
+					photoaddress : lastLocation.photoaddress,
+					phototime : (new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+				};
+				imageUtil.getImageArray().push(imageInfo);
+				showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+				renderTemp('list-view', 'img-template', imageInfo, true);
+				$('#add').parent().insertAfter('#list-view li:last');
+			});
+		}
+
+		/*
+		 * 下载图片
+		 */
+		function downloadPic() {
+			imageUtil.download(function(imageData, ret, err) {
+				if (ret) {
+					if (ret.status) {
+						console.log("图片路径：" + ret.url);
+						var imageInfo = {
+							imgpath : ret.url,
+							lon : imageData.lon,
+							lat : imageData.lat,
+							phototime : imageData.phototime,
+							photoaddress : imageData.photoaddress,
+							isDel : false
+						};
+						imageUtil.getImageArray().push(imageInfo);
+						renderTemp('list-view', 'img-template', imageInfo, true);
+					} else {
+						api.toast({
+							msg : '加载图片失败！'
+						});
+					}
+				} else {
+					api.toast({
+						msg : '缓存图片失败！'
+					});
+				}
+			});
+		}
+
+		/**
+		 *删除图片
+		 */
+		function removeImg(imgPath) {
+			var imageArray = imageUtil.getImageArray();
+			var size = imageArray.length;
+			for (var i = 0; i < size; i++) {
+				var data = imageArray[i];
+				if (data.imgpath == imgPath) {
+					imageArray.remove(i);
+					break;
+				}
+			}
+			$(event.target).parents('li').remove();
+		}
+
+		function call_upload(result) {
+			if (result == '提交文本和图片') {
+				submission = 'BOTH_SUBMIT_TEXT_IMAGE';
+				formUtil.submit();
+			} else if (result == '仅提交文本') {
+				submission = 'ONLY_SUBMIT_TEXT';
+				formUtil.submit();
+			}
+		}
+
+		function call_validate() {
+			if (formUtil.validate()) {
+				select();
+			}
+		}
+
+		/**
+		 *  选择提交方式：1.提交文本和图片，2. 仅提交文本
+		 */
+		function select() {
+			$aui.dialog({
+				title : '提交确认',
+				text : '是否提交巡检项目详情?'
+			}, function(ret) {
+				if (ret.buttonIndex) {
+					var optList = ['提交文本和图片', '仅提交文本'];
+					var cbTarget = {
+						name : api.winName,
+						frameName : 'projectDetail_frm',
+						cbFn : 'call_upload'
+					};
+					$api.setStorage('optList', optList);
+					$api.setStorage('cbTarget', cbTarget);
+					api.openFrame({
+						name : 'popup_select_frm',
+						url : '../dialog/popup_select.html',
+						pagePara : api.pageParam,
+						bounces : false
+					});
+				}
+				$aui.hideDialog();
+			});
+		}
+
+		/*
+		 * 巡检任务详情回滚
+		 */
+		function call_rollback() {
+			var modelType = $api.getStorage("modelType");
+			var user = $api.getStorage('user');
+			var _userId = user.userid;
+			var _taskId = api.pageParam.taskid;
+			var _projectid = api.pageParam.projectid;
+			showlog('taskId = ' + _taskId + " _projectid = " + _projectid);
+			var opts = {
+				taskId : _taskId,
+				ID : _projectid,
+				type : modelType,
+				userId : _userId
+			};
+			api.confirm({
+				title : '重置确认',
+				msg : '确认重置该巡检任务吗？'
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					api.showProgress({
+						title : '重置中'
+					});
+					$client.getProjectItemRollback(opts, function(ret, err) {
+						if (ret) {
+							if (ret.success) {
+								window.setTimeout(function() {
+									var pageParam = {};
+									$.extend(pageParam, api.pageParam);
+									pageParam.isFinish = 'N';
+									pageParam.isrollback = "Y";
+									api.openWin({
+										name : 'xunjian_projectDetail_win',
+										url : 'projectDetail_win.html',
+										pageParam : pageParam,
+										reload : true
+									});
+									//									api.execScript({
+									//										name : 'xunjian_projectList',
+									//										frameName : 'projectListFrm',
+									//										script : 'refreshList();'
+									//									});
+								}, 200);
+							} else {
+								api.toast({
+									msg : ret.data_info
+								});
+							}
+						} else {
+							api.toast({
+								msg : err.msg
+							});
+						}
+						api.hideProgress();
+					});
+				}
+			});
+		}
+	</script>
+</html>

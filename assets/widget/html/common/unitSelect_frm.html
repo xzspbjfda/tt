@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>选择省市区</title>
+        <link rel="stylesheet" href="../../css/api.css" />
+        <!--<link rel="stylesheet" href="../../css/common.css" />-->
+        <link rel="stylesheet" href="../../css/query-list.css" />
+        <link rel="stylesheet" href="../../css/station-query.css"/>
+        <!--<link rel="stylesheet" href="../../css/aui.css"/>-->
+        <!--<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css"/>-->
+    </head>
+    <body>
+        <div class="aui-content" style="height:100%">
+            <div class="js_el_box hui-filterwrap hui-keywords-wrap">
+                <div class="cui-citys-hd js_search_box">
+                    <div class="cui-input-bd" style="display: none">
+                        <input class="cui-input-box js_kw_input" placeholder="省份/城市/区域">
+                        <span class="cui-pro-load js_load_icon" style="display: none;"><span class="cui-pro-radius"></span> <span class="cui-i cui-pro-logo"></span></span><span class="cui-focus-close js_clear_kw_input" style="display: none;">×</span>
+                    </div>
+                    <button type="button" class="cui-btn-cancle js_btn_cancle" style="display: none;">
+                        取消
+                    </button>
+                    <button type="button" class="cui-btn-cancle js_btn_confirm" style="display: none;">
+                        确定
+                    </button>
+                </div>
+                <div class="hui-filterbox js_list_box js_kw_cat_list_wrap" rel="关键字分类列表" style="height:100%;">
+                    <div class="js_kw_cat_list hui-filter-sort js_col_lv1" rel="col_1">
+                        <ul id="provSelectId" class="hhui-filter-fixed"></ul>
+                    </div>
+                    <div class="hui-filter-subsort js_kwcatlv2 js_col_remain" rel="col_2">
+                        <ul id ="citySelectId" class="hhui-filter-fixed"></ul>
+                    </div>
+                    <div class="hui-filter-unit js_col_remain js_kwcatlv3">
+                        <ul id="countrySelectId" class="hhui-filter-fixed"></ul>
+                    </div>
+                </div>
+                <div class="p10 cui-top-fixed js_topbar" style="display: none;">
+                    当前查询结果:
+                </div>
+                <section class="js_list_box js_kw_history_list js_pop_list_section_wrap" style="padding-top: 0px; display: none;" rel="关键字搜索历史模块">
+                    <p class="cui-city-novalue js_no_his_result">
+                        无搜索历史
+                    </p>
+                </section><section class="js_list_box js_kw_ajax_list js_pop_list_section_wrap" style="display: none; padding-top: 0px;" rel="关键字联想列表模块"></section>
+            </div>
+        </div>
+        <!--省份item-->
+        <script id="station-option-prov" type="text/x-dot-template">
+            {{for(var i=0, len=it.length; i < len; i++) {}}
+            <li class="js_kwcatlv1" data-menu="PROV" data-id="{{=it[i].i}}" data-title="{{=it[i].n}}" tapmode="" onclick="onSelUnit('PROV',this)">
+            {{=it[i].n}}
+            </li>
+            {{ } }}
+        </script>
+        <!--城市item-->
+        <script id="station-option-city" type="text/x-dot-template">
+            {{for(var i=0, len=it.length; i < len; i++) {}}
+            <li class="js_kw_cell_item "  data-id="{{=it[i].i}}" data-title="{{=it[i].n}}" tapmode="" onclick="onSelUnit('CITY',this)">
+            <p>
+            {{=it[i].n}}
+            </p>
+            </li>
+            {{ } }}
+        </script>
+        <!--区域item-->
+        <script id="station-option-country" type="text/x-dot-template">
+            {{for(var i=0, len=it.length; i < len; i++) {}}
+            <li  class="js_kw_cell_item" data-id="{{=it[i].i}}" data-title="{{=it[i].n}}" tapmode="" onclick="onSelUnit('COUNTRY',this)">
+            <p class="ellips_line2">
+            {{=it[i].n}}
+            </p>
+            </li>
+            {{ } }}
+        </script>
+    </body>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src="../../script/doT.min.js"></script>
+    <script src="../../script/constant.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+        //省市区数据对象
+        var unitList = null;
+        //省份列表
+        var provList = null;
+        //城市列表
+        var cityList = null;
+        //IDC中心列表
+        var idcList = null;
+        
+        //省id
+        var provId = null;
+        //省名称
+        var provStr = null;
+        var areaIdArrayList = $api.getStorage('areaIdArrayList');
+        
+        apiready = function() {
+            api.parseTapmode();
+            //从缓存中获取省份列表
+            unitList = $api.getStorage('userUnitData');
+            
+         //   showlog(getObj(unitList));
+            
+            if (unitList != undefined) {
+                provList = unitList.c;
+            }
+            if (provList != null) {
+                setOption("provSelectId", provList, "", "PROV");
+            } else {
+                //加载省份列表
+                showToast("省市区加载失败！");
+                assemblySelOpt(provKey, "provSelectId", "1");
+            }
+            api.addEventListener({
+                name : 'keyback'
+            }, function(ret, err) {
+                api.closeWin();
+            });
+        };
+        //组装省市区的下拉框
+        function setOption(selId, jsonModel, flag, type) {
+            var content = $api.byId(selId);
+            var jsonArray = new Array();
+            if (flag == "ALL") {
+                jsonArray[0] = {
+                    i : "",
+                    n : "全部",
+                    l : "",
+                    c : []
+                };
+            } else if (flag == "SEL") {
+                jsonArray[0] = {
+                    i : "",
+                    n : "请选择",
+                    l : "",
+                    c : []
+                };
+            }
+            var jsonList = []
+            Array.prototype.push.apply(jsonArray, jsonModel);
+            if(areaIdArrayList&&areaIdArrayList.length>0){
+                Array.prototype.push.apply(jsonList, getPersonOrg(jsonArray,flag));
+            }else{
+                Array.prototype.push.apply(jsonList, jsonModel);
+            }
+            var tpl = null;
+            if (type == 'PROV') {
+                tpl = $api.byId('station-option-prov').text;
+            } else if (type == 'CITY') {
+                tpl = $api.byId('station-option-city').text;
+            } else {
+                tpl = $api.byId('station-option-country').text;
+            }
+            var tempFn = doT.template(tpl);
+            content.innerHTML = tempFn(jsonList);
+            //绑定跳转事件
+            $('ul.hhui-filter-fixed li').click(function() {
+                $(this).siblings().removeClass('hui-filter-leftcrt');
+                $(this).addClass('hui-filter-leftcrt');
+            });
+        }
+
+        //获得局向下一级列表
+        function onSelUnit(type, obj) {
+            var $obj = $(obj);
+            var objId = $obj.data('id');
+            var objId2 = $obj.text();
+            var objText = $obj.data('title');
+            if (type == "PROV") {
+                //setOption("citySelectId", null, "ALL", 'CITY');
+                setOption("countrySelectId", null, "ALL", "COUNTRY");
+                assemblySelOpt(constant.CITY_LIST, "citySelectId", "2", objId);
+                console.log("countrySelectId:"+countrySelectId);
+                provId = objId;
+                provStr = objId2;
+            } else if (type == "CITY") {
+                if (objText == '全部') {
+                    provId = objId;
+                    console.log("prov1:"+provId);
+                    console.log("city1:"+cityId);
+                    console.log("obj1:"+objId);
+                    transmitUnit(provId,provStr,"","","","",provId,provStr);
+                } else {
+                    //setOption("countrySelectId", null, "ALL", 'COUNTRY');
+                    assemblySelOpt(constant.COUNTRY_LIST, "countrySelectId", "3", objId);
+                }
+            } else {
+                var unitStr = "";
+                var unitId = "";
+                var cityStr = $('#citySelectId .hui-filter-leftcrt').text();
+                var cityId = $( '#citySelectId .hui-filter-leftcrt').data('id');
+                console.log("prov2:"+provId);
+                console.log("city2:"+cityId);
+                console.log("obj2:"+objId);
+           //     alert(cityStr);
+                if (objText == '全部') {
+                    unitStr = provStr + "/" + cityStr;
+                    unitId = provId + "/" + cityId;
+                    provId = objId;
+                } else {
+                    unitStr = provStr + "/" + cityStr + "/" + objText;
+                    unitId = provId + "/" + cityId + "/" + objId;
+                }
+                console.log("prov3:"+provId);
+                console.log("city3:"+cityId);
+                console.log("obj3:"+objId);
+                console.log("unitStr:"+unitStr);
+                transmitUnit(provId, provStr, cityId, cityStr, objId, objText, unitId, unitStr);
+            }
+        }
+
+        function assemblySelOpt(skey, selId, objectType, objId) {
+            var list = null;
+            if (skey == constant.CITY_LIST) {
+                for (var prov in provList) {
+                    if (provList[prov].i == objId) {
+                        cityList = provList[prov].c;
+                        list = cityList;
+                        setOption(selId, list, "ALL", "CITY");
+                    }
+                }
+            } else if (skey == constant.COUNTRY_LIST) {
+                for (var city in cityList) {
+                    if (cityList[city].i == objId) {
+                        idcList = cityList[city].c;
+                        list = idcList;
+                        setOption(selId, list, "ALL", "COUNTRY");
+                    }
+                }
+            }
+        }
+
+        function transmitUnit(provId, provStr, cityId, cityStr, objId, objText, unitId, unitStr) {
+            var winName = api.pageParam.name;
+            var frameName = api.pageParam.frameName;
+            var param = '"' + provId + '","' + provStr + '","' + cityId + '","' + cityStr + '","' + objId + '","' + objText + '","' + unitId + '","' + unitStr + '"';
+          //  showAlert("提示","param:"+param);
+          console.log("provId4:"+provId);
+          console.log("cityId4:"+cityId);
+          console.log("objId4:"+objId);
+            var script = 'if(typeof(fillUnitData)!="undefined"){ fillUnitData(' + param + '); }';
+            if (api.pageParam.frameName != null || api.pageParam.frameName == "") {
+                api.execScript({
+                    name : api.pageParam.name,
+                    frameName : api.pageParam.frameName,
+                    script : script
+                });
+            } else {
+                api.execScript({
+                    name : api.pageParam.name,
+                    script : script
+                });
+            }
+            api.closeWin();
+        }
+        function getPersonOrg(jsonArray,flag){
+            console.log('areaIdArrayList')
+            console.log(JSON.stringify(areaIdArrayList))
+            console.log('flag:'+flag)
+            // console.log(JSON.stringify(jsonArray))
+            var jsonList = []
+            var is = []
+            if (flag == "ALL") {
+                jsonList.push(jsonArray[0])
+            }
+            for(var i=0; i < jsonArray.length; i++) {
+                var aeraIdList = []
+                for(var n=0; n < areaIdArrayList.length; n++) {
+                    // console.log(jsonArray[i].n+','+jsonArray[i].i+','+areaIdArrayList[n]+','+jsonArray[i].i.indexOf(areaIdArrayList[n]))
+                    if(jsonArray[i].i.indexOf(areaIdArrayList[n])==0){
+                        if(is.indexOf(i) == -1){
+                            is.push(i)
+                            jsonList.push(jsonArray[i])
+                            var jsonArrayId = jsonArray[i].c
+                            jsonArrayId.forEach(function(aera){  
+                                if(areaIdArrayList.indexOf(aera.i)<0){
+                                    aeraIdList.push(aera.i)
+                                }
+                            })
+                            if (flag == "ALL") {
+                                jsonList[0].i+=(jsonArray[i].i+',')
+                            }
+                        }
+                        break 
+                    }
+                }
+                // console.log(JSON.stringify(aeraIdList))
+                areaIdArrayList = areaIdArrayList.concat(aeraIdList)
+                // console.log(JSON.stringify(areaIdArrayList))
+                var jsonArray2 = jsonArray[i].c
+                if(jsonArray2.length>0){
+                    for(var j=0; j < jsonArray2.length; j++) {
+                        for(var n=0; n < areaIdArrayList.length; n++) {
+                            // console.log(jsonArray2[j].n+','+jsonArray2[j].i+','+areaIdArrayList[n]+','+jsonArray2[j].i.indexOf(areaIdArrayList[n]))
+                            if(jsonArray2[j].i.indexOf(areaIdArrayList[n])==0){
+                                if(is.indexOf(i) == -1){
+                                    is.push(i)
+                                    jsonList.push(jsonArray[i])
+                                    if (flag == "ALL") {
+                                        jsonList[0].i+=(jsonArray[i].i+',')
+                                    }
+                                }
+                                break
+                            }
+                        }
+                        var jsonArray3 = jsonArray2[j].c
+                        if(jsonArray3.length>0){
+                            for(var k=0; k < jsonArray3.length; k++) {
+                                for(var n=0; n < areaIdArrayList.length; n++) {
+                                    // console.log(jsonArray3[k].n+','+jsonArray3[k].i+','+areaIdArrayList[n]+','+jsonArray3[k].i.indexOf(areaIdArrayList[n]))
+                                    if(jsonArray3[k].i.indexOf(areaIdArrayList[n])==0){
+                                        if(is.indexOf(i) == -1){
+                                            is.push(i)
+                                            jsonList.push(jsonArray[i])
+                                            if (flag == "ALL") {
+                                                jsonList[0].i+=(jsonArray[i].i+',')
+                                            }
+                                        }
+                                        break 
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            console.log("jsonList");
+            console.log(JSON.stringify(jsonList));
+            return jsonList
+        }
+    </script>
+</html>

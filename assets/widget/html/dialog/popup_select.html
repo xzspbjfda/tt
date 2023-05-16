@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>弹出框</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <style>
+            html, body {
+                background-color: transparent !important;
+                color: rgba(0,0,0,0.5);
+                width: 100%;
+                height: 100%;
+            }
+            .transparent_class {
+                filter: alpha(opacity=50);
+                -moz-opacity: 0.5;
+                -khtml-opacity: 0.5;
+                opacity: 0.5;
+            }
+            ul {
+                background-color: transparent !important;
+            }
+            ul li {
+                font-size: 16px;
+                text-align: center;
+                height: 50px;
+                line-height: 50px;
+                border-bottom: #C5C5C5 1px solid;
+                background-color: #fff;
+            }
+            ul li:last-child {
+                margin-top: 3px;
+                border-bottom: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="popupWrapper" style="display: block">
+            <div id="shadeWrapper" class="popup-mask active"></div>
+            <div id="queryListBox" class="view agile-popup bottom">
+                <ul id="options" class="hotel-p-s-filter js_price_star_filter" style="padding:0;"></ul>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript">
+
+        apiready = function() {
+            var optList = $api.getStorage('optList');
+            var cbTarget = $api.getStorage('cbTarget');
+            optList.push('取消');
+            if (isExist(optList)) {
+                for (var i = 0, size = optList.length; i < size; i++) {
+                    $('<li>').text(optList[i]).click(function(){
+                      if($(this).text() == "仅提交文本"){
+                        api.execScript({
+                            frameName : cbTarget.frameName,
+                          script: cbTarget.cbFn + '("'+$(this).text()+'")'
+                        });
+                        api.closeFrame();
+                      }else{
+                          var permission = 'camera';
+                          var resultList = api.hasPermission({
+                            list: [permission]
+                        });
+                        if (resultList[0].granted) {
+                            // 已授权，可以继续下一步操作
+                        } else {
+                            api.confirm({
+                                msg: '应用需要您的授权才能访问相机',
+                                buttons: ['取消', '去设置']
+                            }, function(ret) {
+                                if (ret.buttonIndex == 2) {
+                                    api.requestPermission({
+                                        list: [permission],
+                                    }, function(res) {
+                                        if (res.list[0].granted) {
+                                            // 已授权，可以继续下一步操作
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                            api.execScript({
+                                frameName : cbTarget.frameName,
+                              script: cbTarget.cbFn + '("'+$(this).text()+'")'
+                            });
+                            api.closeFrame();
+                      }
+                    }).appendTo('#options');
+                }
+                $('<li>').text('取消').click(function(){
+                    api.closeFrame();
+                });
+            }
+            $('#popupWrapper').show('slow');
+            $('#shadeWrapper').click(function() {
+                api.closeFrame();
+            });
+        };
+    </script>
+</html>

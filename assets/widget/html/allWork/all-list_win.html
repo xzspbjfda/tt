@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css">
+        <link rel="stylesheet" type="text/css" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title" style="">
+                代办工单
+            </div>
+            <a id="menuBtn" class="aui-pull-right" tapmode onclick="showPopup()"> <span class="aui-iconfont aui-icon-search"></span> </a>
+        </header>
+
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../bill/script/bill-list.js"></script>
+
+    <script>
+    apiready = function() {
+      var header = $api.byId('header');
+      $api.fixIos7Bar(header);
+      var pos = $api.offset(header);
+      api.parseTapmode();
+      api.openFrame({
+          name : 'all-list_frm',
+          url : 'all-list_frm.html',
+          rect : {
+              x : 0,
+              y : pos.h,
+              w : 'auto',
+              h : 'auto'
+          },
+          bounces : true,
+          opaque : true,
+          reload : true,
+          pageParam : api.pageParam,
+          vScrollBarEnabled : false
+      });
+    }
+
+    // 打开站址查询页面
+    function showPopup() {
+        var query_setting = {
+            billType : true,
+            winName : api.winName,
+            frameName : 'all-list_frm',
+            callback : 'cb_queryStationList'
+        };
+        api.openFrame({
+            name : 'popup_query_frm',
+            url : '../dialog/popup_station_query.html',
+            rect : {
+                x : 0,
+                y : 0,
+                w : 'auto',
+                h : 'auto'
+            },
+            bounces : false,
+            pageParam : query_setting
+        });
+    }
+
+    </script>
+</html>

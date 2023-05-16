@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>人工派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+    <link rel="stylesheet" type="text/css" href="../css/standBillRevertDetail.css" />
+    <style>
+        .repairinput {
+            background-color: #FFFFFF;
+            width: 100%;
+            height: 100%;
+            line-height: 40px;
+        }
+
+        .saomabtn {
+            width: 100px;
+            text-align: center;
+            font-size: 14px;
+            background-color: #3779d0;
+            border: none;
+            color: #fff;
+            display: inline-block;
+            border-radius: 3px;
+            padding: 5px 0;
+            margin-top: 4px;
+        }
+
+        .cardCon2 {
+            width: 60%;
+            float: left;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 0px;
+            margin-top: 10px;
+        }
+
+        .cardDiv {
+            width: 100%;
+            font-size: 14px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .removebtn {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            width: 20px !important;
+            height: 20px;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script id="listView-template" type="text/x-dot-template">
+        {{for(var i=0, len=it.length; i< len; i++) { }}
+        <div class="cardDiv">
+            <div class="cardLabel">
+                <font color="red">*</font>{{=it[i].col_name}}:</div>
+            <div class="cardCon">
+            {{?it[i].col_data_type == 'DATE'}}
+            <input name="{{=it[i].table_col}}" type="datetime-local"  {{=it[i].is_must_val=='是'?'class="required" data-valid="actualfill"':''}} data-error="请填写{{=it[i].col_name}}!" value="" style="height:35px;font-size:12px;">
+            {{?? it[i].col_rule=='ENUM'}}
+              <select  name="{{=it[i].table_col}}" class="mjselect {{=it[i].is_must_val=='是'?'required':''}} " {{=it[i].is_must_val=='是'?' data-valid="actualfill"':''}} data-error="请选择{{=it[i].col_name}}！" style="line-height:16px;">
+                {{
+                  var valueListstring=it[i].limit_value;
+                  var valueList=valueListstring.split(",");
+                  for(var z=0, lens=valueList.length; z < lens; z++) {}}
+                <option value="{{=valueList[z]}}">{{=valueList[z]}}</option>
+                {{ } }}
+              </select>
+            {{??}}
+            <input name="{{=it[i].table_col}}" type="text" {{=it[i].is_must_val=='是'?'class="required" data-valid="actualfill"':''}} data-error="请填写{{=it[i].col_name}}！" value="" style="height:35px;">
+            {{?}}
+          </div>
+      </div>
+      {{ } }}
+    </script>
+    <div id="wrap">
+        <form class="submitForm">
+            <div id="listView" style="overflow: auto; margin-bottom: 55px;"></div>
+        </form>
+          <footer style="height: 50px;">
+              <div class="cardButtonDiv">
+                  <button class="cancelBtn" onclick="closeWin()">取消</button>
+                  <button class="okBtn" onclick="creatGenerationOpt()">保存</button>
+              </div>
+          </footer>
+    </div>
+</body>
+<script src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/debug.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/utils/FormUtil.js"></script>
+<script>
+    apiready = function() {
+        // 获取工单发布字段信息
+        var opts = {};
+        $client.accessOrderTemplate(opts, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                  renderTemp('listView', 'listView-template', ret.sendlist,
+                        true);
+                }else {
+                    api.toast({
+                        msg: ret.errorMsg,
+                        location: 'middle'
+                    });
+                }
+            }else{
+              api.toast({
+                  msg: ret.errorMsg,
+                  location: 'middle'
+              });
+            }
+        });
+    }
+
+    function creatGenerationOpt() {
+        var opts = {};
+        var user = $api.getStorage('user');
+        var userId = user.userid;
+        $('.submitForm').find("input,select,textarea").each(function() {
+          var name = $(this).attr('name');
+          var val =  $(this).val();
+          opts[name] = val;
+        });
+        if(opts.TASK_NAME == "" || opts.TASK_SCORE == "" || opts.COL_42 =="" || opts.APPRAISER =="" || opts.PRIORITY == "" || opts.REMARK == "" || opts.SEND_ORDER_TYPE == ""){
+          api.toast({
+              msg: "填写内容有空...",
+              location: 'middle'
+          });
+          return;
+        }
+        opts.site_id = api.pageParam.stationId;
+        opts.site_name = api.pageParam.stationName;
+        opts.site_code = api.pageParam.st_code;
+        api.showProgress({
+          title : '处理中',
+          modal : true,
+        });
+        $client.creatZndwSendOrders(opts, function(ret, err) {
+              if (ret) {
+                    if (ret.success) {
+                        api.hideProgress();
+                        api.toast({
+                            msg: "人工建单成功",
+                            duration: 1500,
+                            location: 'bottom'
+                        });
+                        window.setTimeout(function() {
+                            api.closeWin();
+                        }, 2000);
+                    } else {
+                        api.toast({
+                            msg: ret.errorMsg,
+                            location: 'bottom'
+                        });
+                        api.hideProgress();
+                    }
+                } else {
+                    api.toast({
+                        msg: ret.errorMsg,
+                        location: 'bottom'
+                    });
+                    api.hideProgress();
+                }
+            });
+       }
+
+
+    function closeWin() {
+        api.closeWin();
+    }
+</script>
+</html>

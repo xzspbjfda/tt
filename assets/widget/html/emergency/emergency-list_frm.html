@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>应急物资列表</title>
+       <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+        <style>
+            body.active{
+                background : url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                 var model = it[i];
+                var status = model.status;
+                var billStatusColor;
+                if(status == "在库"){
+                billStatusColor = "#22AADD";
+                }else if(status == "2"){
+                billStatusColor = "#fb8536";
+                }else if(status == "3"){
+                billStatusColor = "#B372F6";
+                }else if(status == "3"){
+                billStatusColor = "#B372F6";
+                }else if(status == "3"){
+                billStatusColor = "#AED684";
+                }else if(status == "6"){
+                billStatusColor = "#7676BA";
+                }else if(status == "7"){
+                billStatusColor = "#953A6C";
+                }
+
+
+                }}
+                <li tapmode="active"    onclick="openRest('{{=model.id!=null?model.id:""}}','{{=model.createPerson!=null?model.createPerson:""}}','{{=model.createOrg!=null?model.createOrg:""}}','{{=model.createTime!=null?model.createTime:""}}','{{=model.province!=null?model.province:""}}','{{=model.city!=null?model.city:""}}','{{=model.county!=null?model.county:""}}','{{=model.areaPath!=null?model.areaPath:""}}','{{=model.sn!=null?model.sn:""}}','{{=model.type!=null?model.type:""}}','{{=model.name!=null?model.name:""}}','{{=model.vender!=null?model.vender:""}}','{{=model.model!=null?model.model:""}}','{{=model.unit!=null?model.unit:""}}','{{=model.workStatus!=null?model.workStatus:""}}','{{=model.maintainCycle!=null?model.maintainCycle:""}}','{{=model.contactPerson!=null?model.contactPerson:""}}','{{=model.contactPersonTelephone!=null?model.contactPersonTelephone:""}}','{{=model.productionDate!=null?model.productionDate:""}}','{{=model.status!=null?model.status:""}}','{{=model.supportOrg!=null?model.supportOrg:""}}','{{=model.oilNum!=null?model.oilNum:""}}','{{=model.gpsNum!=null?model.gpsNum:""}}','{{=model.oilWear!=null?model.oilWear:""}}','{{=model.fuelCategory!=null?model.fuelCategory:""}}','{{=model.phase!=null?model.phase:""}}','{{=model.surfacePhoto!=null?model.surfacePhoto:""}}','{{=model.oilnumPhoto!=null?model.oilnumPhoto:""}}','{{=model.gpsnumPhoto!=null?model.gpsnumPhoto:""}}','{{=model.remark!=null?model.remark:""}}','{{=model.terminalPhone!=null?model.terminalPhone:""}}','{{=model.oilRight !=null?model.oilRight :""}}','{{=model.oilPower !=null?model.oilPower :""}}')">
+                <div class="top-title">{{=model.type!=null?model.type:''}}<span  style="color:{{=billStatusColor}}">{{=model.status!=null?model.status:''}}</span></div>
+                <div class="cj-l-into">物资编码：{{=model.sn!=null?model.sn:''}}</div>
+                <div class="cj-l-into">物资类型：{{=model.name!=null?model.name:''}}</div>
+                </li>
+                {{  } }}
+            </script>
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite0.js"></script>
+     <script>
+     var  listView;
+     apiready = function() {
+       var user=$api.getStorage('user');
+       listView = new C.ApiListView({
+    			fn : $client.getEmergencyList,
+    			listName : 'rows',
+          userName:user.loginname
+  		  });
+      	listView.refresh();
+     }
+
+     /**
+		 *刷新页面
+		 */
+		function refreshList() {
+			listView.refresh();
+		}
+
+     function openRest(id, createPerson,createOrg,createTime,province,
+       city,county,areaPath,sn,type,name,vender,model,unit,workStatus,maintainCycle,
+       contactPerson,contactPersonTelephone,productionDate,status,supportOrg,
+       oilNum,gpsNum,oilWear,fuelCategory,phase,surfacePhoto,oilnumPhoto,gpsnumPhoto,remark,terminalPhone,oilRight,oilPower) {
+
+    	var opt = {
+        id:id,
+        createPerson:createPerson,
+        createOrg:createOrg,
+        createTime:createTime,
+        province:province,
+        city:city,
+        county:county,
+        areaPath:areaPath,
+        sn:sn,
+        type:type,
+        name:name,
+        vender:vender,
+        model:model,
+        unit:unit,
+        workStatus:workStatus,
+        maintainCycle:maintainCycle,
+        contactPerson:contactPerson,
+        contactPersonTelephone:contactPersonTelephone,
+        productionDate:productionDate,
+        status:status,
+        remark:remark,
+        supportOrg:supportOrg,
+        oilNum:oilNum,
+        gpsNum:gpsNum,
+        oilWear:oilWear,
+        fuelCategory:fuelCategory,
+        phase:phase,
+        surfacePhoto:surfacePhoto,
+        oilnumPhoto:oilnumPhoto,
+        gpsnumPhoto:gpsnumPhoto,
+        terminalPhone:terminalPhone,
+        oilRight:oilRight,
+        oilPower:oilPower
+    	};
+
+    	api.openWin({
+    		name : 'emergency-detail_win',
+    		url : 'emergency-detail_win.html',
+    		opaque : true,
+    		bounces : false,
+    		reload : true,
+    		pageParam : opt,
+    		vScrollBarEnabled : false
+    	});
+    }
+
+    function cb_queryBillList(opts) {
+
+    console.log(JSON.stringify(opts));
+    for (var i in opts) {
+      if(opts[i]==""){
+        delete opts[i];
+      }
+    }
+
+      console.log(JSON.stringify(opts));
+
+      api.closeFrame({
+  			name : 'standBillMenu'
+  		});
+    	listView.setQueryOptions(opts);
+    	listView.refresh();
+    }
+
+     </script>
+</html>

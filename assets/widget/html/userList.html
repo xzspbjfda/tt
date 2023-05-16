@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>用户列表</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <style>
+    	html,body,#wrap{
+            background: transparent;
+        }
+    	.shadow{
+		    position: absolute;
+		    width: 100%;
+		    height: 100%;
+		    left: 0;
+		    top: 0;
+		    z-index: 1;
+		    background:#333;
+		    opacity:0.6;
+		    filter:alpha(opacity=60);
+		}
+		.personWin{
+        	width:100%;
+        	text-align:center;
+        	background-color:#f2f2f2;
+        }        
+        .userList{
+        	height:50px;
+        	line-height:50px;
+        	font-size:18px;
+        	width:100%;
+        }
+        .hov-userList{
+        	background-color:#D0D0D0;
+        	color:#007AFF;
+        }
+        .personDivCls{
+        	width:100%;
+        }        
+        .hotelFilter{
+		    position: fixed;
+		    z-index: 300;
+		    bottom: 0;
+		    width: 100%;
+		    box-sizing: border-box;
+		    background: #efefef;
+		}
+    </style>
+</head>
+<body>
+	<!--设置遮罩层-->
+	<div id="shadowId" class="shadow" onclick="api.closeFrame({name: 'userList'});"></div>
+    <div class="hotelFilter">
+    	<div id="personDiv" class="personDivCls">
+    		<div class="personWin">
+    			<div class="userList" tapmode="hov-userList" style="border-bottom:solid 1px #E0E0E0;" onclick="showUserInfo('')">
+					userName
+				</div>
+    		</div>
+    	</div>
+    	<script id="personDiv-template" type="text/x-dot-template">
+    		<div class="personWin">		        			
+				{{ for(var i=0, len=it.length; i < len; i++) {}}
+					{{? i<(len-1) }}                    
+	    				<div class="userList" tapmode="hov-userList" style="border-bottom:solid 1px #E0E0E0;" onclick="showUserInfo('{{=it[i].userId}}')">
+	    					{{=it[i].userName}}
+	    				</div>
+    				{{?}}
+    				{{? i>=(len-1) }}
+    					<div class="userList" tapmode="hov-userList" onclick="showUserInfo('{{=it[i].userId}}')">
+	    					{{=it[i].userName}}
+	    				</div>
+    				{{?}} 	                 	
+				{{ } }}		                    
+    		</div>              
+      	</script>
+    </div>
+</body>
+<script type="text/javascript" src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/debug.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/navigate.js"></script>
+<script type="text/javascript" src="../script/theme.js"></script>
+<script type="text/javascript">
+apiready = function(){
+	var userJsonArr = $api.strToJson(api.pageParam.userJsonArr);
+	var content = $api.byId('personDiv');
+    var tpl = $api.byId('personDiv-template').text;
+    var tempFn = doT.template(tpl);
+    content.innerHTML = tempFn(userJsonArr);               
+};
+function showUserInfo(userId){
+ 	openPage_person(userId);
+ 	api.closeFrame({
+ 		name:'userList'
+     });
+}
+</script>
+</html>

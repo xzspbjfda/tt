@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>告警列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" type="text/css" href="css/alarm-listCon.css" />
+        <style>
+            body.active{
+                background : url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                var model = it[i];
+                var lev = model.alarmlevel;
+                var levName="";
+                var levColor = "";
+                if(lev == "1"){
+                levName = "一级";
+                levColor = "#FF3333";
+                }else if(lev == "2"){
+                levName = "二级";
+                levColor = "#FFCC33";
+                }else if(lev == "3"){
+                levName = "三级";
+                levColor = "#3300FF";
+                }else if(lev == "4"){
+                levName = "四级";
+                levColor = "#00FF00";
+                }
+                }}
+                <li tapmode="active"  onclick="openAlarmDetail('{{=model.id}}','{{=model.alarmlevel}}','{{=model.st_id}}','{{=model.faultid}}');">
+                <div class="cj-l-title">{{=model.st_name}}<span style="color:{{=levColor}}">{{=levName}}</span></div>
+                <div class="cj-l-into">{{=model.devicename}},告警次数:{{=model.times}}<div class="cj-l-date"><span>{{=model.areaname}}</span></div></div>
+                <div class="cj-l-into">原因:{{=model.cause}}<div class="cj-l-date"><span>{{=model.firstalarmtime}}</span></div></div>
+                </li>
+                {{  } }}
+            </script>
+            <script id="alarmList-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                var lev = it[i].alarmlevel;
+                var levName="";
+                var levColor = "";
+                if(lev == "1"){
+                levName = "一级";
+                levColor = "#FF3333";
+                }else if(lev == "2"){
+                levName = "二级";
+                levColor = "#FFCC33";
+                }else if(lev == "3"){
+                levName = "三级";
+                levColor = "#3300FF";
+                }else if(lev == "4"){
+                levName = "四级";
+                levColor = "#00FF00";
+                }
+                }}
+                <li>
+                <a tapmode="active" alarmId="{{=it[i].id}}" stationId="{{=it[i].st_id}}" alarmlevel="{{=it[i].alarmlevel}}" faultid="{{=it[i].faultid}}" onclick="openAlarmDetail(this)">
+                {{? it[i].devicetype == '01' }}
+                <img src="../image/dev_gaoyapeidian.png" />
+                {{?}}
+                {{? it[i].devicetype == '02'}}
+                <img src="../image/dev_diyapeidian.png" />
+                {{?}}
+                {{? it[i].devicetype == '03' }}
+                <img src="../image/dev_jiaoliupeidianping.png" />
+                {{?}}
+                {{? it[i].devicetype == '04' }}
+                <img src="../image/dev_zhiliupeidianping.png" />
+                {{?}}
+                {{? it[i].devicetype == '05' }}
+                <img src="../image/dev_chaiyoufadianjizu.png" />
+                {{?}}
+                {{? it[i].devicetype == '06' }}
+                <img src="../image/dev_kaiguandianyuan.png" />
+                {{?}}
+                {{? it[i].devicetype == '07' }}
+                <img src="../image/dev_xudianchizu.png" />
+                {{?}}
+                {{? it[i].devicetype == '08' }}
+                <img src="../image/dev_upsshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '09' }}
+                <img src="../image/dev_upspeidianping.png" />
+                {{?}}
+                {{? it[i].devicetype == '10' }}
+                <img src="../image/dev_upsdianchi.png" />
+                {{?}}
+                {{? it[i].devicetype == '11' }}
+                <img src="../image/dev_240v_zhiliuxitong.png" />
+                {{?}}
+                {{? it[i].devicetype == '12' }}
+                <img src="../image/dev_zhuanyongkongtiao.png" />
+                {{?}}
+                {{? it[i].devicetype == '13' }}
+                <img src="../image/dev_zhongyangkongtiao.png" />
+                {{?}}
+                {{? it[i].devicetype == '14' }}
+                <img src="../image/dev_zhuanyongkongtiao.png" />
+                {{?}}
+                {{? it[i].devicetype == '15' }}
+                <img src="../image/dev_putongkongtiao.png" />
+                {{?}}
+                {{? it[i].devicetype == '16' }}
+                <img src="../image/dev_zhinengdianbiao.png" />
+                {{?}}
+                {{? it[i].devicetype == '17' }}
+                <img src="../image/dev_menjinxitong.png" />
+                {{?}}
+                {{? it[i].devicetype == '18' }}
+                <img src="../image/dev_jifang_jizhanhuanjing.png" />
+                {{?}}
+                {{? it[i].devicetype == '19' }}
+                <img src="../image/dev_jiankongshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '20' }}
+                <img src="../image/dev_taiyangneng_fengnengshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '21' }}
+                <img src="../image/dev_ranqilunjifadianjizu.png" />
+                {{?}}
+                {{? it[i].devicetype == '22' }}
+                <img src="../image/dev_fenglifadianshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '23' }}
+                <img src="../image/dev_zhinengtongfengxitong.png" />
+                {{?}}
+                {{? it[i].devicetype == '24' }}
+                <img src="../image/dev_xinfengshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '25' }}
+                <img src="../image/dev_rejiaohuanshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '26' }}
+                <img src="../image/dev_reguanshebei.png" />
+                {{?}}
+                {{? it[i].devicetype == '27' }}
+                <img src="../image/dev_xudianchiwenkonggui.png" />
+                {{?}}
+                {{? it[i].devicetype == '28' }}
+                <img src="../image/dev_fangleishebei_fangleixiang.png" />
+                {{?}}
+                {{? it[i].devicetype == '29' }}
+                <img src="../image/dev_ranliaodianchi.png" />
+                {{?}}
+                {{? it[i].devicetype == '30' }}
+                <img src="../image/dev_mokuaihua_ups.png" />
+                {{?}}
+                {{? it[i].devicetype == '31' }}
+                <img src="../image/dev_240v_zhiliuxitong.png" />
+                {{?}}
+                {{? it[i].devicetype == '32' || it[i].devicetype == '37' }}
+                <img src="../image/dev_tieta.png" />
+                {{?}}
+                {{? it[i].devicetype == '38' || it[i].devicetype == null || it[i].devicetype == '33' }}
+                <img src="../image/dev_gaoyapeidian.png" />
+                {{?}}
+                {{? it[i].devicetype == '180' || it[i].devicetype == '181' || it[i].devicetype == '182' || it[i].devicetype == '183' || it[i].devicetype == '184' || it[i].devicetype == '185' }}
+                <img src="../image/dev_jifang_jizhanhuanjing.png" />
+                {{?}}
+                <span style="float: right;background-color:{{=levColor}};color:#ffffff;border-radius: 5px;">{{=levName}}</span>
+                <h3>{{=it[i].st_name}}
+                </h3>
+                <div class="info clearfix">
+                <span style="font-size: 12px;"><h4>设备名称：</h4></span><span style="font-size: 12px;">{{=it[i].devicename}}</span>
+                <br><span style="font-size: 12px;"><h4>所属区域：</h4></span><span style="font-size: 12px;">{{=it[i].areaname}}</span>
+                <img src="../image/arrow.png" alt="" style="width:20px;height:20px;float: right;padding-top: 15px;" />
+                <br><span style="font-size: 12px;"><h4>首次告警时间：</h4></span><span style="font-size: 12px;">{{=it[i].firstalarmtime}}</span>
+                <br><span style="font-size: 12px;"><h4>末次告警时间：</h4></span><span style="font-size: 12px;">{{=it[i].lastalarmtime}}</span>
+                <br><span style="font-size: 12px;"><h4>告警次数：</h4></span><span style="font-size: 12px;">{{=it[i].times}}</span>
+                <br><span style="font-size: 12px;"><h4>告警内容：</h4></span><span style="font-size: 12px;">{{=it[i].cause}}</span>
+                </div>
+                </a>
+                </li>
+                {{ } }}
+            </script>
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="script/alarm-listCon.js"></script>
+</html>

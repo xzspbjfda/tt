@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>title</title>
+        <link rel="stylesheet" type="text/css" href="../../../css/aui.css"/>
+        <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            body {
+                background-color: #fff;
+                height: 100%;
+            }
+            .Fj_style{
+              width: 80%;
+              margin: 0 auto;
+            }
+            .Fj_txt{
+              width: 100%;
+              height: 30px
+              text-align: center;
+              position: absolute;
+              z-index: 10000;
+              color: #000;
+              font-size: 14px;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title">
+                附件上传
+            </div>
+            <a class="aui-pull-right" tapmode onclick="select()"> <span class="aui-iconfont aui-icon-upload"></span> </a>
+        </header>
+        <script id="img-template" type="text/x-dot-template">
+            <li class="aui-list-view-cell aui-img aui-col-xs-4">
+            <img class="Fj_style" src="../../../image/FJ.png">
+            <div class="Fj_txt">{{=it.name}}</div>
+            </li>
+        </script>
+        <ul id="list-view" class="aui-list-view aui-grid-view">
+            <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="call_getPic(this)">
+                <img class="aui-img-object" src="../../../image/icons/png/icon_addpic_focused.png">
+            </li>
+        </ul>
+    </body>
+    <script type="text/javascript" src="../../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../../script/api.js"></script>
+    <script type="text/javascript" src="../../../script/aui.js"></script>
+    <script type="text/javascript" src="../../../script/config.js"></script>
+    <script type="text/javascript" src="../../../script/common.js"></script>
+    <script type="text/javascript" src="../../../script/debug.js"></script>
+    <script type="text/javascript" src="../../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../../script/xunjian_db.js"></script>
+    <script type="text/javascript" src="../../../script/utils/ImageUtil.js"></script>
+    <script type="text/javascript">
+        var user, lastLocation;
+        var billModel;
+        apiready = function() {
+            initHeader();
+            lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+            billModel = $api.getStorage('billModel');
+//          console.log("id:"+billModel.businesstype);
+            if (!lastLocation) {
+                $aui.toast({
+                    msg : '暂未定位\n无法上传照片！',
+                    style : 'fail'
+                });
+                window.setTimeout(function() {
+                    api.closeWin();
+                }, 2000);
+            } else {
+                user = $api.getStorage('user');
+                db_init();
+                imageUtil.init({
+                    uploadFn : $client.uploadBillImage,
+                    saveFn : db_saveBillPic
+                });
+//              select_add();
+            }
+        };
+        /**
+         * 展示图片信息，数据源： data
+         */
+        function showPic(data) {
+            var content = $api.byId('list-view');
+            var tpl = $api.byId('img-template').text;
+            var tempFn = doT.template(tpl);
+            $('#addPic').before(tempFn(data));
+            $new = $('#addPic').prev();
+            $new.css('height', $new.css('width'));
+        }
+
+
+
+
+ function call_getPic(e) {
+
+                var curentTime2 = CurentTime2();
+                $api.setStorage('newtime', curentTime2);
+                var lon1=displaynum(lastLocation.lon);
+                var lat1=displaynum(lastLocation.lat);
+                $api.setStorage('lon1', lon1);
+          			$api.setStorage('lat1', lat1);
+
+                var fileBrowser = api.require('fileBrowser');
+                ////////////////////////////////////////////
+                var user=$api.getStorage('user');
+                var newtime = $api.getStorage('newtime');
+                var lon1 = $api.getStorage('lon1');
+                var lat1 = $api.getStorage('lat1');
+
+                fileBrowser.open(function(ret, err) {
+                  fileBrowser.close();
+
+                  if(ret.url){
+                    try {
+                     url = ret.url;
+                     var filename1 = ret.url.split("/");
+             				 var filename = filename1[filename1.length-1];
+                     var imgModel = {
+                         userid : user.userid,
+                         billid : api.pageParam.billId,
+                         businessid : billModel.businesstype,
+                         stationname : api.pageParam.stationname,
+                         billsn : api.pageParam.billSn,
+                         filePath : url,
+                         phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+                         lon : lon1,
+                         lat : lat1,
+                         name:filename,
+                         photoaddress : lastLocation.photoaddress
+                     };
+                     imageUtil.getImageArray().push(imgModel);
+                     setTimeout(function(){
+                       showPic(imgModel);
+                     }, 1000);
+                    } catch(e) {
+                     console.log(e);
+                    }
+                  }
+                });
+
+        }
+       //保留6位小数点
+       function displaynum(x){
+         var num = new Number(x);
+         return  num.toFixed(6);
+       }
+
+
+        /**
+         *  选择上传方式：1.保存到本地缓存，2. 直接上传到服务器
+         */
+        function select() {
+            var optList = ['直接上传到服务器'];
+            var cbTarget = {
+                name : api.winName,
+                frameName : 'billFjDetail_frm',
+                cbFn : 'call_upload'
+            };
+            $api.setStorage('optList', optList);
+            $api.setStorage('cbTarget', cbTarget);
+            api.openFrame({
+                name : 'popup_select_frm',
+                url : '../../dialog/popup_select.html',
+                pagePara : api.pageParam
+            });
+        }
+
+        /**
+         *  选择获取图片方式：1.拍照，2. 从手机相册选择
+         */
+        function select_add() {
+            var optList = ['拍照', '从手机相册选择'];
+            var cbTarget = {
+                name : api.winName,
+                frameName : 'billPicDetail_frm',
+                cbFn : 'call_getPic'
+            };
+            $api.setStorage('optList', optList);
+            $api.setStorage('cbTarget', cbTarget);
+            api.openFrame({
+                name : 'popup_select_frm',
+                url : '../../dialog/popup_select.html',
+                pagePara : api.pageParam,
+                bounces : false
+            });
+        }
+
+        /**
+         *  popup_select.html页面的回调函数
+         */
+        function call_upload(result) {
+            if (result === '保存到本地缓存') {
+                saveLocal();
+            } else if (result === '直接上传到服务器') {
+                upload();
+            }
+        }
+
+        /**
+         *  保存到本地缓存
+         */
+        function saveLocal() {
+            imageUtil.save(function(num) {
+                //刷新首页的图片上传模块头标
+                api.execScript({
+                    name : 'home_win',
+                    frameName : 'footer_tab_1',
+                    script : 'setofflineUploadCount();'
+                });
+                var length = imageUtil.getImageArray().length;
+                if (num == length) {
+                    $('#list-view li:not(:last)').empty();
+                    window.setTimeout(function() {
+                        api.closeWin();
+                    }, 1100);
+                } else if (num && num < length) {
+                    $('#list-view li:lt(' + num + ')').remove();
+                }
+            });
+        }
+
+        /*
+         * 上传服务器
+         */
+        function upload() {
+            imageUtil.upload(function(num) {
+                if (num) {
+                    setTimeout(function() {
+                        api.closeWin();
+                    }, 1100);
+                }
+            });
+        }
+
+        function back() {
+            if (imageUtil.getImageArray().length > 0) {
+                api.confirm({
+                    title : '关闭提醒',
+                    msg : '当前照片还没上传',
+                    buttons : [ '返回', '取消']
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 1) {
+                        api.closeFrame();
+                    }
+                });
+            } else {
+                api.closeFrame();
+            }
+        }
+    </script>
+</html>

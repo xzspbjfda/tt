@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>巡检任务列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+		<style>
+			body.active {
+				background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+			}
+			.greenPic {
+				/*<img src="../../image/dev_chaiyoufadianjizu.png" width="50px" height="50px"/>*/
+			}
+			.redPic {
+				background-image: url(../../image/red_sign.png);
+			}
+			/*
+			 * 画一个圆角的文本背景
+			 */
+			.curStatus {
+				width: 45px;
+				background-color: #3AAA3F;
+				font-size: 12px;
+				padding: 3px;
+				text-align: center;
+				color: white;
+				border-radius: 7px;
+				margin-top: 6px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="" class="aui-content">
+			<ul class="ccssoft_list" id="listView"></ul>
+		</div>
+	</body>
+</html>
+<script id="listView-template" type="text/x-dot-template">
+	{{ for(var i=0, len=it.length; i < len; i++) {
+	var model=it[i];
+	var time= model.check_month;
+	if(time!=null&&time!=''){
+	time=time.replace(/(.{4})/g,'$1\年')+'月';
+	}else{
+	time='';
+	}
+	}}
+	<input type="hidden" id="getobj" value="{{=model}}" />
+	<li tapmode="active" onclick='openWaitTask("{{=model.create_time?model.create_time:''}}","{{=model.create_oper?model.create_oper:''}}","{{=model.project_id?model.project_id:''}}","{{=model.station_name?model.station_name:''}}","{{=model.work_id?model.work_id:''}}","{{=model.cityname?model.cityname:''}}","{{=model.station_id?model.station_id:''}}", "{{=model.countyname?model.countyname:''}}", "{{=model.provincename?model.provincename:''}}" , "{{=model.resultcount?model.resultcount:''}}", "{{=model.totalcount?model.totalcount:''}}", "{{=model.st_deviceid?model.st_deviceid:''}}", "{{=model.st_sitesource?model.st_sitesource:''}}","{{=model.check_object?model.check_object:''}}","{{=model.repair_company?model.repair_company:''}}","{{=model.base_name?model.base_name:''}}","{{=model.check_status?model.check_status:''}}","{{=model.resultid?model.resultid:''}}","{{=model.st_lon?model.st_lon:''}}","{{=model.st_lat?model.st_lat:''}}","{{=model.st_deviceid?model.st_deviceid:''}}","{{=model.signinstate?model.signinstate:''}}");'>
+	<div class="liTop">
+			
+	{{? it[i].check_object == '3'}}
+		<div class=""  style="margin-left: 3px;width: 75%;font-weight:bold;float: left;">{{=it[i].station_name != null ? it[i].station_name:""}}</div>
+	{{??}}
+		<div class="" style="margin-left: 3px;width: 75%;font-weight:bold;float: left;">{{=it[i].base_name != null ? it[i].base_name:""}}</div>
+	{{?}}
+
+	{{? it[i].signinstate == '0'}}
+		<div class="" style="margin-left: 85%;color: #00ff00;">未签到</div>
+	{{?? it[i].signinstate == '1'}}
+		<div class="" style="margin-left: 85%;color: #00ff00;">已签到</div>
+	{{?}}
+	
+	</div>
+	<div class="liDown" style="margin-top: 10px;">
+	<div class="liDownPerson" style="border-right: transparent;width: 50%;margin-left: 3px;">执行时间:{{=time}}</div>
+	<div class="liDownPerson" style="border-right: transparent;width: 50%;margin-left: 3px;">代维公司:{{=it[i].repair_company}}</div>
+	{{? api.pageParam.start_status == '0' }}
+	<div class="liDownBegin" style="float: right;width: 25%">进度:{{=it[i].resultcount != null ? it[i].resultcount:""}}/{{=it[i].totalcount != null ? it[i].totalcount:""}}</div>
+	{{?}}
+	</div>
+	</li>
+	{{ } }}
+</script>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+	var listView = null;
+	/**
+	 *打开待办任务的详情
+	 * readyStartTime 计划开始时间
+	 */
+	function openWaitTask(createtime, createid, projectid, stationname, workid, cityname, stationid, countyname, provincename, resultcount, totalcount, st_deviceid, st_sitesource, check_object, repair_company, base_name, checkStatus, resultid,st_lon,st_lat,st_deviceid,signinstate) {
+		var status = api.pageParam.start_status;
+		var pageParam = {
+			st_lon : st_lon,
+			st_lat : st_lat,
+			createid : createid,
+			projectid : projectid,
+			stationid : stationid,
+			stationname : stationname,
+			st_deviceid : st_deviceid,
+			signinstate : signinstate
+		}
+		if (status == '1' && signinstate == '0') {
+			//提示需要签到
+			api.confirm({
+		    title : '确认提示',
+		    msg : '请先至签到页面进行签到'
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					//跳转到签到页面
+					api.openWin({
+						name : 'checkSignIn_win',
+						url : 'checkSignIn_win.html',
+						bounces : false,
+						rect : {
+							x : 0,
+							y : 0,
+							w : 'auto',
+							h : 'auto'
+						},
+						reload : true,
+						pageParam : pageParam
+					});
+				}
+			});
+		}else if (signinstate == '1' && status == '1') {
+			api.confirm({
+			title : '确认提示',
+			msg : '确认开始现场检查吗？'
+		}, function(ret) {
+			if (ret.buttonIndex == 2) {
+				showMask("加载中...");
+				$client.startCheck({
+					createid : createid,
+					createtime : createtime,
+					projectid : projectid,
+					checkobject : check_object
+				}, function(ret, err) {
+					hideMask();
+					if (ret) {
+						if (ret.success) {
+							api.execScript({
+								name : "check_list_win",
+								frameName : 'unfinishList',
+								script : 'listView.refresh();'
+							});
+							api.execScript({
+								name : "check_list_win",
+								frameName : "unstartList",
+								script : 'listView.refresh();'
+							});
+						} else {
+							showToast(ret.data_info);
+						}
+					} else {
+						showToast(err.msg);
+					}
+				});
+			}
+		});
+		}else {
+			if (status == '0' && checkStatus == '1') {
+				api.pageParam.resultid = resultid;
+				if (check_object == "3") {
+					api.pageParam.itemname = stationname;
+				} else {
+					api.pageParam.itemname = base_name;
+				}
+				api.openFrame({
+					name : 'checkSign_frm',
+					url : 'check_sign_win.html',
+					bounces : false,
+					pageParam : api.pageParam
+				});
+			} else {
+				var opt = {
+					createtime : createtime,
+					createid : createid,
+					projectid : projectid,
+					stationName : stationname,
+					workid : workid,
+					st_deviceid : st_deviceid,
+					st_sitesource : st_sitesource,
+					cityname : cityname,
+					stationid : stationid,
+					countyname : countyname,
+					provincename : provincename,
+					start_status : api.pageParam.start_status,
+					editEnabled : true,
+					resultcount : resultcount,
+					totalcount : totalcount,
+					check_object : check_object,
+					repair_company : repair_company,
+					base_name : base_name
+				};
+				console.log(JSON.stringify(opt));
+				api.openWin({
+					name : "check_projectList",
+					url : "checkProjectListWin.html",
+					opaque : true,
+					bounces : false,
+					reload : true,
+					pageParam : opt,
+					vScrollBarEnabled : false
+				});
+			}
+		}
+	}
+
+	function cb_refresh() {
+		listView.refresh();
+	}
+
+	apiready = function() {
+		$api.setStorage("checkModel", "");
+		if (api.pageParam.start_status == '0') {
+			listView = new C.ApiListView({
+				listName : 'list',
+				fn : $client.getCheckUnfinishList
+			});
+		} else if (api.pageParam.start_status == '1') {
+			listView = new C.ApiListView({
+				listName : 'list',
+				fn : $client.getCheckUnstartList
+			});
+			// var opts={
+			// 	start: 1,
+			// 	limit: 20
+			// }
+			// $client.getCheckUnstartList(opts,function(ret,err){
+			// 	for (var i = 0; i < ret.list.length; i++) {
+			// 		console.log(getobj(ret.list[i]));
+			// 	}
+			// })
+		} else if (api.pageParam.start_status == '2') {
+			listView = new C.ApiListView({
+				listName : 'list',
+				fn : $client.getCheckfinishList
+			});
+		}
+		listView.refresh();
+		//页面回调刷新
+		api.addEventListener({
+				 name: 'check_list_frm'
+			}, function(ret, err) {
+					if (ret.value.state == 'checkSign') {
+							 refresh();
+					}
+		});
+	};
+	function cb_queryWaitTaskList(opts) {
+		listView.setQueryOptions(opts);
+		listView.refresh();
+	}
+
+	//刷新当前页面
+	function refresh() {
+			 window.location.reload();
+	};
+</script>

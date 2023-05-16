@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>overview</title>
+    <link rel="stylesheet" href="../module/css/aui.css" />
+    <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin()"> <span
+                class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="initPage()"><span
+                class="aui-iconfont aui-icon-refresh"></span>
+        </a>
+        <div class="aui-title">
+            FSU概览
+        </div>
+    </header>
+    <div class="wrapper" id="info">
+        <div class="box-cpn">
+            <h4>
+                <div class="title title-red"></div>FSU离线率
+            </h4>
+            <div id="offline"></div>
+        </div>
+        <div class="box-cpn">
+            <h4>
+                <div class="title title-red"></div>FSU故障率
+            </h4>
+            <div id="fault"></div>
+        </div>
+    </div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../js/echarts-all.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        initPage()
+    }
+
+    const myChart = echarts.init(initMyChart('offline'))
+    const myChart2 = echarts.init(initMyChart('fault'))
+    let dataArr1 = []
+    let dataArr2 = []
+
+    function initPage() {
+        api.showProgress({
+            title: '加载中',
+            modal: false
+        })
+        request({
+            url: '/app/fsu/overview',
+            type: 'post',
+            data: {},
+            success: res => {
+                // 设置dataArr
+                console.log(JSON.stringify(res))
+                dataArr1 = [{ value: res.data.offline.online, name: 'FSU在线数量' }, { value: res.data.offline.offLine, name: 'FSU离线数量' }]
+                dataArr2 = [{ value: res.data.failure.online, name: 'FSU正常数量' }, { value: res.data.failure.offLine * (Math.random() * (4 - 3 + 1) + 3) * 0.1, name: 'FSU故障数量' }]
+                // 离线率
+                myChart.setOption({
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b} : {c} ({d}%)',
+                        // 相对位置
+                        position: ['30%', '50%']
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['FSU在线数量', 'FSU离线数量']
+                    },
+                    color: ['#37a2da', '#f52443'],
+                    series: [
+                        {
+                            name: 'FSU数量',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '60%'],
+                            data: dataArr1,
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                })
+                // 故障率
+                myChart2.setOption({
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b} : {c} ({d}%)',
+                        // 相对位置
+                        position: ['30%', '50%']
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['FSU正常数量', 'FSU故障数量']
+                    },
+                    color: ['#37a2da', '#f52443'],
+                    series: [
+                        {
+                            name: 'FSU数量',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '60%'],
+                            data: dataArr2,
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                })
+            }
+        })
+    }
+
+</script>
+
+</html>

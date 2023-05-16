@@ -1,0 +1,120 @@
+		<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no"/>
+	<title>首页</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+
+	<style>
+		html, body {width: 100%;min-height: 100%;background: #f0f0f0;}
+		.h80 {height: 80px;}
+		.h40 {height: 40px;}
+		.h20 {height: 20px;}
+    	.h10 {height: 10px;background: #f0f0f0;}
+		.h1 {height: 1px;margin-left: 15px;background: #f0f0f0;}
+		.fr {float: right;}
+		.fl {float: left;}
+		.hightitem {background-color: #fff;}
+		.inwrap {padding-right: 15px;padding-left: 15px;}
+
+		/* 2. 价格样式 */
+		.priceitem {height: 60px; line-height: 60px;border-bottom: 1px solid #ccc;}
+		.priceitem .price, .priceitem .symbol {color: #FC5500;}
+		.priceitem .price {font-size: 20px;}
+		.priceitem .o-price {font-size: 12px; color: #666;}
+		.priceitem .buynow {background-color: #FC5500; color: #fff; height: 25px; line-height: 25px; border-radius: 3px;padding: 10px 20px;margin-top: 7px;}
+
+		/* 3. */
+		.brief .title {font-size: 15px;color: #000;}
+		.brief .describe {color: #666;font-size: 13px;line-height: 20px;}
+		.brief .ico {height: 50px;line-height: 50px;font-size: 14px;color: #7AB388;}
+		.brief .ico img {height: 14px;}
+		/* 4. */
+		.goodcomment {height: 50px;line-height: 50px;font-size: 14px;}
+		.goodcomment img {height: 15px;padding-right: 5px;}
+		.goodcomment .arrow {float: right;height: 20px;padding-top: 15px;}
+		.goodcomment .commentnum {font-size: 15px;color: #666;padding-right: 5px;float: right;}
+
+		/* 5. */
+		.darktitle {height: 50px;line-height: 50px;font-size: 14px;color: #666;}
+		.firstrow {position: relative;}
+		.secrow {font-size: 14px;color: #666;border-bottom: 1px solid #e0e0e0;padding-bottom: 15px;}
+		.shopinfo .left {height: 60px;padding: 10px 0;}
+		.shopinfo .right {position: absolute;top: 0px; right: -15px; padding: 15px;border-left: 1px solid #e0e0e0;} 
+		.shopinfo .right img {height: 36px;}
+		.shopinfo .shopname {font-size: 20px;}
+		.moreshop {height: 50px;line-height: 50px;font-size: 14px;}
+
+		/* 6. */
+		.tuanitem {height: 50px;line-height: 50px;font-size: 14px;border-bottom: 1px solid #e0e0e0;}
+		.tuanitem .tuan02,.tuanitem .tuan03,.tuantotalprice .totalprice01, .tuantotalprice .totalprice02, .tuanrealprice .realprice01, .tuanrealprice .realprice02 {float: right; width: 50px;font-size: 14px;}
+		.tuantotalprice {margin-top: 10px;}
+		.tuantotalprice, .tuanrealprice {height: 30px;}
+		.tuanrealprice .realprice02 {font-size: 16px;color: #FC5500;}
+		.tuanitem .tuan03, .tuantotalprice .totalprice02, .tuanrealprice .realprice02 {text-align: right;}
+		.smallitem .averageprice {float: right;}
+		.smallitem {height: 20px;line-height: 20px;font-size: 14px;}
+		.recommandtitle {line-height: 25px; font-size: 14px; color: #666;}
+		.recommanddish {line-height: 22px; font-size: 14px;}
+		.moredetail {height: 50px;line-height: 50px;font-size: 14px;border-top: 1px solid #e0e0e0;}
+		.lastitem {padding-bottom: 10px;}
+
+		/* 7. */
+		.buyinfo .infotitle {line-height: 25px;font-size: 14px;color: #666;}
+		.buyinfo li {line-height: 24px;font-size: 13px;color: #000;}
+		.buyinfo li img {height: 5px; padding-right: 5px;}
+		.arrow {float: right;height: 20px;padding-top: 15px;}
+
+		/* 8. */
+		.othertuan {height: 50px;line-height: 50px;}
+		.othertuan .price, .othertuan .symbol {color: #FC5500;}
+		.othertuan .price {font-size: 15px;}
+		.othertuan .o-price {font-size: 12px; color: #666;}
+		.othertuan .price01 {display: inline-block; width: 30%; vertical-align: top;}
+		.othertuan .title {width: 50%; white-space: nowrap; text-overflow: ellipsis; word-wrap: normal; overflow: hidden;}
+		.bb {border-bottom: 1px solid #e0e0e0;}
+
+		.presshover {background-color: #FAFAFA;}
+		.buyhover {background-color: rgba(252, 85, 0, 0.6) !important;}
+		.swiper-container img {width: 100%;}
+	</style>
+</head>
+<body>
+	<script id="noticeDetail-template" type="text/x-dot-template">
+		<iframe id="noticeIframeId" name="noticeIframe" src="{{=it}}" width="100%" height="99%"></iframe>
+	</script>
+	<div id="noticeDetail">
+               
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script> 
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+	apiready = function(){
+		var noticeUrl = api.pageParam.noticeUrl;
+		var headerHeight = api.pageParam.headerHeight;
+	    api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+	    if(noticeUrl != null){
+	    	var content = $api.byId('noticeDetail');
+            var tpl = $api.byId('noticeDetail-template').text;
+            var tempFn = doT.template(tpl);
+            content.innerHTML = tempFn(noticeUrl);
+            var noticeIframe = $api.byId('noticeIframeId');
+			noticeIframe.height = api.winHeight-headerHeight-10;
+            api.parseTapmode();
+	    }else{
+	    	api.toast({msg:"详情为空", location: 'middle'});
+	    }
+		api.hideProgress();
+		
+	    
+	};
+	
+</script>
+</html>

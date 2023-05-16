@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    </head>
+    <style>
+      .aui-list-view{
+        margin-bottom: 0;
+      }
+    </style>
+    <body>
+        <!--*工单详情模板*-->
+        <div class="aui-content aui-content-wxx">
+          <ul class="aui-list-view">
+          <div class="darktitle" id="quxian"><h2><div class="cj-l_line_detail cj-l_line1"></div>曲线图</h2></div><!--dingxb-->
+              <div id="container1" style="width:100%;height:300px;margin:0 auto;"></div>
+              <div id="container2" style="width:100%;height:300px;margin:0 auto;"></div>
+          </ul>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script src="../../script/echarts/build/dist/echarts.js"></script>
+    <script>
+        apiready = function() {
+          var fsuid=api.pageParam.fsuid;//通过fsuid获取电压电流信息  dingxb
+            api.showProgress({
+                title : '加载中..'
+            });
+
+            $('#quxian').css('display','none');//默认让曲线图信息先不显示，因为不一定能查出数，而且查出数还有一两秒延迟，
+            $('#container1').css('display','none');//为了客户体验，设置有数的时候再让曲线图显示
+            $('#container2').css('display','none');
+            if(fsuid!=null&&fsuid!='null'&&fsuid!=''){//判断fsuid是否存在
+              var dateArr1 = new Array();//定义电压x轴数组
+              var valArr1 = new Array();//定义电压y轴数组
+
+              var dateArr2 = new Array();//定义电流x轴数组
+              var valArr2 = new Array();//定义电流y轴数组
+              var opts4={//设置传参的fsuid
+                fsuid:fsuid
+              }
+              $client.getWorkCurrent(opts4,function(ret,err){//调用接口查询电压电流信息
+                 if(ret.finshDataPressure&&ret.finshDataElectricity){
+                  var a1='',v1='';//电流电压数据为空提示信息
+                  if(ret.finshDataPressure.length!=0){//判断电压数据，如果不为空将数据放到坐标轴上
+                    var interval=1;//设置图表数据x轴显示间隔，默认为1，当数据量在15到30，设置间隔为3，当数据量大于30时，设置间隔为5
+                    if(ret.finshDataPressure.length>15&&ret.finshDataPressure.length<=30){
+                      interval=3;
+                    }else if(ret.finshDataPressure.length>30){
+                      interval=5;
+                    }
+                    for(var i = ret.finshDataPressure.length-1,d=0; (i >=0&&d<50); i--,d++){
+                      $('#quxian').css('display','block');
+                      $('#container1').css('display','block');
+                      dateArr1.push(datetimeFormat(ret.finshDataPressure[i].time));//设置x轴数据
+                      valArr1.push(ret.finshDataPressure[i].value);  //设置Y轴数据
+                      openLineChart(dateArr1, valArr1,1,"电压","V",interval);//调用echarts，展示电压图表数据
+                        }
+                  }else{
+                    v1="电压数据空  ";
+                  }
+                if(ret.finshDataElectricity.length!=0){//判断电流数据，如果不为空将数据放到坐标轴上
+                  var interval=1;
+                  if(ret.finshDataElectricity.length>15&&ret.finshDataElectricity.length<=30){
+                    interval=3;
+                  }else if(ret.finshDataElectricity.length>30){
+                    interval=5;
+                  }
+                  for(var i = ret.finshDataElectricity.length-1,d=0;( i >=0&&d<50); i--,d++){
+                    $('#quxian').css('display','block');
+                    $('#container2').css('display','block');
+                    dateArr2.push(datetimeFormat(ret.finshDataElectricity[i].time));//设置电流x数据
+                    valArr2.push(ret.finshDataElectricity[i].value);//设置电压x数据
+                    openLineChart(dateArr2, valArr2,2,"电流","A",interval);//调用echarts，展示电流图表数据
+                      }
+                }else{
+                  a1="电流数据空";
+                }
+                if(ret.finshDataPressure.length==0&&ret.finshDataElectricity.length==0){
+                  api.toast({//调用方法显示提示信息
+                      msg : v1+a1,//提示内容
+                      location : 'bottom'//提示位置
+                  });
+                }
+              }else{
+                api.toast({//调用方法显示提示信息
+                    msg : "获取电压电流数据失败",//提示内容
+                    location : 'bottom'//提示位置
+                });
+              }
+
+
+          })
+        }else{
+          api.toast({
+              msg : 'FSU编码为空，请检查',//当fsuid为空时提示的内容
+              location : 'bottom'
+          });
+        }
+
+            api.hideProgress();
+            showMsg();
+        };
+
+
+        function openLineChart(dateArr, valArr,flag,type,db,interval) {//参数依次为x轴数据，y轴数据，展示图层标识，电压电流类型，单位
+            // 路径配置
+            require.config({//设置配置路径
+                paths : {
+                    echarts : '../../script/echarts/build/dist'
+                }
+            });
+            require(['echarts', 'echarts/chart/line'], function(ec) {//引入需要调用的模块
+                var myChart;
+                if(flag==1){
+                  myChart = ec.init(document.getElementById('container1'));//在页面中显示的div位置
+                }else if(flag==2){
+                  myChart = ec.init(document.getElementById('container2'));//在页面中显示的div位置
+                }
+                var option = {
+                    tooltip : {   //提示框
+                        trigger : 'axis' //触发类型，默认为数据触发，有两种方式
+                    },
+                    legend : {   //图例
+                        data : [type]   //展示图例
+                    },
+                    toolbox : {  //设置工具箱的展示信息
+                        show : false,  //展示标志
+                        feature : {
+                            mark : {  //辅助线的开关
+                                show : true
+                            },
+                            magicType : {   ///辅助线柱状图切换
+                                show : true,
+                                type : ['line', 'bar']
+                            },
+                            restore : {  //还原，复位原始图表
+                                show : true
+                            }
+                        }
+                    },
+                    calculable : true,//是否启用拖拽重计算特性，默认关闭(即值为false)
+                    xAxis : [{     //设置x轴属性
+                        type : 'category',//坐标轴类型
+                        boundaryGap : false,//设置数据是否从x=0开始显示，false代表是
+                        axisLabel : {  //设置x轴参数信息
+                          interval:interval,  //设置显示间隔
+                            formatter : function(value) {
+                                return value;
+                            }
+                        },
+                        data : dateArr  //赋值数据
+                    }],
+                    yAxis : [{
+                      axisLine: {show:true},//y轴显示
+
+                        name:db,
+                        show:true,
+                        type : 'value',
+                        axisLabel : {
+                            formatter : '{value}'
+                        }
+                    }],
+                    grid: { // 控制图的大小，调整下面这些值就可以，
+                        x:18,  //设置图表距离左边的位置，相当于margin-left
+                        x2:18   //设置图表距离左边的位置，相当于margin-right,同理有y,y2
+                     },
+                    series : [{  //
+                        name : type,
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : valArr
+
+                    }]
+                };
+                // 为echarts对象加载数据
+                myChart.setOption(option);
+            });
+        }
+
+
+
+        function showMsg() {
+            var warning = api.pageParam.warning;
+            if (warning && warning != 'null') {
+                api.toast({
+                    msg : warning,
+                    duration : '5000'
+                });
+            }
+        }
+  
+    </script>
+</html>

@@ -1,0 +1,428 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>站址查询</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/station-query.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/query-list.css"/>
+	</head>
+	<body>
+		<!--省份item-->
+		<script id="station-option-prov" type="text/x-dot-template">
+			{{for(var i=0, len=it.length; i < len; i++) {}}
+			<li class="js_kwcatlv1" data-menu="PROV" data-id="{{=it[i].i}}" data-title="{{=it[i].n}}" onclick="onSelUnit('PROV',this)">
+			{{=it[i].n}}
+			</li>
+			{{ } }}
+		</script>
+		<!--城市item-->
+		<script id="station-option-city" type="text/x-dot-template">
+			{{for(var i=0, len=it.length; i < len; i++) {}}
+			<li class="js_kw_cell_item "  data-id="{{=it[i].i}}" data-title="{{=it[i].n}}" onclick="onSelUnit('CITY',this)">
+			<p>
+			{{=it[i].n}}
+			</p>
+			</li>
+			{{ } }}
+		</script>
+		<!--区域item-->
+		<script id="station-option-country" type="text/x-dot-template">
+			{{for(var i=0, len=it.length; i < len; i++) {}}
+			<li  class="js_kw_cell_item" data-id="{{=it[i].i}}" data-title="{{=it[i].n}}" onclick="onSelUnit('COUNTRY',this)">
+			<p class="ellips_line2">
+			{{=it[i].n}}
+			</p>
+			</li>
+			{{ } }}
+		</script>
+		<!--弹出查询窗口-->
+		<div id="popupWrapper" style="display: none">
+			<div id="shadeWrapper" class="popup-mask active"></div>
+			<div id="queryListBox" class="view agile-popup bottom" >
+				<div id="options" class="hotel-p-s-filter js_price_star_filter">
+					<dl>
+						<article id="opts" data-type="radio">
+							<dt id="begintimetype">
+								站址状态（单选）
+							</dt>
+						</article>
+						<div class="mt10">
+							<button id="popup_btn" class="g_btn_s js_price_star_filter_ok">
+								查询
+							</button>
+						</div>
+					</dl>
+				</div>
+			</div>
+		</div>
+		<div id="wrap">
+			<header id="header">
+				<div class="titlebar">
+					<a class="back-icon" tapmode="" onclick="api.closeWin()"></a>
+					<h1>站址查询</h1>
+				</div>
+			</header>
+			<!--<div id="queryStation">-->
+			<div id="main" class="hotel-page-height100">
+				<div class="main-frame">
+					<div class="main-viewport">
+						<div class="cui-mask" id="js_fake_loading2" style="display: none;">
+							<div class="g-m">
+								<div class="g-m--c"></div><div class="g-m--l"></div>
+							</div>
+						</div>
+						<div id="tab2" class="h100" style="display: none">
+							<article class="js_el_box hui-filterwrap hui-keywords-wrap">
+								<section class="cui-citys-hd js_search_box">
+									<i class="icon-back js_search_back" style="display: none;"></i>
+									<div class="cui-input-bd">
+										<input class="cui-input-box js_kw_input" placeholder="省份/城市/区域">
+										<span class="cui-pro-load js_load_icon" style="display: none;"><span class="cui-pro-radius"></span> <span class="cui-i cui-pro-logo"></span></span><span class="cui-focus-close js_clear_kw_input" style="display: none;">×</span>
+									</div>
+									<button type="button" class="cui-btn-cancle js_btn_cancle" style="display: none;">
+										取消
+									</button>
+									<button type="button" class="cui-btn-cancle js_btn_confirm" style="display: none;">
+										确定
+									</button>
+								</section>
+								<div id='section_container' class="hui-filterbox js_list_box js_kw_cat_list_wrap" rel="关键字分类列表" style="">
+									<section class="js_kw_cat_list hui-filter-sort js_col_lv1" rel="col_1">
+										<ul id="provSelectId" class="hhui-filter-fixed"></ul>
+									</section>
+									<section class="hui-filter-subsort js_kwcatlv2 js_col_remain" rel="col_2">
+										<ul id ="citySelectId" class="hhui-filter-fixed"></ul>
+									</section>
+									<section class="hui-filter-unit js_col_remain js_kwcatlv3">
+										<ul id="countrySelectId" class="hhui-filter-fixed"></ul>
+									</section>
+								</div>
+								<div class="p10 cui-top-fixed js_topbar" style="display: none;">
+									当前查询结果:
+								</div>
+								<section class="js_list_box js_kw_history_list js_pop_list_section_wrap" style="padding-top: 0px; display: none;" rel="关键字搜索历史模块">
+									<p class="cui-city-novalue js_no_his_result">
+										无搜索历史
+									</p>
+								</section><section class="js_list_box js_kw_ajax_list js_pop_list_section_wrap" style="display: none; padding-top: 0px;" rel="关键字联想列表模块"></section>
+							</article>
+						</div>
+						<div id="tab1" data-view-name="index" style="display: block;">
+							<article  class="m">
+								<p class="inn-bgtop"></p>
+								<ul id="query-list" class="t g-b">
+									<li class="g-b g-arr" id="js_query_kw">
+										<p class="g-fn1 g-e1 g-def-txt" id="js_kw_text_box" style="height:48px">
+											<input id="staCodeId" name="station_code" class="g-fn1 g-e1 g-def-txt" style="padding:0;" type="text" placeholder="站址编码"/>
+										</p><span class="g-close js_btn_close" style="display: none;"></span>
+									</li>
+									<li class="g-b g-arr" id="js_query_name" data-type="textInput">
+										<p class="g-fn1 g-e1 g-def-txt" id="js_kw_text_box" style="height:48px">
+											<input id="staNameId" name="station_name" class="g-fn1 g-e1 g-def-txt" style="padding:0;" type="text" placeholder="站址名称"/>
+										</p><span class="g-close js_btn_close" style="display: none;"></span>
+									</li>
+									<li class="g-b g-arr" id="unit" data-type="switchTab" data-default="省份/城市/区域" data-value="">
+										<p class="g-fn1 g-e1 g-def-txt js_price_star_label">
+											省份/城市/区域
+										</p><span class="g-close js_btn_close" style="display: none;"></span>
+									</li>
+									<li class="g-b g-arr" id="status" data-type="popup" data-default="状态" data-value="" onclick="popup_query.showWin({target:this,title:'状态',opts:[{key:'全部',value:''},{key:'在线',value:1},{key:'不在线',value:0}]})">
+										<p id="registstatusId" class="g-fn1 g-e1 g-def-txt js_price_star_label">
+											状态
+										</p><span class="g-close js_btn_close" style="display: none;"></span>
+									</li>
+									<li class="g-b g-arr" id="isroomfault" data-type="popup" data-default="是否室分故障" data-value="" onclick="popup_query.showWin({target:this,title:'是否室分故障',opts:[{key:'是',value:1},{key:'否',value:0}]})">
+										<p class="g-fn1 g-e1 g-def-txt js_price_star_label">
+											是否室分故障
+										</p><span class="g-close js_btn_close" style="display: none;"></span>
+									</li>
+									<li>
+										<button class="g-btn" id="js_submit" onclick = "queryStationList()">
+											查询
+										</button>
+									</li>
+								</ul>
+								<div class="g-oversea-slogan" id="js_oversea_slogan" style="display: none;"></div>
+								<div class="h-place" id="js_oversea_hotcity" style="display: none;">
+									<div class="hotel-dpage-loading js_oversea_hotcity_loading" style="display:none">
+										<span class="cui-pro-load"><span class="cui-pro-radius"></span> <span class="cui-i cui-pro-logo"></span></span><span class="g-load-txtpl">加载中</span>
+									</div><div class="indexguide_box" style="display:none"></div>
+								</div>
+							</article>
+						</div>
+					</div><div class="main-state"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/debug.js"></script>
+	<script type="text/javascript" src="../script/doT.min.js"></script>
+	<script type="text/javascript" src="../script/common.js"></script>
+	<script type="text/javascript" src="../script/constant.js"></script>
+	<script type="text/javascript" src="../script/config.js"></script>
+	<script type="text/javascript" src="../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../script/component.js"></script>
+	<script>
+		var userId = null;
+		//省市区数据对象
+		var unitList = null;
+		//省份列表
+		var provList = null;
+		//城市列表
+		var cityList = null;
+		//IDC中心列表
+		var idcList = null;
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			//status bar style
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+			var user = $api.getStorage('user');
+			if (user != undefined) {
+				userId = user.userid;
+			}
+			//从缓存中获取省份列表
+			unitList = $api.getStorage('unitData');
+			if (unitList != undefined) {
+				provList = unitList[0].c;
+			}
+			if (provList != null) {
+				setOption("provSelectId", provList, "", "PROV");
+			} else {
+				//加载省份列表
+				$api.toast({
+					title : '加载失败',
+					text : '省市区列表不存在'
+				});
+				assemblySelOpt(provKey, "provSelectId", "1");
+			}
+			//绑定查询项事件
+			$('#query-list li').click(function() {
+				var type = $(this).data('type')
+				if (type == 'popup') {
+					var target = $(this);
+					popup_query.init({
+						title : '状态',
+						btnText : '确定',
+						btnClick : function(text, value) {
+							target.addClass('g--active');
+							target.find('p').text(text).removeClass('g-def-txt');
+							target.find('span').show();
+							target.attr('data-value', value);
+						}
+					});
+				} else if (type == 'switchTab') {
+					$('#tab1').toggle();
+					$('#tab2').toggle();
+				}
+			});
+			$('.g-close').click(function() {
+				var defaultTxt = $(this).parent().data('default');
+				$(this).parent().removeClass('g--active');
+				$(this).siblings().text(defaultTxt).addClass('g-def-txt');
+				$(this).hide();
+				return false;
+			});
+		};
+		//组装省市区的下拉框
+		function setOption(selId, jsonModel, flag, type) {
+			var content = $api.byId(selId);
+			var jsonArray = new Array();
+			if (flag == "ALL") {
+				jsonArray[0] = {
+					i : "",
+					n : "全部",
+					l : "",
+					c : []
+				};
+			} else if (flag == "SEL") {
+				jsonArray[0] = {
+					i : "",
+					n : "请选择",
+					l : "",
+					c : []
+				};
+			}
+			Array.prototype.push.apply(jsonArray, jsonModel);
+			var tpl = null;
+			if (type == 'PROV') {
+				tpl = $api.byId('station-option-prov').text;
+			} else if (type == 'CITY') {
+				tpl = $api.byId('station-option-city').text;
+			} else {
+				tpl = $api.byId('station-option-country').text;
+			}
+			var tempFn = doT.template(tpl);
+			content.innerHTML = tempFn(jsonArray);
+			//绑定跳转事件
+			$('ul.hhui-filter-fixed li').click(function() {
+				$(this).siblings().removeClass('hui-filter-leftcrt');
+				$(this).addClass('hui-filter-leftcrt');
+			});
+		}
+
+		//获得局向下一级列表
+		function onSelUnit(type, obj) {
+			var $obj = $(obj);
+			var objId = $obj.data('id');
+			var objText = $obj.data('title');
+			if (type == "PROV") {
+				setOption("citySelectId", null, "ALL", 'PROV');
+				setOption("countrySelectId", null, "ALL", "PROV");
+				assemblySelOpt(constant.CITY_LIST, "citySelectId", "2", objId);
+			} else if (type == "CITY") {
+				if (objText == '全部') {
+					var unitStr = $('#provSelectId .hui-filter-leftcrt').text();
+					var unitId = $('#provSelectId .hui-filter-leftcrt').data('id');
+					$('#unit').addClass('g--active');
+					$('#unit p').text(unitStr).attr('id', unitId).removeClass('g-def-txt');
+					$('#unit span').show();
+					$('#tab2').toggle();
+					$('#tab1').toggle();
+				} else {
+					setOption("countrySelectId", null, "ALL", 'CITY');
+					assemblySelOpt(constant.COUNTRY_LIST, "countrySelectId", "3", objId);
+				}
+			} else {
+				var unitStr = "";
+				var unitId = "";
+				var provStr = $('#provSelectId .hui-filter-leftcrt').text();
+				var provId = $('#provSelectId .hui-filter-leftcrt').data('id');
+				var cityStr = $('#citySelectId .hui-filter-leftcrt').text();
+				var cityId = $('#citySelectId .hui-filter-leftcrt').data('id');
+				if (objText == '全部') {
+					unitStr = provStr + "/" + cityStr;
+					unitId = provId + "/" + cityId;
+				} else {
+					unitStr = provStr + "/" + cityStr + "/" + objText;
+					unitId = provId + "/" + cityId + "/" + objId;
+				}
+				$('#unit').addClass('g--active');
+				$('#unit p').text(unitStr).removeClass('g-def-txt');
+				$('#unit p').parent().attr('data-id', unitId);
+				$('#unit span').show();
+				$('#tab2').toggle();
+				$('#tab1').toggle();
+			}
+		}
+
+		function assemblySelOpt(skey, selId, objectType, objId) {
+			var list = null;
+			if (skey == constant.CITY_LIST) {
+				for (var prov in provList) {
+					if (provList[prov].i == objId) {
+						cityList = provList[prov].c;
+						list = cityList;
+						setOption(selId, list, "ALL", "CITY");
+					}
+				}
+			} else if (skey == constant.COUNTRY_LIST) {
+				for (var city in cityList) {
+					if (cityList[city].i == objId) {
+						idcList = cityList[city].c;
+						list = idcList;
+						setOption(selId, list, "ALL", "COUNTRY");
+					}
+				}
+			}
+		}
+
+		//查询站址
+		function queryStationList() {
+			var stationCode = $api.byId('staCodeId').value;
+			var stationName = $api.byId('staNameId').value;
+			var status = $('#status').data('value');
+			var unitList;
+			var provinceId;
+			var cityId;
+			var areaId
+			if ($('#unit').data('id') != undefined && $('#unit').data('id') != "") {
+				var unitList = $('#unit').data('id').split('/');
+				if (unitList.length >= 1) {
+					provinceId = unitList[0];
+				}
+				if (unitList.length >= 2) {
+					cityId = unitList[1];
+				}
+				if (unitList.length == 3) {
+					areaId = unitList[2];
+				}
+			}
+			var isroomfault = $('#isroomfault').data('value');
+			if (stationCode != null) {
+				api.pageParam.stationCode = stationCode;
+			}
+			if (stationName != null) {
+				api.pageParam.stationName = stationName;
+			}
+			if (status != null) {
+				api.pageParam.status = status;
+			}
+			if (provinceId != null) {
+				api.pageParam.provinceId = provinceId;
+			}
+			if (cityId != null) {
+				api.pageParam.cityId = cityId;
+			}
+			if (areaId != null) {
+				api.pageParam.areaId = areaId;
+			}
+			if (isroomfault != null) {
+				api.pageParam.isroomfault = isroomfault;
+			}
+			
+			api.openWin({
+				name : 'createBillSelStation',
+				url : 'createBillSelStation.html',
+				pageParam : api.pageParam,
+				reload:true
+			});
+			api.closeWin();
+//			$client.getBaseStationSimpleList({
+//				limit : 20,
+//				start : 0,
+//				provinceId : provinceId,
+//				cityId : cityId,
+//				areaId : areaId,
+//				stationName : stationName,
+//				stationCode : stationCode,
+//				status : status,
+//				isroomfault : isroomfault
+//			}, function(ret, err) {
+//				alert('ret.success:' + ret.success);
+//				if (ret) {
+//					if (ret.success) {
+//						api.pageParam.list = ret.list;
+//						api.openWin({
+//							name : 'createBillSelStation',
+//							url : 'createBillSelStation.html',
+//							pageParam : api.pageParam
+//						});
+//					} else {
+//						api.toast({
+//							msg : ret.data_info,
+//							location : 'middle'
+//						});
+//					}
+//				} else {
+//					api.toast({
+//						msg : err.msg,
+//						location : 'middle'
+//					});
+//				}
+//				api.refreshHeaderLoadDone();
+//				api.parseTapmode();
+//				api.hideProgress();
+//			});
+		}
+	</script>
+</html>

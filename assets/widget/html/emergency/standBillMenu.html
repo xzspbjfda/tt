@@ -1,0 +1,294 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>应急物资操作选项</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<style>
+			input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="number"], input[type="week"], input[type="month"], input[type="time"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="search"], input[type="file"], input[type="color"], select, textarea {
+				outline: none;
+			}
+			html, body, #wrap, #header {
+				background: transparent;
+			}
+			#header {
+				height: 58px;
+			}
+			.shadow {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				z-index: 1;
+				background: #333;
+				opacity: 0.6;
+				filter: alpha(opacity=60);
+			}
+			.menu-list li span {
+				text-indent: 1em;
+			}
+			#revertDiv {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+			}
+			.winDiv {
+				display: none;
+				background-color: #f2f2f2;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+			}
+			.winTitleDiv {
+				text-align: center;
+				font-size: 20px;
+				color: #FFFFFF;
+				background-color: #DB4537;
+				height: 35px;
+				line-height: 35px;
+				-webkit-border-radius: 10px 10px 0 0;
+				-moz-border-radius: 10px 10px 0 0;
+				border-radius: 10px 10px 0 0;
+			}
+			.winContentSnDiv {
+				font-size: 16px;
+				height: 30px;
+				line-height: 30px;
+				margin-top: 20px;
+				text-align: center;
+				background-color: #F2F2F2;
+			}
+			.winContentTitleDiv {
+				font-size: 16px;
+				height: 30px;
+				line-height: 30px;
+				margin-bottom: 20px;
+				text-align: center;
+				background-color: #F2F2F2;
+			}
+			.winButtonDiv {
+				background-color: #e0e0e0;
+				height: 50px;
+				width: 300px;
+				-webkit-border-radius: 0 0 10px 10px;
+				-moz-border-radius: 0 0 10px 10px;
+				border-radius: 0 0 10px 10px;
+			}
+			.winOkBtn {
+				width: 130px;
+				height: 40px;
+				color: #FFFFFF;
+				text-align: center;
+				font-size: 20px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #DB4537;
+				float: right;
+				margin-top: 5px;
+				margin-right: 5px;
+			}
+			.winCancelBtn {
+				width: 130px;
+				height: 40px;
+				color: #FFFFFF;
+				text-align: center;
+				font-size: 20px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #3779d0;
+				float: left;
+				margin-left: 5px;
+				margin-top: 5px;
+			}
+			.otherDivHeader {
+				text-align: center;
+				font-size: 20px;
+				color: #FFFFFF;
+				background-color: #DB4537;
+				height: 40px;
+				line-height: 40px;
+				-webkit-border-radius: 10px 10px 0 0;
+				-moz-border-radius: 10px 10px 0 0;
+				border-radius: 10px 10px 0 0;
+			}
+		.isArgeeInfo {
+			 background-color: #FFFFFF;
+			 border: 1px solid #adadad;
+			 margin-top: 5px;
+			 -webkit-border-radius: 5px;
+			 -moz-border-radius: 5px;
+			 float:left;
+			 width:90%;
+			 border-radius: 5px;
+			 }
+			.labelDiv {
+				text-align: center;
+				font-size: 16px;
+				color: #3498DB;
+				height: 30px;
+				line-height: 30px;
+			}
+			.allDiv {
+				width: 100%;
+			}
+			.left {
+				text-align: right;
+				font-size: 16px;
+				float: left;
+				color: #000000;
+				width: 30%;
+			}
+			.right {
+				text-align: left;
+				float: right;
+				font-size: 16px;
+				color: #787878;
+				width: 67%;
+			}
+			.transferDiv {
+				width: 300px;
+				height: 40px;
+			}
+			.isAgreeSel {
+			 -webkit-border-radius: 5px;
+			 -moz-border-radius: 5px;
+			 border-radius: 5px;
+			 width:90%;
+			 margin-top:10px;
+			 float:left;
+			 border: 1px solid #adadad;
+			 background-color: #FFFFFF;
+			 /*border: none !important;*/
+			 }
+			.isArgee {
+				width: 100%;
+				height: 40px;
+				margin-right: 10px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #FFFFFF;
+				border: none !important;
+			}
+			.transferTime {
+				width: 265px;
+				height: 40px;
+				margin-left: 10px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #FFFFFF;
+			}
+			.menuListLi {
+				height: 40px;
+				line-height: 40px;
+				color: #46a3FF;
+				text-align: center;
+				font-size: 16px;
+			}
+			.noborder {
+				border: none !important;
+			}
+			.textStyle {
+				padding-left: 3px;
+				height: 40px;
+				line-height: 40px;
+				text-align: left;
+				color: #adadad;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="standBillMenu-template" type="text/x-dot-template">
+			<ul class="menu-list">
+			{{? it.level == '0'}}
+			<li class="menuListLi" tapmode="tap-active" onclick="showPopup();">查询</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('add');">新增</li>
+			{{?}}
+			{{? it.level == '1' }}
+			<li class="menuListLi" tapmode="tap-active" onclick="emergencyMmodify();">修改</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="emergencyRemove();">删除</li>
+			{{?}}
+			</ul>
+		</script>
+		<div id="wrap" >
+			<div id="shadowId" class="shadow" tapmode="" onclick="closeFrame('standBillMenu')"></div>
+			<div id="header"></div>
+			<div id="standBillMenuMain"></div>
+		</div>
+
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+	<script type="text/javascript" src="script/standBillMenu.js"></script>
+	<script type="text/javascript">
+		function emergencyMmodify(){
+			api.execScript({
+				name : 'emergency-detail_win',
+				frameName : 'emergency-detail_frm',
+				script : 'refreshDetail();'
+			});
+			api.execScript({
+				name : 'emergency-detail_win',
+				script : 'showChange();'
+			});
+			closeFrame('standBillMenu');
+		}
+
+		function emergencyRemove(){
+			api.execScript({
+				name : 'emergency-detail_win',
+				frameName : 'emergency-detail_frm',
+				script : 'emergencyRemoveDetail();'
+			});
+		}
+
+
+		    // 打开查询工单页面
+		    function showPopup() {
+		        var query_setting = {
+		            emergencyQuery1 : true,
+		            emergencyQuery2 : true,
+		            emergencyQuery3 : true,
+		            emergencyQuery4 : true,
+		            emergencyQuery5 : true,
+		            winName : api.winName,
+		            frameName : 'emergency-list_frm',
+		            callback : 'cb_queryBillList'
+		        };
+		        api.openFrame({
+		            name : 'popup_query_frm',
+		            url : '../dialog/popup_query.html',
+		            rect : {
+		                x : 0,
+		                y : 0,
+		                w : 'auto',
+		                h : 'auto'
+		            },
+		            bounces : false,
+		            pageParam : query_setting
+		        });
+		    }
+	</script>
+</html>

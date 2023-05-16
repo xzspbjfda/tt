@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>处理流程</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+</head>
+<style type="text/css">
+.aui-content {
+    background: #ffffff;
+    overflow: hidden;
+    padding: 15px;
+}
+</style>
+<body style="background-color:#FFFFFF;">
+	<script id="bugFlow-template" type="text/x-dot-template">
+		{{ for(var i=0,j=1; i<=it.length-1; i++,j++) { }}
+			{{
+				var status = it[i].status;
+				var statusName = "";
+				if(status=="0"){
+					statusName = "待审核";
+				}else if(status=="1"){
+					statusName = "待签到";
+				}else if(status=="2"){
+					statusName = "待身份识别";
+				}else if(status=="3"){
+					statusName = "施工前记录";
+				}else if(status=="4"){
+					statusName = "施工中记录";
+				}else if(status=="5"){
+					statusName = "离站确认";
+				}else if(status=="6"){
+					statusName = "待归还钥匙";
+				}else if(status=="9"){
+					statusName = "已归档";
+				}
+				var time = it[i].operatingCost;
+				var hour = 0;
+				var minute = 0;
+				var second = 0;
+				var useTime = "";
+				if(time >= 3600){
+					hour = parseInt(time / 3600);
+					time = time - (3600 * hour);
+					minute = parseInt(time / 60);
+					time = time - (60 * minute);
+					second = time;
+					useTime = hour + "时" + minute + "分" + second + "秒";
+				}else if(time >= 60){
+					minute = parseInt(time / 60);
+					time = time - (60 * minute);
+					second = time;
+					useTime = minute + "分" + second + "秒";
+				}else if(time < 60){
+					second = time;
+					useTime = second + "秒";
+				}
+			}}
+			<li>
+				<i class="aui-iconfont aui-icon-mark aui-bg-warning"></i>
+				<div class="aui-timeline-item">
+					<div class="aui-timeline-body">
+						{{=statusName}}
+						<div style="width:100%;height:auto;text-align:center">
+							{{=it[i].remark!= null ? it[i].remark:""}}
+							<br>
+							用时： {{=useTime}}
+							<br>
+							操作途径： {{=it[i].device!= null ? it[i].device:""}}
+						</div>
+					</div>
+					<div class="aui-timeline-footer" style="text-align:right;">{{=it[i].createTime}}</div>
+				</div>
+			</li>
+		{{ } }}
+	</script>
+    <div class="aui-content">
+        <ul class="aui-timeline" id="standBillBugFlowDetail">
+
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+//	var actionJsonArr = new Array();
+//  function openActionDetail(index) {
+//      var billSn = api.pageParam.billSn;
+//      var billId = api.pageParam.billId;
+//      var stationId = api.pageParam.stationId;
+//      var jsonStr = "[" + $api.jsonToStr(actionJsonArr[index - 1]) + "]";
+//      api.openWin({
+//          name : 'mainActionDetailWin',
+//          url : 'mainActionDetailWin.html',
+//          opaque : true,
+//          bounces : false,
+//          pageParam : {
+//              billSn : billSn,
+//              billId : billId,
+//              stationId : stationId,
+//              actionDetail : jsonStr
+//          },
+//          vScrollBarEnabled : false
+//      });
+//  }
+
+    apiready = function() {
+        //status bar style
+        api.setStatusBarStyle({
+            style : 'light'
+        });
+        //从缓存中获取处理流程信息
+        var standBillBugFlowInfo = $api.getStorage("standBillAction");
+		console.log('standBillAction:' + JSON.stringify(standBillBugFlowInfo))
+
+        if (isExist(standBillBugFlowInfo)) {
+        	renderTemp('standBillBugFlowDetail', 'bugFlow-template', standBillBugFlowInfo);
+            api.parseTapmode();
+        }else{
+        	api.toast({
+                msg : '暂无处理流程信息',
+                location : 'bottom'
+            });
+        }
+    };
+</script>
+</html>

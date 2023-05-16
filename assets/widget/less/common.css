@@ -1,0 +1,73 @@
+#header {
+  background-color: #db4537;
+  position: relative;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+}
+#header .right-icon {
+  right: 0;
+  font-size: 25px;
+  line-height: 44px;
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  height: 44px;
+}
+#header .left-icon {
+  left: 0;
+  font-size: 25px;
+  line-height: 44px;
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  height: 44px;
+}
+#header .back-icon {
+  background: url(../image/icon_arrow.png) no-repeat center center;
+  -webkit-background-size: 14px 18px;
+  background-size: 36px 36px;
+  left: 0;
+  font-size: 25px;
+  line-height: 44px;
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  height: 44px;
+}
+#header .menu-icon {
+  background: url(../image/actionbar_icon_add.png) no-repeat center center;
+  -webkit-background-size: 14px 18px;
+  background-size: 30px 30px;
+  right: 0;
+  font-size: 25px;
+  line-height: 44px;
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  height: 44px;
+}
+#header .action-icon {
+  background: url(../image/drawer_menu_icon_setting_nor.png) no-repeat center center;
+  -webkit-background-size: 14px 18px;
+  background-size: 30px 30px;
+  right: 0;
+  font-size: 25px;
+  line-height: 44px;
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  height: 44px;
+}
+#header .openDoor-icon {
+  background: url(../image/icons/png/icon_openDoor.png) no-repeat center center;
+  -webkit-background-size: 14px 18px;
+  background-size: 30px 30px;
+  right: 0;
+  font-size: 25px;
+  line-height: 44px;
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  height: 44px;
+}

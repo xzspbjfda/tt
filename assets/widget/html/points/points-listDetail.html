@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <style>
+
+		.list b{
+			color: #444444;
+		}
+    </style>
+</head>
+<body>
+
+	<div >
+            <ul class="list" id="listView"></ul>
+    </div>
+    <script id="listView-template" type="text/x-dot-template">
+         {{ for(var i=0, len=it.length, name1=''; i < len; i++) {}}
+	        <ul class="aui-user-view">
+            <li class="aui-user-view-cell aui-img" onclick="seeDetail('{{=it[i].site_name}}','{{=it[i].p_org_name}}','{{=it[i].c_org_name}}','{{=it[i].org_name}}','{{=it[i].do_man_name}}','{{=it[i].id}}','{{=it[i].task_name}}','{{=it[i].task_score}}','{{=it[i].get_score}}','{{=it[i].get_task_time}}','{{=it[i].check_task_end_time}}','{{=it[i].appraiser}}')">
+	                <img class="aui-img-object aui-pull-left" >
+	                 <div class="aui-img-body aui-arrow-right">
+	                    <span style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{=it[i].site_name}}<em><p style="margin-right: 20px;font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">标准分{{=it[i].task_score != null&&it[i].task_score != "null" ? it[i].task_score :""}}/实际得分：{{=it[i].get_score != null&&it[i].get_score != "null" ? it[i].get_score :""}}  </p> </em></span>
+	                    <p class='aui-ellipsis-1' style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">领取时间:{{=it[i].get_task_time != null&&it[i].get_task_time != "null" ? it[i].get_task_time :""}}</p>
+											<p class='aui-ellipsis-1' style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">确认完成时间:{{=it[i].check_task_end_time != null&&it[i].check_task_end_time != "null" ? it[i].check_task_end_time :""}}</p>
+	                </div>
+
+            </li>
+
+	        {{ } }}
+    </script>
+</body>
+
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript">
+	var listView = null;
+	var finishLoadDone  = false;
+	var finishStart = 0;
+	var queryOpts ={
+		username:'',
+		mobilephone:'',
+		email:'',
+        sorgid : ''
+	};
+	apiready = function(){
+
+		var user = $api.getStorage('user');
+		var userid = user.userid;
+		console.log('userid ===' + userid);
+		listView = new C.ApiListView({
+            listDivId : '#listView',
+            templateId : '#listView-template',
+            listName : 'myScore',
+            fn : $client.getMyPoints
+        });
+        listView.refresh();
+	};
+
+
+	/**
+     * 打开下拉刷新
+     */
+    function openRefreshHeader() {
+        api.setRefreshHeaderInfo({
+            visible : true,
+            bgColor : '#f2f2f2',
+            textColor : '#4d4d4d',
+            textDown : '下拉刷新...',
+            textUp : '松开刷新...',
+            showTime : true
+        }, function(ret, err) {
+       		finishStart = 0;
+             listView.refresh();
+        });
+    }
+
+	seeDetail = function(site_name,p_org_name,c_org_name,org_name,do_man_name,id,task_name,task_score,
+		get_score,get_task_time,check_task_end_time,appraiser){
+//		var userId = $api.attr(el, 'telno');
+
+		var pageParm ={
+		site_name:site_name,//站址名称
+		p_org_name:p_org_name,//省份
+		c_org_name:c_org_name,//地市
+		org_name:org_name,//区域
+		do_man_name:do_man_name,//登陆人
+		id:id,//工单编号
+		task_name:task_name,//任务名称
+		task_score:task_score,//标准得分
+		get_score:get_score,//实际得分
+		get_task_time:get_task_time,//领取任务时间
+		check_task_end_time:check_task_end_time,//检查时间
+		appraiser:appraiser//审批人
+		};
+		api.openWin({
+				name : 'points-detail',  //打开窗口名称
+				url : 'points-detail.html',//打开窗口url
+				opaque : true,
+				bounces : false,
+				reload : true,   //
+				pageParam : pageParm,  //传递参数
+				vScrollBarEnabled : false
+		});
+			// openSingleWindow({
+			// 		name : "systemPerson",
+			// 		url : "html/points/points-detail.html",
+			// 		bounces : false,
+			// 		vScrollBarEnabled : false,
+			// 		hScrollBarEnabled : false,
+			// 		slidBackEnabled : true,
+			// 		pageParam:pageParm,
+			// 		reload : true,
+			// 		userId : userId,
+			// 		animation : {
+			// 				type : "push",
+			// 				subType : "from_right",
+			// 				duration : 300
+			// 		}
+			// });
+	};
+
+
+
+
+
+
+	startSort = function(list ){
+		list.sort(function(a,b){
+			var name1 = a['orgname'];
+			var name2 = b['orgname'];
+			return name1.localeCompare(name2);
+		});//汉字拼音排序方法
+	}
+
+	queryContact = function(opts){
+		console.log('queryContact callback');
+		finishStart == 0;
+		for(var name in opts){
+			console.log('opt.key = ' + name + ' opt[name] = ' + opts[name] );
+		}
+//		if(typeof(opts.name)!="undefined" && opts['name']!=null){
+			queryOpts.username = opts['name'];
+//		} else{ queryOpts.username =""}
+
+		if(typeof(opts.mobilephone)!="undefined" && opts.mobilephone!=null){
+			queryOpts.mobilephone = opts.mobilephone;
+		}else{ queryOpts.mobilephone =""}
+
+		if(typeof(opts.email)!="undefined" && opts.email!=null){
+			queryOpts.email = opts.email;
+		}else{ queryOpts.email =""}
+
+		if(typeof(opts.unit)!="undefined" && opts.unit!=null){
+			 var unitIdList = opts.unit.split('/');
+               if (unitIdList.length >= 1) {
+                    queryOpts.sorgid = unitIdList[0];
+                }
+                if (unitIdList.length >= 2) {
+                    queryOpts.sorgid = unitIdList[1];
+                }
+                if (unitIdList.length >= 3) {
+                    queryOpts.sorgid = unitIdList[2];
+                }
+		}else{ queryOpts.sorgid =""}
+
+		showlog(getObj(queryOpts));
+		listView.setQueryOptions(queryOpts);
+        listView.refresh();
+        openRefreshHeader();
+
+	};
+</script>
+</html>

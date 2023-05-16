@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>筛选框</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body {
+				background-color: transparent !important;
+				color: rgba(0,0,0,0.0)
+			}
+			.otherDealInfo {
+				background-color: #FFFFFF;
+				border: 1px solid #DBDBDB;
+				margin-right: 20px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+			.clear {
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				margin: 6px 0 0 -20px;
+				background: url(../../image/icons/png/close.png) no-repeat;
+				outline: none;
+			}
+		</style>
+	</head>
+	<body>
+		<!--设置遮罩层-->
+		<div id="popupWrapper" style="display: none">
+			<div id="shadeWrapper" class="popup-mask active"></div>
+			<div id="queryListBox" class="view agile-popup bottom">
+				<div id="options" class="hotel-p-s-filter js_price_star_filter">
+					<dl>
+						<div id="stationNameOpt" class=" aui-flex-col" data-type="text" style="display: none">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								站址名称
+							</div>
+							<div class="aui-flex-item-9"  onclick="openQueryStationWin()">
+								<input id="stationname" type="text" value="" class="otherDealInfo" />
+							</div>
+						</div>
+
+
+
+						<div id="stationNameOpt2" class=" aui-flex-col" data-type="text" style="display: none">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								站址名称
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="stationname" type="text" value="" class="otherDealInfo" />
+							</div>
+						</div>
+						<div id="alarmNameOpt"class="aui-flex-col" data-type="text" style="display: none;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								告警名称
+							</div>
+							<div class="aui-flex-item-9">
+								<input id="alarmname" type="text" value="" class="otherDealInfo"/>
+								<!--<img class="close" src="../../image/icons/png/close.png"/>-->
+							</div>
+						</div>
+						<div id="stationCodeOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								运维ID
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="stationCode" type="text"  class="otherDealInfo"/>
+								<!--<img class="close" src="../../image/icons/png/close.png"/>-->
+								<!--<span id="cancleBtn2" style="position: absolute;display: block;height: 40px;line-height: 40px;min-width: 32px;top:0;right:0;margin-top: 150px;margin-right: 15px;"><img width="28" height="28"  src="../../image/icons/png/cancle.png"/></span>-->
+							</div>
+						</div>
+						<!--告警箱begin-->
+						<div id="alarmType" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								告警类型
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="falutTpye" name="falutTpye" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="2003">机房环境设备故障</option>
+									<option value="2004">空调设备故障</option>
+									<option value="2001">开关电源设备故障</option>
+									<option value="2001">蓄电池设备故障</option>
+									<option value="GENERELEC">发电</option>
+									<option value="GENERELEC_FAULT">停电</option>
+									<option value="NOSIGNAL">无信号</option>
+									<option value="2005">断站退服</option>
+									<option value="OTHER">其他</option>
+								</select>
+							</div>
+						</div>
+						<!--告警箱begin-->
+						<!-- 日常维修-合同查询开始 -->
+						<div id="contractnoOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								合同号
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="contractno" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+
+						<div id="paytypeOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								维修项目
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="paytype" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="itemtypeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								计费方式
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="itemtype" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">按次</option>
+									<option value="2">按月包干</option>
+								</select>
+							</div>
+						</div>
+
+						<!--日常维修合同查询结束-->
+
+						<!-- 日常维修查询开始 -->
+						<div id="billsnOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								维修单号
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="billsn" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="billStatusOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								工单状态
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="bussinessid" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">待问题核实</option>
+									<option value="2">待方案制定</option>
+									<option value="3">待实施</option>
+									<option value="4">待验收</option>
+									<option value="5">待验收归档</option>
+									<option value="6">挂起</option>
+									<option value="7">已归档</option>
+								</select>
+							</div>
+						</div>
+						<div id="hiddenTypeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								隐患种类
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="hiddentype" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">开关电源</option>
+									<option value="2">蓄电池</option>
+									<option value="3">空调</option>
+									<option value="4">机房环境</option>
+									<option value="5">铁塔环境</option>
+									<option value="6">FSU</option>
+									<option value="7">其他设备</option>
+								</select>
+							</div>
+						</div>
+						<div id="hiddensrcOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								隐患来源
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="hiddensource" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">巡检发现</option>
+									<option value="2">运营商申告</option>
+									<option value="3">自有人员上站巡查</option>
+									<option value="4">业主申告</option>
+									<option value="5">告警发现</option>
+
+								</select>
+							</div>
+						</div>
+						<div id="hiddenGradeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								隐患等级
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="hiddengrade" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">特别严重</option>
+									<option value="2">严重</option>
+									<option value="3">一般</option>
+								</select>
+							</div>
+						</div>
+						<!--日常维修查询结束-->
+
+						<!-- 应急物资查询开始 -->
+						<div id="emergencyQuery1" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								物资编码
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="sn" name='sn' type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="emergencyQuery2" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								物资类型
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="type" name="type" class="otherDealInfo"   value="" onchange="changeName(this)">
+									<option value="应急通信保障物资">应急通信保障物资</option>
+									<option value="应急信息传报类物资">应急信息传报类物资</option>
+									<option value="应急辅助物资">应急辅助物资</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery3" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								物资名称
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="name" name="name" class="otherDealInfo"   value="">
+									<option value="应急发电车">应急发电车</option>
+									<option value="越野车">越野车</option>
+									<option value="皮卡车">皮卡车</option>
+									<option value="应急油机(5KW及以上)(代维产权)">应急油机(5KW及以上)(代维产权)</option>
+									<option value="应急油机(5KW及以下)(代维产权)">应急油机(5KW及以下)(代维产权)</option>
+									<option value="应急油机(5KW及以上)(铁塔产权)">应急油机(5KW及以上)(铁塔产权)</option>
+									<option value="应急油机(5KW及以下)(铁塔产权)">应急油机(5KW及以下)(铁塔产权)</option>
+									<option value="应急油机(5KW及以上)(代维产权)">应急油机(5KW及以上)(其他第三方产权)</option>
+									<option value="应急油机(5KW及以下)(代维产权)">应急油机(5KW及以下)(其他第三方产权)</option>
+									<option value="一体化柜(含电源、蓄电池等配套)">一体化柜(含电源、蓄电池等配套)</option>
+									<option value="锂电池包">锂电池包</option>
+									<option value="便携塔">便携塔</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery4" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								设备工况
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="workStatus"  name="workStatus" class="otherDealInfo"   value="">
+									<option value="性能良好">性能良好</option>
+									<option value="正常可用">正常可用</option>
+									<option value="基本可用">基本可用</option>
+									<option value="无法正常工作">无法正常工作</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery5" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								库存状态
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="status" name="status" class="otherDealInfo"   value="">
+									<option value="在库">在库</option>
+									<option value="领用出库">领用出库</option>
+									<option value="调度出库">调度出库</option>
+									<option value="维护出库">维护出库</option>
+									<option value="维修出库">维修出库</option>
+									<option value="消耗">消耗</option>
+									<option value="遗失">遗失</option>
+								</select>
+							</div>
+						</div>
+						<div id="user_name" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-2" style="height: 40px;line-height: 40px;">
+								姓名
+							</div>
+							<div class="aui-flex-item-10" >
+								<input id="contactPerson" name="contactPerson" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="user_tel" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-2" style="height: 40px;line-height: 40px;">
+								电话
+							</div>
+							<div class="aui-flex-item-10" >
+								<input id="contactPersonTelephone"  name="contactPersonTelephone" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<!--应急物资查询结束-->
+
+						<div id="status" data-type="radio" style="display: none">
+							<dt>
+								站址状态（单选）
+							</dt>
+							<dd class="js_star_h js_star_all current" data-value="">
+								不限
+							</dd>
+							<dd  class="js_star_h" data-value="1">
+								工程
+							</dd>
+							<dd  class="js_star_h" data-value="2">
+								交维
+							</dd>
+							<dd  class="js_star_h" data-value="3">
+								退网下线
+							</dd>
+							<dd  class="js_star_h" data-value="6">
+								测试
+							</dd>
+							<dd  class="js_star_h" data-value="7">
+								存量监控
+							</dd>
+							<dd  class="js_star_h" data-value="8">
+								检修
+							</dd>
+						</div>
+						<div id="unitOpt" data-type="text" style="display: none">
+							<dt>
+								省份/城市/区域
+							</dt>
+							<dd class="js_price_h" style="width:100%;height:40px;padding:0;" onclick="toggleQueryUnit()">
+								<input id="unit" type="text" readonly/>
+								<input id="provId" type="hidden" />
+								<input id="cityId" type="hidden" />
+								<input id="areaId" type="hidden" />
+								<img id="imade" class="close" src="../../image/icons/png/close.png"/ onclick＝"clearUnit(this)">
+							</dd>
+						</div>
+						<div id="begintimetype" data-type="radio" style="display: none;overflow:hidden;">
+							<dt>
+								时间范围（单选）
+							</dt>
+							<dd  class="js_star_h js_star_all current" data-value="">
+								全部
+							</dd>
+							<dd id="time0" class="js_star_h" data-value="0">
+								今天
+							</dd>
+							<dd id="time1" class="js_star_h" data-value="1">
+								昨天
+							</dd>
+							<dd id="time2" class="js_star_h" data-value="2">
+								三天前
+							</dd>
+							<dd id="time3" class="js_star_h" data-value="3">
+								一个星期前
+							</dd>
+							<dd id="time4" class="js_star_h" data-value="4">
+								一个月前
+							</dd>
+							<dd id="time5" class="js_star_h" data-value="5">
+								自定义
+							</dd>
+						</div>
+
+						<div id='timeStrat' class="aui-flex-col zdyTime" data-type="text" style="display:none;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								开始时间
+							</div>
+							<div class="aui-flex-item-9">
+								<input id="alarmTimeStart" type="date" value="" class="otherDealInfo"/>
+							</div>
+						</div>
+
+						<div id='timeEnd' class="aui-flex-col zdyTime" data-type="text" style="display:none;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								结束时间
+							</div>
+							<div class="aui-flex-item-9">
+								<input id="alarmTimeEnd" type="date" value="" class="otherDealInfo"/>
+							</div>
+						</div>
+									<!-- 日常维修查询开始 -->
+						<div id="standBillsnOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								上站单号
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="applyid" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="standbillStatusOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								工单状态
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="processflag" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="ACCEPT">待接单</option>
+									<option value="AUDIT">待审批</option>
+									<option value="COORDINATE">待协调上站</option>
+									<option value="REVERT">待回单</option>
+									<option value="ISPROMPT">是否及时上站</option>
+									<option value="ISAGREE">是否同意</option>
+									<option value="SENISPROMPT">待最终确认</option>
+									<option value="PHONESIGN">待手机签到</option>
+									<option value="CONFIRE">待上站确认</option>
+								</select>
+							</div>
+						</div>
+						<div id="causeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								上站原因
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="cause" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">抢修（紧急故障处理）</option>
+									<option value="2">排障（一般故障处理）</option>
+									<option value="3">施工（安装设备）</option>
+									<option value="4">勘察</option>
+									<option value="5">巡检</option>
+									<option value="6">发电</option>
+									<option value="7">检查</option>
+									<option value="8">保障</option>
+									<option value="99">其他</option>
+								</select>
+							</div>
+						</div>
+
+						<!--日常维修查询结束-->
+
+
+
+
+						<!--出入站已办工单筛选条件begin-->
+						<div id="daytype" data-type="radio" style="display: none">
+							<dt>
+								时间范围（单选）
+							</dt>
+							<dd class="js_star_h current" id="daytype1" data-value="1">
+								一周内
+							</dd>
+							<dd id="daytype2" class="js_star_h" data-value="2">
+								一个月内
+							</dd>
+							<dd id="daytype3" class="js_star_h" data-value="3">
+								三个月内
+							</dd>
+							<dd id="daytype4" class="js_star_h" data-value="4">
+								三个月以前
+							</dd>
+						</div>
+						<!--出入站已办工单筛选条件end-->
+						<div id="billStatus" data-type="checkbox" style="display: none">
+							<dt>
+								工单状态（多选）
+							</dt>
+							<dd class="js_star_h js_star_all current" data-value="">
+								不限
+							</dd>
+							<dd id="ACCEPT" class="js_star_h" data-value="ACCEPT">
+								待接单
+							</dd>
+							<dd id="REVERT" class="js_star_h" data-value="REVERT">
+								待回单
+							</dd>
+							<dd id="SUPPORTCONFIRM" class="js_star_h" data-value="SUPPORTCONFIRM">
+								待确认
+							</dd>
+							<dd id="ELECTRIC_JUDGE" class="js_star_h" data-value="ELECTRIC_JUDGE">
+								待发电
+							</dd>
+							<dd id="DEFINE" class="js_star_h" data-value="DEFINE">
+								待定位
+							</dd>
+							<dd id="ARCHIVE" class="js_star_h" data-value="ARCHIVE">
+								归档
+							</dd>
+						</div>
+						<!--<div id="isOutdate" data-type="radio" style="display: none">
+						<dt>
+						是否超期
+						</dt>
+						<dd class="js_star_h current" data-value="">
+						全部
+						</dd>
+						<dd class="js_star_h" data-value="1">
+						是
+						</dd>
+						<dd class="js_star_h" data-value="0">
+						否
+						</dd>
+						</div>-->
+						<div id="registStatus" data-type="radio" style="display: none">
+							<dt>
+								状态
+							</dt>
+							<dd class="js_star_h current" data-value="">
+								全部
+							</dd>
+							<dd class="js_star_h" data-value="1">
+								在线
+							</dd>
+							<dd class="js_star_h" data-value="0">
+								不在线
+							</dd>
+						</div>
+						<div id="isroomfault" data-type="radio" style="display: none">
+							<dt>
+								是否室分故障
+							</dt>
+							<dd class="js_star_h current" data-value="">
+								全部
+							</dd>
+							<dd class="js_star_h" data-value="Y">
+								是
+							</dd>
+							<dd class="js_star_h" data-value="N">
+								否
+							</dd>
+						</div>
+						<div id="alarmLevel" data-type="radio" style="display: none">
+							<dt>
+								告警级别
+							</dt>
+							<dd class="js_star_h current" data-value="">
+								全部
+							</dd>
+							<dd class="js_star_h" data-value="1">
+								一级
+							</dd>
+							<dd class="js_star_h" data-value="2">
+								二级
+							</dd>
+							<dd class="js_star_h" data-value="3">
+								三级
+							</dd>
+							<dd class="js_star_h" data-value="4">
+								四级
+							</dd>
+						</div>
+						<div class="mt10">
+							<button class="g_btn_s js_price_star_filter_ok" onclick="query()">
+								查询
+							</button>
+						</div>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/component.js"></script>
+	<script type="text/javascript">
+		var winName;
+		var frameName;
+		var callback;
+		apiready = function() {
+			winName = api.pageParam.winName;
+			frameName = api.pageParam.frameName;
+			callback = api.pageParam.callback;
+			initQueryBox();
+			popup_query.init();
+			popup_query.showPopup();
+
+		}
+		function initQueryBox() {
+			$('dl>div').each(function() {
+				var id = $(this).attr('id');
+				if (api.pageParam[id]) {
+					$(this).show();
+				}
+			});
+		}
+
+		/**
+		 *打开站址查询接口
+		 */
+		function openQueryStationWin() {
+			//          api.openWin({
+			//              name : 'query',
+			//              url : 'query.html',
+			//              bounces : false,
+			//              pageParam : {
+			//                  winName : api.winName,
+			//                  frameName : api.frameName
+			//              }
+			//          });
+			api.openWin({
+				name : 'stationSearch_win',
+				url : 'stationSearch_win.html',
+				bounces : false,
+				pageParam : {
+					winName : api.winName,
+					frameName : api.frameName
+				}
+			});
+		}
+
+		/*
+		*  dingxb 点击查询时需要处理的操作
+		*  最新更新时间2019/2/12
+		*/
+		function query() {
+			var formData = popup_query.serialize();//从显示的列表获取查询的条件
+			transferObj(formData, {  //将查询的条件传到指定的窗口执行指定callback方法
+				winName : winName,
+				frameName : frameName
+			}, callback);
+			popup_query.hidePopup();//隐藏查询界面
+			$("#contactPerson").val('');//清空联系人
+			$("#contactPersonTelephone").val('');//清空电话
+			$("#unit").val('');//清空组织机构
+			$("#imade").css("display","none");//清除图标
+			$('#provId').val('');//清除省份
+			$('#cityId').val('');//清除地市
+			$('#areaId').val('');//清除区域
+
+		}
+
+		// 物资类型 物资名称 联动
+		function changeName(e){
+			var materialType=$(e).val();
+			var materialNameList;
+			if(materialType=="应急通信保障物资"){
+				materialNameList=[
+					'应急发电车',
+					'越野车',
+					'皮卡车',
+					'应急油机(5KW及以上)(代维产权)',
+					'应急油机(5KW及以下)(代维产权)',
+					'应急油机(5KW及以上)(铁塔产权)',
+					'应急油机(5KW及以下)(铁塔产权)',
+					'应急油机(5KW及以上)(其他第三方产权)',
+					'应急油机(5KW及以下)(其他第三方产权)',
+					'一体化柜(含电源、蓄电池等配套)',
+					'锂电池包',
+					'便携塔'
+				]
+			}else if (materialType=="应急信息传报类物资") {
+				materialNameList=[
+					'卫星电话(带数据传送)',
+					'卫星电话(仅语音功能)',
+					'应急智能手机'
+				]
+			}else if (materialType=="应急辅助物资") {
+				materialNameList=[
+					'冲锋舟',
+					'皮划艇',
+					'潜水泵',
+					'抽水机',
+					'无人机',
+					'对讲机',
+					'便携式扩音器',
+					'大功率探照灯',
+					'广告帐篷',
+					'抗震帐篷',
+					'防汛沙袋沙包',
+					'油机并发器',
+					'汽车防滑链',
+					'应急电源灯',
+					'应急保障桌子',
+					'应急保障椅子'
+				]
+			}
+			$('#materialName').empty();
+			if (materialNameList != null && materialNameList.length > 0) {
+				for (var i = 0; i < materialNameList.length; i++) {
+					$('<option>').text(materialNameList[i]).val(materialNameList[i]).appendTo('#materialName');
+				}
+			}
+		}
+
+		/**
+		 *设置站址名称和站址编码
+		 */
+		function onStationSelect(stationname, stationcode) {
+			$("#stationname").val(stationname).parent().addClass('active');
+			$("#stationCode").val(stationcode).parent().addClass('active');
+		}
+
+		/**
+		 * 打开部门查询组件
+		 */
+		function toggleQueryUnit() {
+			var query_setting = {
+				name : api.winName,
+				frameName : 'popup_query_frm'
+			}
+			api.openWin({
+				name : 'unitSelect',
+				url : '../common/unitSelect_win.html',
+				opaque : true,
+				bounces : false,
+				reload : false,
+				vScrollBarEnabled : false,
+				pageParam : query_setting,
+				animation : {
+					type : "push",
+					subType : "from_right",
+					duration : 300
+				}
+			});
+		}
+
+		/**
+		 * 设置省市区的值
+		 */
+		function fillUnitData(provId, provStr, cityId, cityStr, objId, objText, unitId, unitStr) {
+			var $unit = $('#unit');
+			$unit.val(unitStr).attr('data-unitId', unitId).parent().addClass('active');
+			$('#provId').val(provId);
+			$('#cityId').val(cityId);
+			$('#areaId').val(objId);
+		}
+
+		function clearUnit(target) {
+			$(target).siblings('[type=hidden]').each(function() {
+				$(this).val('');
+			});
+		}
+	</script>
+</html>

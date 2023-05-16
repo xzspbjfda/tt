@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="format-detection" content="telephone=no" />
+	<title>启动页面</title>
+	<link rel="stylesheet" type="text/css" href="html/login/login.css" />
+	<link rel="stylesheet" type="text/css" href="css/common.css" />
+</head>
+
+<body>
+	<!--<body style="background:url('image/welcome.png') position:relative;width: 100%;height: 100%;">-->
+	<!-- <img src="image/welcome.png" style="position:relative;width: 100%;height: 100%;z-index:1;"/> -->
+	<!--<span style="position: absolute; top: 0; left: 0;">添加文字...添加文字...添加文字...</span>-->
+	<span
+		style="position:fixed; left:0px; bottom:0px; width:100%; height:50px; z-index:9999;color:#FFFFFF;text-align: center;background-color:transparent; margin-bottom: 25px; ">正在验证登录中</span>
+	<div id="loading" class="loading1"
+		style="position:fixed; left:0px; bottom:0px; width:100%; height:50px; z-index:9999;text-align: center;background-color:transparent;">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+</body>
+<script src="script/jquery-1.11.3.min.js"></script>
+<script src="script/constant.js"></script>
+<script src="script/api.js"></script>
+<script src="script/common.js"></script>
+<script src="script/navigate.js"></script>
+<script src="script/debug.js"></script>
+<script src="script/cvi_busy_lib.js"></script>
+<script type="text/javascript" src="script/config.js"></script>
+<script type="text/javascript" src="script/aui-alert.js"></script>
+<script type="text/javascript" src="script/client.api.js"></script>
+
+<script type="text/javascript">
+	apiready = function () {
+		var jpushVip = api.require('jpushVip');
+		jpushVip.init(function (ret) {
+			console.log("安卓初始化成功")
+		});
+		
+		//		api.removeLaunchView();
+		//      	console.log("登录窗口："+api.winName);
+		//判断是否自动登录
+		//			setTimeout(function() {
+		var isloginOut = $api.getStorage("isLoginOut");
+		api.getPrefs({
+			key: constant.AUTO_LOGIN
+		}, function (ret, err) {
+			if (ret) {
+				console.log("是否登陆过" + isloginOut);
+				//跳转到首页ret.value
+				if (ret.value && isloginOut == "false") {
+					getIsOut();
+					//						tranMainHome();
+				} else {
+					//跳转到登录页面
+					console.log("已经注销");
+					openPage_login();
+				}
+			} else {
+				//跳转到登录页面
+				console.log("没有登陆过");
+				openPage_login();
+			}
+		});
+		//  }, 10000);
+
+		var logCrash = api.require('logCrash');
+		logCrash.listenCrash();
+	};
+	function getIsOut() {
+		var loginName = $api.getStorage(constant.LOGIN_LOGINNAME);
+		var psw = $api.getStorage(constant.LOGIN_PASSWORD);
+		var opts = {
+			loginname: loginName,
+			password: psw
+		};
+		$client.getCheckLogin(opts, function (ret, err) {
+			if (ret) {
+				if (ret.success) {
+					//					setTimeout(function() {
+					tranMainHome();
+					//						}, 10000);
+				} else {
+					showToast(ret.data_info);
+					openPage_login();
+				}
+			} else {
+				showToast("服务异常，请重试");
+				openPage_login();
+			}
+		});
+	}
+</script>
+
+</html>

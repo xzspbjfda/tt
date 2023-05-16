@@ -1,0 +1,294 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>进站派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+    <link rel="stylesheet" type="text/css" href="../css/standBillRevertDetail.css" />
+    <link rel="stylesheet" type="text/css" href="../css/list-format.css"/>
+<!--    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>-->
+    <style type="text/css">
+        /*.cardLabel,.cardTextareaLabel {*/
+        /*    !*color:black;*!*/
+        /*    color:rgb(225,225,225);*/
+        /*}*/
+        .billDetailDivId{
+            margin-left:  -8%;
+        }
+        .darktitle {
+            background-color: white;
+        }
+        .cardTextareaDiv {
+            margin-bottom: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <!--下拉列表-->
+    <script id="dict-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i
+        < len; i++) {}} <option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+            {{ } }}
+    </script>
+    <script id="dict-template2" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <option value="{{=it[i].itemValue}}">{{=it[i].itemName}}</option>
+        {{ } }}
+    </script>
+
+    <script id="option-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i
+        < len; i++) {}} <option value="{{=it[i].orgid}}">{{=it[i].orgname}}</option>
+            {{ } }}
+    </script>
+    <script id="station-option" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i
+        < len; i++) {}} <option value="{{=it[i].st_id}}">{{=it[i].st_name}}</option>
+            {{ } }}
+    </script>
+    <div id="wrap" style="overflow:auto;width: 120%;height: 100%;" >
+        <div class="darktitle"><h2><img class="tit_img" src="../image/bt_icon2.png" alt=""/>申请信息</h2></div>
+
+        <div id="billDetailDivId" class="billDetailDivId">
+            <input id="isBorrowKey" form-param type="hidden" value="N" readonly="readonly">
+            <div class="cardDiv">
+                <div class="cardLabel">省-市-区域：</div>
+                <div class="cardCon">
+                    <input id="area" type="text" readonly="readonly" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">站址名称：</div>
+                <div class="cardCon">
+                    <input id="stationName" form-param type="text" readonly style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                    <input id="stationId" form-param type="hidden">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">站址编码：</div>
+                <div class="cardCon">
+                    <input id="devinceId" form-param type="number" readonly style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站类型：</div>
+                <div class="cardCon">
+                    <select id="standType" form-param style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+    				</select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">作业内容：</div>
+                <div class="cardCon">
+                    <select id="workType" form-param style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+<!--                        <option value="0">日常维护</option>-->
+<!--                        <option value="1">故障处理</option>-->
+<!--                        <option value="2">应急保障</option>-->
+<!--                        <option value="3">设计查勘</option>-->
+    				</select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站人：</div>
+                <div class="cardCon">
+                    <input id="arrivalsName" form-param type="text" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站人身份：</div>
+                <div class="cardCon">
+                    <select id="arrivalsType" form-param style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+    				</select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">进站人电话：</div>
+                <div class="cardCon">
+                    <input id="arrivalsPhone" form-param type="text" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">申请进站时间：</div>
+                <div class="cardCon">
+                    <input id="bookStartTime" form-param type="datetime-local" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">申请离站时间：</div>
+                <div class="cardCon">
+                    <input id="bookEndTime" form-param type="datetime-local" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">开门类型：</div>
+                <div class="cardCon">
+                    <select id="openWay" form-param style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;" value="">
+<!--                        <option value="0">远程开门</option>-->
+<!--                        <option value="1">蓝牙钥匙开门</option>-->
+<!--                        <option value="2">机械钥匙开门</option>-->
+    				</select>
+                </div>
+            </div>
+            <div id="refiefDealInfoDivId" class="cardTextareaDiv">
+                <div class="cardTextareaLabel">上站原因：</div>
+                <div class="cardTextareaCon">
+                    <textarea id="cause" form-param rows="8" class="noborder" style="background-color:white;border:solid 1px green;width:100%;height:100%;"></textarea>
+                </div>
+            </div>
+            <!--<div class="cardDiv" style="margin-bottom: 70px">
+                <div class="cardLabel">用户：</div>
+                <div class="cardCon">
+                    <input id="userName" onclick="openSelectUserWin()" type="text" readonly placeholder="点击选择用户" style="background-color:#FFFFFF;width:80%;height:100%;line-height:40px;">
+                </div>
+            </div>-->
+        </div>
+    </div>
+        <footer style="height:50px;">
+            <div class="cardButtonDiv">
+                <button class="cancelBtn" onclick="closeWin()">取消</button>
+                <button class="okBtn" onclick="creatBillOpt()">提交</button>
+            </div>
+        </footer>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/request.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/home_frm.js"></script>
+<!--<script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.9.1/vconsole.min.js"></script>-->
+<!--<script >-->
+<!--    var vConsole = new VConsole();-->
+<!--</script>-->
+<script>
+
+    var user;
+    request.createBill = function(params,callback){
+        service.post({
+            url:"/enterStationBill/createBill.do",
+            data:{
+                params:params
+            }
+        },callback)
+    }
+
+
+
+
+    apiready = function() {
+        user = $api.getStorage("user");
+        api.setStatusBarStyle({
+            style: 'light'
+        });
+        // 站址信息
+        if(api.pageParam.stationInfo){
+            $api.byId("area").value = api.pageParam.stationInfo.st_provinceid + "-" + api.pageParam.stationInfo.st_cityid + "-" + api.pageParam.stationInfo.st_countyid;
+            $api.byId("stationId").value = api.pageParam.stationInfo.st_id;
+            $api.byId("devinceId").value = api.pageParam.stationInfo.st_deviceid;
+            $api.byId("stationName").value = api.pageParam.stationInfo.st_name;
+        }
+        // 进站人
+        $api.byId("arrivalsName").value = user.username;
+        $api.byId("arrivalsPhone").value = user.mobilephone;
+
+        console.log("参数为："+JSON.stringify(api.pageParam));
+
+        // request.getDict("IDD_ARRIVALS_TYPE",function (ret){
+        //     renderTemp('arrivalsType', 'dict-template2', ret.data, false);
+        // })
+        // request.getDict("IDD_STAND_TYPE_STATION",function (ret){
+        //     renderTemp('standType', 'dict-template2', ret.data, false);
+        // })
+        // request.getDict("IDD_OPEN_WAY",function (ret){
+        //     renderTemp('openWay', 'dict-template2', ret.data, false);
+        // })
+        request.getDictList(["IDD_ARRIVALS_TYPE","IDD_STAND_TYPE_STATION","IDD_OPEN_WAY","IDD_WORK_TYPE_0"],function (ret){
+            renderTemp('arrivalsType', 'dict-template2', ret.data.IDD_ARRIVALS_TYPE, false);
+            renderTemp('standType', 'dict-template2', ret.data.IDD_STAND_TYPE_STATION, false);
+            ret.data.IDD_OPEN_WAY.unshift({itemName:"请选择",itemValue:""})
+            renderTemp('openWay', 'dict-template2', ret.data.IDD_OPEN_WAY, false);
+            renderTemp('workType', 'dict-template2', ret.data.IDD_WORK_TYPE_0, false);
+        })
+
+        $("#standType").change(function(){
+            var type = $(this).val();
+            if(type){
+                request.getDict("IDD_WORK_TYPE_" + type,function (ret){
+                    if(ret.data && ret.data.length > 1){
+                        renderTemp('workType', 'dict-template2', ret.data, false);
+                    }else{
+                        renderTemp('workType', 'dict-template2', [], false);
+                        api.toast({msg: "该进站类型下没有工作内容可选", duration: 1000, location: 'middle'});
+                    }
+                })
+            }
+        })
+
+        $("#openWay").change(function(){
+            // $("#key-field-div").val($(this).val() === "2" ? "Y" : "N");
+            $("#isBorrowKey").val($(this).val() === "2" ? "Y" : "N");
+            // console.log("【这里】",$("#isBorrowKey").val())
+        })
+    };
+
+    function creatBillOpt() {
+        var json = request.serialization("#billDetailDivId");
+        // console.log("【哦也】",JSON.stringify(json));
+        if (!json.arrivalsName) {
+            return api.toast({msg: "请填写进站人员", duration: 1000, location: 'middle'});
+        }
+        if (!json.arrivalsPhone) {
+            return api.toast({msg: "请填写联系电话", duration: 1000, location: 'middle'});
+        }
+        if (!json.arrivalsType) {
+            return api.toast({msg: "请选择进站人单位", duration: 1000, location: 'middle'});
+        }
+        if (!json.bookStartTime) {
+            return api.toast({msg: "请选择申请进站时间", duration: 1000, location: 'middle'});
+        }
+        if (!json.bookEndTime) {
+            return api.toast({msg: "请选择申请离站时间", duration: 1000, location: 'middle'});
+        }
+        if (!json.openWay) {
+            return api.toast({msg: "请选择开门类型", duration: 1000, location: 'middle'});
+        }
+        json.bookStartTime = json.bookStartTime.replace(/T/, " ") + ":00";
+        json.bookEndTime = json.bookEndTime.replace(/T/, " ") + ":00";
+        api.showProgress({title: '加载中', modal: false});
+        request.createBill(json, function(ret, err) {
+            if (ret) {
+                if (ret.data && ret.data.status === "1") {
+                    api.toast({msg: "创建工单成功", duration: 800, location: 'middle'});
+                    window.setTimeout(function() {
+                        api.hideProgress();
+                        api.closeWin();
+                    },3000);
+                    return;
+                } else {
+                    ret.data.error.replace(/<\/br>/,"\n");
+                    api.toast({msg: ret.data.error, location: 'middle'});
+                }
+            } else {
+                api.toast({msg: err.msg, location: 'middle'});
+            }
+            api.hideProgress();
+        });
+    }
+
+
+
+</script>
+
+</html>

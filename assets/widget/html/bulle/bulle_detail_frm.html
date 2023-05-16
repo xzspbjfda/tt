@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+        .title{
+          text-align: center;
+          font-size: 16px;
+          font-weight: bold;
+          margin-top: 10px;
+        }
+        .name{
+          font-size: 14px;
+        }
+        .aui-content{
+          padding: 0 10px;
+        }
+        #page{
+          margin-top: 10px;
+        }
+        #page table{
+          border: 1px solid #000;
+        }
+        #page table td{
+          border: 1px solid #000;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="aui-content" >
+          <div class="title"></div>
+          <div class="name">
+            发布人：<span id="name"></span>
+          </div>
+          <div class="name">
+            发布时间：<span id="time"></span>
+          </div>
+          <div id="page"></div>
+        </div>
+    </body>
+
+</html>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/debug.js"></script>
+<script src='../../script/constant.js'></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+
+    <script type="text/javascript">
+        apiready = function() {
+          api.showProgress({
+            title : '处理中',
+            modal : true,
+          });
+            var opts={
+              id:api.pageParam.detailUrl
+            }
+            var bulleList=$api.getStorage('bulleList');
+            for (var i = 0; i < bulleList.length; i++) {
+              if(api.pageParam.detailUrl==bulleList[i].id){
+                bulleList[i].readed='Y';
+              }
+            }
+            $api.setStorage('bulleList', bulleList);
+            api.execScript({
+                name: 'bulle_list_win',
+                frameName: 'bulle_list_frm',
+                script: 'shuaxin();'
+            });
+            api.execScript({
+                name: 'home_win',
+                frameName: 'footer_tab_4',
+                script: 'shuaxinCount();'
+            });
+            api.execScript({
+                name: 'home_win',
+                script: 'shuaxinCount();'
+            });
+            $client.getBulleDetail(opts,function(ret,err){
+              console.log(JSON.stringify(ret));
+              if(ret.success){
+                  var title = ret.model.title;
+
+                  $(".title").html(js2string(ret.model.title));
+                  $("#name").html(ret.model.publishername);
+                  $("#time").html(ret.model.publishtime);
+                  $("#page").html(js2string(ret.model.content));
+              }else {
+                api.toast({
+                  msg : '详情加载失败！'
+                });
+              }
+                api.hideProgress();
+            })
+        };
+
+        function js2string(str){
+            str = str.replace(/<script>/g, '&lt;script&gt;');
+            str = str.replace(/<\/script>/g, '&lt;/script&gt;');
+
+            for(var i = 0 ; i < 1; i++){
+
+                var index = str.indexOf("<script");
+                if(index != -1){
+                    var str_front = "";
+                    var str_behind = "";
+                    str_front = str.substring(0, index);
+                    str_behind = str.substring(index);
+                    str_behind = str_behind.replace('<script', '&lt;cript');
+                    str_behind = str_behind.replace('>','&gt;');
+                    str = str_front + str_behind;
+
+                    i = -1;
+                }else{
+                    i = 1;
+                }
+
+
+            }
+
+            return str;
+        }
+
+
+    </script>
+

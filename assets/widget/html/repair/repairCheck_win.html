@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>问题核实</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="submit"  > <span class="aui-iconfont" style="font-size:16px">提交</span> </a>
+            <div class="aui-title">问题核实信息</div>
+        </header>
+        <script src="../../script/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../../script/api.js"></script>
+        <script type="text/javascript" src="../../script/common.js"></script>
+        <script type="text/javascript" src="../../script/debug.js"></script>
+        <script type="text/javascript">
+            apiready = function() {
+                var header = $api.byId('header');
+                $api.fixIos7Bar(header);
+                var headerPos = $api.offset(header);
+                var body_h = $api.offset($api.dom('body')).h;
+                api.openFrame({
+                    name : 'repairCheckDetail_frm',
+                    url : 'repairCheckDetail_frm.html',
+                    bounces : false,
+                    pageParam : api.pageParam,
+                    rect : {
+                        x : 0,
+                        y : headerPos.h,
+                        w : headerPos.w,
+                        h : 'auto'
+                    },
+                    reload: true
+                });
+
+                	/*jQuery事件:提交按钮*/
+				$('#submit').click(function() {
+                    $("#submit").attr("disabled",true).css("pointer-events","none");  
+                    // setTimeout(function() {
+                    //     $(".praise").attr("disabled",false).css("pointer-events","auto");  
+                    // },8*1000)
+					api.execScript({
+						frameName : 'repairCheckDetail_frm',
+						script : 'call_validate();'
+					});
+				});
+
+                $api.addEvt($api.byId('back'), 'click', function() {
+                    api.closeWin();
+                });
+            };
+            function onClick(){
+                console.log("sdaflkjsa")
+                $("#submit").attr("disabled",false).css("pointer-events","auto");  
+            }
+        </script>
+    </body>
+</html>

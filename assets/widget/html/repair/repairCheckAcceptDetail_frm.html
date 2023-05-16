@@ -1,0 +1,438 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>结果验收详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../bill/css/billRevertDetail.css" />
+		<style>
+            .removebtn{
+                position: absolute;
+                right: 0;
+                top: 10px;
+                width: 20px!important;
+                height: 20px;
+                padding: 0;
+                margin: 0;
+        	}
+		</style>
+	</head>
+	<body>
+
+        <script id="img-template" type="text/x-dot-template">
+            <li class="aui-list-view-cell aui-img aui-col-xs-4">
+            <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="openImg('{{=it.imgpath}}')">
+            <button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+            </li>
+        </script>
+		<!--下拉列表-->
+		<script id="m-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+		<div id="wrap" >
+			<!--普通回单begin-->
+			<form enctype="multipart/form-data">
+				<input id="project_id" name="projectid" type="hidden" value=""/>
+				<input id="action" name="action" type="hidden" value="5"/>
+
+				<div id="billRevertDivId" style="overflow:auto;margin-bottom:55px;">
+					<div id="isStandStaHidDivId" class="cardDiv">
+						<div class="cardLabel">
+						维修工单号：
+						</div>
+						<div class="cardCon">
+							<input id="billId" name="billsn" type="text"  value="" disabled="disabled" style="height:35px; line-height:35px;">
+						</div>
+					</div>
+					<div id="project_num" class="cardDiv" >
+						<div class="cardLabel">
+							项目编码：
+						</div>
+						<div class="cardCon">
+							<input id="programCodeId" name="programCode" type="text" value=""  style="height:35px; line-height:35px;">
+						</div>
+					</div>
+					<div id="repair_user" class="cardDiv" >
+						<div class="cardLabel">
+						<font color="red" >*</font>参与验收人：
+						</div>
+						<div class="cardCon">
+							<input id="acceptUser" name="acceptUser" type="text" class="required" data-valid="required" data-error="请填写参与验收人！"   value=""  style="height:35px; line-height:35px;">
+						</div>
+					</div>
+					<div id="repair_com" class="cardDiv" >
+						<div class="cardLabel">
+						<font color="red" >*</font>联系电话：
+						</div>
+						<div class="cardCon">
+							<input id="faultId" name="acceptPhone" type="text" class="required" data-valid="required" data-error="请填写联系电话！"  value=""  style="height:35px; line-height:35px;">
+						</div>
+					</div>
+					<!-- wxx -->
+					<div id="project_num" class="cardDiv" >
+						<div class="cardLabel">
+						<font color="red" >*</font>验收结论：
+						</div>
+						<div class="cardCon">
+							<select id="isRefiefHid" name="acceptResult" class="required" data-valid="required" data-error="请选择验收结论！"  value=""  >
+								<option value="">请选择</option>
+								<option value="Y">合格</option>
+								<option value="N">不合格</option>
+							</select>
+						</div>
+					</div>
+					<!-- wxx -->
+					<div id="project_date" class="cardDiv"style="display:none;">
+						<div class="cardLabel">
+						<font color="red" >*</font>质保期：
+						</div>
+						<div class="cardCon">
+							<select id="savetime" name="quality" class="required" data-valid="required" data-error="请选择质保期！">
+								<option value="">请选择</option>
+							</select>
+						</div>
+					</div>
+
+					<!-- wxx  修改了div的ID-->
+					<!-- ========================= -->
+					<!-- 方法一 -->
+					<!-- <div id="acceptanceReportDivId" class="cardDiv" >
+						<div class="cardLabel">
+						<font color="red" >*</font>验收报告：
+						</div>
+						<div class="cardCon">
+							<input id="acceptanceReport" name="acceptanceReport" type="file" class="required" data-valid="required" data-error="验收报告不能为空！"  value=""  style="height:35px; line-height:35px;"/>
+						</div>
+						<input name="acceptanceReportName" id="acceptanceReportName">
+					</div> -->
+
+					<!-- <input name="file" id="file_base64" class="required" data-valid="required" data-error="验收报告正在上传！"> -->
+					<!-- ========================= -->
+					<!-- 方法二 -->
+					<div class="cardTextareaDiv" id="Presentation" style="display:none;height: 150px;">
+						<div class="cardTextareaLabel">
+						<font color="red" >*</font>验收报告：
+						</div>
+						<style>
+							.fileBtn{
+								padding:2px 6px;
+								border-radius:4px;
+								background-color:#3c7dbd;
+								color:#fff;
+								font-size:14px;
+								height:26px;
+								line-height: 26px;
+								margin-top: 7px;
+								display: inline-block;
+							}
+						</style>
+						<div class="cardTextareaCon" style="height: 150px;">
+							<div>
+								<span onclick="openFile()" class="fileBtn">选择文件</span>
+								<span id="fileBtnTs" style="display:none; font-size:14px;color:#000">已选择</span>
+							</div>
+							<div>
+								<span onclick="call_getPic(this)" class="fileBtn">拍照</span>
+								<span id="fileBtnTs2" style="display:none; font-size:14px;color:#000">已拍照</span>
+								<ul class="aui-list-view aui-grid-view" id="addPic" style="min-height: 100px;">
+								</ul>
+							</div>
+						</div>
+						<!-- <input name="acceptanceReportName" id="acceptanceReportName"> -->
+						<input name="acceptanceReportUrl" id="acceptanceReportUrl" class="required" type='hidden' data-valid="required" data-error="请选择或拍照验收报告！">
+					</div>
+					<!-- wxx -->
+
+					<!-- ========================= -->
+
+					<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+						<div class="cardTextareaLabel">
+							<font color="red" >*</font>验收说明：
+						</div>
+						<div class="cardTextareaCon" style="background-color: #fff">
+							<textarea id="reliefDealInfoId" name="acceptRemark" rows="4" class="noborder required" data-valid="required" data-error="请填写验收说明！"></textarea>
+						</div>
+					</div>
+
+					</div>
+				</div>
+				<!--<div id="hiddenForm" style="display: none">
+					<script id="hiddenParam-template" type="text/x-dot-template">
+						<input name="billsn" type="hidden" value="{{=it.billsn}}"/>
+						<input name="projectid" type="hidden" value="111111"/>
+					</script>
+				</div>-->
+				<!--普通回单end-->
+				<footer style="height:50px;">
+					<div class="cardButtonDiv">
+						<button class="billRevertCancelBtn"  onclick="api.closeWin()">
+							取消
+						</button>
+						<button id="submitBtn" class="billRevertOkBtn">
+							确定
+						</button>
+					</div>
+				</footer>
+			</form>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="script/billForm.js"></script>
+	<script>
+		var imageArray =[];
+		var repairDetail;
+		var url;
+		function openFile(){
+			var fileBrowser = api.require('fileBrowser');
+			var err;
+
+			fileBrowser.open(function(ret, err) {
+				fileBrowser.close();
+				//  alert(JSON.stringify(ret));
+				if(ret.url){
+					try {
+					//  throw err = new Error( '用户自定义异常信息' );
+					 url = ret.url;
+					} catch(e) {
+					 console.log(e);
+					}
+
+					var arr = url.split("/");
+					// $('#acceptanceReportName').val(arr[arr.length-1]);
+					$('#acceptanceReportUrl').val(url);
+					$('#fileBtnTs').show();
+				}
+			});
+		}
+		apiready = function() {
+			console.log("-------------apiready------------")
+			console.log(JSON.stringify(imageArray))
+			// wxx
+			// $('#acceptanceReport').change(function(){
+			// 	alert($(this).val())
+			// 	if($(this).val()!=null && $(this).val()!=''){
+			// 		var reader = new FileReader();
+			// 		console.log(getObj(this.files[0]))
+			// 		$('#acceptanceReportName').val(this.files[0].name);
+			// 		reader.readAsDataURL(this.files[0]);
+			// 		reader.onload = function(e){
+			// 				$('#file_base64').val(e.target.result);
+			// 				api.toast({
+			// 					msg : '文件正在上传,请稍等！',
+			// 					location : 'middle',
+			// 					duration: 4000
+			// 				});
+			// 				console.log($('#file_base64').val());
+			// 		};
+			// 	}
+			// });
+			// wxx
+		 repairDetail= $api.getStorage('repairDetail');
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+
+			$('#billId').val(repairDetail.billsn);
+			$('#project_id').val(repairDetail.projectid);
+			initDict();
+			var billForm = new BillForm($('form'), $('#submitBtn'), $client.repairCheckAcceptBill);
+			billForm.init();
+//			renderTemp('hiddenForm', 'hiddenParam-template', repairDetail);
+// wxx
+// 验收不合格时，需要隐藏掉【验收报告】和【质保期】属性，且不必填
+			$('#isRefiefHid').change(function(){
+				var isRefiefHidVal= $(this).val();
+				if(isRefiefHidVal=='N'){
+					$('#project_date').hide();
+					$('#savetime').removeClass('required');
+					$('#acceptanceReportUrl').removeClass('required');
+					$('#Presentation').hide();
+				}else {
+					$('#project_date').show();
+					$('#savetime').addClass('required');
+					$('#acceptanceReportUrl').addClass('required');
+					$('#Presentation').show();
+				}
+
+			});
+// 验收报告附件上传
+			$('#submitBtn').click(function(){
+				if(($('#acceptanceReportUrl').val()!='' || imageArray.length>0) && $('#isRefiefHid').val()!='' && $('#savetime').val()!='' && $('#reliefDealInfoId').val()!=''){
+					var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+					var lon1 = displaynum(lastLocation.lon);
+					var lat1 = displaynum(lastLocation.lat);
+					user = $api.getStorage('user');
+					console.log(getObj(user))
+					var opts = {
+						userid : user.userid,
+						imgpath : $('#acceptanceReportUrl').val(),
+						billsn : repairDetail.billsn,
+						action : '5',
+						phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+						lon : lon1,
+						lat : lat1,
+						photoaddress : lastLocation.photoaddress
+					};
+					var file =$('#acceptanceReportUrl').val();
+					var files={};
+					if(file!=null && file!=""){
+						files["file0"]=file;
+					}
+					for(i=0;i<imageArray.length;i++){
+						var key=i+1;
+						files["file"+key]=imageArray[i];
+					}
+					console.log("===============file======================");
+					console.log(JSON.stringify(files));
+					imageUtil.init({
+						uploadFn: $client.uploadRepairAttach(opts,files,function(ret,err){
+							console.log("--------------------------------------------------");
+								console.log(getObj(ret));
+								if(ret.data_info=='附件上传成功'){
+									api.toast({
+									    msg: '附件上传成功',
+									    duration: 2000,
+									    location: 'bottom'
+									});
+
+								}else {
+									api.toast({
+									    msg: '附件上传失败,请重新上传',
+									    duration: 2000,
+									    location: 'bottom'
+									});
+								}
+						}),
+						saveFn: db_saveRepairPic
+					});
+				}
+			})
+			//zhangzhitao
+			var user = $api.getStorage('user');
+			if(user!=null){
+				$('#acceptUser').val(user.username);
+				$('#faultId').val(user.mobilephone);
+			}
+
+	};
+
+	function appendpic(imgpath){
+		var data={imgpath:imgpath};
+		var tpl = $api.byId('img-template').text;
+		var tempFn = doT.template(tpl);
+		$("#addPic").append(tempFn(data));
+		$new=$("#addPic li:last");
+		$new.css('height', $new.css('width'));
+		imageArray.push(imgpath);
+		$('#acceptanceReportUrl').removeClass('required');
+		$('#fileBtnTs2').show();
+	}
+	function initDict(){
+	var saveTimeList = $api.getStorage("saveTimeList");
+
+	//免责条款
+			if (saveTimeList != null && saveTimeList.length > 0) {
+				//				alert("集合数：" + disclaimerList.length);
+				$('#savetime').empty();
+				$('<option>').text('请选择').val('').appendTo('#savetime');
+				renderTemp('savetime', 'm-template', saveTimeList, true);
+			}
+	}
+
+	//拍照
+	function call_getPic(e) {
+		var permission = 'camera';
+		var resultList = api.hasPermission({
+			list: [permission]
+		});
+		if (resultList[0].granted) {
+			// 已授权，可以继续下一步操作
+		} else {
+			api.confirm({
+				msg: '应用需要您的授权才能访问相机',
+				buttons: ['取消', '去设置']
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					api.requestPermission({
+						list: [permission],
+					}, function(res) {
+						if (res.list[0].granted) {
+							// 已授权，可以继续下一步操作
+						}
+					});
+				}
+			});
+		}
+		api.getPicture({
+                sourceType: 'camera',
+                encodingType: 'png',
+                mediaValue: 'pic'
+            }, function(ret, err){
+                if (ret && ret.data && ret.data.length) {
+					try {
+						console.log(ret.data)
+						appendpic(ret.data);
+					} catch(e) {
+					 	console.log(e);
+					}
+				}
+            });
+	}
+	
+	/**
+	 *打开图片
+		*/
+		function openImg(imgPath) {
+		window.event.stopPropagation();
+		// showlog("openImg:" + imgPath);
+		// var module = api.require('imageBrowser');
+		// module.openImages({
+		// 	imageUrls : [imgPath],
+		// 	showList : false
+		// });
+		var pageParam = {
+			images: [imgPath]
+		};
+		api.openWin({
+			name: 'imageViewer',
+			url:'../photoViewer/mainFrame.html',
+			pageParam : pageParam
+		})
+	}
+	/**
+	 *删除图片
+	*/
+	function removeImg(imgPath) {
+		var size = imageArray.length;
+		for (var i = 0; i < size; i++) {
+			var data = imageArray[i];
+			if (data == imgPath) {
+				imageArray.remove(i);
+				break;
+			}
+		}
+		if(imageArray.length<=0){
+			$('#acceptanceReportUrl').addClass('required');
+			$('#fileBtnTs2').hide();
+		}
+		$(event.target).parents('li.aui-img').remove();
+	}
+	</script>
+</html>

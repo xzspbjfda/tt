@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>设备详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/common.css" />
+        <style>
+            .iconFont {
+                font-size: 22px;
+                color: #8f8f94;
+                height: 30px;
+                line-height: 30px;
+                display: inline-block;
+                margin-top: 3px;
+            }
+            .activeWarning p {
+                color: #DB4537;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" tapmode onclick="closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title" id="header-title">
+                设备详情
+            </div>
+            <!--<a  id="devDoorIconId" style="display:none;" class="aui-iconfont openDoor-icon right-icon" tapmode="" onclick="openDevDoor()"></a>-->
+        </header>
+        <footer class="aui-nav" style="border-top:1px solid #ADADAD;" id="footer">
+            <ul class="aui-bar-tab">
+                <li class="activeWarning" id="tabbar1" tapmode onclick="randomSwitchBtn(this,'设备详情',0)">
+                    <span class="iconFont"> <img id="deviceOverId" src="../../image/widget_tab_icon_device_over.png" width="25px" height="25px"/> <img id="deviceNorId" style="display:none;" src="../../image/widget_tab_icon_device_nor.png" width="25px" height="25px"/> </span>
+                    <p>
+                        设备详情
+                    </p>
+                </li>
+                <li id="tabbar2" tapmode onclick="randomSwitchBtn(this,'信号精简指标',1)">
+                    <span class="iconFont"> <img id="stationNorId1" src="../../image/widget_tab_icon_station_nor.png" width="25px" height="25px"/> <img id="stationOverId1" style="display:none;" src="../../image/widget_tab_icon_station_over.png" width="25px" height="25px"/> </span>
+                    <p>
+                        信号精简指标
+                    </p>
+                </li>
+                <li id="tabbar3" tapmode onclick="randomSwitchBtn(this,'信号详细指标',2)">
+                    <span class="iconFont"> <img id="stationNorId2" src="../../image/widget_tab_icon_station_nor.png" width="25px" height="25px"/> <img id="stationOverId2" style="display:none;" src="../../image/widget_tab_icon_station_over.png" width="25px" height="25px"/> </span>
+                    <p>
+                        信号详细指标
+                    </p>
+                </li>
+            </ul>
+        </footer>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        apiready = function() {
+            api.parseTapmode();
+            var header = $api.byId('header');
+            $api.fixIos7Bar(header);
+            //status bar style
+            api.setStatusBarStyle({
+                style : 'light'
+            });
+            var headerPos = $api.offset(header);
+            var body_h = $api.offset($api.dom('body')).h;
+            var footer_h = $api.offset($api.byId('footer')).h;
+            var deviceType = api.pageParam.deviceType;
+//          if (deviceType == '17' || deviceType == '99') {
+//              $('#devDoorIconId').show();
+//          }
+            api.openFrameGroup({
+                name : 'device_footer_tab',
+                scrollEnabled : true,
+                rect : {
+                    x : 0,
+                    y : headerPos.h,
+                    w : 'auto',
+                    h : body_h - headerPos.h - footer_h
+                },
+                index : 0,
+                preload : 0,
+                frames : [{
+                    name : 'devDetail',
+                    url : 'devDetail.html',
+                    pageParam : api.pageParam,
+                    bounces : false
+                }, {
+                    name : 'simpleSignalList',
+                    url : 'signalListWinSimple.html',
+                    pageParam : {
+                        showFlag : 1,
+                        //                      measuredval : api.pageParam.measuredval,
+                        //                      semaphorename : api.pageParam.semaphorename,
+                        //                      semaphoreId : api.pageParam.semaphoreId,
+                        stationId : api.pageParam.stationId,
+                        deviceName : api.pageParam.deviceName,
+                        deviceCode : api.pageParam.deviceCode,
+                        devFsuId : api.pageParam.devFsuId,
+                        type : '1'
+                    },
+                    bounces : false
+                }, {
+                    name : 'allSignalList',
+                    url : 'signalListWinAll.html',
+                    pageParam : {
+                        showFlag : 0,
+                        //                      measuredval : api.pageParam.measuredval,
+                        //                      semaphorename : api.pageParam.semaphorename,
+                        //                      semaphoreId : api.pageParam.semaphoreId,
+                        stationId : api.pageParam.stationId,
+                        deviceName : api.pageParam.deviceName,
+                        deviceCode : api.pageParam.deviceCode,
+                        devFsuId : api.pageParam.devFsuId,
+                        type : '0'
+                    },
+                    bounces : false
+                }]
+            }, function(ret, err) {
+                var footer = $api.byId('footer');
+                var footerAct = $api.dom(footer, '.aui-bar-tab li.activeWarning');
+                $api.removeCls(footerAct, 'activeWarning');
+                var name = ret.name;
+                var index = ret.index;
+                if (index == 0) {
+                    $api.text($api.byId('header-title'), '设备详情');
+                    $api.addCls($api.byId('tabbar1'), 'activeWarning');
+                    $('#deviceOverId').show();
+                    $('#deviceNorId').hide();
+                    $('#stationOverId1').hide();
+                    $('#stationNorId1').show();
+                    $('#stationOverId2').hide();
+                    $('#stationNorId2').show();
+                    //                  api.execScript({
+                    //                      frameName : 'signalListWin',
+                    //                      script : 'hiddenFrameGroup();'
+                    //                  });
+                } else if (index == 1) {
+                    $api.text($api.byId('header-title'), '信号精简指标');
+                    $api.addCls($api.byId('tabbar2'), 'activeWarning');
+                    $('#deviceOverId').hide();
+                    $('#deviceNorId').show();
+                    $('#stationOverId1').show();
+                    $('#stationNorId1').hide();
+                    $('#stationOverId2').hide();
+                    $('#stationNorId2').show();
+                    api.execScript({
+                        frameName : 'simpleSignalList',
+                        script : 'showFrameGroup();'
+                    });
+                } else if (index == 2) {
+                    $api.text($api.byId('header-title'), '信号详细指标');
+                    $api.addCls($api.byId('tabbar3'), 'activeWarning');
+                    $('#deviceOverId').hide();
+                    $('#deviceNorId').show();
+                    $('#stationOverId1').hide();
+                    $('#stationNorId1').show();
+                    $('#stationOverId2').show();
+                    $('#stationNorId2').hide();
+                    api.execScript({
+                        frameName : 'allSignalList',
+                        script : 'showFrameGroup();'
+                    });
+                }
+            })
+        };
+        function closeWin() {
+            api.closeWin();
+        }
+
+        function randomSwitchBtn(obj, name, index) {
+            $api.text($api.byId('header-title'), name);
+            var footer = $api.byId('footer');
+            var footerAct = $api.dom(footer, '.aui-bar-tab li.activeWarning');
+            $api.removeCls(footerAct, 'activeWarning');
+            $api.addCls(obj, 'activeWarning');
+            if (index == 0) {
+                $('#deviceOverId').show();
+                $('#deviceNorId').hide();
+                $('#stationOverId').hide();
+                $('#stationNorId').show();
+                api.execScript({
+                    frameName : 'allSignalList',
+                    script : 'hiddenFrameGroup();'
+                });
+                api.execScript({
+                    frameName : 'simpleSignalList',
+                    script : 'hiddenFrameGroup();'
+                });
+            } else if (index == 1) {
+                $('#deviceOverId').hide();
+                $('#deviceNorId').show();
+                $('#stationOverId').show();
+                $('#stationNorId').hide();
+                api.execScript({
+                    frameName : 'allSignalList',
+                    script : 'hiddenFrameGroup();'
+                });
+                api.execScript({
+                    frameName : 'simpleSignalList',
+                    script : 'showFrameGroup();'
+                });
+            }
+            api.setFrameGroupIndex({
+                name : 'device_footer_tab',
+                index : index,
+                scroll : true
+            });
+        }
+
+//      //开门
+//      function openDevDoor() {
+//          api.pageParam.stationName = $api.getStorage('stationName');
+//          api.openWin({
+//              name : 'autoOpenDoor_win',
+//              url : '../autoOpenDoor_win.html',
+//              bounces : false,
+//              pageParam : api.pageParam,
+//              rect : {
+//                  x : 0,
+//                  y : 0,
+//                  w : 'auto',
+//                  h : 'auto'
+//              },
+//              reload : true
+//          });
+//      }
+    </script>
+</html>

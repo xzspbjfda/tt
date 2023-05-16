@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/standBillRevertDetail.css" />
+        <style>
+            #header .openMenu-icon {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                background: url(../../image/actionbar_icon_add.png) no-repeat center center;
+                -webkit-background-size: 14px 18px;
+                background-size: 30px 30px;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
+            .iconFont {
+                font-size: 22px;
+                color: #8f8f94;
+                height: 30px;
+                line-height: 30px;
+                display: inline-block;
+                margin-top: 3px;
+            }
+            .activeWarning p {
+                color: #DB4537;
+            }
+        </style>
+        <style>
+			.aui-flex-col:last-child {
+				line-height: 25px;
+				border-bottom: 1px dashed #00a0c8;
+			}
+			.aui-flex-col {
+				line-height: 25px;
+			}
+			.cj-orange{
+				background-color: orange;
+			}
+			.cj-blue{
+				background-color: blue;
+			}
+			.cj-purple{
+				background-color: purple;
+			}
+			.cj-green{
+				background-color: green;
+			}
+
+			.cj-l-level{
+				width: 18px;
+				height: 18px;
+				border-radius: 50%;
+				line-height: 18px;
+				text-align: center;
+				display: inline-block;
+				color: #fff;
+				margin: 0 4px;
+				vertical-align:top;
+			}
+
+			.cj-ash{
+				background-color: grey;
+			}
+		 #main{
+			 background-color: #f4f4f4;
+			 padding-top: 10px;
+		 }
+		 .cj-l-into-wxx {
+				 font-size: 12px;
+				 color: #666;
+				 line-height: 20px;
+				 padding: 3px 0;
+				 position: relative;
+		 }
+		 .cj-l-date-wxx {
+				 display: block;
+				 position: absolute;
+				 top: 3px;
+				 right: 0;
+				 width: 180px;
+				 text-align: right;
+		 }
+		 .cj-l-date-wxx span {
+				 margin-left: 7px;
+		 }
+		 .cj-l-date-wxx:after {
+				 content: "";
+				 display: block;
+				 width: 1px;
+				 height: 12px;
+				 background: #e3e3e3;
+				 position: absolute;
+				 top: 4px;
+				 left: 60px;
+		 }
+		 .cj-l-date-wxx-2{
+			 display: block;;
+			 width: 1px;
+			 height: 12px;
+			 background: #e3e3e3;
+			 position: absolute;
+			 right: -4px;
+			 top:4px;
+		 }
+
+		 .cj-l_line{
+			 position: absolute;
+			 width:5px;
+			 height: 18px;
+			 left: -10px;
+			 top: 9px;
+			 border-radius: 10px;
+		 }
+		 .cj-l_line1{
+			 background: linear-gradient(#fe7a7d, #fe4f4f);
+		 }
+			.LC_img{
+				height: 60px;
+				display: block;
+				margin: 0 auto;
+				background-color:#ccc;
+			}
+			.wxx_btn_box{
+				display: flex;
+				justify-content: space-between;
+			}
+			.wxx_btn{
+				width: 118px;
+				height: 33px;
+				border-radius: 35px;
+				border: 1px solid #db4537;
+				line-height: 30px;
+				box-shadow: 0 3px 8px rgba(226,132,123,.5);
+				color: #db4537;
+				font-size: 14px;
+				text-align: center;
+				margin: 4px auto;
+			}
+			.none{
+				display: none;
+			}
+		</style>
+    </head>
+    <body>
+        <ul class="aui-list-view" id="stationLeaveDetail"></ul>
+        <ul class="aui-list-view" id="beforeAlarmList"></ul>
+        <ul class="aui-list-view" id="leaveAlarmList"></ul>
+        <ul class="aui-list-view" id="leaveRemark" style="display:none">
+	        <li class="aui-list-view-cell border_b" >
+			<form>
+				<div id="billRevertDivId" style="margin-bottom:5px; height:120px">
+					<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+						<div class="cardTextareaLabel">
+							<font color="red" >*</font>离站说明：
+						</div>
+						<div class="cardTextareaCon" style="background-color: #fff">
+							<textarea id="txtLeaveReason" name="txtLeaveReason" rows="4" class="noborder" ></textarea>
+						</div>
+						<span style="color:#ff0000; display:inline-block; width:100%;  text-align:center; margin-top:10px">您当前不符合离站条件</span>
+					</div>
+				</div>
+			</form>
+		</li>
+	</ul>
+	<span style="color:#08c; display:inline-block; width:100%;  text-align:center; display:none; margin-top:10px" id="span_message">您当前符合离站条件</span>
+	
+	<div style="width: 100%; padding:0px; text-align:center; padding-top:10px; padding-bottom:10px">
+		<button class="okBtn" style="width: 40%;color:#fff; margin:0px; float: none" onclick="submitData()" id="btnConfirm" disabled="disabled">确认离站</button>
+		<button class="okBtn" style="width: 40%;color:#fff;margin:0px;float: none; background:#00BFFF" onclick="refreshData()" style="display:none" id="refreshDataBtn">更新数据</button>
+	</div>
+	
+        <script id="detail-template" type="text/x-dot-template">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>负载情况</h2></div>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">上站前负载</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.beforeCollectionNumber != null ? it.beforeCollectionNumber:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">离站时负载</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.endCollectionNumber != null ? it.endCollectionNumber:''}}</div>
+			</li>
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>低压脱离告警</h2></div>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">一级低压脱离告警</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.periodOnelevelAlarmNumber != null ? it.periodOnelevelAlarmNumber:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">二级低压脱离告警</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.periodTwolevelAlarmNumber != null ? it.periodTwolevelAlarmNumber:''}}</div>
+			</li>
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>告警数量</h2></div>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">上站前告警数量</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.beforeOnelevelAlarmNumber + it.beforeTwolevelAlarmNumber }}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">离站时告警数量</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.afterOnelevelAlarmNumber + it.afterTwolevelAlarmNumber }}</div>
+			</li>
+	</script>
+	<script id="beforeAlarmlist-template" type="text/x-dot-template">
+		<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>上站前告警信息</h2></div>
+		{{ for(var i=0, len=it.length; i < len; i++) { }}
+		{{ if (it[i].source == '1') { }}
+		<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left" style="font-weight:bold">告警名称</div>
+			<div class="aui-col-xs-9 aui-pull-right">{{=it[i].content != null ? it[i].content:''}}</div>
+			<div class="aui-col-xs-3 aui-pull-left" style="font-weight:bold">告警时间</div>
+			<div class="aui-col-xs-9 aui-pull-right">{{=it[i].occurrenceDate != null ? it[i].occurrenceDate:''}}</div>
+			<div class="aui-col-xs-3 aui-pull-left" style="font-weight:bold">告警详情</div>
+			<div class="aui-col-xs-9 aui-pull-right">{{=it[i].describe != null ? it[i].describe:''}}</div>
+		</li>
+		{{  }  }}
+		{{  }  }}
+	</script>
+	
+	<script id="leaveAlarmlist-template" type="text/x-dot-template">
+		<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>离站时告警信息</h2></div>
+		{{ for(var i=0, len=it.length; i < len; i++) { }}
+		{{ if (it[i].source == '2') { }}
+		<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left" style="font-weight:bold">告警名称</div>
+			<div class="aui-col-xs-9 aui-pull-right">{{=it[i].content != null ? it[i].content:''}}</div>
+			<div class="aui-col-xs-3 aui-pull-left" style="font-weight:bold">告警时间</div>
+			<div class="aui-col-xs-9 aui-pull-right">{{=it[i].occurrenceDate != null ? it[i].occurrenceDate:''}}</div>
+			<div class="aui-col-xs-3 aui-pull-left" style="font-weight:bold">告警详情</div>
+			<div class="aui-col-xs-9 aui-pull-right">{{=it[i].describe != null ? it[i].describe:''}}</div>
+		</li>
+		{{ } }}
+		{{  }  }}
+	</script>
+	
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/getStationData.js"></script>
+
+    <script type="text/javascript">
+    	var leaveStation = true;
+    	var firstDate = new Date();
+        apiready = function() {
+        	renderTemp('stationLeaveDetail', 'detail-template', {"afterOnelevelAlarmNumber":'', "afterTwolevelAlarmNumber":'', "beforeOnelevelAlarmNumber":'' , "beforeTwolevelAlarmNumber":''});
+        	initData();
+        };
+        
+        function initData(){
+        	$('#btnConfirm').attr('disabled', 'disabled');
+        	api.showProgress({
+			title : '信息采集中...',
+			modal : false
+		});
+        	var billModel = $api.getStorage('standBillModel');
+        	var user = $api.getStorage('user');
+        	
+		var stationId=$api.getStorage('st_code');
+		
+		request.getAlarmNumber = function (opts,callback) {
+			service({
+				url: "/enterStationBill/getAlarmNumber.do",
+				data: opts
+			},callback)
+		}
+		//getAlarmCount();
+		//return;
+		getStationData(stationId,function(ret){
+			console.log("============总直流负载电流采集完成================")
+			console.log("返回结果：",JSON.stringify(ret));
+			if (ret.success) {
+				var measuredValCount=ret.measuredValCount;
+				if (ret.deviceCnt==0){
+					api.hideProgress();
+					api.alert({
+		    				msg : "该站址下未采集到总直流负载电流信息"
+		    			});
+		    			errorHandler();
+		    			return;
+				}
+				var opts={
+					id:billModel.id,
+					stationId:billModel.stationId,//'64861FDB369F8F9D057B51A473A57062'
+					billSn:billModel.billSn,
+					userId:user.userid,//'2355840'
+					userName:user.username,
+					measuredValCount:measuredValCount,
+					saveType: "leave"
+				}
+				
+				
+				//alert(JSON.stringify(opts));
+				//总直流负载电流采集以及告警数量入库
+				console.log("============总直流负载电流以及告警数量入库开始================")
+				//console.log("上传参数",JSON.stringify(opts));
+				request.getAlarmNumber(opts,function(ret, err){
+					console.log("============总直流负载电流以及告警数量入库完成================")
+					console.log("返回结果：",JSON.stringify(ret));
+					if (ret) {
+						if (ret.success) {
+							//获取上站期间低压脱离告警数量
+							console.log("============上站期间低压脱离告警数量采集开始================")
+							getAlarmCount()
+						}else{
+							api.alert({
+				    				msg : "信息采集失败"
+				    			});
+				    			errorHandler();
+				    			api.hideProgress();
+						}
+					}else{
+						errorHandler();
+						api.alert({
+			    				msg : "信息采集失败"
+			    			});
+			    			api.hideProgress();
+					}
+				});
+			}else{
+				api.hideProgress();
+				api.alert({
+	    				msg : "信息采集失败"
+	    			});
+	    			errorHandler();
+	    			
+			}
+		});
+        }
+        
+        // 数据采集异常情况处理
+        function errorHandler(){
+		leaveStation = false;
+        	$('#leaveRemark').show();
+			$('#refreshDataBtn').show();
+			$('#span_message').hide();
+			$('#btnConfirm').removeAttr('disabled');
+        }
+        
+        //获取上站期间低压脱离告警数量、获取预警信息并显示
+        function getAlarmCount(){
+			var billModel = $api.getStorage('standBillModel');
+        	var user = $api.getStorage('user');
+        	var opts ={"billSn": billModel.billSn, "billId":  billModel.id, "collectAlarmCount": "true", "stationId": billModel.stationId};
+        	
+        	request.getWarmData = function (opts,callback) {
+				service({
+					url: "/enterStationWarm/getByBillSn.do",
+					data: opts
+				},callback);
+			}
+			request.getWarmData(opts,function(ret, err) {
+				leaveStation = true;
+				if (ret) {
+					if (ret.success) {
+							renderTemp('stationLeaveDetail', 'detail-template', ret.data);
+							console.log("============上站期间低压脱离告警数量采集完成================")
+							/*api.alert({
+								msg : "信息采集完成"
+							});*/
+						
+							// 不允许离站的条件判断
+							
+							//对于离站时负载大于上站前负载15A
+							
+							if (null2zero(ret.data.endCollectionNumber) - null2zero(ret.data.beforeCollectionNumber)>15){
+								leaveStation = false;
+							}
+							//离站时一、二级告警数量较上站开门前告警数量增加1条及以上
+							if (leaveStation 
+								&& null2zero(ret.data.beforeOnelevelAlarmNumber) + null2zero(ret.data.beforeTwolevelAlarmNumber) < null2zero(ret.data.afterOnelevelAlarmNumber) + null2zero(ret.data.afterTwolevelAlarmNumber)){
+								leaveStation = false;
+							}
+							//产生“一级低压脱离告警”或“二级低压脱离告警”的情况
+							if (null2zero(ret.data.periodOnelevelAlarmNumber)>0 || null2zero(ret.data.periodTwolevelAlarmNumber)>0){
+								leaveStation = false;
+							}
+							
+							//leaveStation=false;
+							if (leaveStation==false){
+								$('#leaveRemark').show();
+								$('#refreshDataBtn').show();
+								$('#span_message').hide();
+							} else {
+								$('#leaveRemark').hide();
+								$('#refreshDataBtn').hide();
+								$('#span_message').show();
+							}
+							$('#btnConfirm').removeAttr('disabled');
+					} else {
+						errorHandler();
+						api.alert({
+							msg : "信息采集失败"
+						});
+					}
+				}
+			});
+			//直接放过1 start;
+			/*var data = {}
+			data.beforeCollectionNumber = 10
+			data.endCollectionNumber = 10
+			data.periodOnelevelAlarmNumber = 0
+			data.periodTwolevelAlarmNumber = 0
+			data.beforeOnelevelAlarmNumber = 0
+			data.afterOnelevelAlarmNumber = 0
+			data.beforeTwolevelAlarmNumber = 0
+			data.afterTwolevelAlarmNumber = 0
+			renderTemp('stationLeaveDetail', 'detail-template', data);
+			leaveStation = true;
+			$('#leaveRemark').hide();
+			$('#refreshDataBtn').hide();
+			$('#span_message').show();
+			$('#btnConfirm').removeAttr('disabled');*/
+			//直接放过1 end			
+			api.hideProgress();
+			opts ={"billSn": billModel.billSn};
+			request.getAlarmList = function (opts,callback) {
+				service({
+					url: "/enterWarmRecord/getListByBillSn.do",
+					data: opts
+				},callback);
+			}
+			request.getAlarmList(opts,function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+							renderTemp('beforeAlarmList', 'beforeAlarmlist-template', ret.data);
+							renderTemp('leaveAlarmList', 'leaveAlarmlist-template', ret.data);
+					}
+				}
+			});
+        }
+        
+        // 提交离站确认信息
+        function submitData(){
+        	$('#btnConfirm').attr('disabled', 'disabled');
+        	var billModel = $api.getStorage('standBillModel');
+			//leaveStation
+			var opts = {};
+			opts.id=billModel.id;
+			var user=$api.getStorage('user');
+			opts.leaveUserId=user.userid;
+			opts.leaveUserName=user.username;
+			if (leaveStation){
+				// 正常离站
+				opts.leaveStatus=1;
+				opts.leaveReason = '';
+			} else {
+				//异常离站
+				opts.leaveStatus=2;
+				opts.leaveReason = $('#txtLeaveReason').val();
+				
+				if (opts.leaveReason.length==0){
+					api.toast({
+						msg : "离站说明必须填写",
+						duration : 3000,
+						location : 'middle'
+					});
+					$('#btnConfirm').removeAttr('disabled');
+					return;
+				}
+			}
+			
+			// 计算操作时长
+			var endDate=new Date(); 
+			opts.operatingCost = (endDate.getTime()-firstDate.getTime())/1000; 
+			
+			request.submitData = function (opts,callback) {
+				service({
+					url: "/enterStationBill/saveLeaveData.do",
+					data: opts
+				},callback);
+			}
+			
+			api.showProgress({
+				title : '保存中',
+				modal : true
+			});
+			request.submitData(opts,function(ret, err) {
+				leaveStation = true;
+				api.hideProgress();
+				$('#btnConfirm').removeAttr('disabled');
+				if (ret) {
+					if (ret.success) {
+						api.toast({
+							msg : "成功提交离站确认信息",
+							duration : 3000,
+							location : 'middle'
+						});
+						api.execScript({
+							name: 'mainStandBillDetail',
+							frameName: 'standBillDetail_frm',
+							script: 'refreshFrame();'
+						});
+						api.closeWin();
+						//直接返回列表
+						api.closeToWin({
+							name: 'churuzhan/standBillListWin',
+							frameName: 'standBillListWin'
+						});
+						api.execScript({
+							name: 'churuzhan/standBillListWin',
+							frameName:'waitTaskList1',
+							script: 'refreshList();'
+						});
+					}
+				}
+			});
+        }
+        
+        function refreshData(){
+        	initData();
+        }
+        
+        function null2zero(val){
+        	if (null==val) return 0;
+        	else return val;
+        }
+        
+    </script>
+</html>

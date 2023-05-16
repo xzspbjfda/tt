@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>电表装维列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<style>
+			.aui-flex-col:first-child {
+				height: 30px;
+				line-height: 30px;
+				border-bottom: 1px solid #999;
+			}
+			.aui-flex-col {
+				height: 25px;
+				line-height: 25px;
+			}
+			.ccssoft_list {
+				background-color: #eff1f0;
+				override: hidden;
+			}
+			.ccssoft_list {
+				margin-top: 15px;
+			}
+			.ccssoft_list li {
+				list-style: none;
+				background: #fff;
+				overflow: hidden;
+				margin: 0 10px 10px 10px;
+				font-size: 12px;
+				border-radius: 5px;
+			}
+			.ccssoft_list li:hover {
+				background: #f9e9df;
+			}
+			.ccssoft_list li.acitve {
+				background: #f9e9df;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="aui-content">
+			<ul class="ccssoft_list" id="listView">
+				<li class="aui-content" style="padding:8px;" tapmode="active" applyisneedperson="{{=it[i].applyisneedperson}}"  onclick="openStandcheckDetail(this)">
+					<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>隐患检查</h2></div>
+					<div class="aui-flex-col">
+						<div class="aui-flex-item-5">站址编码</div>
+						<div class="aui-flex-item-7">{{=it[i].sitecode != null ? it[i].sitecode:''}}</div>
+					</div>
+					<div class="aui-flex-col">
+						<div class="aui-flex-item-5">设备编码</div>
+						<div class="aui-flex-item-7">{{=it[i].devicecode != null ? it[i].devicecode:''}}</div>
+					</div>
+				</li>
+
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite00.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript">
+		// var listView;
+		// apiready = function() {
+		// 		listView = new C.ApiListView({
+		// 			fn : $client.getAmmeterDevice,
+		// 			startTime:'2019-11-27',
+		// 			endTime:'2019-11-29',
+		// 			listName : 'rows'
+		// 		});
+		// 	listView.refresh();
+		// };
+
+
+		//查看上站核实工大详情与站址信息
+		function openStandcheckDetail(el) {
+			showlog("wo_id=" + $api.attr(el, 'wo_id') + '， wo_sn' + $api.attr(el, 'wo_sn'));
+			var wo_id = $api.attr(el, 'wo_id');
+			var wo_sn = $api.attr(el, 'wo_sn');
+			var stationId = $api.attr(el, 'stationId');
+      		var st_name = $api.attr(el, 'st_name');
+			var pageParam = {};
+			pageParam.wo_id = wo_id;
+			pageParam.wo_sn = wo_sn;
+			pageParam.stationId = stationId;
+      		pageParam.st_name = st_name;
+      		pageParam.status = status;
+			//页面来源，这里表示从上站待办跳过来
+			pageParam.fromPage = "standCheckDetail";
+			api.openWin({
+				name : 'standCheckDetail',
+				url : 'standCheckDetail.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+	</script>
+</html>

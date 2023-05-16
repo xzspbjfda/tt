@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>巡检任务项目列表</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+	<style>
+		ul,
+		li {
+			margin: 0;
+			padding: 0;
+		}
+
+		.ccssoft_list li {
+			list-style: none;
+			padding: 8px;
+			border-bottom: 1px solid #e3e2e2;
+			background: #fff;
+			overflow: hidden;
+			margin-bottom: 10px;
+		}
+
+		.ccssoft_list li:hover {
+			background: #f9e9df;
+		}
+
+		.liTopLeft span {
+			display: block;
+			width: 54px;
+			height: 20px;
+			line-height: 20px;
+			text-align: right;
+			position: absolute;
+			top: 5px;
+			right: 0;
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		.liTop {
+			width: 100%;
+		}
+
+		.liTopLeft {
+			font-size: 16px;
+			font-weight: bold;
+			line-height: 20px;
+			padding: 5px 60px 5px 25px;
+			position: relative;
+		}
+
+		.liTopRight {
+			width: 20%;
+			height: 20px;
+			line-height: 20px;
+			float: left;
+			font-size: 12px;
+			color: #666;
+		}
+
+		.liDown {
+			width: 100%;
+			height: 30px;
+			line-height: 30px;
+			border-top: 1px #E3E2E2 solid;
+		}
+
+		.liDownLeft {
+			width: 85%;
+			height: 14px;
+			line-height: 14px;
+			float: left;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 14px;
+			color: #999;
+			margin-top: 8px;
+			border-right: 1px #E3E2E2 solid;
+		}
+
+		.aui-list-check {
+			position: relative;
+			border-top: 1px #E3E2E2 solid;
+			overflow: hidden;
+			-webkit-transform-style: preserve-3d;
+			transform-style: preserve-3d;
+			-webkit-touch-callout: none;
+		}
+
+		.aui-list-check:after {
+			display: block;
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			-webkit-transform-origin: 0 0;
+			-webkit-transform: scale(1);
+			pointer-events: none;
+		}
+
+		.liDownRight {
+			width: 15%;
+			height: 14px;
+			line-height: 14px;
+			font-size: 14px;
+			float: left;
+			text-align: right;
+			color: #999;
+			margin-top: 8px;
+		}
+
+		.greyIconCls {
+			position: absolute;
+			left: 0;
+			height: 18px;
+			width: 18px;
+			border-radius: 9px;
+			background-color: #8f9693;
+		}
+
+		.greenIconCls {
+			position: absolute;
+			left: 0;
+			height: 18px;
+			width: 18px;
+			border-radius: 9px;
+			background-color: green;
+		}
+
+		.picCount {
+			margin-left: 10px;
+		}
+
+		.ammeter {
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body>
+	<script id="listView-template" type="text/x-dot-template">
+			{{ var finishCount = 0; }}
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			if(it[i].isfinish=="Y")
+			finishCount +=1;
+			var objType = it[i].objtype;
+			var objTypeClass = "";
+			var objTypeName = "";
+			if(objType == "1"){
+			objTypeName = "铁塔";
+			objTypeClass ="ccssoft_color_carrot";
+			}else if(objType == "2"){
+			objTypeName = "动力环境";
+			objTypeClass="ccssoft_color_green";
+			}else if(objType == "3"){
+			objTypeName = "室分系统";
+			objTypeClass="ccssoft_color_pink";
+			}else if(objType == "4"){
+			objTypeName = "机房";
+			objTypeClass="ccssoft_color_violet";
+			}
+			}}
+			<!-- <li projectid="{{=it[i].id}}" projectname="{{=it[i].projectname}}" isfinish="{{=it[i].isfinish}}">-->
+			<li projectid="{{=it[i].id}}" projectname="{{=it[i].projectname}}" devname="{{=it[i].devname}}" isfinish="{{=it[i].isfinish}}" objtype="{{=it[i].objtype}}" modularname="{{=it[i].modularname}}" modularid="{{=it[i].modularid}}" >
+			<div class="liTop" >
+			<div class="liTopLeft"><i class="{{=it[i].isfinish=="Y" ? "greenIconCls" :"greyIconCls"}}"></i>{{=it[i].modularname != null ? it[i].modularname:""}}
+				{{=it[i].checkresut != null ? "("+it[i].checkresut+")":""}}
+			<span class="{{=objTypeClass}}">{{=objTypeName}}</span>
+			</div>
+			</div>
+			<div class="liDown">
+			<div class="liDownLeft">{{=it[i].devname != null ? it[i].devname:""}}</div>
+			<div class="liDownRight">
+			<i class="aui-iconfont aui-icon-pic" ></i>
+			<span class="picCount">{{=it[i].imagecount}}</span>
+			</div>
+			</div>
+
+
+			{{? it[i].isfinish != 'Y'&& api.pageParam.taskstate == '2'&& api.pageParam.provinceid=='0001934'}}
+			<div id="radioid" class="aui-list-check">
+			<input class="aui-radio" type="radio" name="resultType{{=i}}"  value="Y"  checked="checked"><div class="aui-radio-name">可以巡检</div>
+			<input class="aui-radio" type="radio" name="resultType{{=i}}" value="N"   style="margin-left: 10px;"><div class="aui-radio-name">无该设备</div>
+			</div>
+			{{?}}
+			</li>
+			{{ } }}
+		</script>
+	<div class="aui-content">
+		<ul class="ccssoft_list">
+			<li class='ammeter'><i class="greenIconCls"
+					style='float:left;margin-left:8px;display:block;margin-top:3px;'></i><span
+					style='margin-left:25px;'>执行人：<span id="todoman"></span>&nbsp;&nbsp<button id="adtodoman"
+						style="border-radius:50%;" onclick='addtodoman();'>+</button></span></li>
+		</ul>
+		<ul class="ccssoft_list" id='recordingID'>
+			<li class='ammeter' onclick='recording();'><i class="greenIconCls"
+					style='float:left;margin-left:8px;display:block;margin-top:3px;'></i><span
+					style='margin-left:25px;'>物业抄表</span></li>
+		</ul>
+		<ul class="ccssoft_list" id='inspectID'>
+			<li class='ammeter' onclick='inspectings();'><i class="greenIconCls"
+					style='float:left;margin-left:8px;display:block;margin-top:3px;'></i><span
+					style='margin-left:25px;'>资源核查</span></li>
+		</ul>
+		<ul class="ccssoft_list" id="listView"></ul>
+		<li id="resadd_id" style="background: #FFFFFF;padding: 10px;display: none" onclick="openRes();">
+			<div class="liTop">
+				<div class="liTopLeft">
+					<i class="greyIconCls" }}></i>资源核准
+				</div>
+			</div>
+			<div class="liDown">
+				<div class="liDownLeft" style="color:#F26166;border-right:none">
+					反馈现场实际资源
+				</div>
+			</div>
+		</li>
+		<li id="resaddfinish_id" style="background: #FFFFFF;padding: 10px;display: none" onclick="openRes();">
+			<div class="liTop">
+				<div class="liTopLeft">
+					<i class="greenIconCls" }}></i>资源核准
+				</div>
+			</div>
+			<div class="liDown">
+				<div class="liDownLeft" style="color:#F26166;border-right:none">
+					反馈现场实际资源
+				</div>
+			</div>
+		</li>
+	</div>
+	<!--到站签到begin-->
+	<div id="SignDiv" class="winDiv" style="display: none">
+		<div id="spanTitleId1" class="otherDivHeader"></div>
+		<div id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;">
+			<div id="user_name1" style="font-size:16px;color:#adadad;">
+				接收人
+			</div>
+		</div>
+		<div id="contactTelSpanId1" class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+			<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+				联系电话:
+			</div>
+			<div class="aui-flex-item-9 " style="padding-right: 10px">
+				<input id="contactTelTextId1" type="number" class="textareaborder" value="" />
+			</div>
+		</div>
+		<div id="userLocationSpanId1" class="aui-flex-col" data-type="text"
+			style=" margin-top: 10px;margin-right: 10px;">
+			<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+				所在位置:
+			</div>
+			<div class="aui-flex-item-9 " style="padding-right: 10px;">
+				<textarea id="locationId1" class="dealInfo" readonly="readonly"
+					style="padding: 5px 2px;overflow:auto;margin-left: 10px;background-color: #FAFAFA " rows="7"
+					cols="10"></textarea>
+			</div>
+		</div>
+		<div id="opinionLabelDiv1" class="aui-flex-col" data-type="text" style="display:none;  margin-right: 10px;">
+			<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+				处理意见:
+			</div>
+			<div class="aui-flex-item-9 " style="padding-right: 10px">
+				<textarea id="otherDealInfoId1" class="dealInfo" rows="6" cols="10"
+					placeholder="若偏差超过100米，请写上原因"></textarea>
+			</div>
+		</div>
+		<div class="winButtonDiv">
+			<button class="winCancelBtn" onclick="restartLocationFunc()">
+				重新定位
+			</button>
+			<button class="winOkBtn" onclick="signOptFunc()">
+				确定
+			</button>
+		</div>
+	</div>
+	<!--到站签到end-->
+	<textarea id="tra" rows="15" cols="65" style='display:none;'>
+        MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCa4KHNwDX44gGmmIAtRu4gjVYtGWZzcm4t+1wjUD4dn7fMLPvuK7ai4UrfDeEJE1RPwudJw+lJ6crql8wSIg7/DbTlG3ihsCT6dT9H5B9OoeR7K9VWUesaW/iyVL6HXiYOANabW14pvJATDmdq91Tfgp6PSQyvdfiRdV4r07crpQIDAQAB
+    </textarea>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+<script type="text/javascript" src="../../script/jsencrypt.min.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script type="text/javascript" src="../../script/gongdan.js"></script>
+<script type="text/javascript">
+	var taskid, stattime, fromflag, taskstatus, readyStartTime, start_status, isMonitor;
+	//是否能够编辑项目
+	var editEnabled = true;
+	var finishCount = 0;
+	var isopen = false;
+	var selectProjectId;
+	var listView;
+	var distance;
+	var ischecked;
+	var index;
+	var provinceid;
+	var modelType = $api.getStorage("modelType");
+	var offline = $api.getStorage('offline');
+	// 判断当前网络连接状态 wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	//950205
+
+	apiready = function () {
+		//任务ID
+		taskid = api.pageParam.taskid ? api.pageParam.taskid : "CA665B59F48A3AB46EC2AAF17E8FDD50";
+		// wxx
+		$api.setStorage('taskid', taskid);
+		//-----------------dxb---------------------
+		if (api.pageParam.index_id == 2 || api.pageParam.index_id == 1) {
+			$('#adtodoman').hide();
+		}
+		//通过标识量控制在巡检任务详情中是否有回退功能
+		if ($api.getStorage('ifroolback') == 'true') {
+			api.execScript({
+				winName: 'projectListWin',
+				script: '$("#rollback").css("display","none");'
+			});
+		}
+		var taskuser = api.pageParam.allusername; 				//获取执行人
+		$("#todoman").text(taskuser);								//在模块顶部显示执行人
+		//------------------dxb--------------------
+
+		$api.setStorage('stationname', api.pageParam.stationname);
+		console.log(JSON.stringify($api.getStorage('user')));
+
+		$api.setStorage('deviceid', api.pageParam.deviceid);
+
+		$api.setStorage('stationid', api.pageParam.stationid);
+
+		//开始时间
+		starttime = api.pageParam.starttime ? api.pageParam.starttime : "";
+		//来自通知栏？
+		fromflag = api.pageParam.fromflag ? api.pageParam.fromflag : "Y";
+		//计划开始时间
+		taskstatus = api.pageParam.taskstatus ? api.pageParam.taskstatus : "";
+		//巡检状态
+		readyStartTime = api.pageParam.readyStartTime ? api.pageParam.readyStartTime : "";
+		//是否巡检监控
+		isMonitor = api.pageParam.isMonitor ? api.pageParam.isMonitor : "";
+		//巡检任务状态
+		start_status = api.pageParam.start_status || '';
+
+		// 判断当前网络连接状态 wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		var connectionType = api.connectionType;
+		if (offline == 'true' || offline == true) {
+			$('#recordingID').hide(0);
+			$('#inspectID').hide(0);
+			db = api.require('db');
+			db.openDatabase({
+				name: 'xunjian',
+				path: 'fs://xunjian/DB/inspection'
+			}, function (ret, err) {
+				if (ret.status) {
+					db.selectSql({
+						name: 'xunjian',
+						sql: 'SELECT * FROM inspstandRelProjInfoList  WHERE  taskid = "' + taskid + '"'
+					}, function (ret, err) {
+						if (ret.status) {
+							renderTemp('listView', 'listView-template', ret.data);
+							var opt = {
+								success: true,
+								data: ret.data
+							};
+							load_callback(opt);
+						} else {
+							api.toast({
+								msg: '操作本地数据库失败',
+								duration: 2000,
+								location: 'bottom'
+							});
+						}
+					});
+				} else {
+					api.toast({
+						msg: '访问本地数据库失败',
+						duration: 2000,
+						location: 'bottom'
+					});
+				}
+			});
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		} else {
+			listView = new C.ApiListView({
+				fn: $client.getProjectNewList,
+				callback: load_callback,
+				limit: 1000
+			});
+			listView.setQueryOptions({
+				taskid: taskid,
+				fromflag: fromflag
+			});
+			listView.refresh();
+		}
+
+		/*
+		 * jQuery事件:list-item点击
+		 */
+		$('#listView').on('click', 'li', function () {
+
+			var projectid = $(this).attr('projectid');
+			var projectname = $(this).attr('projectname');
+			var isFinish = $(this).attr('isfinish');
+			var objtype = $(this).attr('objtype');
+			var devname = $(this).attr('devname');
+			var modularid = $(this).attr('modularid');
+			var modularname = $(this).attr('modularname');
+
+
+			api.pageParam.taskid = taskid;
+			api.pageParam.projectid = projectid;
+			api.pageParam.projectname = projectname;
+			api.pageParam.isFinish = isFinish;
+			api.pageParam.editEnabled = editEnabled;
+			api.pageParam.taskstatus = taskstatus;
+			api.pageParam.start_status = start_status;
+			api.pageParam.isMonitor = isMonitor;
+			api.pageParam.objtype = objtype;
+			api.pageParam.devname = devname;
+			api.pageParam.modularid = modularid;
+			api.pageParam.modularname = modularname;
+
+
+
+
+			api.openWin({
+				name: "projectDetailNew_win",
+				url: "projectDetailNew_win.html",
+				bounces: false,
+				vScrollBarEnabled: true,
+				reload: true,
+				slidBackEnabled: true,
+				pageParam: api.pageParam,
+				animation: {
+					type: "push",
+					subType: "from_right",
+					duration: 300
+				}
+			});
+
+
+			//				onclick="openProject('{{=it[i].id}}','{{=it[i].projectname}}','{{=it[i].isfinish}}','{{=it[i].objtype}}','{{=it[i].devname}}');"
+			//				openProject(result_type, item_desc, remark, detail_id, weight, item_id, item_name);
+			//				openPage_project_detail(taskid, projectid, projectname, isFinish, editEnabled, taskstatus, start_status, isMonitor, objtype, devname, api.pageParam.taskstate,modularid,modularname);
+
+		});
+		$('#listView').on('click', '.aui-list-check', function (event) {
+			if (event.stopPropagation) {//如果提供了事件对象，则这是一个非IE浏览器
+				event.stopPropagation();
+			} else {
+				//兼容IE的方式来取消事件冒泡
+				window.event.cancelBubble = true;
+			}
+			//			               return false;
+		});
+	};
+
+	function totransfer() {
+		api.openWin({
+			name: 'transtodomanWin',			//window 名字，不能为空字符串
+			url: 'transtodomanWin.html',	//页面地址，可以为本地文件路径，支持相对路径和绝对路径，以及 widget://、fs://等协议路径，也可以为远程地址
+			bounces: false,					//（可选项）页面是否弹动，若在 config.xml 里面配置了pageBounce，则默认值为配置的值，否则为 false
+			rect: {									//位置信息
+				x: 0,
+				y: 0,
+				w: 'auto',
+				h: 'auto'
+			},
+			reload: true,						//（可选项）页面已经打开时，是否重新加载页面，重新加载页面后 apiready 方法将会被执行
+			pageParam: api.pageParam //传递的参数
+		});
+	}
+	/**
+	* dev:dxb
+	* date:2019/3/6
+	* description:在巡检任务中增加协助人，点击+可以添加协助人，协助人可以巡检各个模块，也可以重置
+	* 提出人：郭哲     负责人：孙曦彤
+	*/
+	function addtodoman() {
+		api.openWin({
+			name: 'todomanWin',			//window 名字，不能为空字符串
+			url: 'todomanWin.html',	//页面地址，可以为本地文件路径，支持相对路径和绝对路径，以及 widget://、fs://等协议路径，也可以为远程地址
+			bounces: false,					//（可选项）页面是否弹动，若在 config.xml 里面配置了pageBounce，则默认值为配置的值，否则为 false
+			rect: {									//位置信息
+				x: 0,
+				y: 0,
+				w: 'auto',
+				h: 'auto'
+			},
+			reload: true,						//（可选项）页面已经打开时，是否重新加载页面，重新加载页面后 apiready 方法将会被执行
+			pageParam: api.pageParam //传递的参数
+		});
+	}
+	/**
+	 *打开待办任务的详情
+	 */
+	function openProject(projectid, projectname, isFinish, objtype, devname) {
+		openPage_project_detail(taskid, projectid, projectname, isFinish, editEnabled, taskstatus, start_status, isMonitor, objtype, devname, api.pageParam.taskstate);
+	}
+
+	function openRes() {
+		//		openResDetail();
+		var pageParam = {
+			takeid: taskid,
+			ischecked: ischecked,
+			taskstate: api.pageParam.taskstate,
+			stationname: api.pageParam.stationname
+		};
+		api.openWin({
+			name: 'res_add',
+			url: 'resAdd_win.html',
+			opaque: true,
+			bounces: false,
+			pageParam: pageParam,
+			vScrollBarEnabled: false
+		});
+	}
+	/**
+	 *获取当前时间
+	 */
+	function CurentTime() {
+		var now = new Date();
+
+		var year = now.getFullYear();       //年
+		var month = now.getMonth() + 1;     //月
+		var day = now.getDate();            //日
+
+		var hh = now.getHours();            //时
+		var mm = now.getMinutes();          //分
+		var ss = now.getSeconds();           //秒
+
+		var clock = year + "-";
+
+		if (month < 10)
+			clock += "0";
+
+		clock += month + "-";
+
+		if (day < 10)
+			clock += "0";
+
+		clock += day + " ";
+
+		if (hh < 10)
+			clock += "0";
+
+		clock += hh + ":";
+		if (mm < 10) clock += '0';
+		clock += mm + ":";
+
+		if (ss < 10) clock += '0';
+		clock += ss;
+		return (clock);
+	}
+
+
+
+
+
+	/**
+	 *加载完成后的回调函数
+	 */
+
+	function load_callback(ret, status) {
+		// alert(getObj(ret));
+		var connectionType = api.connectionType;
+		if (ret && ret.success) {
+
+			projectList = ret.list;
+			ischecked = ret.ischecked;
+			var index = $api.getStorage("indexId");
+			provinceid = $api.getStorage("provinceid");
+			//								alert("下标："+api.pageParam.taskstate+":"+provinceid);
+			//				"false" == ret.ischecked &&
+			if ((api.pageParam.taskstate == '2' || api.pageParam.taskstate == '3') && provinceid == '0001934') {
+				if ("true" == ret.ischecked || api.pageParam.taskstate == '3') {
+					$api.byId('resaddfinish_id').style.display = "";
+					$api.byId('resadd_id').style.display = "none";
+				} else {
+					$api.byId('resadd_id').style.display = "";
+					$api.byId('resaddfinish_id').style.display = "none";
+				}
+			} else {
+				$api.byId('resadd_id').style.display = "none";
+				$api.byId('resaddfinish_id').style.display = "none";
+			}
+			//巡检任务已经完成，不需要弹出窗口
+			if ('Y' != isMonitor) {
+				if (taskstatus == "Y") {
+					return;
+				}
+				if (readyStartTime != "") {
+					//判断计划时间是否大于现在，如果是，提示用户巡检计划未激活
+					//                                      var readyDate = Date.parse(readyStartTime);
+					var readyDate = new Date(readyStartTime + ' 00:00:00');
+					var nowDate = new Date();
+					var a = (readyDate - nowDate) / (60 * 60 * 1000 * 24);
+					//						if (a >= 0) {
+					//							editEnabled = false;
+					//							showToast("巡检计划尚未激活，无法提交项目!");
+					//							return;
+					//						}
+				}
+				//开始时间为空，要弹出窗口给用户确认是否开始巡检
+				if (starttime == null || starttime == "") {
+					api.confirm({
+						title: '确认提示',
+						msg: '是否开始巡检？',
+						buttons: ['取消', '确认']
+					}, function (ret, err) {
+						console.log("================================", ret.buttonIndex)
+						if (ret.buttonIndex == 2) {
+							editEnabled = false;
+							var connectionType = api.connectionType;
+							if (offline == 'true' || offline == true) {
+								// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+								starttime = CurentTime();
+								var user = $api.getStorage('user');
+								var taskuserid = user.userid;
+								var taskuser = user.username;
+								db = api.require('db');
+								db.openDatabase({
+									name: 'xunjian',
+									path: 'fs://xunjian/DB/inspection'
+								}, function (ret, err) {
+									if (ret.status) {
+										db.executeSql({
+											name: 'xunjian',
+											sql: 'UPDATE taskInfoList SET taskstate = "1",taskuser = "' + taskuser + '",taskuserid = "' + taskuserid + '",starttime = "' + starttime + '" WHERE taskid = "' + taskid + '"'
+										}, function (ret, err) {
+											if (ret.status) {
+												api.execScript({
+													name: "task_list_win",
+													frameName: 'waitTaskList1',
+													script: 'location.reload();'
+												});
+												api.execScript({
+													name: "task_list_win",
+													frameName: 'waitTaskList2',
+													script: 'location.reload();'
+												});
+												setTimeout(function () {
+													api.closeWin({
+													});
+												}, 300);
+
+											} else {
+												api.toast({
+													msg: '操作本地数据库失败',
+													duration: 2000,
+													location: 'bottom'
+												});
+											}
+										});
+									} else {
+										api.toast({
+											msg: '访问本地数据库失败',
+											duration: 2000,
+											location: 'bottom'
+										});
+									}
+								});
+								// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+							} else {
+								starttime = "start";
+								$client.startXunjianTask({
+									type: modelType,
+									taskid: taskid
+								}, function (ret, err) {
+									console.log("==接单完成，检查是否还有待办工单【巡检】===")
+									var opts = {
+										pagename: 'xj',
+										pageaction: 'ACCEPT',
+										stationName: api.pageParam.stationname,
+										stationcode: api.pageParam.stationcode
+									}
+									console.log("调用是否有待办-传入参数：" + JSON.stringify(opts));
+									$client.sixBillRemind(opts, function (ret, err) {
+										console.log("调用是否有待办-返回结果：" + JSON.stringify(ret));
+										console.log('RSupdate10')
+										var selectedBillSN = $api.getStorage("selectedBillSN");
+										if (selectedBillSN != null && selectedBillSN != "") {
+											updateRecommendStatus(selectedBillSN);
+										} else {
+											console.log('未获取到工单号，不更新推荐状态。')
+										}
+										if (ret.billCntInfo.length > 0) {
+											var billCntInfo = JSON.parse(ret.billCntInfo);
+											if (billCntInfo.page == "xj" && billCntInfo.status == "ACCEPT" && billCntInfo.count > 0) {
+												api.toast({
+													msg: "本站还有工单未处理！",
+													location: "middle",
+													duration: 3000,
+												});
+											}
+										}
+										api.execScript({
+											name: "task_list_win",
+											frameName: 'waitTaskList1',
+											script: 'listView.refresh();'
+										});
+										api.execScript({
+											name: "task_list_win",
+											frameName: "waitTaskList2",
+											script: 'listView.refresh();'
+										});
+										api.execScript({
+											name: 'allBillListWin',
+											frameName: 'waitTaskList1',
+											script: 'fiveList()'
+										});
+										api.execScript({
+											name: 'allBillListWin',
+											frameName: 'waitTaskList2',
+											script: 'fiveList()'
+										});
+										api.execScript({
+											name: 'allBillListWin',
+											frameName: 'waitTaskList3',
+											script: 'fiveList()'
+										});
+										setTimeout(function () {
+											api.closeWin({
+											});
+										}, 1000);
+									});
+								});
+							}
+							// wxx
+						} else {
+							editEnabled = false;
+							showToast("巡检项目未激活！");
+						}
+					});
+				} else if (ret.currentPage == 1 && ret.needConfirm && ret.needConfirm == "true") {
+
+					/*
+					*  dingxb
+					*/
+					var message = "任务已完成，是否结束巡检？";//默认提示信息
+					var end_time = CurentTime().replace(/-/g, "/");//格式化字符串日期
+					var sstarttime = api.pageParam.signtime;//获取签到时间
+					if (sstarttime) {
+						sstarttime = sstarttime.replace(/-/g, "/");
+						sstarttime = new Date(sstarttime);//将签到时间转换为日期格式
+						end_time = new Date(end_time);//将结束时间转化为日期格式   600000
+						if ((end_time.getTime() - sstarttime.getTime()) <= 1200000) {//判断时间是否不足二十分钟
+							message = "巡检时间不足20分钟，是否结束巡检？";
+						}
+					}
+
+
+					if (provinceid == '0001934') {//如果是广东的，需要判断是否资源核准
+						if ("true" == ret.ischecked) {
+
+							C.confirm("提示", message, function (ret) {
+								$client.stopXunjianTask({
+									type: modelType,
+									taskid: taskid
+								}, function (ret, err) {
+									api.execScript({
+										name: "task_list_win",
+										frameName: 'waitTaskList1',
+										script: 'listView.refresh();'
+									});
+									api.execScript({
+										name: "task_list_win",
+										frameName: "finishTaskList",
+										script: 'listView.refresh();'
+									});
+									setTimeout(function () {
+										api.closeWin({
+										});
+									}, 300);
+								});
+							});
+						}
+					} else {
+						C.confirm("提示", message, function (ret) {
+							$client.stopXunjianTask({
+								type: modelType,
+								taskid: taskid
+							}, function (ret, err) {
+								/*api.execScript({
+									name : "task_list_win",
+									frameName : 'waitTaskList1',
+									script : 'listView.refresh();'
+								});
+								api.execScript({
+									name : "task_list_win",
+									frameName : "finishTaskList",
+									script : 'listView.refresh();'
+								});
+								setTimeout(function() {
+									api.closeWin({
+									});
+								}, 300);*/
+
+								//====================修改 工单提醒 BEGIN
+
+								var opts = {
+									pagename: 'xj',
+									pageaction: 'ACCEPT',	//ACCEPT/DOING
+									stationName: api.pageParam.stationname,
+									stationcode: api.pageParam.stationcode
+								}
+								$client.sixBillRemind(opts, function (ret, err) {
+									var billcntFrom = $api.getStorage('billcntFrom');	// 获取标识的入口页面
+									if (ret.billCntInfo.length > 0) {
+										var billCntInfo = JSON.parse(ret.billCntInfo);
+										var pageAction = billCntInfo.status;
+										//var pagename = billCntInfo.pagename;
+										var pageMessage = "本站还有工单未处理！";
+										/*if (pagename=='xj'){
+											pageMessage ="本站还有工单未处理！";
+											if (billCntInfo.status=='DOING'){
+												pageMessage ="本站还有工单未处理！";
+											} else {
+												pageMessage ="本站还有未开始得巡检工单！";
+											}
+										} else if (pagename=='gz') {
+											pageMessage ="本站还有工单未处理！";
+										} else if (pagename=='fd') {
+											pageMessage ="本站还有工单未处理！";
+										} else if (pagename=='rcwx') {
+											pageMessage ="本站还有工单未处理！";
+										} else if (pagename=='dd') {
+											pageMessage ="本站还有工单未处理！";
+										} else if (pagename=='sz') {
+											pageMessage ="本站还有工单未处理！";
+										}*/
+										api.confirm({
+											title: '提示',
+											msg: pageMessage,
+										}, function (ret, err) {
+											if (ret.buttonIndex == 2) {
+												if (billcntFrom != 'all_bill_list_frm') {
+													setTimeout(function () {
+														api.hideProgress();
+														api.execScript({
+															name: 'home_win',
+															frameName: 'footer_tab_1',
+															script: 'openDaibaiList("' + pageAction + '",  "' + api.pageParam.stationcode + '", "3")'
+														});
+														api.closeToWin({
+															name: 'home_win'
+														});
+													}, 500);
+												} else {
+													api.execScript({
+														name: "task_list_win",
+														frameName: 'waitTaskList1',
+														script: 'listView.refresh();'
+													});
+													api.execScript({
+														name: "task_list_win",
+														frameName: "finishTaskList",
+														script: 'listView.refresh();'
+													});
+													setTimeout(function () {
+														api.closeWin({
+														});
+													}, 300);
+												}
+											} else {
+												api.execScript({
+													name: "task_list_win",
+													frameName: 'waitTaskList1',
+													script: 'listView.refresh();'
+												});
+												api.execScript({
+													name: "task_list_win",
+													frameName: "finishTaskList",
+													script: 'listView.refresh();'
+												});
+												setTimeout(function () {
+													api.closeWin({
+													});
+												}, 300);
+											}
+										});
+									} else {
+										api.execScript({
+											name: "task_list_win",
+											frameName: 'waitTaskList1',
+											script: 'listView.refresh();'
+										});
+										api.execScript({
+											name: "task_list_win",
+											frameName: "finishTaskList",
+											script: 'listView.refresh();'
+										});
+										setTimeout(function () {
+											api.closeWin({
+											});
+										}, 300);
+									}
+								});
+								//====================修改 工单提醒  END
+							});
+						});
+					}
+				} else if (offline == 'true' || offline == true) {
+
+					// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+					var finishtrue = true;
+					for (var i = 0; i < ret.data.length; i++) {
+						if (ret.data[i].isfinish == 'N') {
+							finishtrue = false;
+						}
+					}
+					/*
+					*  dingxb
+					*/
+					var message = "任务已完成，是否结束巡检？";//默认提示信息
+					var end_time = CurentTime().replace(/-/g, "/");//格式化字符串日期
+					var sstarttime = api.pageParam.signtime;//获取签到时间
+					if (sstarttime) {
+						sstarttime = sstarttime.replace(/-/g, "/");
+						sstarttime = new Date(sstarttime);
+						end_time = new Date(end_time);
+						if ((end_time.getTime() - sstarttime.getTime()) <= 1200000) {//判断时间是否不足二十分钟
+							message = "巡检时间不足20分钟，是否结束巡检？";
+						}
+					}
+
+					if (finishtrue) {
+						var endtime = CurentTime();
+						C.confirm("提示", message, function (ret) {
+							db.executeSql({
+								name: 'xunjian',
+								sql: 'UPDATE taskInfoList SET taskstate = "3",endtime = "' + endtime + '" WHERE taskid = "' + taskid + '"'
+							}, function (ret, err) {
+								if (ret.status) {
+									api.execScript({
+										name: "task_list_win",
+										frameName: 'waitTaskList1',
+										script: 'location.reload();'
+									});
+									api.execScript({
+										name: 'task_list_win0',
+										frameName: 'waitTaskList10',
+										script: 'onlineRefresh();'
+									});
+									setTimeout(function () {
+										api.closeWin();
+									}, 300);
+								} else {
+									api.toast({
+										msg: '操作本地数据库失败',
+										duration: 2000,
+										location: 'bottom'
+									});
+								}
+							});
+						});
+					}
+					// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+				}
+
+				$(this).attr("disabled", 'true').siblings().click(function () {
+					return false;
+				});
+				$("input[type='radio']").change(function (index) {
+					if ($(this).val() == "N") {
+						var projectid = $(this).parent().parent().attr('projectid');
+						var projectname = $(this).parent().parent().attr('projectname');
+						var devname = $(this).parent().parent().attr('devname');
+						api.confirm({
+							title: '确认提示',
+							msg: '确定该任务没有该设备？',
+							buttons: ['取消', '确认']
+						}, function (ret, err) {
+							if (ret.buttonIndex == 2) {
+								$client.saveXunjinProjectResult({
+									tag: 'fonm',
+									ID: projectid,
+									isFinish: 'Y',
+									lon: '',
+									lat: '',
+									isShidden: '',
+									hiddencontent: '',
+									actualfill: '',
+									result: '',
+									isStander: '',
+									remark: '',
+									hiddengrade: '',
+									isexist: '',
+									shiddenSource: '',
+									hiddenremark: '',
+									clientType: api.systemType
+								}, function (ret, err) {
+									if (ret) {
+										if (ret.success) {
+											$client.saveResResult({
+												action: '1',
+												taskid: taskid,
+												projectid: projectid,
+												projectname: projectname,
+												devname: devname
+											}, function (ret, err) {
+												if (ret) {
+													if (ret.success) {
+														api.execScript({
+															name: "xunjian_projectList",
+															frameName: 'projectListFrm',
+															script: 'listView.refresh();'
+														});
+													} else {
+														api.toast({
+															msg: ret.data_info
+														});
+													}
+												} else {
+													api.toast({
+														msg: err.msg
+													});
+												}
+											});
+										} else {
+											api.toast({
+												msg: ret.data_info
+											});
+										}
+									} else {
+										api.toast({
+											msg: err.msg
+										});
+									}
+								});
+								//								}
+							}
+						});
+					}
+					return false;
+				});
+			}
+		}
+	}
+
+	function initLocation() {
+		var user = $api.getStorage('user');
+		$api.byId('spanTitleId1').innerHTML = "巡检签到";
+		$api.byId('user_name1').innerHTML = "操作人：" + user.username;
+		$api.byId('contactTelTextId1').value = user.mobilephone;
+	}
+
+	function locationFunc() {
+		getHeartFromGps("xunjian_projectList", "projectListFrm");
+	}
+
+	function restartLocationFunc() {
+		//		easyDialog=new easyDialog();
+		if (isopen) {
+			easyDialog.close({
+				container: 'SignDiv'
+			});
+		}
+		getHeartFromGps("xunjian_projectList", "projectListFrm");
+	}
+
+	function getHeartFromGps(winName, frmName) {
+		var script = "startLocation('" + winName + "','" + frmName + "');";
+		console.log("异步加载" + script);
+		api.execScript({
+			name: "home_win",
+			frameName: 'gps',
+			script: script
+		});
+		//      gps_invoke();
+	}
+
+	function gps_invoke() {
+		api.showProgress({
+			title: '定位中……',
+			modal: true
+		});
+		var lastLocation = $api.getStorage('LAST_GPS_LOCATION1');
+		//			console.log("经度：" + lastLocation.lon);
+		//			console.log("定位时间：" + lastLocation.timestamp);
+		if (!lastLocation || !lastLocation.status || lastLocation.timestamp == 0 || lastLocation.lon == 0 || lastLocation.lat == 0) {
+			window.setTimeout(function () {
+				api.hideProgress();
+				api.confirm({
+					title: '确认提示',
+					msg: '定位失败，请重新定位？',
+					buttons: ['强制签到', '重新定位']
+				}, function (ret) {
+					if (ret.buttonIndex == 2) {
+						isopen = false;
+						restartLocationFunc();
+					} else {
+						initRelief();
+					}
+				});
+			}, 5000);
+			return;
+		} else {
+			$api.setStorage("lon1", lastLocation.lon);
+			$api.setStorage("lat1", lastLocation.lat);
+			window.setTimeout(function () {
+				api.hideProgress();
+				console.log("定时");
+				api.execScript({
+					frameName: "projectListFrm",
+					script: 'initRelief();'
+				});
+			}, 3000);
+		}
+	}
+
+	//初始化故障定位信息
+	function initRelief() {
+		var user = $api.getStorage('user');
+		$api.byId('spanTitleId1').innerHTML = "巡检签到";
+		$api.byId('user_name1').innerHTML = "操作人：" + user.username;
+		$api.byId('contactTelTextId1').value = user.mobilephone;
+		var location = $api.getStorage('LAST_GPS_LOCATION1');
+		var lon1 = $api.getStorage("lon1");
+		var lat1 = $api.getStorage("lat1");
+		lon = location.lon != null ? location.lon : lon1;
+		lat = location.lat != null ? location.lat : lat1;
+		var stLon = api.pageParam.lon;
+		var stLat = api.pageParam.lat;
+		lon = displaynum(lon);
+		console.log("测试");
+		lat = displaynum(lat);
+		var info = "";
+		distance = GetDistance(stLat, stLon, lat, lon);
+		if (distance <= 100) {
+			info = "站址经度是：" + stLon + "\n站址纬度是：" + stLat + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + location.time + "\n偏差：" + distance + "米" + "\n情况描述：偏差在100米范围内，可以进行手机定位";
+			isSuper = "N";
+		} else if (distance > 100) {
+			console.log("时间：" + location.timestamp);
+			info = "站址经度是：" + stLon + "\n站址纬度是：" + stLat + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + location.time + "\n偏    差：" + distance + "米" + "\n情况描述：偏差已经超过100米，请在空旷的地方进行重新定位";
+			isSuper = "Y";
+		}
+		$api.byId('locationId1').value = info;
+		$api.byId('SignDiv').style.display = "";
+		isopen = true;
+		easyDialog.open({
+			container: 'SignDiv',
+			fixed: false
+		});
+	}
+
+	function signOptFunc() {
+		var user = $api.getStorage('user');
+		var userId = user.userid;
+		var linkInfo = $api.byId('contactTelTextId1').value;
+		var remark = $api.byId('locationId1').value;
+		api.showProgress({
+			title: '处理中',
+			modal: true
+		});
+		//			console.log("type:" + type);
+		//		userId, billSn, taskId, '', causeDealInfo
+		$client.xunjianSign({
+			taskId: api.pageParam.taskid,
+			linkInfo: linkInfo,
+			lon: lon,
+			lat: lat,
+			rangesite: distance,
+			remark: remark
+		}, function (ret, err) {
+			if (ret) {
+				if (ret.success) {
+					api.toast({
+						msg: "签到成功",
+						duration: 1000,
+						location: 'middle'
+					});
+					api.execScript({
+						name: 'task_list_win',
+						script: 'refreshList(' + 0 + ');'
+					});
+					window.setTimeout(function () {
+						api.closeToWin({
+							name: 'task_list_win'
+						});
+					}, 1100);
+				} else {
+					api.toast({
+						msg: ret.data_info,
+						location: 'middle'
+					});
+				}
+			} else {
+				api.toast({
+					msg: '接口访问失败',
+					location: 'middle'
+				});
+			}
+			api.hideProgress();
+		});
+	}
+
+	/**
+	 *刷新页面
+	 */
+	function refreshList(id, count) {
+		var connectionType = api.connectionType;
+		if (offline == 'true' || offline == true) {
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			db = api.require('db');
+			db.openDatabase({
+				name: 'xunjian',
+				path: 'fs://xunjian/DB/inspection'
+			}, function (ret, err) {
+				if (ret.status) {
+					db.selectSql({
+						name: 'xunjian',
+						sql: 'SELECT * FROM inspstandRelProjInfoList  WHERE  taskid = "' + taskid + '"'
+					}, function (ret, err) {
+						if (ret.status) {
+							renderTemp('listView', 'listView-template', ret.data);
+							var opt = {
+								success: true,
+								data: ret.data
+							};
+							load_callback(opt);
+						} else {
+							api.toast({
+								msg: '操作本地数据库失败',
+								duration: 2000,
+								location: 'bottom'
+							});
+						}
+					});
+				} else {
+					api.toast({
+						msg: '访问本地数据库失败',
+						duration: 2000,
+						location: 'bottom'
+					});
+				}
+			});
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		} else {
+			listView.refresh();
+		}
+	}
+
+	// 跳转抄表页面
+	function recording() {
+		var user = $api.getStorage('user');
+		// console.log(getObj(user));
+		var stationName = encodeURI(api.pageParam.stationname);
+		console.log("stationName:" + api.pageParam.stationname);
+		var encrypt = new JSEncrypt();
+		encrypt.setPublicKey($("#tra").val());
+		var selectStationIdData = encrypt.encrypt(api.pageParam.deviceid);
+		// alert(selectStationIdData);
+
+		console.log(getObj(api.pageParam));
+		// 生产环境 http://120.52.40.27:11002/tower/view/AOS/pcms/property_detail.html?selectStationId="+encodeURI(selectStationIdData).replace(/\+/g, '%2B')+"&selectStationName="+stationName+"&selectStationCode="+api.pageParam.stationcode+"&dwUserId="+user.userid
+		// 疑似准生产环境 http:///119.3.193.39:38888/tower/view/AOS/pcms/property_detail.html?selectStationId=
+		//http://120.52.40.27:11002/app_res/tower/view/AOS/pcms/property_detail.html?selectStationId=
+		console.log("http://120.52.40.27:11002/tower/view/AOS/pcms/property_detail.html?selectStationId=" + api.pageParam.deviceid + "&selectStationName=" + stationName + "&selectStationCode=" + api.pageParam.stationcode + "&dwUserId=" + user.userid);
+		api.openWin({
+			name: "recording",
+			url: "http://120.52.40.27:11002/app_res/tower/view/AOS/pcms/property_detail.html?selectStationId=" + api.pageParam.deviceid + "&selectStationName=" + stationName + "&selectStationCode=" + api.pageParam.stationcode + "&dwUserId=" + user.userid,
+			bounces: false,
+			vScrollBarEnabled: true,
+			reload: true,
+			slidBackEnabled: true,
+			pageParam: {},
+			animation: {
+				type: "fade",
+				subType: "from_right"
+			}
+		});
+	}
+
+	//跳转资产管理页面
+	function inspectings() {
+		var user = $api.getStorage('user');
+		//获取token  appAcctId是用户id   siteCode站址编码
+		$client.getpropertyTokens({
+			username: user.loginname
+		}, function (ret, err) {
+			//测试环境	console.log("zhangning"+"http://114.116.254.193:38680/towerres/index.html#/InspectHome?token="+ret.token+"&appAcctId="+ret.appacctid+"&siteCode="+"370683500000000044");
+			//生产调用IPhttp://120.52.40.27:11002/towerres/index.html#/InspectHome?token=
+			//准生产调用IP http://10.34.6.21:9000/towerres/index.html#/InspectHome?token=
+			console.log("zhangning" + "http://120.52.157.131:18888/towerres/index.html#/InspectHome?token=" + ret.token + "&appAcctId=" + ret.appacctid + "&siteCode=" + api.pageParam.deviceid);   //验收
+			if (ret) {
+				if (ret.success) {
+					if (ret.token == undefined) {
+						api.toast({
+							msg: '身份认证失败，请联系4A管理员',
+							location: 'middle'
+						});
+					} else {
+						// var param = {
+						// 	name: 'inspect',
+						// 	url: ret.resAdder+"/towerres/index.html#/InspectHome?token=" + ret.token + "&appAcctId=" + ret.appacctid + "&siteCode=" + api.pageParam.deviceid,
+						// 	bgColor: '#fff',
+						// 	title: '资源核查',
+						// 	navigationBar: {
+						// 		color: '#fff',
+						// 		background: '#db4537',
+						// 	}
+						// }
+						// api.openTabLayout(param);
+						// api.openWin({
+						// 	name: 'inspectHome',
+						// 	url: ret.resAdder+"/towerres/index.html#/InspectHome?token=" + ret.token + "&appAcctId=" + ret.appacctid + "&siteCode=" + api.pageParam.deviceid,
+						// })
+					}
+				} else {
+					api.toast({
+						msg: ret.errorMsg,
+						location: 'middle'
+					});
+				}
+			} else {
+				api.toast({
+					msg: '接口访问失败',
+					location: 'middle'
+				});
+			}
+			api.hideProgress();
+		});
+	}
+
+
+	function call_rollback() {
+		var taskid = api.pageParam.taskid
+		showlog('taskId = ' + taskid);
+		var opts = {
+			taskId: taskid,
+			type: modelType
+		};
+		api.confirm({
+			title: '巡检项目回退确认',
+			msg: '确认回退该巡检项目吗？',
+			buttons: ["取消", "确认"]
+		}, function (ret) {
+			if (ret.buttonIndex == 2) {
+				api.showProgress({
+					title: '加载中',
+					modal: false
+				});
+				$client.getTaskRollback(opts, function (ret, err) {
+					api.hideProgress();
+					if (ret) {
+						if (ret.success) {
+							api.execScript({
+								name: 'task_list_win',
+								frameName: 'waitTaskList1',
+								script: 'listView.refresh();'
+							});
+							api.execScript({
+								name: 'task_list_win',
+								frameName: 'finishTaskList',
+								script: 'listView.refresh();'
+							});
+							api.toast({
+								msg: '重置成功!'
+							});
+							window.setTimeout(function () {
+								api.closeWin();
+							}, 2000)
+						} else {
+							api.toast({
+								msg: ret.data_info
+							});
+						}
+					} else {
+						api.toast({
+							msg: ret.data_info
+						});
+					}
+				});
+			}
+		});
+	}
+	function reftaskstate(){
+		api.pageParam.taskstate = '2';
+	}
+	function closeInspectHome(){
+		api.closeWin({
+			name: 'inspectHome'
+		});
+	}
+</script>
+
+</html>

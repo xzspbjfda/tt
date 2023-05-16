@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>信号量列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <style>
+            body {
+            }
+        </style>
+    </head>
+    <body>
+        <header id="header">
+            <ul class="aui-tab-nav" id="signalTabId">
+                <li id="tabbar1" class="active" tapmode onclick="randomSwitchBtn(this,0)">
+                    遥测
+                </li>
+                <li id="tabbar2" tapmode onclick="randomSwitchBtn(this,1)">
+                    遥信
+                </li>
+            </ul>
+        </header>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+
+        apiready = function() {
+            api.parseTapmode();
+            //		var body_h = window.clientHeight;
+            //		var header_h = $('#header').height();
+            var body_h = $api.offset($api.dom('body')).h;
+            var header_h = $api.offset($api.byId('header')).h;
+            var top_h;
+            if (api.systemType == 'ios') {
+                top_h = header_h * 2 + 20;
+            } else {
+                top_h = header_h * 2
+            }
+            
+            var showFlag = api.pageParam.showFlag;
+            showlog('showFlag = '+ showFlag);
+            api.openFrameGroup({
+                name : 'signal_header_tab',
+                scrollEnabled : true,
+                rect : {
+                    x : 0,
+                    y : top_h,
+                    w : 'auto',
+                    h : body_h - header_h
+                },
+                index : 0,
+                preload : 0,
+                frames : [{
+                    name : 'ycSignalList'  ,
+                    url : 'signalList_frm.html',
+                    pageParam : {
+                        showFlag : showFlag,
+//                      measuredval : api.pageParam.measuredval,
+//                      semaphorename : api.pageParam.semaphorename,
+//                      semaphoreId : api.pageParam.semaphoreId,
+						signalType : 'yc',
+                        stationId : api.pageParam.stationId,
+                        deviceName : api.pageParam.deviceName,
+                        deviceCode : api.pageParam.deviceCode,
+                        devFsuId : api.pageParam.devFsuId
+                    },
+                    bounces : false
+                }, {
+                    name : 'yxSignalList' ,
+                    url : 'signalList_frm.html',
+                    pageParam : {
+                        showFlag : showFlag,
+//                      measuredval : api.pageParam.measuredval,
+//                      semaphorename : api.pageParam.semaphorename,
+//                      semaphoreId : api.pageParam.semaphoreId,
+						signalType : 'yx',
+                        stationId : api.pageParam.stationId,
+                        deviceName : api.pageParam.deviceName,
+                        deviceCode : api.pageParam.deviceCode,
+                        devFsuId : api.pageParam.devFsuId
+                    },
+                    bounces : false
+                }]
+            }, function(ret, err) {
+                var header = $api.byId('header');
+                var headerAct = $api.dom(header, '.aui-bar-nav li.active');
+                $api.removeCls(headerAct, 'active');
+                var name = ret.name;
+                var index = ret.index;
+                if (index == 0) {
+                    $api.removeCls($api.byId('tabbar2'), 'active');
+                    $api.addCls($api.byId('tabbar1'), 'active');
+                } else if (index == 1) {
+                    $api.removeCls($api.byId('tabbar1'), 'active');
+                    $api.addCls($api.byId('tabbar2'), 'active');
+                }
+            })
+        };
+        
+
+        function randomSwitchBtn(obj, index) {
+            $(obj).addClass('active').siblings().removeClass('active');
+            api.setFrameGroupIndex({
+                name : 'signal_header_tab',
+                index : index,
+                scroll : true
+            });
+        }
+
+        //隐藏FrameGroup
+        function hiddenFrameGroup() {
+            api.setFrameGroupAttr({
+                name : 'signal_header_tab',
+                hidden : true
+            });
+        }
+
+        //显示FrameGroup
+        function showFrameGroup() {
+            api.setFrameGroupAttr({
+                name : 'signal_header_tab',
+                hidden : false
+            });
+        }
+    </script>
+</html>

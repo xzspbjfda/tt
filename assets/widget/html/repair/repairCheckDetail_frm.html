@@ -1,0 +1,1025 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<title>问题核实详情</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	<link rel="stylesheet" type="text/css" href="../bill/css/billRevertDetail.css" />
+	<style>
+		input:disabled{  
+			color:#ccc;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="main" class="aui-content" style=" display: none;">
+		<form>
+			<ul id="list-view" class="aui-list-view" style="padding-bottom: 20px;"></ul>
+		</form>
+	</div>
+	<div style="height:50px;"></div>
+	<div id="downloadBtn" class="fixed_bottom" style="display: none;">
+		<button class="outline center aui-btn aui-btn-success" onclick="downloadPic();">
+				下载图片
+			</button>
+	</div>
+	<!--下拉列表-->
+	<!--下拉列表-->
+	<script id="hiddenlist-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i
+		< len; i++) {}} <option value="{{=it[i].hiddencontent}}">{{=it[i].hiddencontent}}</option>
+			{{ } }}
+	</script>
+
+	<script id="dict-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i
+		< len; i++) {}} <option value="{{=it[i].itemname}}">{{=it[i].itemname}}</option>
+			{{ } }}
+	</script>
+	<!--下拉列表-->
+	<script id="m-template" type="text/x-dot-template">
+		{{ for(var i=0, len=it.length; i
+		< len; i++) {}} <option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+	</script>
+	<!--合同模板-->
+	<script id="contract-template" type="text/html">
+		{{ for(var i=0, len=it.length; i
+		< len; i++) { var type="" ; if( "1"==i t[i].itemtype){ type="按次" ; }else if( "2"==it[i].itemtype){ type="按月包干" ; } }} <li class="aui-list-view-cell  aui-flex-col">
+			<div style="width: 100%">
+				<div class="  aui-pull-left" style="width:75%;font-size: 16px; font-weight: bold;">
+					{{=it[i].contractno}}
+				</div>
+				<div class="aui-pull-left" style="margin-left: 5px;">
+					{{=type}}
+				</div>
+			</div>
+			<div style="width: 100%">
+				<div class=" aui-pull-left" style="width: 40%;padding-top: 10px">
+					{{=it[i].paytype}}
+				</div>
+				<div class="aui-pull-right">
+					<div class="aui-counter-box">
+						<div class="aui-pull-left aui-text-danger" style="padding-right: 5px;">¥ {{=it[i].paymoney}}元</div>
+						<div class="aui-counter aui-info aui-pull-right">
+							<div id="min_num" class="aui-counter-minus" onclick="minNum(this,'{{=it[i].id}}');"></div>
+							<input id="numinfo" name="numinfo" class="aui-counter-input" type="number" value="1" onchange="setBudgetTxt();">
+							<div id="add_num" class="aui-counter-plus" onclick="addNum(this);"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</li>
+			{{ } }}
+	</script>
+	<!--图片模板-->
+	<script id="img-template" type="text/html">
+		<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col">
+			<div class=" aui-flex-item-2">
+				<img class="aui-img-object aui-pull-left" src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			<div class="aui-pull-left aui-flex-item-8">
+				{{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+				<p class='aui-ellipsis-1'>
+					经度:{{=it.lon}}
+				</p>
+				<p class='aui-ellipsis-1'>
+					纬度: {{=it.lat}}
+				</p>
+				<p>
+					地址:{{=it.photoaddress}}
+				</p>
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center">
+				<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">x</button>
+			</div>
+			{{?}}
+		</li>
+	</script>
+	<!--普通回单begin-->
+	<!--<div id="wrap" style="display: none;">
+		<form>-->
+	<script id="parol-template" type="text/html">
+		<input id="billsn" name="billsn" type="hidden" value="{{=it.billsn}}" />
+		<input name="projectId" type="hidden" value="{{=it.projectid}}" />
+		<input name="hiddenSource" type="hidden" value="{{=it.hiddensource}}" />
+		<!--<div id="billRevertDivId" style="overflow:auto;margin-bottom:55px;">-->
+		<div id="reliefTypeDivId" class="cardDiv" style="margin-top: 0px;padding-top: 10px;margin-bottom: 20px;">
+			<div class="cardLabel">
+				<font color="red">*</font>隐患是否属实：
+			</div>
+			<div class="cardCon">
+				<select id="isTrueId" name="ishidden" class="required" data-valid="required" data-error="请选择隐患是否属实！" value="" onchange="isShow(this);">
+				<option value="">请选择</option>
+				<option value="Y">是</option>
+				<option value="N">否</option>
+			</select>
+			</div>
+		</div>
+		<div id="isshowid" style="display: none;">
+			<!-- <div id="reliefTypeDivId" class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>隐患种类：
+				</div>
+				<div class="cardCon">
+					<select id="hiddenTypeId" name="hiddenType" class="required" data-valid="required" data-error="请选择隐患种类！" value="2"></select>
+				</div>
+			</div> -->
+			<div id="reliefTypeDivId" class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>隐患内容：
+				</div>
+				<div class="cardCon">
+					<!--<input id="faultId" name="hiddenContent" class="required" data-valid="required" type="text"  value="{{=it.hiddencontent?it.hiddencontent:''}}" data-error="请填写隐患内容！"  style="height:35px; line-height:35px;">-->
+					<select id="hiddencontentid" name="hiddencontent" class="required" data-valid="required" data-error="请选择隐患内容！" value="" onchange="selectHiddenContent(this)">
+			<option value="">请选择</option>
+			</select>
+				</div>
+			</div>
+			<div id="reliefTypeDivId" class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>隐患等级：
+				</div>
+				<div class="cardCon">
+					<input id="hiddenGradeId" name="hiddengrade" type="text" disabled="disabled" value="">
+					</select>
+				</div>
+			</div>
+			<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+				<div class="cardTextareaLabel">
+					<font color="red">*</font>隐患描述：
+				</div>
+				<div class="cardTextareaCon" style="background-color: #fff">
+					<textarea id="reliefDealInfoId" name="hiddenRemark" rows="4" class="noborder required" data-valid="required" data-error="填写隐患描述！">{{=it.hiddenremark?it.hiddenremark:''}}</textarea>
+				</div>
+			</div>
+			<div id="reliefTypeDivId" class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>设备名称：
+				</div>
+				<div class="cardCon">
+					<input id="deviceNameId" name="deviceName" type="text" value="{{=it.devicename}}" disabled="disabled" style="height:35px; line-height:35px;">
+				</div>
+			</div>
+			<div id="reliefTypeDivId" class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>设备型号：
+				</div>
+				<div class="cardCon">
+					<input id="device" name="deviceCode" type="text" value="{{=it.devicecode}}" disabled="disabled" style="height:35px; line-height:35px;">
+				</div>
+			</div>
+			<!--<div id="reliefTypeDivId" class="cardDiv">
+			<div class="cardLabel">
+			维修人：
+			</div>
+			<div class="cardCon">
+			<input id="faultId" name="fixUser" type="text"  value=""   style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div id="reliefTypeDivId" class="cardDiv">
+			<div class="cardLabel">
+			维修单位：
+			</div>
+			<div class="cardCon">
+			<input id="faultId" name="fixCom" type="text"  value=""  style="height:35px; line-height:35px;">
+			</div>
+			</div>-->
+			<!-- <div class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>是否走代维费处理
+				</div>
+				<div class="cardCon">
+					<select id="isNeedFeeId" name="isNeedFee" class="required" data-valid="required" data-error="是否走代维费处理必选！" value="" onchange="isFreeDeal(this);">
+					<option value="">请选择</option>
+					<option value="1">是</option>
+					<option value="2">否</option>
+					</select>
+				</div>
+			</div> -->
+
+			<!-- <div class="cardDiv">
+				<div class="cardLabel">
+					<font color="red">*</font>执行人
+				</div>
+				<div class="cardCon">
+					<select id="executor" name="executor" class="required" data-valid="required" data-error="请选择派单对象！" value="">
+						<option value="">请选择</option>
+						<option value="2">维修厂家</option>
+						<option value="1">地市维护部</option>
+						<option value="4">维护中心</option>
+						<option value="5">区域经理</option>
+					</select>
+				</div>
+			</div> -->
+
+		</div>
+		<!--<div id="reliefTypeDivId" class="cardDiv">
+			<div class="cardLabel">
+			隐患处理预算：
+			</div>
+			<div class="cardCon">
+			<input id="budgetId" name="budget" type="text"  value="0" disabled="disabled" style="height:35px; line-height:35px;">
+			</div>
+			</div>-->
+		<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+			<div class="cardTextareaLabel" id='txt_id'>
+				<font color="red">*</font> 建议维修方案:
+			</div>
+			<div class="cardTextareaCon">
+				<textarea id="fixplan" name="fixplan" rows="4" class="noborder required" data-valid="required" data-error="请填写建议维修方案！"></textarea>
+			</div>
+		</div>
+		<!--<li id="title_contract" class="aui-list-view-cell ccssoft-aui-list-view-divider" style="display: none">
+			合同信息
+			</li>
+			<div id="mainid" name="mainname"  style="display: none"></div>
+			<li id="info_contract" class="aui-list-view-cell" data-win="list-image"  style="display: none">
+			<img id="add_contract" src="../../image/icons/png/add_num.png" width="50" height="50" style="float: left;" onclick="addContract(this)"/>
+			</li>-->
+		<div id="isshow_img" style="display: none;">
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+				图片列表 ：
+			</li>
+			<li class="aui-list-view-cell" data-win="list-image">
+				<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic(this)" />
+				<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+				<img style='display:none;' class='imgPath'  src=''/>
+			</li>
+		</div>
+		<!--</div>-->
+		<!--<div id="hiddenForm" style="display: none">
+			<script id="hiddenParam-template" type="text/x-dot-template">
+			<input name="billsn" type="hidden" value="{{=it.billsn}}"/>
+			</script>
+			</div>-->
+		<!--普通回单end-->
+		<!--<footer style="height:50px;">
+			<div class="cardButtonDiv">
+			<button class="billRevertCancelBtn"  onclick="api.closeWin()">
+			取消
+			</button>
+			<button id="submitBtn" class="billRevertOkBtn">
+			确定
+			</button>
+			</div>
+			</footer>-->
+	</script>
+	<!--</form>
+		</div>-->
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script src="../../script/template-native.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script src="../../script/GPS.js"></script>
+<script src="../../script/debug.js"></script>
+<script src='../../script/constant.js'></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../../script/utils/ListUtil.js"></script>
+<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+<script type="text/javascript" src="../../script/gongdan.js"></script>
+<script>
+	var billModel;
+	var provinceid;
+	var hiddenList;
+	var lastLocation;
+	var projectid;
+	var billsn;
+	var idArr = new Array();
+	var shuArr;
+	var dataArr = new Array();
+	var user;
+	var bigData;
+	var repairDetail;
+	var billcntFrom;
+	apiready = function() {
+		//console.log(JSON.stringify(api))
+		billcntFrom = $api.getStorage('billcntFrom');	// 获取标识的入口页面
+		repairDetail = $api.getStorage('repairDetail');
+		console.log(getObj(repairDetail));
+		user = $api.getStorage('user');
+		lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+		api.setStatusBarStyle({
+			style: 'light'
+		});
+		api.closeFrame({
+			name: 'repairBillMenu'
+		});
+		if (!debug) {
+			db_init();
+		}
+		imageUtil.init({
+			uploadFn: $client.uploadRepairImage,
+			saveFn: db_saveRepairPic
+		});
+		formUtil.init({
+			submitFn: $client.saveRepairProblem,
+			btnObj: $('#submitBtn'),
+			callback: function(ret, err) {
+				// wxx
+				console.log("2222222222222222222222222222222222");
+				console.log(getObj(ret));
+				var billsn = $('#billsn').val()
+				console.log(billsn);
+				console.log("3333333333333333333333333333333333");
+				if (ret && ret.success) {
+					console.log('RSupdate9')
+					updateRecommendStatus(billsn)
+					if (imageUtil.getImageArray().length) {
+						if (submission == 'ONLY_SUBMIT_TEXT') {
+							saveLocal_new();
+						}else {
+							imageUtil.upload(function(count) {
+								billTixing();
+							});
+						}
+					} else{
+						billTixing();
+					}
+				} else {
+					// wxx
+					showToast(ret.errorMsg);
+					api.hideProgress();
+					setTimeout(function(){
+						api.execScript({
+							name : 'repairCheck_win',
+							script : 'onClick();'
+						});
+					},5000)
+				}
+			},
+			rules: {
+				//必填验证
+				required: function(value, errorMsg, el) {
+					if (value == '') {
+						if (!formUtil.getHasError()) {
+							formUtil.setHasError(true);
+							return errorMsg;
+						}
+					}
+				},
+				hasImage: function(value, errorMsg, el) {
+					if (!imageUtil.getImageArray().length) {
+						if (!formUtil.getHasError()) {
+							formUtil.setHasError(true);
+							return errorMsg;
+						}
+					}
+				}
+
+			}
+		});
+		projectid = repairDetail.projectid;
+		billsn = repairDetail.billsn;
+		// initData();
+		//			alert(repairDetail.hiddentype);
+		$('#main').show();
+		renderTemp('list-view', 'parol-template', repairDetail, false);
+		initDict();
+	};
+
+	function billTixing(){
+		//====================修改 工单提醒 BEGIN
+		var repairDetail = $api.getStorage('repairDetail');
+		var opts = {
+			pagename: 'rcwx',
+			pageaction: 'DOING',	//DOING/ACCEPT
+			stationName: repairDetail.stationname,
+			stationcode: repairDetail.stationcode
+		}
+		$client.sixBillRemind(opts, function(ret, err) {
+			if (ret.billCntInfo.length>0){
+				var billCntInfo = JSON.parse(ret.billCntInfo);
+				console.log("=========aaaaaaaa======")
+				console.log(JSON.stringify(billCntInfo));
+				if (billCntInfo.status=='DOING'){
+					// 已领取
+					api.confirm({
+						title: '提示',
+						msg: '本站还有工单未处理！',
+					}, function(ret, err) {
+						if (billcntFrom!='all_bill_list_frm'){
+							if (ret.buttonIndex == 2) {
+								//saveLocal();   //需要将图片保存到本地
+								setTimeout(function() {
+									api.hideProgress();
+									api.execScript({
+										name:'home_win',
+										frameName: 'footer_tab_1',
+										script: 'openDaibaiList("'+billCntInfo.status+'", "'+repairDetail.stationcode+'", "4")'
+									});
+									api.closeToWin({
+										name: 'home_win'
+									});
+								}, 500);
+							}else{
+								api.execScript({
+									name: 'repair/repair-list_win',
+									frameName: 'repair-listCon_frm',
+									script: 'refreshList();'
+								});
+								setTimeout(function() {
+									api.hideProgress();
+									api.closeToWin({
+										name: 'repair/repair-list_win'
+									});
+								}, 1100);
+							}
+						} else {																																				
+							api.execScript({
+								name: 'allBillListWin',
+								frameName: 'waitTaskList1',
+								script: 'fiveList()'
+							});										
+							setTimeout(function() {
+								api.hideProgress();	
+								api.closeToWin({name: 'allBillListWin'})
+							}, 1100);
+						}
+					});
+				} else {
+					console.log("==接单完成，检查是否还有待办工单【维修】===")
+					api.hideProgress();
+					api.toast({
+						msg: "提交成功。本站还有工单未处理！",
+						location: "middle",
+						duration : 3000,
+					});
+					window.setTimeout(function() {
+						if (billcntFrom!='all_bill_list_frm'){
+							api.execScript({
+								name: 'repair/repair-list_win',
+								frameName: 'repair-listCon_frm',
+								script: 'refreshList();'
+							});
+							setTimeout(function() {
+								api.hideProgress();
+								api.closeToWin({
+									name: 'repair/repair-list_win'
+								});
+							}, 1100);
+						} else {										
+							api.execScript({
+								name: 'allBillListWin',
+								frameName: 'waitTaskList1',
+								script: 'fiveList()'
+							});
+							setTimeout(function() {
+								api.hideProgress();
+								api.closeToWin({name: 'allBillListWin'})
+							}, 1100);
+						}
+					}, 3000);
+				}
+			} else {
+				api.toast({
+					msg: '提交成功!'
+				});
+				if (billcntFrom!='all_bill_list_frm'){
+					api.execScript({
+						name: 'repair/repair-list_win',
+						frameName: 'repair-listCon_frm',
+						script: 'refreshList();'
+					});
+					setTimeout(function() {
+						api.hideProgress();
+						api.closeToWin({
+							name: 'repair/repair-list_win'
+						});
+					}, 1100);
+				} else {								
+					api.execScript({
+						name: 'allBillListWin',
+						frameName: 'waitTaskList1',
+						script: 'fiveList()'
+					});						
+					setTimeout(function() {
+						api.hideProgress();
+						api.closeToWin({name: 'allBillListWin'})
+					}, 1100);
+				}							
+			}
+			setTimeout(function(){
+				api.execScript({
+					name : 'repairCheck_win',
+					script : 'onClick();'
+				});
+			},5000)
+		});
+		//====================修改 工单提醒 END
+	}
+
+	function initData() {
+		api.showProgress({
+			title: '加载中...'
+		});
+		$client.getRepairDeviceList({
+			stationid: repairDetail.stationid
+		}, function(ret, err) {
+			if (ret) {
+				//          api.hideProgress();
+				if (ret.success) {
+					$('#main').show();
+					var bigList = ret.list;
+					console.log(getObj(bigList[0]));
+					renderTemp('list-view', 'parol-template', repairDetail, false);
+					if (bigList != null && bigList.length > 0) {
+						for (var i = 0, size = bigList.length; i < size; i++) {
+							if(bigList[i].model==''|| bigList[i].model == null){
+									bigList[i].model=" ";
+							}
+							$('<option>').text(bigList[i].name).val(bigList[i].model).appendTo('#deviceNameId');
+						}
+					}
+					initDict();
+				} else {
+					api.toast({
+						msg: ret.data_info
+					});
+				}
+			} else {
+				api.toast({
+					msg: '获取工单详情出错!'
+				});
+			}
+			api.hideProgress();
+		});
+	}
+
+	function call_validate() {
+		if (formUtil.validate()) {
+			select();
+		}
+	}
+
+	/**
+	 *  选择提交方式：1.提交文本和图片，2. 仅提交文本
+	 */
+	//  wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	function select() {
+		var optList = ['提交文本和图片', '仅提交文本'];
+		var cbTarget = {
+			name: api.winName,
+			frameName: 'repairCheckDetail_frm',
+			cbFn: 'call_upload'
+		};
+		$api.setStorage('optList', optList);
+		$api.setStorage('cbTarget', cbTarget);
+		api.openFrame({
+			name: 'popup_select_frm',
+			url: '../dialog/popup_select.html',
+			pagePara: api.pageParam,
+			bounces: false
+		});
+
+	}
+
+	function call_upload(result) {
+		var opt = {};
+		var isTrueId = $("#isTrueId").val();
+		var hiddenTypeId = $("#hiddenTypeId").val();
+		var hiddencontentid = $("#hiddencontentid").val();
+		var hiddenGradeId = $("#hiddenGradeId").val();
+		var reliefDealInfoId = $("#reliefDealInfoId").val();
+		var deviceNameId = $("#deviceNameId").val();
+		var device = $("#device").val();
+		var isNeedFeeId = $("#isNeedFeeId").val();
+		var executor = $("#executor").val();
+		var fixplan = $("#fixplan").val();
+
+		dataArr.push(isTrueId)
+		dataArr.push(hiddenTypeId)
+		dataArr.push(hiddencontentid)
+		dataArr.push(hiddenGradeId)
+		dataArr.push(reliefDealInfoId)
+		dataArr.push(deviceNameId)
+		dataArr.push(device)
+		dataArr.push(isNeedFeeId)
+		dataArr.push(executor)
+		dataArr.push(fixplan)
+
+		opt.contract = dataArr;
+
+
+		// wxx
+
+		opt.repair = "Y";
+
+		//			$('#deviceNameId').val($('#deviceNameId').find('option:selected').text());
+		//						alert($("#deviceNameId").find("option:selected").text());
+		console.log("提交的数据==》》"+JSON.stringify(opt))
+		if (result == '提交文本和图片') {
+			console.log('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww提交文本和图片');
+			console.log(getObj(opt));
+			console.log(opt.contract);
+			submission = 'BOTH_SUBMIT_TEXT_IMAGE';
+			formUtil.setQueryOptions(opt);
+			formUtil.submit();
+		} else if (result == '仅提交文本') {
+			console.log('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww仅提交文本');
+			console.log(opt.contract);
+			submission = 'ONLY_SUBMIT_TEXT';
+			formUtil.setQueryOptions(opt);
+			formUtil.submit();
+		}
+	}
+
+	function saveLocal_new() {
+		imageUtil.save(function(num) {
+			var length = imageUtil.getImageArray().length;
+			if (num) {
+				//刷新首页的图片上传模块头标
+				api.execScript({
+					name: 'home_win',
+					frameName: 'footer_tab_1',
+					script: 'setofflineUploadCount();'
+				});
+				setTimeout(function() {
+					//刷新单个列表项
+					api.execScript({
+						name: 'repair/repair-list_win',
+						frameName: 'repair-listCon_frm',
+						script: 'refreshList();'
+					});
+					api.hideProgress();
+					api.closeToWin({
+						name: 'repair/repair-list_win'
+					});
+				}, 2000);
+				setTimeout(function(){
+					api.execScript({
+						name : 'repairCheck_win',
+						script : 'onClick();'
+					});
+				},5000)
+			}
+		});
+	}
+	
+	function saveLocal() {
+		imageUtil.save(function(num) {
+			var length = imageUtil.getImageArray().length;
+			if (num) {
+				//刷新首页的图片上传模块头标
+				api.execScript({
+					name: 'home_win',
+					frameName: 'footer_tab_1',
+					script: 'setofflineUploadCount();'
+				});
+				setTimeout(function() {
+					//刷新单个列表项
+					api.execScript({
+						name: 'repair/repair-list_win',
+						frameName: 'repair-listCon_frm',
+						script: 'refreshList();'
+					});
+					api.hideProgress();
+					api.closeToWin({
+						name: 'repair/repair-list_win'
+					});
+				}, 2000);
+			}
+		});
+	}
+
+	// function isFreeDeal(e) {
+	// 	var isFree = $(e).val();
+	// 	if ("2" == isFree) {
+	// 		//				$('#title_contract').show();
+	// 		//				$('#mainid').show();
+	// 		//				$('#info_contract').show();
+	// 		$('#txt_id').html("<font color='red' >*</font>建议维修方案：");
+	// 		$('#fixplan').attr('data-error', '建议维修方案必填！');
+	// 	} else {
+	// 		//				$('#title_contract').hide();
+	// 		//				$('#mainid').hide();
+	// 		//				$('#info_contract').hide();
+	// 		$('#txt_id').html("<font color='red' >*</font>维修方式说明：");
+	// 		$('#fixplan').attr('data-error', '维修方式说明必填！');
+	// 	}
+	// }
+
+	function selectHiddenContent(target) {
+		var val = $(target).val();
+		//			hiddenList.
+		for (var i = 0; i < hiddenList.length; i++) {
+			if (val == hiddenList[i].hiddencontent) {
+				if ("A" == hiddenList[i].hiddengrade) {
+					$api.byId('hiddenGradeId').value = '特别严重';
+				} else if ("B" == hiddenList[i].hiddengrade) {
+					$api.byId('hiddenGradeId').value = '严重';
+				} else if ("C" == hiddenList[i].hiddengrade) {
+					$api.byId('hiddenGradeId').value = '一般';
+				} else {
+					$api.byId('hiddenGradeId').value = '';
+				}
+			}
+		}
+		//hiddengradeid
+	}
+
+	function isShow(e) {
+		var hideList = ['#hiddenTypeId', '#hiddenGradeId', '#hiddencontentid', '#reliefDealInfoId', '#isNeedFeeId','#executor'];
+		var isTrue = $(e).val();
+		if ("Y" == isTrue) {
+			$('#isshowid').show();
+			$('#isshow_img').show();
+			$('#txt_id').html("<font color='red' >*</font>建议维修方案：");
+			$('#fixplan').attr('data-error', '建议维修方案必填！');
+			for (var i = 0, size = hideList.length; i < size; i++) {
+				var $target = $(hideList[i]);
+				if ($target.attr('data-valid') != '' && !$target.attr('disabled')) {
+					$target.addClass('required');
+				}
+			}
+		} else {
+			$('#isshowid').hide();
+			$('#isshow_img').show();
+			$('#txt_id').html("<font color='red' >*</font> 填写原因：");
+			$('#fixplan').attr('data-error', '填写原因必填！');
+			for (var i = 0, size = hideList.length; i < size; i++) {
+				$(hideList[i]).removeClass('required');
+			}
+		}
+	}
+
+	function selectDevice(e) {
+		//			alert($(e).val());
+		$api.byId('device').value = $(e).val();
+		$('#deviceid').val($(e).find("option:selected").text())
+			//				alert($(e).find("option:selected").text());
+			//			document.getElementById("device").value="somethind";
+			//			$('#devicecodeId').val('22222222');
+	}
+
+	function initDict() {
+		var hiddenTypeList = $api.getStorage("hiddenTypeList");
+		var hiddenGradeList = $api.getStorage("hiddenGradeList");
+		hiddenList = $api.getStorage("contentlist");
+		console.log("ppppppppppppppppppppppppp");
+		console.log(JSON.stringify(hiddenList));
+		console.log(JSON.stringify(hiddenGradeList));
+
+		//免责条款
+		if (hiddenTypeList != null && hiddenTypeList.length > 0) {
+			//				alert("集合数：" + roomFaultList.length);
+			$('#hiddenTypeId').empty();
+			$('<option>').text('请选择').val('').appendTo('#hiddenTypeId');
+			renderTemp('hiddenTypeId', 'm-template', hiddenTypeList, true);
+			$('#hiddenTypeId').val(repairDetail.hiddentype);
+			$('#hiddenGradeId').val(repairDetail.hiddengrade);
+			$('#deviceNameId').val(repairDetail.devicename);
+			$('#deviceid').val(repairDetail.devicecode);
+			//				{{=it.devicecode}}
+		}
+
+		if (hiddenList != null && hiddenList.length > 0) {
+			$('#hiddencontentid').empty();
+			$('<option>').text('请选择').val('').appendTo('#hiddencontentid');
+			renderTemp('hiddencontentid', 'hiddenlist-template', hiddenList, true);
+			var grade = repairDetail.hiddengrade;
+			if ("A" == grade) {
+				$('[name=hiddengrade]').val("特别严重");
+			} else if ("B" == grade) {
+				$('[name=hiddengrade]').val("严重");
+			} else if ("C" == grade) {
+				$('[name=hiddengrade]').val("一般");
+			}
+
+
+			//outputObj(hiddenList[1]);undefined
+			for (var i = 0; i < hiddenList.length; i++) {
+				//alert("@@@@@tao: "+hiddenList[i]);
+				if (hiddenList[i].hiddencontent == repairDetail.hiddencontent) {
+					$('[name=hiddencontent]').val(repairDetail.hiddencontent);
+				}
+			}
+		}
+	}
+
+	function outputObj(obj) {
+		var description = "";
+		for (var i in obj) {
+			description += i + " = " + obj[i] + "\n";
+		}
+		// alert("@@@@@tao: " + description);
+	}
+
+	function getNowFormatDate() {
+		var date = new Date();
+		var seperator1 = "-";
+		var seperator2 = ":";
+		var month = date.getMonth() + 1;
+		var strDate = date.getDate();
+		var hour = date.getHours();
+		var min = date.getMinutes();
+		var s = date.getSeconds();
+		if (month >= 1 && month <= 9) {
+			month = "0" + month;
+		}
+		if (strDate >= 0 && strDate <= 9) {
+			strDate = "0" + strDate;
+		}
+		if (hour >= 0 && hour <= 9) {
+			hour = "0" + hour;
+		}
+		if (min >= 0 && min <= 9) {
+			min = "0" + min;
+		}
+		if (s >= 0 && s <= 9) {
+			s = "0" + s;
+		}
+		var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + "T" + hour + seperator2 + min + seperator2 + s;
+		return currentdate;
+	}
+
+	function addContract(e) {
+		api.pageParam.winName = 'repairCheck_win';
+		api.pageParam.frameName = 'repairCheckDetail_frm';
+		api.pageParam.stationid = repairDetail.stationid;
+		api.openWin({
+			name: 'contract-list_win',
+			url: 'contract-list_win.html',
+			pageParam: api.pageParam,
+			opaque: true,
+			bounces: false,
+			reload: true,
+			slidBackEnabled: true,
+			vScrollBarEnabled: false
+		});
+	}
+
+	function refreshList(str) {
+		shuArr = new Array();
+		var shu = eval('(' + str + ')');
+		//注意json格式
+		if (shu != null && shu.length > 0) {
+			for (var i = 0; i < shu.length; i++) {
+				//					alert(shu[i].id);
+				if (idArr.indexOf(shu[i].id) == -1) {
+					//					alert('到站');
+					idArr.push(shu[i].id);
+					shuArr.push(shu[i]);
+					dataArr.push(shu[i]);
+				} else {
+					for (var j = 0; j < idArr.length; j++) {
+						if (shu[i].id == idArr[j]) {
+							$($('#mainid').find('input')[j]).val(Number($($('#mainid').find('input')[j]).val()) + 1);
+						}
+					}
+				}
+			}
+		}
+		renderTemp('mainid', 'contract-template', shuArr, true);
+		setBudgetTxt();
+	}
+
+	function setBudgetTxt() {
+		var budget = 0;
+		if (dataArr != null && dataArr.length > 0) {
+			for (var i = 0; i < dataArr.length; i++) {
+				if (dataArr[i].itemtype == "1") {
+					budget += Number($($('#mainid').find('input')[i]).val()) * dataArr[i].paymoney
+				}
+			}
+			$('#budgetId').val(budget);
+		} else {
+			$('#budgetId').val("0");
+		}
+	}
+
+	function minNum(e, id) {
+		var size = dataArr.length;
+		//
+		if (Number($($(e).next('input')).val() == 1)) {
+			for (var i = 0; i < size; i++) {
+				var data = dataArr[i];
+				if (data.id == id) {
+					dataArr.remove(i);
+					idArr.remove(i);
+					break;
+				}
+			}
+			$(event.target).parents('li').remove();
+			setBudgetTxt();
+		} else {
+			$($(e).next('input')).val(Number($($(e).next('input')).val()) - 1);
+			setBudgetTxt();
+		}
+	}
+
+	function addNum(e) {
+		//		$('#numinfo').val(Number($('#numinfo').val())+1);
+		$($(e).prev('input')).val(Number($($(e).prev('input')).val()) + 1);
+		setBudgetTxt();
+	}
+
+	/**
+	 * 添加图片
+	 */
+	function addPic(e) {
+		var permission = 'camera';
+		var resultList = api.hasPermission({
+		    list: [permission]
+		});
+		if (resultList[0].granted) {
+		    // 已授权，可以继续下一步操作
+		} else {
+		    api.confirm({
+		        msg: '应用需要您的授权才能访问相机',
+		        buttons: ['取消', '去设置']
+		    }, function(ret) {
+		        if (ret.buttonIndex == 2) {
+		            api.requestPermission({
+		                list: [permission],
+		            }, function(res) {
+		                if (res.list[0].granted) {
+		                    // 已授权，可以继续下一步操作
+		                }
+		            });
+		        }
+		    });
+		}
+		if (!lastLocation || !lastLocation.status) {
+			api.toast({
+				msg: '暂未定位\n无法上传照片！'
+			});
+			window.setTimeout(function() {
+				api.closeWin();
+			}, 2000);
+		}
+		var lon1 = displaynum(lastLocation.lon);
+		var lat1 = displaynum(lastLocation.lat);
+		/////////////////////////////
+		var curentTime2 = CurentTime2();
+		$api.setStorage('newtime', curentTime2);
+		$api.setStorage('lon1', lon1);
+		$api.setStorage('lat1', lat1);
+		var lon1 = $api.getStorage('lon1');
+		var lat1 = $api.getStorage('lat1');
+		var user=$api.getStorage('user');
+		var newtime = $api.getStorage('newtime');
+		////////////////////////////
+		imageUtil.add('camera', function(ret, err) {
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			var oldret = ret.data.split(".");
+			var newret = oldret[0]+"_shuiyin;2;"+user.userid+";"+projectid+";"+billsn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			var imageInfo = {
+				userid: user.userid,
+				projectid: projectid,
+				projectname: "",
+				imgpath: newret,
+				billsn: billsn,
+				spare: "",
+				lon: lon1,
+				lat: lat1,
+				photoaddress: lastLocation.photoaddress,
+				phototime: (new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+				action:'2'
+			};
+			console.log('000000000000000000000000000000000000000000000');
+			imageUtil.getImageArray().push(imageInfo);
+			// showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+			setTimeout(function(){
+				renderTemp('list-view', 'img-template', imageInfo, true);
+				$('#add').parent().insertAfter('#list-view li:last');
+			}, 5000);
+		},e,true);
+	}
+
+	/**
+	 *删除图片
+	 */
+	function removeImg(imgPath) {
+		var imageArray = imageUtil.getImageArray();
+		var size = imageArray.length;
+		for (var i = 0; i < size; i++) {
+			var data = imageArray[i];
+			if (data.imgpath == imgPath) {
+				imageArray.remove(i);
+				break;
+			}
+		}
+		$(event.target).parents('li').remove();
+	}
+</script>
+
+</html>

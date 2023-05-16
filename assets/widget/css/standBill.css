@@ -1,0 +1,110 @@
+.ccssoft_list {
+ 	background-color: #eff1f0;
+ 	override: hidden;
+}
+.ccssoft_list li {
+    list-style: none;
+    padding:3px 5px 3px 5px;
+    border-bottom: 1px solid #e3e2e2;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.ccssoft_list li:hover {
+    background: #f9e9df;
+}
+.ccssoft_list li.acitve {
+    background: #f9e9df;
+}
+.ccssoft_list li:first-child {
+	margin-top:10px;
+}        
+.liTop{
+	width:100%;
+	font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 5px 135px 5px 5px;
+    position: relative;
+}
+
+.hasFellow{
+	display: block;
+    width: 40px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    position: absolute;
+    top: 5px;
+    right: 90px;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.billStatus{
+	display: block;
+    width: 80px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.liMiddle{
+	width:100%;
+	border-top:1px #999 solid;
+	font-size: 12px;
+    line-height: 15px;
+    padding: 5px 95px 5px 5px;
+    position: relative;
+    color:#666;
+}
+
+.bugType{
+	display: block;
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 12px;
+    font-weight: normal;
+    border-left: 1px #999 solid;
+    white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	color:#666;
+}
+
+.liDown{
+	width:100%;
+	font-size: 12px;
+    line-height: 15px;
+    padding: 5px 95px 5px 5px;
+    position: relative;
+    color:#666;
+}
+
+.dealPerson{
+	display: block;
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 12px;
+    font-weight: normal;
+    border-left: 1px #999 solid;
+    white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	color:#666;
+}

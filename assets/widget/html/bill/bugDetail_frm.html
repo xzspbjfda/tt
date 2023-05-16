@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单信息分类</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    </head>
+    <body>
+        <script id="bugDetail-template" type="text/x-dot-template">
+            {{? it.businesstype == '设备告警工单' }}
+            <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">工单编码</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.billsn != null?it.billsn:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警名称</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_alarmname != null?it.ala_alarmname:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警等级</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">
+		       	{{? it.ala_alarmlevel == '1'}}
+			            一级告警
+			    {{?}}
+			    {{? it.ala_alarmlevel == '2'}}
+			            二级告警
+			    {{?}}
+			    {{? it.ala_alarmlevel == '3'}}
+			            三级告警
+			    {{?}}
+			    {{?  it.ala_alarmlevel == '4'}}
+			            四级告警
+			    {{?}}
+		       	</div>
+		    </li>
+ 			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警来源</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_cause != null?it.ala_cause:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警类型</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">
+		       	{{? it.ala_subobjtype == '1' }}
+			             设备告警
+	            {{?}}
+	            {{? it.ala_subobjtype == '2' }}
+			             通讯告警
+	            {{?}}
+	            {{? it.ala_subobjtype == '3' }}
+			             进程告警
+	            {{?}}
+	            {{? it.ala_subobjtype == '4' }}
+			             环境告警
+	            {{?}}
+	            {{? it.ala_subobjtype == '5' }}
+			             服务告警
+			    {{?}}
+		       	</div>
+		    </li>
+      		<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警设备编码</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_subobjid != null?it.ala_subobjid:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警设备名称</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.r_device_name != null?it.r_device_name:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警详情</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_detailinfo != null?it.ala_detailinfo:''}}</div>
+		    </li>
+            <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">首次告警时间</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_firstalarmtime != null?it.ala_firstalarmtime:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">末次告警时间</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_lastalarmtime != null?it.ala_lastalarmtime:''}}</div>
+		    </li>
+            <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">告警重复次数</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_count != null?it.ala_count:''}}</div>
+		    </li>
+            <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">是否已确认</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_ifconfirm == null?'':it.ala_ifconfirm=='Y'?'已确认':'未确认'}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">确认人</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_confirmperson != null?it.ala_confirmperson:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">确认时间</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.ala_confirmtime != null?it.ala_confirmtime:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">设备类型</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.r_device_type != null?it.r_device_type:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">所属机房</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.r_device_room_name != null?it.r_device_room_name:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">设备型号</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.r_device_model != null?it.r_device_model:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">设备厂家</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.r_device_factory != null?it.r_device_factory:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">启用时间</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.r_device_startusetime != null?it.r_device_startusetime:''}}</div>
+		    </li>
+            {{?}}
+            {{? it.businesstype != '设备告警工单' }}
+            <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">客户信息</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.customer_name != null?it.customer_name:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">故障类型</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">
+		       {{? it.faulttype == 'GENERELEC' }}
+               	      发电
+             	{{?}}
+               {{? it.faulttype == 'GENERELEC_FAULT' }}
+                 	停电
+               {{?}}
+	            {{? it.faulttype == '2001' }}
+                        开关电源设备故障
+                {{?}}
+                {{? it.faulttype == '2002' }}
+                        蓄电池设备故障
+                {{?}}
+                {{? it.faulttype == '2003' }}
+                        机房环境设备故障
+                {{?}}
+	            {{? it.faulttype == '2004' }}
+			            空调设备故障
+	            {{?}}
+	            {{? it.faulttype == 'NOSIGNAL' }}
+                        无信号(已停用)
+                {{?}}
+	            {{? it.faulttype == 'OTHER' }}
+			            其它
+	            {{?}}
+	            {{? it.faulttype == '2005' }}
+                        断站退服
+                {{?}}
+                {{? it.faulttype == '4001' }}
+                        室分故障
+                {{?}}
+		       	</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">故障内容</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.billtitle != null?it.billtitle:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">故障描述</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.faultinfo != null?it.faultinfo:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">申告人</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.declare_person != null?it.declare_person:'系统'}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">申告人电话</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.declare_telepho != null?it.declare_telepho:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">申告时间</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.dispatchtime != null?it.dispatchtime:''}}</div>
+		    </li>
+			<li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">联系人</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.contact != null?it.contact:''}}</div>
+		    </li>
+		    <li class="aui-list-view-cell" >
+		       	<div class="aui-col-xs-3 aui-pull-left">联系电话</div>
+		       	<div class="aui-col-xs-7 aui-pull-right">{{=it.contactmode != null?it.contactmode:''}}</div>
+		    </li>
+            {{?}}
+        </script>
+        <div class="aui-content">
+	        <ul class="aui-list-view" id="bugDetail">
+
+	        </ul>
+	    </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script>
+        apiready = function() {
+            initHeader();
+            //status bar style
+            api.setStatusBarStyle({
+                style : 'light'
+            });
+            var billDetailInfo = $api.getStorage('billDetailInfo');
+            if (isExist(billDetailInfo)) {
+                if (isExist(billDetailInfo.list)) {
+                    renderTemp('bugDetail', 'bugDetail-template', billDetailInfo.list);
+                    api.parseTapmode();
+                } else if (isExist(billDetailInfo.info)) {
+                    api.toast({
+                        msg : billDetailInfo.info,
+                        location : 'bottom'
+                    })
+                } else {
+                    api.toast({
+                        msg : billDetailInfo.error,
+                        location : 'bottom'
+                    })
+                }
+            }else{
+                api.toast({
+                        msg : '无故障信息',
+                        location : 'bottom'
+                    })
+            }
+        };
+    </script>
+</html>

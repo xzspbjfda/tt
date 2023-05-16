@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>筛选框</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <style>
+            html, body {
+                background-color: transparent !important;
+                color: rgba(0,0,0,0.0)
+            }
+        </style>
+    </head>
+    <body>
+        <!--设置遮罩层-->
+        <div id="popupWrapper" style="display: none">
+            <div id="shadeWrapper" class="popup-mask active"></div>
+            <div id="queryListBox" class="view agile-popup bottom">
+                <div id="options" class="hotel-p-s-filter js_price_star_filter">
+                    <dl>
+                        <div id="stationNameOpt" data-type="text" style="display: none">
+                            <dt>
+                                姓名
+                            </dt>
+                            <dd class="js_price_h js_price_all" ><!--onclick="openQueryStationWin()"-->
+                                <input id="name" type="text" value=""/>
+                                <img class="close" src="../../image/icons/png/close.png"/>
+                            </dd>
+                        </div>
+                        <div id="phoneOpt" data-type="text" ><!--style="display: none"-->
+                            <dt>
+                                电话
+                            </dt>
+                            <dd class="js_price_h js_price_all" ><!--onclick="openQueryStationWin()"-->
+                                <input id="mobilephone" type="text" value=""/>
+                                <img class="close" src="../../image/icons/png/close.png"/>
+                            </dd>
+                        </div>
+                        <div id="emailOpt" data-type="text" ><!--style="display: none"-->
+                            <dt>
+                                邮箱
+                            </dt>
+                            <dd class="js_price_h js_price_all" ><!--onclick="openQueryStationWin()"-->
+                                <input id="email" type="text" value=""/>
+                                <img class="close" src="../../image/icons/png/close.png"/>
+                            </dd>
+                        </div>
+                        <div id="unitOpt" data-type="text" style="display: none">
+                            <dt>
+                                省份/城市/区域
+                            </dt>
+                            <dd class="js_price_h" style="width:100%;height:40px;padding:0;" onclick="toggleQueryUnit()">
+                                <input id="unit" type="text" disabled="disabled"/>
+                                <img class="close" src="../../image/icons/png/close.png"/>
+                            </dd>
+                        </div>
+                        <div class="mt10">
+                            <button class="g_btn_s js_price_star_filter_ok" onclick="query()">
+                                查询
+                            </button>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/component.js"></script>
+    <script type="text/javascript">
+        var winName = null;
+        var frameName = null;
+        var callback = null;
+        apiready = function() {
+            winName = api.pageParam.winName;
+            frameName = api.pageParam.frameName;
+            callback = api.pageParam.callback;
+            initQueryBox();
+            popup_query.init();
+            popup_query.showPopup();
+        }
+        function initQueryBox() {
+            $('dl>div').each(function() {
+                var id = $(this).attr('id');
+                if (api.pageParam[id]) {
+                    $(this).show();
+                }
+            });
+        }
+
+        /**
+         *打开站址查询接口
+         */
+        function openQueryStationWin() {
+            api.openWin({
+                name : 'query',
+                url : '../dialog/stationSearch_win.html',
+                pageParam : {
+                    winName : api.winName,
+                    frameName : 'popup_query_frm'
+                }
+            });
+        }
+
+        function query() {
+        	console.log('winName = '+ winName+', frameName = ' + frameName);
+            var formData = popup_query.serialize();
+            transferObj(formData, {
+                winName : winName,
+                frameName : frameName
+            }, callback);
+        		$(this).hide();
+            popup_query.hidePopup();
+        }
+
+        /**
+         *设置站址名称和站址编码
+         */
+        function onStationSelect(name, stationcode) {
+            $("#name").val(name).parent().addClass('active');
+            $("#name").val(name).parent().addClass('active');
+            $("#stationCode").val(stationcode).parent().addClass('active');
+        }
+
+        /**
+         * 打开部门查询组件
+         */
+        function toggleQueryUnit() {
+            api.pageParam.name = api.winName;
+            api.pageParam.frameName = 'popup_query_frm';
+            api.openWin({
+                name : 'unitSelect',
+                url : '../common/unitSelect_win.html',
+                opaque : true,
+                bounces : false,
+                reload : false,
+                vScrollBarEnabled : false,
+                pageParam : api.pageParam,
+                animation : {
+                    type : "push",
+                    subType : "from_right",
+                    duration : 300
+                }
+            });
+        }
+
+        /**
+         * 设置省市区的值
+         */
+        function fillUnitData(provId, provStr, cityId, cityStr, objId, objText, unitId, unitStr) {
+            $('#unit').val(unitStr).attr('data-unitId', unitId).parent().addClass('active');
+        }
+    </script>
+</html>

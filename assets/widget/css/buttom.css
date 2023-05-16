@@ -1,0 +1,52 @@
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+button.block, input[type="button"].block, a.button.block {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/*按钮-取消按钮*/
+button.cancel, input[type="button"].cancel, a.button.cancel {
+    background-color: #ca4a52;
+}
+
+button, input[type="button"], a.button {
+    color:#FFFFFF;
+    border: 0;
+    font-size: 14px;
+    border-radius: 4px;
+    padding: 0px 8px;
+    height: 40px;
+    min-width: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    display: inline-block;
+    /*清除文本选择与外框*/
+    outline: none;
+    -moz-user-select: none;
+    /*火狐*/
+    -webkit-user-select: none;
+    /*webkit浏览器*/
+    -ms-user-select: none;
+    /*IE10*/
+    -khtml-user-select: none;
+    /*早期浏览器*/
+    user-select: none;
+    /*动画*/
+    -webkit-transition: all;
+    -moz-transition: all;
+    transition: all;
+    -webkit-transition-timing-function: linear;
+    -moz-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transition-duration: .2s;
+    -moz-transition-duration: .2s;
+    transition-duration: .2s;
+}

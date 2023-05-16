@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../css/powerbinding.css" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<title>电表绑定</title>
+	</head>
+	<style>
+	.aui-list-view-cell:after{
+			border: none!important;
+		}
+	.removebtn{
+			position: absolute;
+			right: 0;
+			top: 10px;
+			width: 20px!important;
+			height: 20px;
+			padding: 0;
+			margin: 0;
+		}
+		#list-view input,#list-view select{
+			font-size: 14px;
+		}
+	</style>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+				{{ for(var i=0, len=it.length; i< len; i++) {
+
+				}}
+				<option value="{{=it[i][0]}}">{{=it[i][1]}}</option>
+				{{ } }}
+		</script>
+		<script id="img-template" type="text/x-dot-template">
+				<li class="aui-list-view-cell aui-img aui-col-xs-4">
+				<img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+				<button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+				</li>
+		</script>
+		<div class="pb_content pb_hasbtnabs">
+			<div class="pb_formdiv">
+				<form>
+				<div class="pb_formdivunit" id="ispayTypeDivId">
+					<label class="pb_formlabel"><span style="color:red;">* </span>电表类型 :</label>
+					<div class="pb_formdivunitcon">
+						<select class="pb_forminput" onchange="onpayTypeWay(this)" id="payType" name="payType"  data-valid="required" data-error="请选择">
+							<option selected="" value="">请选择</option>
+							<option value="0">缴费电表</option>
+							<option value="1">计量电表</option>
+						</select>
+						<a class="pb_selectarrow"></a> </div>
+				</div>
+				<div class="pb_formdivunit" id="ismeasurementTypeDivId">
+					<label class="pb_formlabel"><span style="color:red;">* </span>计量类型 :</label>
+					<div class="pb_formdivunitcon" >
+						<select class="pb_forminput" id="measurementType" name="measurementType" onchange="onMentTypeWay(this)"  data-valid="required" data-error="请选择">
+							<option selected="" value="">请选择</option>
+							<option value="0">站址用电</option>
+							<option value="1">机房用电</option>
+							<option value="2">租户用电</option>
+						</select>
+						<a class="pb_selectarrow"></a> </div>
+				</div>
+				<div class="pb_formdivunit" id="isroomcodeDivId">
+					<label class="pb_formlabel"><span style="color:red;">* </span>机房名称 :</label>
+					<div class="pb_formdivunitcon">
+						<select class="pb_forminput" id="roomcode" name="roomcode" data-valid="required" data-error="请选择">
+							<option selected="" >请选择</option>
+						</select>
+						<a class="pb_selectarrow"></a> </div>
+				</div>
+				<div class="pb_formdivunit" id="isStandStaHidDivId">
+					<label class="pb_formlabel"><span style="color:red;">* </span> 站址 :</label>
+					<div class="pb_formdivunitcon">
+						<span id="siteName" name="siteName"></span>
+					</div>
+				</div>
+				<div class="pb_formdivunit">
+					<label class="pb_formlabel"><span style="color:red;">* </span>经度 :</label>
+					<div class="pb_formdivunitcon">
+							<span id="longitude"></span>
+					</div>
+				</div>
+				<div class="pb_formdivunit">
+					<label class="pb_formlabel"><span style="color:red;">* </span>维度 :</label>
+					<div class="pb_formdivunitcon">
+							<span id="latitude"></span>
+					</div>
+				</div>
+				<div class="pb_formdivunit">
+					<label class="pb_formlabel"><span style="color:red;">* </span>资产编码 :</label>
+					<div class="pb_formdivunitcon">
+						<input type="text" id="meternum" name="meternum" class="pb_forminput pb_saomiaoinput" placeholder="请扫描或者手动填写"><a class="pb_saomiao" onclick="goScan()"><img
+							 src="../../image/pb_saomiao.png" ></a>
+					</div>
+				</div>
+				<div class="pb_formdivunit">
+				<label class="pb_formlabel"><span style="color:red;">* </span>电表编码 :</label>
+					<div class="pb_formdivunitcon">
+						<input type="text" id="devicecode"  name="devicecode" class="pb_forminput"  placeholder="请扫描或者手动填写"><a class="pb_saomiao" onclick="goScanCode()"><img
+							 src="../../image/pb_saomiao.png"></a>
+					</div>
+				</div>
+		<div class="cardDiv" style="width:100%;text-align:left">
+			<div class="cardDiv1">
+					<span class="red">*</span>施工验收照片(至少上传一张):
+			</div>
+			<div class="cardCon2" style="width:100%;text-align:center">
+				<ul id="list-view" class="aui-list-view aui-grid-view">
+						<li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+								<img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+						</li>
+						<canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+						<img class='imgPath' style="display:none;"  src=''/>
+				</ul>
+			</div>
+		</div>
+
+			</div>
+			<div id="loopMessage"></div>
+			<a class="pb_btnadd"  id ='clicka'><i><img src="../../image/pb_btnadd.png"></i>新增</a>
+		</div>
+
+		<p class="pb_btnpar"> <a class="pb_btn" id="submitbut" onclick="binding()">绑定</a></p>
+		</form>
+	</body>
+		<script src="../../script/jquery.min.js"></script>
+		<script src="../../script/xjpstyle.js"></script>
+		<script src="../../script/jquery-1.11.3.min.js"></script>
+		<script src="../../script/template-native.js"></script>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/aui.js"></script>
+		<script type="text/javascript" src="../../script/doT.min.js"></script>
+		<script src="../../script/GPS.js"></script>
+		<script src="../../script/debug.js"></script>
+		<script type="text/javascript" src="../../script/config.js"></script>
+		<script type="text/javascript" src="../../script/common.js"></script>
+		<script type="text/javascript" src="../../script/navigate.js"></script>
+		<script type="text/javascript" src="../../script/client.api.js"></script>
+	  <script src="../../script/jquery-1.11.3.min.js"></script>
+	  <script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script>
+		var jsonArray = new Array();
+		// var loopInfo = new Array();
+		var stationList;
+		var loops = new Array();
+		apiready = function() {
+
+			$('#ismeasurementTypeDivId').hide(); //计量类型
+			$('#isroomcodeDivId').hide(); //机房名称
+			$('#loopMessage').hide(); //回路信息
+			$('#clicka').hide();
+			// $api.byId('longitude').value = api.pageParam.st_lon;
+			$("#siteName").html(api.pageParam.stationName+"-"+api.pageParam.stationCode);
+			$("#longitude").html(api.pageParam.st_lon);
+			$("#latitude").html(api.pageParam.st_lat);
+			imageUtil.init({
+          uploadFn : $client.uploadammeterImage
+      });
+			//查询机房
+			// alert("deviceId"+api.pageParam.stationCode)
+		var opt = {deviceid:api.pageParam.deviceid};
+		$client.roomcodeBegin(opt, function(ret, err) {
+				if (ret) {
+						 if (ret.success) {
+						 	$('#roomcode').empty();
+						 	$('<option>').text('请选择').val('').appendTo('#roomcode');
+							// stationList = ret.list;
+						 	renderTemp('roomcode', 'dict-template', ret.list,true);
+						 } else {
+					 		api.toast({
+						 				msg: ret.data_info,
+						 				location: 'middle'
+						 		});
+					 }
+				} else {
+						api.toast({
+								msg: err.msg,
+								location: 'middle'
+						});
+				}
+		});
+
+		};
+
+
+			//新增div弹框
+			function addloop(){
+				 //$('#clicka').before("<div class='pb_formdiv'><h1 class='pb_formdivtitle'><a class='pb_formdivdel' onclick='deleteLoop()'><img src='../../image/pb_formscdel.png'></a></h1><div class='pb_formdivunit'><label class='pb_formlabel'>租户类型</label><div class='pb_formdivunitcon'><select class='pb_forminput' name='tenantType'  data-valid='required' data-error='请选择' ><option selected=''>请选择</option><option value='0'>移动</option><option value='1'>联通</option><option value='2'>电信</option><option value='3'>能源</option><option value='4'>拓展</option></select> <a class='pb_selectarrow'></a> </div></div><div class='pb_formdivunit'><label class='pb_formlabel'>设备类型</label><div class='pb_formdivunitcon'><select class='pb_forminput'  name='tenantDevType'  data-valid='required' data-error='请选择' ><option selected=''>请选择</option><option value='0'>2G/3G/4G</option><option value='1'>5G</option><option value='2'>全部</option></select><a class='pb_selectarrow'></a> </div></div><div class='pb_formdivunit'><label class='pb_formlabel'>回路</label><div class='pb_formdivunitcon'><select class='pb_forminput' name='loop'  data-valid='required' data-error='请选择'><option selected=''>请选择</option><option value='0'>一回路</option><option value='1'>二回路</option><option value='2'>三回路</option> <option value='3'>四回路</option><option value='4'>五回路</option> <option value='5'>六回路</option></select> <a class='pb_selectarrow'></a> </div></div></div>")
+				var $div = $("<div class='pb_formdiv'/>");
+				$('#loopMessage').append($div);
+
+
+				var $closeBtn = $("<h1 class='pb_formdivtitle'><a class='pb_formdivdel'><img src='../../image/pb_formscdel.png'></a></h1>");
+				$div.append($closeBtn);
+				$closeBtn.click(function(){
+					$div.remove();
+				});
+
+				var $formdivunit = $("<div class='pb_formdivunit'>"
+														+ "	<label class='pb_formlabel'>租户类型</label>"
+														+ "	<div class='pb_formdivunitcon'>"
+														+ "			<select class='pb_forminput' name='tenantType'  data-valid='required' data-error='请选择' >"
+														+ "					<option selected='' value=''>请选择</option>"
+														+ "					<option value='0'>移动</option>"
+														+ "					<option value='1'>联通</option>"
+														+ "					<option value='2'>电信</option>"
+														+ "					<option value='3'>能源</option>"
+														+ "					<option value='4'>拓展</option>"
+														+ "			</select>"
+														+ "			<a class='pb_selectarrow'></a>"
+														+ "	</div>"
+														+ "</div>"
+														+ " <div class='pb_formdivunit'>"
+														+ "	<label class='pb_formlabel'>设备类型</label>"
+														+ "	<div class='pb_formdivunitcon'>"
+														+ "			<select class='pb_forminput' name='tenantDevType'  data-valid='required' data-error='请选择' >"
+														+ "					<option selected='' value=''>请选择</option>"
+														+ "					<option value='0'>2G/3G/4G</option>"
+														+ "					<option value='1'>5G</option>"
+														+ "					<option value='2'>全部</option>"
+														+ "			</select>"
+														+ "			<a class='pb_selectarrow'></a>"
+														+ "	</div>"
+														+ "</div>"
+				                    + " <div class='pb_formdivunit'>"
+														+ "	<label class='pb_formlabel'>回路</label>"
+														+ "	<div class='pb_formdivunitcon'>"
+														+ "			<select class='pb_forminput' name='loopXL'  data-valid='required' data-error='请选择' >"
+														+ "					<option selected='' value=''>请选择</option>"
+														+ "					<option value='1'>一回路</option>"
+														+ "					<option value='2'>二回路</option>"
+														+ "					<option value='3'>三回路</option>"
+														+ "					<option value='4'>四回路</option>"
+														+ "					<option value='5'>五回路</option>"
+														+ "					<option value='6'>六回路</option>"
+														+ "			</select>"
+														+ "			<a class='pb_selectarrow'></a>"
+														+ "	</div>"
+														+ "</div>");
+				$div.append($formdivunit);
+
+
+				$formdivunit.find("select[name='loopXL']").change(function(){
+					var $this = $(this);
+					var loopVal = $this.val();
+					$this.parents("div.pb_formdiv").siblings("div.pb_formdiv").each(function(i, o){
+						console.log($(o).html());
+						var vv = $(o).find("select[name='loopXL']:first").val();
+						if(vv != '请选择' && vv == loopVal){
+							$this.val("");
+							alert("回路不可重复！请重新选择...");
+							return false;
+						}
+					});
+				});
+
+		// $("select[name='tenantType']").each(function(i, v){
+		// 	var val = $(v).val();
+		// 	alert(JSON.stringify(val));
+		//  });
+		//zhangning
+		// $(function(){
+		// 	 $("#loopMessage select").each(function(i){$(this).attr("xh",i);});
+		// 	 $("#loopMessage select").change(function(){
+		// 			 var val=$(this).val();
+		// 			 alert("val"+val);
+		// 			 $("#loopMessage select[xh!="+$(this).attr("xh")+"]").each(function(){
+		// 						 if(val==$(this).val())
+		// 						 {
+		// 									 alert("回路不可重复！请重新选择");
+		// 									 return;
+		// 						 }
+		// 			 })
+		// 	 })
+		// })
+
+			}
+
+		//隐藏电路信息
+		function closeLoopFre(){
+			$('#loopMessage').hide(); //回路信息
+		}
+		//选择电表类型时触发
+				function onpayTypeWay(e){
+						var index = $(e).val();
+						if(index == "0"){
+							$('#ismeasurementTypeDivId').hide(); //计量类型
+							$('#isroomcodeDivId').hide(); //机房名称
+							$('#loopMessage').hide(); //回路信息
+						}else if(index == "1"){
+							$('#isImageDivId').show(); //施工图片
+							$('#ismeasurementTypeDivId').show();
+							$('#loopMessage').hide();
+						}else{
+							$('#ismeasurementTypeDivId').hide(); //计量类型
+							$('#isroomcodeDivId').hide(); //机房名称
+							$('#loopMessage').hide(); //回路信息
+						}
+				}
+
+				//选择计量类型时触发
+						function onMentTypeWay(e){
+								var index = $(e).val();
+								if(index == "0"){
+										$('#isImageDivId').show(); //施工图片
+										$('#isroomcodeDivId').hide(); //机房名称
+										$('#loopMessage').hide();
+										$('#clicka').hide();
+								}else	if(index == "1"){
+									$('#isroomcodeDivId').show(); //机房名称
+									$('#isImageDivId').show(); //施工图片
+									$('#loopMessage').hide();
+									$('#clicka').hide();
+								}else if(index == "2"){
+										$('#isroomcodeDivId').show(); //机房名称
+										$('#loopMessage').show();
+										addloop();
+										$('#clicka').show();
+										$("#clicka").click(function(){
+												addloop();
+										});
+								}else{
+									$('#isroomcodeDivId').hide(); //机房名称
+									$('#loopMessage').hide();
+									$('#clicka').hide();
+								}
+						}
+
+			//资产编码扫描
+						function goScan() {
+							var permission = 'camera';
+							var resultList = api.hasPermission({
+							    list: [permission]
+							});
+							if (resultList[0].granted) {
+							    // 已授权，可以继续下一步操作
+							} else {
+							    api.confirm({
+							        msg: '应用需要您的授权才能访问相机',
+							        buttons: ['取消', '去设置']
+							    }, function(ret) {
+							        if (ret.buttonIndex == 2) {
+							            api.requestPermission({
+							                list: [permission],
+							            }, function(res) {
+							                if (res.list[0].granted) {
+							                    // 已授权，可以继续下一步操作
+							                }
+							            });
+							        }
+							    });
+							}
+							var FNScanner = api.require('FNScanner');
+				       FNScanner.openScanner({
+				        autorotation: true
+				       }, function(ret, err) {
+				           if (ret) {
+											//  alert(JSON.stringify(ret));
+											 if (ret.eventType=="success") {
+					 						 	var EWM=ret.content;
+					 							document.getElementById("meternum").value=EWM;
+					 						}else {
+					 						 		api.toast({
+					 						 			msg : '请扫描二维码!'
+					 					 		});
+					 						 	}
+
+				       } else {
+									 api.toast({
+										 msg : '获取信息出错!'
+								 });
+				     }
+				     });
+					 }
+
+	//电表编码扫描
+		function goScanCode(){
+			var permission = 'camera';
+			var resultList = api.hasPermission({
+			    list: [permission]
+			});
+			if (resultList[0].granted) {
+			    // 已授权，可以继续下一步操作
+			} else {
+			    api.confirm({
+			        msg: '应用需要您的授权才能访问相机',
+			        buttons: ['取消', '去设置']
+			    }, function(ret) {
+			        if (ret.buttonIndex == 2) {
+			            api.requestPermission({
+			                list: [permission],
+			            }, function(res) {
+			                if (res.list[0].granted) {
+			                    // 已授权，可以继续下一步操作
+			                }
+			            });
+			        }
+			    });
+			}
+			var FNScanner = api.require('FNScanner');
+			 FNScanner.openScanner({
+				autorotation: true
+			 }, function(ret, err) {
+					 if (ret) {
+							//  alert(JSON.stringify(ret));
+							 if (ret.eventType=="success") {
+								var EWM=ret.content;
+								document.getElementById("devicecode").value=EWM;
+							}else {
+									api.toast({
+										msg : '请扫描二维码!'
+								});
+								}
+
+			 } else {
+					 api.toast({
+						 msg : '获取信息出错!'
+				 });
+		 }
+		 });
+		}
+
+	//删除回路信息
+			function deleteLoop(){
+				$("#loopMessage").remove();
+			}
+
+
+//绑定接口
+		function binding() {
+			api.showProgress({
+			title : '加载中...',
+			modal : false
+			});
+			 $("#submitbut").attr({"disabled":true});
+			var paramJson = {};
+		  var meternum =	document.getElementById("meternum");
+			var devicecode = document.getElementById("devicecode");
+			var payType = document.getElementById("payType");
+			var measurementType = document.getElementById("measurementType");
+			var roomcode = document.getElementById("roomcode");
+			paramJson['meternum'] = meternum.value;
+			paramJson['siteid']=api.pageParam.deviceid;
+      paramJson['lon']=api.pageParam.st_lon;
+			paramJson['lat']=api.pageParam.st_lat;
+			paramJson['devicecode']=devicecode.value;
+			paramJson['payType']=payType.value;
+			paramJson['measurementType']=measurementType.value;
+			paramJson['roomcode'] = roomcode.value;
+				$('#loopMessage').find(".pb_formdiv").each(function(i, o){
+						var value1 = $(o).find("select.pb_forminput").eq(0).val();
+						var value2 = $(o).find("select.pb_forminput").eq(1).val();
+						var value3 = $(o).find("select.pb_forminput").eq(2).val();
+						loops.push({"tenantType":value1, "tenantDevType":value2, "loop":value3});
+				});
+
+			// $("select[name='tenantType']").each(function(i, v){
+			// 	var val = $(v).val();
+			//  });
+			//  $("select[name='tenantDevType']").each(function(i, v){
+ 		// 	 	var val = $(v).val();
+ 		// 	 });
+			//   $("select[name='loop']").each(function(i, v){
+			//  	 	var val = $(v).val();
+			//  	 });
+			paramJson['loopInfo']=loops;
+			paramJson['imgArr']=jsonArray;
+			console.log(JSON.stringify(paramJson));
+
+				$client.submitAmmeter(paramJson, function(ret, err) {
+					console.log(JSON.stringify(ret));
+						if (ret) {
+									 if(ret.status == 500){
+											 api.toast({
+	 												msg: ret.errorMsg,
+	 												duration: 800,
+	 												location: 'middle',
+	 										});
+											$('#submitbut').removeAttr("disabled");
+									 }else{
+										 api.toast({
+												msg: ret.errorMsg,
+												duration: 3000,
+												location: 'middle'
+										});
+										if(ret.status == 200){
+											 window.setTimeout(function() {
+											 		api.closeWin();
+											 }, 1000);
+										}
+									 }
+						} else {
+								api.toast({
+										msg: err.msg,
+										location: 'middle'
+								});
+								$('#submitbut').removeAttr("disabled");
+						}
+						 api.hideProgress();
+				});
+				// $("#submitbut").removeAttr("disabled");
+		}
+
+		//绑定成功后跳转
+
+		/**
+		 	* 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		 	*/
+		  function addPic(e) {
+				var permission = 'camera';
+				var resultList = api.hasPermission({
+				    list: [permission]
+				});
+				if (resultList[0].granted) {
+				    // 已授权，可以继续下一步操作
+				} else {
+				    api.confirm({
+				        msg: '应用需要您的授权才能访问相机',
+				        buttons: ['取消', '去设置']
+				    }, function(ret) {
+				        if (ret.buttonIndex == 2) {
+				            api.requestPermission({
+				                list: [permission],
+				            }, function(res) {
+				                if (res.list[0].granted) {
+				                    // 已授权，可以继续下一步操作
+				                }
+				            });
+				        }
+				    });
+				}
+		 	 var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+		 	 var lon1 = displaynum(lastLocation.lon);
+		 	 var lat1 = displaynum(lastLocation.lat);
+			 console.log("lon1为"+lon1);
+		 	 if (!lastLocation || !lastLocation.status) {
+		 		 api.toast({
+		 			 msg : '暂未定位\n无法上传照片！'
+		 		 });
+		 	 }else {
+		 		 ////////////////////////////////////////////
+		 		 var curentTime2 = CurentTime2();
+				 $api.setStorage('newtime', curentTime2);
+				 $api.setStorage('lon1', lon1);
+				 $api.setStorage('lat1', lat1);
+				 var lon1 = $api.getStorage('lon1');
+				 var lat1 = $api.getStorage('lat1');
+				 var user=$api.getStorage('user');
+				 console.log("user为："+user);
+		 		 imageUtil.add('camera', function(ret, err) {
+		 				 var imgModel = {
+		 						 //stationname : api.pageParam.stationname,
+		 						 //billsn : billModel.billsn,
+		 						 imgpath : ret,
+		 						 phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+		 						 lon : lon1,
+		 						 lat : lat1,
+		 						 businessid : "电表交维施工",
+		 						 phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+		 						 photoaddress : lastLocation.photoaddress
+		 						 //state:api.pageParam.billStatus,
+		 						 //billstatusname:billModel.billstatusname
+
+		 				 };
+		 				 // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		 				 // cacheImgArr(imgModel);
+		 				 // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		 				 console.log("ss///////////////////////////////////////"+getObj(imgModel));
+							imageUtil.getImageArray().push(imgModel);
+						showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+
+	          imageUtil.upload(function(count) {
+	            jsonArray.push(count);
+	          });
+		 			 var tpl = $api.byId('img-template').text;
+		 			 var tempFn = doT.template(tpl);
+		 					 $('#addPic').before(tempFn(imgModel));
+		 					 $new = $('#addPic').prev();
+		 					 $new.css('height', $new.css('width'));
+		 		 },e,true,false);
+		 	 }
+		  }
+
+	 	 /**
+	 		*删除图片
+	 		*/
+	 	 function removeImg(imgPath) {
+	 		 var imageArray = imageUtil.getImageArray();
+	 		 var size = imageArray.length;
+	 		 for (var i = 0; i < size; i++) {
+	 			 var data = imageArray[i];
+	 			 if (data.imgpath == imgPath) {
+	 				 imageArray.remove(i);
+	 				 break;
+	 			 }
+	 		 }
+	 		 $(event.target).parents('.picBox').find('#add').show();
+	 		 $(event.target).parents('li.aui-img').remove();
+	 		 // 删除本地缓存图片其一
+	 		 deleteImgArr(imgPath);
+
+		 }
+
+	</script>
+</html>

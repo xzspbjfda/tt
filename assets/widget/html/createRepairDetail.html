@@ -1,0 +1,997 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>人工派单详情</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+    <link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+    <link rel="stylesheet" type="text/css" href="../css/standBillRevertDetail.css" />
+    <style>
+        .repairinput {
+            background-color: #FFFFFF;
+            width: 100%;
+            height: 100%;
+            line-height: 40px;
+        }
+        .shareType{
+            padding-left: 10px;
+        }
+        .saomabtn{
+          width: 100px;
+          text-align: center;
+          font-size: 14px;
+          background-color: #3779d0;
+          border: none;
+          color: #fff;
+          display: inline-block;
+          border-radius: 3px;
+          padding:5px 0;
+          margin-top: 4px;
+        }
+        .cardCon2 {
+            width: 60%;
+            float: left;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 0px;
+            margin-top: 10px;
+        }
+        .cardDiv {
+            width: 100%;
+            font-size: 14px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .removebtn{
+          position: absolute;
+          right: 0;
+          top: 10px;
+          width: 20px!important;
+          height: 20px;
+          padding: 0;
+          margin: 0;
+        }
+
+        input:disabled{
+            background-color : #F5F5F5;
+            color: #ACA899;
+            border:1px solid #DDD;
+            opacity:1;
+            -webkit-text-fill-color:#666;
+        }
+        select:disabled {
+            background-color : #F5F5F5;
+            color: #ACA899;
+            border:1px solid #DDD;
+            opacity:1;
+            -webkit-text-fill-color:#666;
+        }
+    </style>
+</head>
+
+<body>
+    <!--下拉列表-->
+    <script id="dict-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i< len; i++) {
+
+        }}
+        <option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+        {{ } }}
+    </script>
+    <!--下拉列表-->
+    <script id="dict-template2" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i< len; i++) {
+
+        }}
+        <option value="{{=it[i].hiddencontent}}">{{=it[i].hiddencontent}}</option>
+        {{ } }}
+    </script>
+    <!--下拉列表-->
+    <script id="dict-template3" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i< len; i++) {
+
+        }}
+        <option value="{{=it[i].name}}">{{=it[i].name}}</option>
+        {{ } }}
+    </script>
+    <script id="img-template" type="text/x-dot-template">
+        <li class="aui-list-view-cell aui-img aui-col-xs-4">
+        <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+        <button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+        </li>
+    </script>
+    <div id="wrap">
+        <div id="repairDetailDivId" style="overflow:auto;margin-bottom:55px;">
+          <form>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>站址名称：</div>
+                <div class="cardCon">
+                    <input name="stationName" id="bill-stationName" type="text" data-valid="required" data-error="站址名称必填！" readonly="readonly" class="repairinput required">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>站址运维ID：</div>
+                <div class="cardCon">
+                    <input name="stationCode" id="st_code" type="text" readonly="readonly" class="repairinput required"  data-valid="required" data-error="站址运维ID必填！">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>共享情况：</div>
+                <div class="cardCon">
+                    <span name="shareType" id="itemname" type="text" readonly="readonly" class="repairinput required shareType"  data-valid="required" data-error="共享情况必填！"/>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>隐患来源：</div>
+                <div class="cardCon">
+                    <select id="" name="hiddenSource" class="repairinput required" style="display:block;" value=""  data-valid="required" data-error="隐患来源必填！">
+                  		<option value="">请选择</option>
+          						<option value="1">巡检发现</option>
+          						<option value="2">运营商申告</option>
+          						<option value="3">自由人员上站巡查</option>
+          						<option value="4">业主申告</option>
+          						<option value="5">告警发现</option>
+            				</select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel"><font color="red">*</font>发现人员：</div>
+                <div class="cardCon">
+                    <input id="findUser" readonly disabled name="findUser" type="text" class="repairinput required" data-valid="required" data-error="发现人员必填！">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel"><font color="red">*</font>发现人电话：</div>
+                <div class="cardCon">
+                    <input id="findPhone" readonly disabled name="findPhone" type="number" class="repairinput required" style="line-height: 34px;"  data-valid="required" data-error="发现人电话必填！">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel"><font color="red">*</font>发现时间：</div>
+                <div class="cardCon">
+                    <input id="findTime" name="findTime" type="datetime-local" class="repairinput required" style="line-height: 34px;height:34px;"  data-valid="required" data-error="发现时间必填！">
+                </div>
+            </div>
+            <!-- 一码到底  start-->
+            <div class="cardDiv2">
+                <div class="cardLabel" style="margin-top: 5px;">
+                  <font color="red">*</font>设备名称：
+                </div>
+                <div class="cardCon2" style="margin-top: 5px;" >
+
+                    <ul class="aui-list-view" style="width: 100%;">
+                        <input id="devicename" name="deviceName" type="hidden" value="" />
+                        <select class="repairinput required" style="margin: 0px;width: 80%;padding-right: 5%;line-height: 35px;"
+                                id="deviceid" name="deviceId" data-valid="required" data-error="请选择设备或者扫描二维码" onchange="fillInfo(this)">
+                            <option value="">-请选择或扫码-</option>
+                        </select>
+                        <li class="aui-list-view-cell aui-img aui-col-xs-3"
+                          style="float: right;margin-left: -10%;margin-top: -3%;">
+                          <img src="../image/pb_saomiao.png" style="width: 33px;height: 33px;"
+                               onclick="goScanCode()">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">设备型号：</div>
+                <div class="cardCon">
+                    <input id="devicemodel" readonly name="deviceModel" type="text" class="repairinput" style="line-height: 34px;">
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">设备运维ID：</div>
+                <div class="cardCon">
+                    <input id="devicecode" readonly name="deviceCode" type="text" class="repairinput" style="line-height: 34px;"  >
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">资源资产编码：</div>
+                <div class="cardCon">
+                    <input id="res_code" readonly name="res_code" type="text" class="repairinput" style="line-height: 34px;"  >
+                </div>
+            </div>
+            <!-- 一码到底  end -->
+            <!-- <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>设备名称：</div>
+                <div class="cardCon">
+                  <select id="fsudevice" name="deviceName" class="repairinput required" style="display:block;" value="" onchange="getFSUdevice(this)"  data-valid="required" data-error="设备名称必填！">
+                    <option value="">请选择</option>
+                  </select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    设备型号：</div>
+                <div class="cardCon">
+                    <input id="model" name="deviceCode" readonly="readonly" type="text" class="repairinput">
+                </div>
+            </div> -->
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>对象类型：</div>
+                <div class="cardCon">
+                    <select id="" name="objType" class="repairinput required" style="display:block;" value="" onchange="getDissystem(this)"  data-valid="required" data-error="对象类型必填！">
+                      <option value="">请选择</option>
+                      <option value="1">铁塔</option>
+                      <option value="2">动力及配套</option>
+                      <option value="3">机房及配套</option>
+                      <option value="4">室内分布</option>
+            				</select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>隐患设备：</div>
+                <div class="cardCon">
+                    <select id="dissystem" name="devname" class="repairinput required" style="display:block;" value="" onchange="getInspstand(this)"  data-valid="required" data-error="隐患设备必填！">
+                      <option value="">请选择</option>
+            				</select>
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>隐患内容：</div>
+                <div class="cardCon">
+                    <!-- <select id="inspstand" name="hiddenContent" class="repairinput required" style="display:block;" value="" onchange="choiceInspstand(this)"  data-valid="required" data-error="隐患内容必填！">
+                      <option value="">请选择</option>
+            				</select> -->
+                    <input name="hiddenContent" id="hiddenContentInput" readonly="readonly"  type="text" class="repairinput"  onclick="openQueryStationWin()" >
+                </div>
+            </div>
+            <div class="cardDiv">
+                <div class="cardLabel">
+                    <font color="red">*</font>隐患等级：</div>
+                <div class="cardCon">
+                    <input name="hiddenGrade" id="Grade" type="text" readonly="readonly"  class="repairinput required"  data-valid="required" data-error="隐患等级必填！">
+                </div>
+            </div>
+            <div id="refiefDealInfoDivId" class="cardTextareaDiv">
+                <div class="cardTextareaLabel">
+                    <font color="red">*</font>隐患描述：</div>
+                <div class="cardTextareaCon">
+                    <textarea id="" name="hiddenRemark" rows="8" class="noborder" class="required"  data-valid="required" data-error="隐患描述必填！" style="background-color:white;border:solid 1px green;width:100%;height:100%;padding:5px"></textarea>
+                </div>
+            </div>
+            <div class="cardDiv2">
+              <div class="cardLabel">
+                  <font color="red">*</font>上传照片：
+              </div>
+              <div class="cardCon2">
+                <ul id="list-view" class="aui-list-view aui-grid-view">
+
+                    <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+                        <img class="aui-img-object" src="../image/icons/png/icon_addpic_focused.png">
+                    </li>
+                    <canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+                    <img class='imgPath' style="display:none;"  src=''/>
+                </ul>
+              </div>
+            </div>
+            <input id="GradeVal" name="hiddenGrade"  type="hidden" >
+          </form>
+        </div>
+
+        <footer style="height:50px;">
+            <div class="cardButtonDiv">
+                <button class="cancelBtn" onclick="closeWin()">取消</button>
+                <button class="okBtn" onclick="creatBillOpt()">保存</button>
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+    <script type="text/javascript" src="../script/aui.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/debug.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/jquery-validate.js"></script>
+<script type="text/javascript" src="../script/utils/FormUtil.js"></script>
+<script type="text/javascript" src="../script/utils/ImageUtil.js"></script>
+<script>
+    console.log("维修隐患录入===>")
+    var dictionary;
+    var systasklist;
+    var sysfsulist;
+    var devname;
+    var imageUtil;
+    var jsonArray = new Array();
+    apiready = function() {
+
+        var user = $api.getStorage("user");
+
+        $api.byId("findUser").value = user.username;
+        $api.byId("findPhone").value = user.mobilephone;
+        $api.byId("findTime").value = new Date().pattern("yyyy-MM-ddTHH:mm:ss")
+
+      imageUtil.init({
+          uploadFn : $client.uploadHiddenImage
+      });
+      api.setStatusBarStyle({
+          style : 'light'
+      });
+        formUtil.init({
+  				rules : {
+  					isShidden : function(value, errorMsg, el) {
+  						if ($('input[name=isShidden]').is(':checked')) {
+  							if (value == '') {
+  								if (!formUtil.getHasError()) {
+  									formUtil.setHasError(true);
+  									return errorMsg;
+  								}
+  							}
+  						}
+  					}
+  				}
+  			});
+        //status bar style
+        api.setStatusBarStyle({
+            style: 'light'
+        });
+        var tdObj = document.getElementById("bill-stationName");
+        tdObj.value = api.pageParam.stationName;
+        $('#st_code').val(api.pageParam.st_code);
+        if(api.pageParam.stationInfo.st_operators == 'undefined'){
+          $('#itemname').html("无");
+        }else{
+          $('#itemname').html(api.pageParam.stationInfo.st_operators);
+        }
+        var opt={
+          areaid:api.pageParam.stationId
+        }
+        $client.repairFSUdevice(opt, function(ret, err) {
+          console.log(JSON.stringify(ret));
+            if (ret) {
+                if (ret.success) {
+                  $('#fsudevice').empty();
+                  $('<option>').text('请选择').val('').appendTo('#fsudevice');
+                  sysfsulist=ret.sysfsulist;
+                    renderTemp('fsudevice', 'dict-template3', ret.sysfsulist,true);
+                } else {
+                    api.toast({
+                        msg: ret.data_info,
+                        location: 'middle'
+                    });
+                }
+            } else {
+                api.toast({
+                    msg: err.msg,
+                    location: 'middle'
+                });
+            }
+        });
+
+        //读取设备
+        getDevList(api.pageParam.stationId);
+    };
+
+    function creatBillOpt() {
+        console.log("okBtn关闭")
+        $(".okBtn").attr("disabled", true);
+        var user = $api.getStorage('user');
+        var userId = user.userid;
+        var paramJson = {};
+        $('#repairDetailDivId').find("[name]:visible,input[type=hidden]").each(function() {
+            var name = $(this).attr('name');
+            var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+            if ($(this).attr('type') == 'datetime-local') {
+                val = val.replace(/T/, " ").replace(/\.\d+/, "");
+                //如果出现不带有秒数的时间字符串，补充
+                if (!(/\d{2}:\d{2}:\d{2}/.test(val))) {
+                    val += ':00';
+                }
+            }
+            if($(this).attr('type')=='radio'){
+              val=$("input[type='radio']:checked").val();
+            }
+            paramJson[name] = val;
+        });
+        var hiddenGrade = paramJson.hiddenGrade
+        console.log('hiddenGrade:'+hiddenGrade)
+        paramJson['shareType']=api.pageParam.stationInfo.st_operators_dictvalue;
+        paramJson['stationId']=api.pageParam.stationId;
+        paramJson['hiddenGrade']= hiddenGrade=='特别严重'?'A':hiddenGrade=='严重'?'B':hiddenGrade=='一般'?'C':'';
+        paramJson['imgArr']=jsonArray;
+        console.log(JSON.stringify(paramJson));
+        	if (formUtil.validate()) {
+            api.showProgress({
+                title: '加载中',
+                modal: false
+            });
+            $client.repairBillDisplay(paramJson, function(ret, err) {
+              console.log(JSON.stringify(ret));
+
+                if (ret) {
+                    if (ret.success) {
+                        api.toast({
+                            msg: "人工建单成功",
+                            duration: 800,
+                            location: 'middle'
+                        });
+                        window.setTimeout(function() {
+                            closeWin();
+                        }, 900);
+                    } else {
+                        api.toast({
+                            msg: ret.data_info,
+                            location: 'middle'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg: err.msg,
+                        location: 'middle'
+                    });
+                }
+                console.log("okBtn恢复")
+                $(".okBtn").attr("disabled", false);
+                api.hideProgress();
+              });
+          }else{
+              console.log("okBtn恢复")
+              $(".okBtn").attr("disabled", false);
+
+          }
+    }
+
+    function closeWin() {
+        api.closeWin({
+            name: 'createRepair'
+        });
+    }
+
+    function getDissystem(e){
+      dictionary=$(e).val();
+      var opt={
+        dictionarycode:$(e).val()
+      }
+      $client.repairDissystem(opt, function(ret, err) {
+        console.log(JSON.stringify(ret));
+          if (ret) {
+              if (ret.success) {
+                $('#dissystem').empty();
+                $('<option>').text('请选择').val('').appendTo('#dissystem');
+                if($(e).val()!=''){
+                  renderTemp('dissystem', 'dict-template', ret.sysdictlist,true);
+                }
+              } else {
+                  api.toast({
+                      msg: ret.data_info,
+                      location: 'middle'
+                  });
+              }
+          } else {
+              api.toast({
+                  msg: err.msg,
+                  location: 'middle'
+              });
+          }
+      });
+    }
+
+    function getInspstand(e){
+      devname=$(e).val();
+
+      // var opt={
+      //   devname:$(e).val(),
+      //   objtype:dictionary
+      // }
+      // $client.repairInspstand(opt, function(ret, err) {
+      //   console.log(JSON.stringify(ret));
+      //     if (ret) {
+      //         if (ret.success) {
+      //           $('#inspstand').empty();
+      //           $('<option>').text('请选择').val('').appendTo('#inspstand');
+      //           if($(e).val()!=''){
+      //             systasklist=ret.systasklist;
+      //             renderTemp('inspstand', 'dict-template2', ret.systasklist,true);
+      //           }
+      //         } else {
+      //             api.toast({
+      //                 msg: ret.data_info,
+      //                 location: 'middle'
+      //             });
+      //         }
+      //     } else {
+      //         api.toast({
+      //             msg: err.msg,
+      //             location: 'middle'
+      //         });
+      //     }
+      // });
+    }
+
+    function choiceInspstand(e){
+      for (var i = 0; i < systasklist.length; i++) {
+        if(systasklist[i].hiddencontent==$(e).val()){
+          if(systasklist[i].hiddengrade=='A'){
+            $('#Grade').val('特别严重');
+          }else if (systasklist[i].hiddengrade=='B') {
+            $('#Grade').val('严重');
+          }else if (systasklist[i].hiddengrade=='C') {
+            $('#Grade').val('一般');
+          }else{
+            $('#Grade').val(systasklist[i].hiddengrade);
+          }
+        }
+      }
+    }
+    function getFSUdevice(e){
+      for (var i = 0; i < sysfsulist.length; i++) {
+        if(sysfsulist[i].name==$(e).val()){
+          $('#model').val(sysfsulist[i].model)
+        }
+      }
+    }
+
+    /**
+		 *打开站址查询接口
+		 */
+	function openQueryStationWin() {
+      if(!dictionary){
+        api.toast({
+          msg: '请选择对象类型',
+          location: 'middle'
+        });
+        return;
+      }else if (!devname) {
+        api.toast({
+          msg: '请选择隐患设备',
+          location: 'middle'
+        });
+        return;
+      }
+			api.openWin({
+				name : 'dangerSearch_win',
+				url : 'dialog/dangerSearch_win.html',
+				bounces : false,
+				pageParam : {
+          devname:devname,
+          objtype:dictionary
+				}
+			});
+		}
+
+    /**
+		 *设置隐患内容
+		 */
+		function onDangerSelect(hiddencontent, hiddengrade) {
+      $("#hiddenContentInput").val(hiddencontent);
+      $('#GradeVal').val(hiddengrade);
+      if(hiddengrade=='A'){
+        $('#Grade').val('特别严重');
+      }else if (hiddengrade=='B') {
+        $('#Grade').val('严重');
+      }else if (hiddengrade=='C') {
+        $('#Grade').val('一般');
+      }else{
+          $('#Grade').val(hiddengrade);
+      }
+		}
+
+		  /**
+		 * 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		 */
+		function addPic(e) {
+            openAlbumOrCamera(e);
+
+		// 	var permission = 'camera';
+		// 	var resultList = api.hasPermission({
+		// 	    list: [permission]
+		// 	});
+		// 	if (resultList[0].granted) {
+		// 	    // 已授权，可以继续下一步操作
+		// 	} else {
+		// 	    api.confirm({
+		// 	        msg: '应用需要您的授权才能访问相机',
+		// 	        buttons: ['取消', '去设置']
+		// 	    }, function(ret) {
+		// 	        if (ret.buttonIndex == 2) {
+		// 	            api.requestPermission({
+		// 	                list: [permission],
+		// 	            }, function(res) {
+		// 	                if (res.list[0].granted) {
+		// 	                    // 已授权，可以继续下一步操作
+		// 	                }
+		// 	            });
+		// 	        }
+		// 	    });
+		// 	}
+		// 	var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+		// 	var lon1 = displaynum(lastLocation.lon);
+		// 	var lat1 = displaynum(lastLocation.lat);
+		// 	if (!lastLocation || !lastLocation.status) {
+		// 		api.toast({
+		// 			msg : '暂未定位\n无法上传照片！'
+		// 		});
+		// 	}else {
+		// 		////////////////////////////////////////////
+		// 		var curentTime2 = CurentTime2();
+		// 		$api.setStorage('newtime', curentTime2);
+		// 		$api.setStorage('lon1', lon1);
+		// 		$api.setStorage('lat1', lat1);
+		// 		var lon1 = $api.getStorage('lon1');
+		// 		var lat1 = $api.getStorage('lat1');
+		// 		var user=$api.getStorage('user');
+		// 		/* var newtime = $api.getStorage('newtime');
+		// 		var lon1 = $api.getStorage('lon1');
+		// 		var lat1 = $api.getStorage('lat1');
+		// 		var billModel = $api.getStorage('billModel'); */
+		// 		////////////////////////////////////////////
+
+
+		// 		imageUtil.add('camera', function(ret, err) {
+
+		// 			// var stationname=api.pageParam.stationname;
+		// 			// var billId=api.pageParam.billId;
+		// 			// var billSn=api.pageParam.billSn;
+		// 			// var businessid = billModel.businesstype;
+
+		// 				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		// 				// var oldret = ret.data.split(".");
+		// 				// var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+billId+';'+businessid+';'+billSn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+		// 				// console.log(newret);
+		// 				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		// 				// var filePath = ret.data;
+		// 				var imgModel = {
+		// 						userid : user.userid,
+		// 						businessid : "隐患录入",
+		// 						//stationname : api.pageParam.stationname,
+		// 						//billsn : billModel.billsn,
+		// 						imgpath : ret,
+		// 						phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+		// 						lon : lon1,
+		// 						lat : lat1,
+		// 						photoaddress : lastLocation.photoaddress
+        //         //state:api.pageParam.billStatus,
+        //         //billstatusname:billModel.billstatusname
+
+		// 				};
+        //     // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //     // cacheImgArr(imgModel);
+        //     // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //     console.log("ss///////////////////////////////////////"+getObj(imgModel));
+		// 				imageUtil.getImageArray().push(imgModel);
+		// 			showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+
+        //   imageUtil.upload(function(count) {
+        //     //imageUtil.getImageArray=new Array();
+        //     jsonArray.push(count);
+        //     //alert("jsonArray=="+jsonArray);
+        //   });
+
+		// 			var tpl = $api.byId('img-template').text;
+		// 			var tempFn = doT.template(tpl);
+
+		// 					$('#addPic').before(tempFn(imgModel));
+	    //         $new = $('#addPic').prev();
+	    //         $new.css('height', $new.css('width'));
+
+		// 		},e,true,false);
+		// 	}
+		}
+
+      /**
+       *删除图片
+       */
+      function removeImg(imgPath) {
+        var imageArray = imageUtil.getImageArray();
+        var size = imageArray.length;
+        for (var i = 0; i < size; i++) {
+          var data = imageArray[i];
+          if (data.imgpath == imgPath) {
+            imageArray.remove(i);
+            break;
+          }
+        }
+        $(event.target).parents('.picBox').find('#add').show();
+        $(event.target).parents('li.aui-img').remove();
+        // 删除本地缓存图片其一
+        deleteImgArr(imgPath);
+      }
+
+
+    /************************************一码到底**************************************/
+    var devlist;
+    /**
+     * 获取设备列表
+     */
+    function getDevList(stationId){
+
+        //为了方便开发暂时写死
+        // stationId = '2973847'
+
+        var opts = {
+            areaId : stationId
+        }
+        $client.getDevListPlus(opts, function(ret, err) {
+            if (ret) {
+                console.log("===========开始获取本站设备==================")
+
+                if (ret.success) {
+                    console.log(JSON.stringify(ret))
+                    if (undefined != ret.deviceList && ret.deviceList.length ){
+                        console.log("设备列表获取成功===>"+JSON.stringify(ret.deviceList))
+                        /*renderTemp('devList', 'devList-template', ret.deviceList);*/
+                        devlist = ret.deviceList;
+                        var html = "";
+                        devlist.forEach(function (item,index) {
+                            html += '<option id="'+item.id+'" value="'+item.id+'">'+item.name+'</option>';
+                        })
+                        $("#deviceid").append(html);
+                    }
+                    else{
+                        console.log("没获取到")
+                        // $('body').addClass('active');
+                    }
+
+                } else {
+                    api.toast({
+                        msg: ret.data_info,
+                        location: 'bottom'
+                    });
+                }
+            } else {
+                api.toast({
+                    msg: '获取站址设备列表失败',
+                    location: 'bottom'
+                });
+            }
+        });
+    }
+
+    /**
+     * 开启扫码
+     */
+    function goScanCode(){
+
+        var permission = 'camera';
+        var resultList = api.hasPermission({
+            list: [permission]
+        });
+        if (resultList[0].granted) {
+            // 已授权，可以继续下一步操作
+        } else {
+            api.confirm({
+                msg: '应用需要您的授权才能访问相机',
+                buttons: ['取消', '去设置']
+            }, function(ret) {
+                if (ret.buttonIndex == 2) {
+                    api.requestPermission({
+                        list: [permission],
+                    }, function(res) {
+                        if (res.list[0].granted) {
+                            // 已授权，可以继续下一步操作
+                        }
+                    });
+                }
+            });
+        }
+        var FNScanner = api.require('FNScanner');
+        FNScanner.openScanner({
+            autorotation: true
+        }, function(ret, err) {
+            if (ret) {
+                //  alert(JSON.stringify(ret));
+                if (ret.eventType=="success") {
+                    var EWM=ret.content;
+
+                    if(!compare(null, EWM)){
+                        api.toast({
+                            msg : '未查询到该设备!'
+                        });
+                    }
+                }else {
+                    /*api.toast({
+                        msg : '请扫描二维码!'
+                    });*/
+                }
+
+            } else {
+                api.toast({
+                    msg : '获取信息出错!'
+                });
+            }
+        });
+
+    }
+
+    //填补信息
+    function fillInfo(obj) {
+        $("#devicemodel").val('');
+        $("#devicecode").val('');
+        $("#res_code").val('');
+        $("#devicename").val('');
+        compare($(obj).val(), null);
+    }
+
+
+    function compare(id, rfid) {
+
+        var hasDev = false;
+        if(undefined == devlist || devlist.length == 0){
+            return hasDev;
+        }
+        if(rfid != null){
+            var html = "";
+            console.log("rfid ======= > "+rfid)
+
+            devlist.forEach(function (item,index) {
+                console.log("rfid ======= > "+item.rfid_code)
+                if(item.rfid_code == rfid){
+                    /*$("#"+item.id).attr("selected","selected");
+                    $("#deviceid").trigger("onchange");*/
+
+                    $("#deviceid" ).attr("value",item.id);
+                    html += '<option name="'+item.id+'" value="'+item.id+'" selected>'+item.name+'</option>';
+                    hasDev =true;
+                }else{
+                    html += '<option name="'+item.id+'" value="'+item.id+'" >'+item.name+'</option>';
+                }
+            })
+
+            if(hasDev){
+                $("#deviceid").html(html)
+                $("#deviceid").trigger("change");
+            }
+
+        }else{
+            console.log("id =======> "+id)
+            devlist.forEach(function (item,index) {
+                console.log("item.id ======= > "+item.id)
+                if(item.id == id){
+                    $("#devicemodel").val(item.model);
+                    $("#devicecode").val(item.devicecode);
+                    $("#res_code").val(item.res_code);
+                    $("#devicename").val(item.name);
+                }
+            })
+        }
+
+        return hasDev;
+
+    }
+
+    function openAlbumOrCamera(e) {
+        api.confirm({
+            title: "上传照片",
+            buttons: ["拍照", "从相册选择", "取消"]
+        }, function (ret, err) {
+            var sourceType = "camera";
+            var permission = 'camera';
+
+            if (3 == ret.buttonIndex) {// 取消
+                return;
+            } else if (1 == ret.buttonIndex) {// 打开相机
+                sourceType = "camera";
+                permission = 'camera'
+            } else if (2 == ret.buttonIndex) { // 相册
+                sourceType = "album";
+                permission = 'photos'
+            }
+
+            var resultList = api.hasPermission({
+                list: [permission]
+            });
+            console.log(`permission>${permission}-${sourceType}`)
+            if (resultList[0].granted) {
+                // 已授权，可以继续下一步操作
+                console.log(`granted>${resultList[0]}`)
+
+                doTakePhoto(e, sourceType)
+            } else {
+                api.confirm({
+                    msg: '应用需要您的授权才能访问',
+                    buttons: ['取消', '去设置']
+                }, function (ret) {
+                    if (ret.buttonIndex == 2) {
+                        api.requestPermission({
+                            list: [permission],
+                        }, function (res) {
+                            if (res.list[0].granted) {
+                                // 已授权，可以继续下一步操作
+                                console.log(`granted>${resultList[0]}应用需要您的授权才能访问相机`)
+
+                                doTakePhoto(e, sourceType)
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    function doTakePhoto(e, sourceType) {
+        var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+        var lon1 = displaynum(lastLocation.lon);
+        var lat1 = displaynum(lastLocation.lat);
+        if (!lastLocation || !lastLocation.status) {
+            api.toast({
+                msg : '暂未定位\n无法上传照片！'
+            });
+        }else {
+            ////////////////////////////////////////////
+            var curentTime2 = CurentTime2();
+            $api.setStorage('newtime', curentTime2);
+            $api.setStorage('lon1', lon1);
+            $api.setStorage('lat1', lat1);
+            var lon1 = $api.getStorage('lon1');
+            var lat1 = $api.getStorage('lat1');
+            var user=$api.getStorage('user');
+            /* var newtime = $api.getStorage('newtime');
+            var lon1 = $api.getStorage('lon1');
+            var lat1 = $api.getStorage('lat1');
+            var billModel = $api.getStorage('billModel'); */
+            ////////////////////////////////////////////
+
+
+            imageUtil.add(sourceType, function(ret, err) {
+
+                // var stationname=api.pageParam.stationname;
+                // var billId=api.pageParam.billId;
+                // var billSn=api.pageParam.billSn;
+                // var businessid = billModel.businesstype;
+
+                    // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    // var oldret = ret.data.split(".");
+                    // var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+billId+';'+businessid+';'+billSn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+                    // console.log(newret);
+                    // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    // var filePath = ret.data;
+                    var imgModel = {
+                            userid : user.userid,
+                            businessid : "隐患录入",
+                            //stationname : api.pageParam.stationname,
+                            //billsn : billModel.billsn,
+                            imgpath : ret,
+                            phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+                            lon : lon1,
+                            lat : lat1,
+                            photoaddress : lastLocation.photoaddress
+            //state:api.pageParam.billStatus,
+            //billstatusname:billModel.billstatusname
+
+                    };
+        // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        // cacheImgArr(imgModel);
+        // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        console.log("ss///////////////////////////////////////"+getObj(imgModel));
+                    imageUtil.getImageArray().push(imgModel);
+                showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+
+        imageUtil.upload(function(count) {
+        //imageUtil.getImageArray=new Array();
+        jsonArray.push(count);
+        //alert("jsonArray=="+jsonArray);
+        });
+
+                var tpl = $api.byId('img-template').text;
+                var tempFn = doT.template(tpl);
+
+                        $('#addPic').before(tempFn(imgModel));
+            $new = $('#addPic').prev();
+            $new.css('height', $new.css('width'));
+
+            },e,true,false);
+        }
+    }
+    // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</script>
+
+</html>

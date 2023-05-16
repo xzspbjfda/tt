@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html style="height:auto">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>站址信息查询</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+        <!--<link rel="stylesheet" type="text/css" href="../../css/aui.css" />-->
+        <link rel="stylesheet" href="../../script/agile/css/agile.layout.css">
+        <!--<link rel="stylesheet" href="../../script/agile/css/flat/flat.component.css">-->
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.color.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+        <link rel="stylesheet" href="../../css/query.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/aui.css"/>
+    </head>
+    <body>
+        <div>
+            <header id="header" style="position:absolute;top: 0;z-index: 99">
+                <div class="titlebar" style="background-color: #db4537">
+                    <!--<a class="aui-iconfont aui-icon-left left-icon" tapmode="active" onclick="back();"></a>-->
+                    <a  onclick="back();"><i class="iconfont iconline-arrow-left"></i></a>
+                    <div class="cui-input-bd">
+                        <input id="keyInput"  class="cui-input-box js_kw_input" style="float: left;" placeholder="搜索关键字">
+                        <span id="cancleBtn" style="position: absolute;display: block;height: 28px;line-height: 28px;min-width: 32px;top:0;right:0;"><img width="28" height="28"  src="../../image/icons/png/cancle.png"/></span>
+                    </div>
+                    <a id="searchBtn" style="width:15%;"><i class="iconfont" style="float: right;font-size:16px;line-height:32px;width:100%;height:32px;">搜索</i></a>
+                </div>
+            </header>
+            <ul  id="listView" class="ccssoft_list" style="margin-top: 49px;"></ul>
+        </div>
+        <script id="listView-template" type="text/x-dot-template">
+            {{ for(var i=0, len=it.length; i < len; i++) {}}
+            <li onclick="stationClick('{{=it[i].name != null ? it[i].name:""}}','{{=it[i].code != null ? it[i].code:""}}');" >
+            <div class="cj-l-title">{{=it[i].name != null ? it[i].name:""}}</div>
+            <div class="cj-l-into">{{=it[i].st_provinceid}} - {{=it[i].st_cityid}} - {{=it[i].st_countyid}} </div>
+            </li>
+            {{}}}
+        </script>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script src="../../script/common.js"></script>
+    <script src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript">
+        var timer;
+        var lastSearchKey = "";
+        //上一个输入的站址名字
+        apiready = function() {
+            initHeader();
+            listView = new C.ApiListView({
+                fn : $client.searchBaseStation,
+                listName : 'list'
+            });
+            $('#keyInput').focus();
+            //          $('#keyInput').bind('input', delayRun);
+            $('#searchBtn').click(function() {
+                var searchKey = $.trim($('#keyInput').val());
+                if (searchKey && searchKey == "") {
+                    api.toast({
+                        msg : '请输入关键字'
+                    });
+                    return;
+                }
+                queryKey();
+            });
+            $('#cancleBtn').click(function() {
+                $('#keyInput').val('');
+                $('#listView').empty();
+            });
+        };
+        /**
+         *站址点击事件
+         */
+        function stationClick(stationname, stationcode) {
+            var script = "onStationSelect('" + stationname + "','" + stationcode + "');";
+            var winName = api.pageParam.winName;
+            var frameName = api.pageParam.frameName;
+            if (isExist(api.pageParam.frameName)) {
+                api.execScript({
+                    name : winName,
+                    frameName : frameName,
+                    script : script
+                });
+            } else {
+                api.execScript({
+                    name : api.pageParam.name,
+                    script : script
+                });
+            }
+            api.closeWin();
+        }
+
+        /**
+         *延迟运行
+         */
+        function delayRun() {
+            $('#listView').empty();
+            if (timer != null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout('queryKey()', 1000);
+        }
+
+        /**
+         *查询关键字
+         */
+        function queryKey() {
+            var searchKey = $.trim($('#keyInput').val());
+            if (searchKey == "") {
+                $('article').removeClass('alert-bg-empty');
+                return;
+            }
+            if (searchKey == "" || searchKey == lastSearchKey) {
+                return;
+            }
+            lastSearchKey = searchKey;
+            var opts = {
+                name : searchKey
+            };
+            api.showProgress({
+                title : '查询中...'
+            });
+            listView.setQueryOptions(opts);
+            listView.refresh();
+        }
+    </script>
+</html>

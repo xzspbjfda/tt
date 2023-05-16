@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+    <!--巡检项目详情的新模块代码-->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>巡检项目详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <div class="aui-content">
+            <ul id="list-view" class="aui-list-view">
+                <li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+                    站址信息
+                </li>
+                <li class="aui-list-view-cell" data-win="list_arrow">
+                    <div class="item-left">
+                        站址名
+                    </div>
+                    <div  id="stationName" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell" data-win="list_arrow">
+                    <div class="item-left">
+                        站址编码
+                    </div>
+                    <div id="stationCode" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell" data-win="list_arrow">
+                    <div class="item-left">
+                        站址来源
+                    </div>
+                    <div id="stationSource" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell" data-win="list_arrow">
+                    <div class="item-left">
+                        设备名
+                    </div>
+                    <div  id="deviceName" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell" data-win="list_arrow">
+                    <div class="item-left">
+                        所属省份
+                    </div>
+                    <div id="province" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell" data-win="list_arrow">
+                    <div class="item-left">
+                        所属地市
+                    </div>
+                    <div id="city" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell" data-win="list-image">
+                    <div class="item-left">
+                        所属区县
+                    </div>
+                    <div id="country" class="item-right"></div>
+                </li>
+                <li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+                    巡检要求
+                </li>
+                <li id="projectRequirement" style="min-height: 30px;padding:5px 20px;"></li>
+                <li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+                    记录填写
+                </li>
+                <li class="aui-list-view-cell aui-switch-body">
+                    <div class="aui-switch-title">
+                        是否符合要求
+                    </div>
+
+                    <!-- <input id="isStander" type="checkbox" class="aui-switch aui-pull-right"> -->
+                    <!-- zhangzhitao shifou -->
+                    <select id="isStander" class="aui-switch aui-pull-right">
+                				<option value="Y">是</option>
+                				<option value="N">否</option>
+            				</select>
+                </li>
+                <li class="aui-list-view-cell" data-win="list-image">
+                    <div class="item-left">
+                        巡检结果
+                    </div>
+                    <div class="item-right">
+                        <textarea id="remark" name="remark" style="width:100%;height:100px; margin-bottom:0px;"></textarea>
+                    </div>
+                </li>
+                <li class="aui-list-view-cell aui-switch-body">
+                    <div class="aui-switch-title">
+                        是否存在隐患
+                    </div>
+
+                    <!-- <input id="isYinHuan" type="checkbox" class="aui-switch aui-pull-right"> -->
+                    <!-- zhangzhitao shifou-->
+                    <select id="isYinHuan" class="aui-switch aui-pull-right">
+                				<option value="Y">是</option>
+                				<option value="N">否</option>
+            				</select>
+
+                </li>
+                <li class="aui-list-view-cell" data-win="list-image">
+                    <div class="item-left">
+                        隐患内容
+                    </div>
+                    <div class="item-right">
+                        <textarea id="shiddenContent" name="shiddenContent" style="width:100%;height:100px; margin-bottom:0px;"></textarea>
+                    </div>
+                </li>
+                <li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+                    图片列表
+                </li>
+            </ul>
+        </div>
+        <div style="height:50px;"></div>
+        <div id="workingBottom" class="fixed_bottom">
+            <button class="outline left aui-btn aui-btn-info" onclick="addPicture();">
+                添加图片
+            </button>
+            <button class="right aui-btn aui-btn-danger" onclick="uploadResult();">
+                提交结果
+            </button>
+        </div>
+        <div id="finishBottom" class="fixed_bottom">
+            <button class="outline center aui-btn aui-btn-success" onclick="downloadPicture();">
+                下载图片
+            </button>
+        </div>
+        <!--图片模板-->
+        <script id="img-template" type="text/html">
+            <li id="{{=it.imgPath}}" class="aui-list-view-cell aui-img" onclick="openImg('{{=it.imgPath}}');">
+            <img class="aui-img-object aui-pull-left" src="{{=it.imgPath}}">
+            <div class="aui-img-body aui-pull-left">
+            {{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+            <p class='aui-ellipsis-2'>
+            经度:{{=it.lon}}<br/> 纬度:{{=it.lat}}
+            </p>
+            </div>
+            {{?it.deleteFlag=="Y"}}
+            <div class="aui-pull-right" style="display:inline-block height: 60px;line-height: 60px;">
+            <button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgPath}}');">X</button>
+            </div>
+            {{?}}
+            </li>
+        </script>
+    </body>
+    <!-- third -->
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script src="../../script/template-native.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script src="../../script/GPS.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/xunjian_db.js"></script>
+    <script>
+        //巡检项目详情js
+        var taskid, projectid, projectname = '', model = null, isFinish = 'N';
+        var historyUrl = [];
+        //历史url
+        var lon = 0, lat = 0;
+        //经度，纬度
+        var uploadImgPath = [];
+        var downloadSize = 0, downloadIndex = 0;
+        var localDir = "";
+        //要下载的总数量，当前下载好的数量
+        //上传文件列表
+        /**
+         * 页面初始化
+         */
+        apiready = function() {
+            // initHeader();
+            //    uploadResult();
+//          db_init(function(ret, err) {
+//          });
+            projectid = api.pageParam.projectid;
+            projectname = api.pageParam.projectname;
+            taskid = api.pageParam.taskid;
+            isFinish = api.pageParam.isFinish;
+            editEnabled = api.pageParam.editEnabled;
+            if (!editEnabled) {
+                showToast("巡检项目未激活！");
+            }
+            showlog("isFinish:" + isFinish + ",projectname:" + projectname);
+            if (!editEnabled || ( typeof (isFinish) != "undefined" && isFinish != null && isFinish == "Y")) {
+                $api.attr($api.byId("workingBottom"), "style", "display:none");
+                $api.attr($api.byId("shiddenContent"), "disabled", "true");
+                $api.attr($api.byId("remark"), "disabled", "true");
+                $api.attr($api.byId("isYinHuan"), "disabled", "true");
+                $api.attr($api.byId("isStander"), "disabled", "true");
+            } else {
+                $api.attr($api.byId("finishBottom"), "style", "display:none");
+            }
+            if (!editEnabled) {
+                $api.attr($api.byId("finishBottom"), "style", "display:none");
+            }
+            loadProjectDetail(taskid, projectid);
+            var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+            lon = lastLocation.lon;
+            lat = lastLocation.lat;
+//          getLocation();
+        };
+        /**
+         *获取经度纬度
+         */
+//      function getLocation() {
+//          api.startLocation({
+//              accuracy : '100m',
+//              filter : 1,
+//              autoStop : true
+//          }, function(ret, err) {
+//              showlog("location:" + ret.status);
+//              if (ret.status) {
+//                  // ios要把  GCJ-02 to WGS-84   安卓不用转
+//                  if (ret.latitude != null && ret.longitude != null && ret.latitude != 0.0 && ret.longitude != 0.0 && ret.latitude != 0 && ret.longitude != 0) {
+//                      lat = ret.latitude;
+//                      lon = ret.longitude;
+//                      if (api.systemType == "ios") {
+//                          var xyJson = GPS.gcj_decrypt_exact(ret.latitude, ret.longitude);
+//                          lat = xyJson.lat;
+//                          lon = xyJson.lon;
+//                      }
+//                      showlog("lat:" + lat + ",lon:" + lon);
+//                  }
+//              }
+//          });
+//      }
+
+        /**
+         *加载巡检项目详情
+         */
+        function loadProjectDetail(taskid, projectid) {
+            showMask("加载中...");
+            $client.getProjectDetail({
+                taskid : taskid,
+                projectid : projectid
+            }, function(ret, err) {
+                hideMask();
+                if (ret) {
+                    if (ret.success) {
+                        var model = ret.model;
+                        $api.text($api.byId("stationName"), model.sitename);
+                        $api.text($api.byId("stationCode"), model.sitecode);
+                        $api.text($api.byId("stationSource"), model.st_sitesource);
+                        $api.text($api.byId("deviceName"), model.devname);
+                        $api.text($api.byId("province"), model.province);
+                        $api.text($api.byId("city"), model.city);
+                        $api.text($api.byId("country"), model.county);
+                        $api.text($api.byId("projectRequirement"), model.request);
+                        $api.text($api.byId("shiddenContent"), model.shiddensource);
+                        $api.text($api.byId("remark"), model.remark);
+                        if (model.isshidden != null && model.isshidden == "Y") {
+                            //var isYinHuanDiv = $api.byId("isYinHuan");
+                            //$api.attr(isYinHuanDiv, "checked", "");
+                            $("#isYinHuan").val("Y");
+                        }
+                        if (model.isstander != null && model.isstander == "Y") {
+                            //var isReadyRequirementDiv = $api.byId("isStander");
+                            //$api.attr(isReadyRequirementDiv, "checked", "");
+                            $("#isStander").val("Y");
+                        }
+                        var imgList = ret.imgList;
+                        if (imgList != null && imgList.length > 0) {
+                            for (var i = 0, size = imgList.length; i < size; i++) {
+                                // showAlert(imgList[i]);
+                                var imageUrl = imgList[i];
+                                historyUrl.push(imageUrl);
+                            }
+                            //   loadFinishPic();
+                        }
+                    } else {
+                        showToast(ret.data_info);
+                    }
+                } else {
+                    showToast(err.msg);
+                }
+            });
+        }
+
+        /**
+         * 添加图片
+         */
+        function addPicture() {
+            api.getPicture({
+                sourceType : 'camera',
+                encodingType : 'jpg',
+                mediaValue : 'pic',
+                quality : 20,
+                saveToPhotoAlbum : true
+            }, function(ret, err) {
+                if (isExist(ret) && ret.data.length > 0) {
+                    var filePath = ret.data;
+                    var imageFilter = api.require("imageFilter");
+                    var imgPathArr = filePath.split("/");
+                    var imgName = imgPathArr[imgPathArr.length - 1];
+                    //删除数组最后一个元素
+                    imgPathArr.pop();
+                    var imgPath = imgPathArr.join("/");
+                    //var ss = pth.join("/");
+                    imageFilter.compress({
+                        img : ret.data,
+                        quality : 0.4,
+                        scale : 0.5,
+                        save : {
+                            //  album: false,
+                            imgPath : imgPath,
+                            imgName : imgName
+                        }
+                    });
+                    showlog(filePath);
+                    var data = {
+                        imgPath : filePath,
+                        lon : lon,
+                        lat : lat,
+                        phototime : (new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+                        deleteFlag : 'N',
+                        picType : 'patrol'
+                    };
+                    uploadImgPath.push(data);
+                    renderTemp('list-view', 'img-template', data, true);
+                    //   uploadImgPath.push(filePath);
+                    //                  var ul = $api.byId("list-view");
+                    //                  var content = template("img-template", data);
+                    //                  //  alert(content);
+                    //                  $api.append(ul, content);
+                }
+            });
+        }
+
+        /**
+         *加载已完成图片
+         */
+        function loadFinishPic() {
+            var size = historyUrl.length;
+            //   showlog("图片的数量:" + size);
+            if (size == 0) {
+                $api.attr($api.byId("finishBottom"), "style", "display:none");
+                return;
+            }
+            for (var i = 0, size = historyUrl.length; i < size; i++) {
+                var imageData = historyUrl[i];
+                var path = transform(imageData.path);
+                if (!path.startWith("/")) {
+                    path = "/" + path;
+                }
+                var savePath = "fs://picture" + path;
+                //本地目录
+                var fs = api.require('fs');
+                fs.exist({
+                    path : savePath
+                }, function(ret, err) {
+                    if (ret.exist === true) {
+                        var imagePath = systemLocalPath + "/picture" + path;
+                        //                      var imagePath =
+                        //    showlog("下载图片已经存在，直接加载:"+imagePath);
+                        var data = {
+                            imgPath : imagePath,
+                            lon : imageData.lon,
+                            lat : imageData.lat,
+                            phototime : imageData.phototime,
+                            deleteFlag : 'N'
+                        };
+                        var ul = $api.byId("list-view");
+                        var content = template("img-template", data);
+                        $api.append(ul, content);
+                    }
+                });
+            }
+        }
+
+        function downloadPicture() {
+            // showlog("downloadPicture");
+            waitDuck(function() {
+                //showlog("waitDuck");
+                var size = historyUrl.length;
+                //   showlog("图片的数量:" + size);
+                if (size == 0) {
+                    showToast("没有图片");
+                    $api.attr($api.byId("finishBottom"), "style", "display:none");
+                    return;
+                }
+                showMask("加载中...");
+                //              downloadImage(0, size);
+                cacheImage(0, size);
+            });
+        }
+
+        //缓存图片
+        function cacheImage(index, size) {
+            if (index >= size) {
+                hideMask();
+                $api.attr($api.byId("finishBottom"), "style", "display:none");
+                //              showToast("图片加载完成!");
+                return;
+            }
+            var imageData = historyUrl[index];
+            var url = transform(imageData.url);
+            api.imageCache({
+                url : url,
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.status) {
+                        var data = {
+                            imgPath : ret.url,
+                            lon : imageData.lon,
+                            lat : imageData.lat,
+                            phototime : imageData.phototime,
+                            deleteFlag : 'N'
+                        };
+                        //                      alert('data:\n'+getObj(data));
+                        renderTemp('list-view', 'img-template', data, true);
+                    } else {
+                        api.toast({
+                            msg : err,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : '缓存图片失败！',
+                        location : 'bottom'
+                    });
+                }
+                cacheImage(index + 1, size);
+            });
+        }
+
+        /**
+         *从远程服务器下载图片
+         */
+        //      function downloadImage(index, size) {
+        //          if (index >= size) {
+        //              hideMask();
+        //              $api.attr($api.byId("finishBottom"), "style", "display:none");
+        //              //              showToast("图片加载完成!");
+        //              return;
+        //          }
+        //          var imageData = historyUrl[index];
+        //          var path = transform(imageData.path);
+        //          if (!path.startWith("/")) {
+        //              path = "/" + path;
+        //          }
+        //          //          alert('path:'+path);
+        //          var savePath = "fs://picture" + path;
+        //          alert('locationUrl:' + locationUrl);
+        //          alert('href:' + href);
+        //          alert('systemLocalPath:' + systemLocalPath);
+        //          alert('savePath:' + savePath);
+        //          //本地目录
+        //          var fs = api.require('fs');
+        //          fs.exist({
+        //              path : savePath
+        //          }, function(ret, err) {
+        //              alert('ret:\n' + getObj(ret));
+        //              if (ret.exist === true) {
+        //                  var imagePath = systemLocalPath + "/picture" + path;
+        //                  alert('imagePath:' + imagePath);
+        //                  //    showlog("下载图片已经存在，直接加载:"+imagePath);
+        //                  var data = {
+        //                      imgPath : imagePath,
+        //                      lon : imageData.lon,
+        //                      lat : imageData.lat,
+        //                      imgDate : imageData.phototime,
+        //                      deleteFlag : 'N'
+        //                  };
+        //                  var ul = $api.byId("list-view");
+        //                  var content = template("img-template", data);
+        //                  $api.append(ul, content);
+        //                  index++;
+        //                  downloadImage(index, size);
+        //                  return;
+        //              } else {
+        //                  // showlog("imageSavePath:" + savePath);
+        //                  var url = transform(imageData.url);
+        //                  //  alert(url);
+        //                  // savePath = "fs://picture/1.jpg";
+        //                  api.download({
+        //                      url : url,
+        //                      savePath : savePath,
+        //                      report : false,
+        //                      cache : true,
+        //                      allowResume : true
+        //                  }, function(ret, err) {
+        //                      if (ret) {
+        //                          var value = '文件大小：' + ret.fileSize + '；下载进度：' + ret.percent + '；下载状态' + ret.state + '存储路径: ' + ret.savePath;
+        //                          showlog(value);
+        //                          if (ret.state == "1") {
+        //                              alert('ret.savePath:' + ret.savePath);
+        //                              var data = {
+        //                                  imgPath : ret.savePath,
+        //                                  lon : imageData.lon,
+        //                                  lat : imageData.lat,
+        //                                  imgDate : imageData.phototime,
+        //                                  deleteFlag : 'N'
+        //                              };
+        //                              var ul = $api.byId("list-view");
+        //                              var content = template("img-template", data);
+        //                              //  alert(content);
+        //                              $api.append(ul, content);
+        //                              index++;
+        //                              downloadImage(index, size);
+        //                          }
+        //                      } else {
+        //                          hideMask();
+        //                          showToast(err.msg);
+        //                      }
+        //                  });
+        //              }
+        //          });
+        //      }
+        /**
+         *删除图片
+         */
+        function removeImg(imgPath) {
+            var size = uploadImgPath.length;
+            for (var i = 0; i < size; i++) {
+                var data = uploadImgPath[i];
+                if (data.imgPath == imgPath) {
+                    uploadImgPath.remove(i);
+                    break;
+                }
+            }
+            var li = $api.byId(imgPath);
+            $api.remove(li);
+        }
+
+        /**
+         *打开图片
+         */
+        function openImg(imgPath) {
+            showlog("openImg:" + imgPath);
+            if (isFinish == "Y") {
+                // var module = api.require('imageBrowser');
+                // module.openImages({
+                //     imageUrls : [imgPath],
+                //     showList : false
+                // });
+                var pageParam = {
+                    images: [imgPath]
+                };
+                api.openWin({
+                    name: 'imageViewer',
+                    url:'../photoViewer/mainFrame.html',
+                    pageParam : pageParam
+                })
+                return;
+            } else {
+                setTimeout(function() {
+                    var size = uploadImgPath.length;
+                    for (var i = 0; i < size; i++) {
+                        var data = uploadImgPath[i];
+                        showlog(data.imgPath);
+                        if (data.imgPath == imgPath) {
+                            // var module = api.require('imageBrowser');
+                            // module.openImages({
+                            //     imageUrls : [imgPath],
+                            //     showList : false
+                            // });
+                            var pageParam = {
+                                images: [imgPath]
+                            };
+                            api.openWin({
+                                name: 'imageViewer',
+                                url:'../photoViewer/mainFrame.html',
+                                pageParam : pageParam
+                            })
+                            break;
+                        }
+                    }
+                }, 200);
+            }
+        }
+
+        /**
+         *保存图片
+         */
+        function savePic() {
+            if (uploadImgPath == null || uploadImgPath.length == 0) {
+                showlog("图片资源为空，不需要保存进数据库;");
+                return;
+            }
+            var user = $api.getStorage('user');
+            var size = uploadImgPath.length;
+            for (var i = 0; i < size; i++) {
+                var imgData = uploadImgPath[i];
+                var imgModel = {
+                    projectid : projectid,
+                    projectname : projectname,
+                    lon : imgData.lon,
+                    lat : imgData.lat,
+                    imgpath : imgData.imgPath,
+                    phototime : imgData.phototime,
+                    userid : user.userid
+                };
+                db_saveXunjianPic(imgModel, function(ret, err) {
+                    if (!ret) {
+                        showToast("图片保存失败!");
+                        return;
+                    }
+                });
+            }
+        }
+
+        /**
+         *上传结果
+         */
+        function uploadResult() {
+            // showlog("巡检图片数量:"+db_getXunjianPicCount(projectid));
+            //return;
+            var isYinHuanDiv = $api.byId("isYinHuan");
+            var isStanderDiv = $api.byId("isStander");
+            isShidden = $api.cssVal(isYinHuanDiv, "border-color") == "rgb(221, 221, 221)" ? false : true;
+            isStander = $api.cssVal(isStanderDiv, "border-color") == "rgb(221, 221, 221)" ? false : true;
+            var shiddenContent = $api.trim($api.byId('shiddenContent').value);
+            var remark = $api.trim($api.byId('remark').value);
+            showlog("isStander:" + isStander + ",isShidden:" + isShidden + ",shidden:" + shiddenContent + ",remark:" + remark);
+            if (!isStander && remark == "") {
+                //  showAlert("提示","hello");
+                showAlert("提示", "不符合要求，<巡检结果>不能为空！");
+                return;
+            }
+            //如果存在隐患，隐患内容不能为空
+            if (isShidden && shiddenContent == "") {
+                showAlert("提示", "存在隐患,<隐患内容>不能为空！");
+                //  api.alert({title:"提示"，msg:""});
+                return;
+            }
+            if (isShidden && uploadImgPath.length == 0) {
+                showAlert("提示", "存在隐患,相片不能为空！");
+                return;
+            }
+            // showAlert("提示","hello3");
+            var opts = {
+                id : projectid,
+                taskid : taskid,
+                isFinish : 'Y',
+                isShidden : isShidden ? "Y" : "N",
+                isStander : isStander ? "Y" : "N",
+                remark : remark,
+                shiddenSource : shiddenContent
+            };
+            showMask("上传中...");
+            $client.saveXunjinProjectResult(opts, function(ret, err) {
+                hideMask();
+                if (ret && ret.success && ret.success === true) {
+                    var size = uploadImgPath.length;
+                    //uploadImage(0, size);
+                    savePic();
+                    api.execScript({
+                        name : 'xunjian_projectList',
+                        frameName : 'projectListFrm',
+                        script : 'refreshList();'
+                    });
+                    api.toast({
+	                    msg:'您提交的图片已保存到离线上传',
+	                    location : 'middle'
+                    });
+                    setTimeout(function() {
+                        hideMask();
+                        showToast("上传成功!");
+                        api.closeWin();
+                    }, 1100);
+                } else {
+                    showToast("上传失败!");
+                }
+            });
+        }
+
+        /**
+         *上传图片到服务器
+         */
+        function uploadImage(index, size) {
+            if (index >= size) {
+                api.execScript({
+                    name : 'xunjian_projectList',
+                    script : 'refreshList();'
+                });
+                setTimeout(function() {
+                    hideMask();
+                    showToast("上传成功!");
+                    api.closeWin();
+                }, 200);
+                return;
+            }
+            var data = uploadImgPath[index];
+            var opts = {
+                isJson : true,
+                lon : data.lon,
+                lat : data.lat,
+                id : projectid,
+                phototime : data.phototime
+            };
+            $client.uploadProjectImage(opts, data.imgPath, function(ret, err) {
+                if (ret && ret.success) {
+                    uploadImage(++index, size);
+                } else {
+                    hideMask();
+                    showToast("上传图片失败!");
+                    return;
+                }
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,1547 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="css/bill-listCon_frm.css" />
+        <link rel="stylesheet" type="text/css" href="css/billMenu.css" />
+
+        <style>
+            body.active {
+                background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            .cj-orange{
+              background-color: orange;
+            }
+            .cj-blue{
+              background-color: blue;
+            }
+            .cj-purple{
+              background-color: purple;
+            }
+            .cj-green{
+              background-color: green;
+            }
+
+            .cj-l-level{
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              line-height: 18px;
+              text-align: center;
+              display: inline-block;
+              color: #fff;
+              margin: 0 4px;
+              vertical-align:top;
+            }
+
+            .cj-ash{
+              background-color: grey;
+            }
+
+            .ccssoft_list_wxx {
+             background-color: #eff1f0;
+             overflow: hidden;
+             width: 94%;
+             margin: 0 auto;
+           }
+           .ccssoft_list_wxx li {
+               list-style: none;
+               border-radius: 6px;
+               padding:3px 10px 3px 10px;
+               background: #fff;
+               overflow: hidden;
+               margin-top: 10px;
+           }
+           /*.ccssoft_list_wxx li:hover {
+               background: #f9e9df;
+           }
+           .ccssoft_list_wxx li.acitve {
+               background: #f9e9df;
+           }*/
+           .ccssoft_list_wxx .showBox{
+               text-align:center;
+               font-size:12px;
+           }
+           #main{
+             background-color: #f4f4f4;
+             padding-top: 10px;
+           }
+           .cj-l-title-wxx{
+               border-bottom: 1px dashed #00a0c8;
+               font-size: 16px;
+               font-weight: bold;
+               line-height: 20px;
+               padding: 8px 70px 8px 0;
+               position: relative;
+           }
+
+           .cj-l-title-wxx span {
+               display: block;
+               width: 90px;
+               height: 20px;
+               line-height: 20px;
+               color: #666;
+               text-align: right;
+               position: absolute;
+               top: 5px;
+               right: 0;
+               font-size: 12px;
+               font-weight: bold;
+           }
+           .cj-l-into-wxx {
+               font-size: 12px;
+               color: #666;
+               line-height: 20px;
+               padding: 3px 0;
+               position: relative;
+           }
+           .cj-l-date-wxx {
+               display: block;
+               position: absolute;
+               top: 3px;
+               right: 0;
+               width: 180px;
+               text-align: right;
+           }
+           .cj-l-date-wxx span {
+               margin-left: 7px;
+           }
+           .cj-l-date-wxx:after {
+               content: "";
+               display: block;
+               width: 1px;
+               height: 12px;
+               background: #e3e3e3;
+               position: absolute;
+               top: 4px;
+               left: 60px;
+           }
+           .cj-l-date-wxx-2{
+             display: block;;
+             width: 1px;
+             height: 12px;
+             background: #e3e3e3;
+             position: absolute;
+             right: -4px;
+             top:4px;
+           }
+
+           .cj-l_line{
+             position: absolute;
+             width:5px;
+             height: 18px;
+             left: -10px;
+             top: 9px;
+             border-radius: 10px;
+           }
+           .cj-l_line1{
+             background: linear-gradient(#fe7a7d, #fe4f4f);
+           }
+            .LC_img{
+              height: 60px;
+              display: block;
+              margin: 0 auto;
+              background-color:#ccc;
+            }
+            .wxx_btn{
+              width: 118px;
+              height: 33px;
+              border-radius: 35px;
+              border: 1px solid #db4537;
+              line-height: 30px;
+              box-shadow: 0 3px 8px rgba(226,132,123,.5);
+              color: #db4537;
+              font-size: 14px;
+              text-align: center;
+              margin: 10px auto;
+            }
+            .none{
+              display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+              <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                var model = it[i];
+                var billstatus = model.billstatus;
+               	var time= model.dispatch_time;
+               	var businesstype=model.businesstype;
+                var faultType=model.faulttype;
+                var action=model.actionlist;
+                if(model.mode){
+                  var fsuid=model.mode.fsuid;
+                }else {
+                  var fsuid='';
+                }
+               	var alarmStatus="";
+               	var alarmColor="";
+               	var longTime="";
+                var billStatusName="";
+                var billStatusImage='';
+                var billStatusImagenone="";
+                var mode2=JSON.stringify(model.mode);
+                var action2=JSON.stringify(action);
+                var billModel2=model.mode;
+
+                var billStatusColor = "";
+                if(billstatus == "ACCEPT"){
+                billStatusName = "待接单";
+
+                billStatusColor = "#22AADD";
+                if(billModel2){
+                  if((billModel2.faulttype == "GENERELEC" && billModel2.istemperature == "Y")
+                  ||(billModel2.faulttype =="2005"&&(billModel2.businesstype.indexOf('运营商工单')!=-1||billModel2.businesstype.indexOf('千寻公司工单')!=-1))
+                  || (billModel2.faulttype =="2005"&&(billModel2.rev_is_empty_run=='0'||billModel2.rev_is_empty_run=='1'||billModel2.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==billstatus||'ELECTRIC_END'==billstatus))){
+                    billStatusImage="fd1.png";
+                  }else {
+                    billStatusImage="gz1.png";
+                  }
+                }else {
+                  billStatusImagenone="none";
+                }
+
+                }else if(billstatus == "SUPPORTCONFIRM"){
+                billStatusName = "待确认";
+                billStatusColor = "#fb8536";
+                billStatusImagenone="none";
+                }else if(billstatus == "REVERT"){
+                billStatusName = "待回单";
+                billStatusColor = "#B372F6";
+                if(billModel2){
+                  if((billModel2.faulttype == "GENERELEC" && billModel2.istemperature == "Y")
+                  ||(billModel2.faulttype =="2005"&&(billModel2.businesstype.indexOf('运营商工单')!=-1||billModel2.businesstype.indexOf('千寻公司工单')!=-1))
+                  || (billModel2.faulttype =="2005"&&(billModel2.rev_is_empty_run=='0'||billModel2.rev_is_empty_run=='1'||billModel2.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==billstatus||'ELECTRIC_END'==billstatus))){
+
+                    billStatusImage="fd5.png";
+
+                  }else {
+                    var qiand=false;
+              			for (var j = 0; j < action.length; j++) {
+
+              				if(action[j].task_status == '签到'){
+              					qiand=true;
+              				}
+              			}
+
+              			if(qiand){
+                      billStatusImage="gz4.png";
+              			}else {
+                      billStatusImage="gz3.png";
+              			}
+
+                  }
+                }else {
+                  billStatusImagenone="none";
+                }
+
+                }else if(billstatus == "REVERTED"){
+                billStatusName = "已回单";
+                billStatusColor = "#B372F6";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "AUDIT"){
+                billStatusName = "待审核";
+                billStatusColor = "#AED684";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "ELECTRIC_JUDGE"){
+                billStatusName = "待发电";
+                billStatusColor = "#7676BA";
+                if(billModel2){
+                  billStatusImage="fd2.png";
+                }else {
+                  billStatusImagenone="none";
+
+                }
+                }else if(billstatus == "ARCHIVE"){
+                billStatusName = "归档";
+                billStatusColor = "#953A6C";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "DEFINE"){
+                billStatusName = "待定位";
+                billStatusColor = "#00DB00";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "HANGUP"){
+                billStatusName = "挂起";
+                billStatusColor = "#F9F900";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "ISSTAND"){
+                billStatusName = "待上站";
+                billStatusColor = "#A79F00";
+                if(billModel2){
+                  billStatusImage="gz2.png";
+                }else {
+                  billStatusImagenone="none";
+                }
+                }else if(billstatus == "ARRIVE"){
+                billStatusName = "到站签到";
+                billStatusColor = "#04B88B";
+                if(billModel2){
+                  billStatusImage="gz3.png";
+                }else {
+                  billStatusImagenone="none";
+                }
+                }else if(billstatus == "ELECTRIC_BEGIN"){
+                billStatusName = "开始发电";
+                billStatusColor = "#8470FF";
+                if(billModel2){
+                  billStatusImage="fd3.png";
+                }else {
+                  billStatusImagenone="none";
+
+                }
+                }else if(billstatus == "ELECTRIC_END"){
+                billStatusName = "结束发电";
+                billStatusColor = "#8FBC8F";
+                if(billModel2){
+                  billStatusImage="fd4.png";
+                }else {
+                  billStatusImagenone="none";
+
+                }
+
+                }else if(billstatus == "CON_CONFIRM"){
+                billStatusName = "运营商确认";
+                billStatusColor = "#D067AC";
+                billStatusImagenone="none";
+
+                }else if(billstatus == "CON_APPROVE"){
+                billStatusName = "是否认可";
+                billStatusColor = "#008AD4";
+                billStatusImagenone="none";
+
+                }
+
+
+                if(time!=null){
+                longTime=getDateLong(time);
+                }
+
+          		  if("人工受单"==businesstype){
+            			alarmStatus="人工";
+
+            		}else if("设备告警工单"==businesstype&&model.alarmactivecount=="0"){
+
+            			alarmStatus="告警已消除";
+            			alarmColor="#19743b";
+            		}else{
+            			alarmStatus="告警未消除";
+            			alarmColor="#d8544d";
+
+            		}
+
+                var mark;
+                var markColorClass;
+                if("GJ"==model.basestationlevel){
+                    mark='高';
+                    markColorClass="cj-orange";
+                }else if ("BZ"==model.basestationlevel) {
+                    mark='标';
+                    markColorClass="cj-blue";
+                }else if ("GSHD"==model.basestationlevel) {
+                    mark='山';
+                    markColorClass="cj-purple";
+                }else if ("BKH"==model.basestationlevel) {
+                    mark='免';
+                    markColorClass="cj-green";
+                }else if ("KONG"==model.basestationlevel){
+                    mark='';
+                    markColorClass="cj-ash";
+                }
+                }}
+                <li>
+
+                <div class='liBTn'  tapmode="active" isstand="{{=model.mode!=null?model.mode.isstand:''}}" billStatus="{{=model.billstatus}}" stationId="{{=model.stationid}}" billId="{{=model.billid}}" billSn="{{=model.billsn}}" onclick="openRest('{{=model.billsn}}','{{=model.billid}}','{{=model.stationid}}','{{=model.billstatus}}','{{=model.gradetype}}','','{{=fsuid}}');">
+                <div class="cj-l-title-wxx">
+                  <div class="cj-l_line cj-l_line1"></div>
+                  {{=model.billtitle}}
+                  <span style="color:{{=billStatusColor}}">{{=billStatusName}}</span>
+                </div>
+                <div class="cj-l-into-wxx">{{=model.billsn}}<div class="cj-l-date-wxx"><span>{{=model.businesstype}}</span></div></div>
+                <div class="cj-l-into-wxx">
+                  <span style="color:{{=alarmColor}};position:relative;" >{{=alarmStatus}}<div class="cj-l-date-wxx-2"></div> </span>
+                  <span style="margin-left: 2px;">
+                  <div class='cj-l-level {{=markColorClass}}'>{{=mark}}</div>
+                  {{=model.stationname!=null?model.stationname:''}}
+                  </span>
+                </div>
+                <div class="cj-l-into-wxx">
+                  历时:<span>{{=longTime}}</span>
+
+                  <div class="startTime none">{{=time}}</div>
+
+                </div>
+
+                <img class="LC_img {{=billStatusImagenone}}" src="../../image/{{=billStatusImage}}" alt=""/>
+                </div>
+
+                {{? billstatus == 'ACCEPT'&&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("ACCEPT",{{=mode2}},"{{=model.stationid}}");'>接单</div>
+          			{{?}}
+
+          			{{? billstatus == 'ISSTAND'&&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("ISUPSTATION",{{=mode2}},"{{=model.stationid}}");'>是否上站</div>
+          			{{?}}
+
+          			{{? billstatus == 'ARRIVE'&&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("UPSTATIONSIGN",{{=mode2}},"{{=model.stationid}}");'>到站</div>
+          			{{?}}
+
+
+          			{{? billstatus == 'SUPPORTCONFIRM'&&billModel2!=''}}
+          			{{? businesstype.indexOf('运营商工单')==-1}}
+          			<div class='wxx_btn' onclick='optBill("SUPPORTCONFIRM",{{=mode2}},"{{=model.stationid}}");'>故障确认</div>
+          			{{?}}
+          			{{?}}
+
+          			{{? billstatus == 'REVERT' &&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("REVERT",{{=mode2}},"{{=model.stationid}}",{{=action2}});'>回单</div>
+          			{{?}}
+
+          			{{? billstatus == 'ELECTRIC_BEGIN' &&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("ELECTRIC_BEGIN",{{=mode2}},"{{=model.stationid}}");'>开始发电</div>
+          			{{?}}
+
+          			{{? billstatus == 'ELECTRIC_END' &&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("ELECTRIC_END",{{=mode2}},"{{=model.stationid}}");'>结束发电</div>
+          			{{?}}
+
+          			{{? billstatus == 'CON_CONFIRM'&&billModel2!='' }}
+          			<div class='wxx_btn' onclick='optBill("CON_CONFIRM",{{=mode2}},"{{=model.stationid}}");'>运营商确认</div>
+          			{{?}}
+
+          			{{? billstatus == 'CON_APPROVE'&&billModel2!='' }}
+          			<div class='wxx_btn' onclick='optBill("CON_APPROVE",{{=mode2}},"{{=model.stationid}}");'>是否认可</div>
+          			{{?}}
+
+          			{{? billstatus == 'AUDIT'&&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("AUDIT",{{=mode2}},"{{=model.stationid}}");'>审核</div>
+          			{{?}}
+
+          			{{? billstatus == 'ELECTRIC_JUDGE'&&billModel2!=''}}
+          			<div class='wxx_btn' onclick='optBill("ELECTRIC_JUDGE",{{=mode2}},"{{=model.stationid}}");'>是否发电</div>
+          			{{?}}
+
+                </li>
+                {{  } }}
+            </script>
+            <ul class="ccssoft_list_wxx" id="listView"></ul>
+            <div class="aui-hidden">
+                <div id="actionForm" class="aui-form">
+                    <div class="aui-input-row" style="padding:0 5px;width:100%;">
+                        <label class="aui-input-addon" style="font-size:1em;width:25%;font-weight: bold;">工单</label>
+                        <input class="aui-input aui-pull-right" type="text" readonly  name="billsn"/>
+                    </div>
+                    <div class="aui-input-row aui-hidden" style="padding:0 5px;width:100%;">
+                        <label class="aui-input-addon" style="font-size:1em;width:25%;font-weight: bold;">联系人电话</label>
+                        <input class="aui-input aui-pull-right" type="text" readonly  name="linkInfo" />
+                    </div>
+                    <div class="aui-input-row aui-hidden" style="padding:0 5px;width:100%;">
+                        <label class="aui-input-addon" style="font-size:1em;width:25%;font-weight: bold;">接受人</label>
+                        <select class="aui-pull-right" name="transferUserid" style="margin-bottom: 0;border:none;"></select>
+                    </div>
+                    <div class="aui-input-row" style="padding:0 5px;width:100%;">
+                        <label class="aui-input-addon" style="font-size:1em; width:25%;font-weight: bold;">处理意见</label>
+                        <textarea class="aui-pull-right" name="dealComment" autofocus="true" style="margin-bottom:0;border: none;"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="wrap">
+          <div id="header"></div>
+          <div id="billMenuMain"></div>
+        </div>
+        <!--接单begin-->
+        <div id="acceptDiv" class="winDiv">
+          <div class="winTitleDiv">
+            确定接单？
+          </div>
+          <div class="winContentSnDiv" id="acceptSnId"></div>
+          <div class="winContentTitleDiv" id="acceptTitleId"></div>
+          <div class="winButtonDiv">
+            <button class="winCancelBtn"  onclick="closeFrame()">
+              取消
+            </button>
+            <button class="winOkBtn"  onclick="acceptFunc()">
+              确定
+            </button>
+          </div>
+        </div>
+        <!--接单end-->
+    		<!--升级、反馈和转派等begin-->
+    		<div id="otherDiv" class="winDiv">
+    			<div id="spanTitleId" class="otherDivHeader"></div>
+    			<input type="hidden" id="optTypeId" value=""/>
+    			<div  id="transferLabelDivId" class="selectLabelDiv" style="margin-top: 10px;" >
+    				<div id="user_name" style="font-size:14px;color:#adadad;">
+    					接收人
+    				</div>
+    			</div>
+    			<!--<div id="transferSelDivId" class="transferDiv" style="display:none;">
+    				<select id="transferSelId" class="transferSel" value="">
+    					<option value="">请选择</option>
+    				</select>
+    			</div>-->
+
+    			<div id="contactTelSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+    				<div class="aui-flex-item-3 " style="height: 30px;line-height: 30px; text-align: right;color:#adadad; font-size:14px;">
+    					联系电话:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<input id="contactTelTextId"  type="text" class="textareaborder" value=""/>
+    				</div>
+    			</div>
+
+    			<div id="delayHourSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+
+    				<div id="delayHourId" class="aui-flex-item-3 " style=" padding-left:2px;font-size:16px;line-height: 1.5;text-align: left;color:#adadad;">
+    					申请延时的时间(小时):
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<input id="delayHourTextId"  type="text" class="textareaborder" value=""/>
+    				</div>
+    			</div>
+
+    			<div id="transferSelDivId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+    				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+    					接收人:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<select id="transferSelId" class="textareaborder2" value="">
+    					<option value="">请选择</option>
+    				</select>
+    				</div>
+    			</div>
+
+    			<div id="isjishuSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+    				<div  style="height: 40px;line-height: 40px; padding-left:2px;color:#adadad;">
+    					是否技术问题:
+    				</div>
+    				<div class="aui-flex-auto " style="padding-right: 10px;width：65%;">
+    					<select id="isStandSelId" class="textareaborder2" value="" onchange="selectIsJishu(this);">
+    						<option value="Y">是</option>
+    						<option value="N">否</option>
+    					</select>
+    				</div>
+    			</div>
+    			<div id="areaManagerLabelDivId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+    				<div id="the_username" class="aui-flex-item-3 " style=" padding-left:2px;font-size:16px;line-height: 1.5;text-align: left;color:#adadad;">
+    					区域经理:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<select id="areaManagerId" class="textareaborder2"  style="padding: 0px;padding-left: 5px;" value="">
+    					<option value="">请选择</option>
+    				</select>
+    				</div>
+    			</div>
+
+
+
+
+    				<div id="userLocationSpanId"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+    				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+    					所在位置:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<textarea id="locationId" class="dealInfo" style="padding: 5px 2px;overflow:auto; " rows="7"  cols="10"></textarea>
+    				</div>
+    			</div>
+    			<div id="isUpstationSpanId"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+    				<div id="is_tipsid" style="height: 40px;line-height: 40px; padding-left:2px;color:#adadad;">
+    					是否需要上站:
+    				</div>
+    				<div class="aui-flex-auto " style="padding-right: 10px;width：65%;">
+    					<select id="isStandId" class="textareaborder2" value="" onchange="selectIsNeed(this);">
+    						<option value="Y">是</option>
+    						<option value="N">否</option>
+    					</select>
+    				</div>
+    			</div>
+    				    <div id="opinionLabelDiv"class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+
+                            <div id="dealWayLabelId" class="aui-flex-item-3 " style=" padding-left:2px;font-size:14px;width: 28%;height: 100px;line-height: 1.5;text-align: left;color:#adadad;">
+    					处理方法:
+    						</div>
+                            <div class="cardTextareaCon">
+                                <textarea id="otherDealInfoId" name="handlerResult" rows="4" class="noborder required" style='width:100%' data-valid="required" data-error="请填写处理方法！" ></textarea>
+                             <!--<select id='isshowSel' onchange="commonDoWith(this)" value="" style="width:100%; height: 30%;line-height:30%;display: none">
+                                    <option value="" style="font-size: 10px;">常用语</option>
+                                    <option value="供电公司原因">供电公司原因</option>
+                                    <option value="运营商原因">运营商原因</option>
+                                    <option value="站点设备故障">站点设备故障</option>
+                                    <option value="铁塔公司原因">铁塔公司原因</option>
+                                </select>-->
+                            </div>
+                        </div>
+                         <div id='isshowSel'  style="height:30px;margin-bottom: 20px;margin-top: 0px;padding-top:0px; padding-right: 12px;display: none">
+                        <div style="width: 71%;height: 30px;float: right;" >
+                             <select onchange="commonDoWith(this)" value="" style="width:100%;padding: 0px 5px;font-size: 12px; ">
+                                    <option value="" style="font-size: 10px;">常用语</option>
+                                    <option value="供电公司原因">供电公司原因</option>
+                                    <option value="运营商原因">运营商原因</option>
+                                    <option value="站点设备故障">站点设备故障</option>
+                                    <option value="铁塔公司原因">铁塔公司原因</option>
+                                </select>
+                            </div>
+                        </div>
+
+    			<div class="winButtonDiv">
+    				<button class="winCancelBtn"  onclick="closeFrame()">
+    					取消
+    				</button>
+    				<button class="winOkBtn"  onclick="otherOptFunc()">
+    					确定
+    				</button>
+    			</div>
+    		</div>
+    		<!--升级、反馈和转派等end-->
+
+    				<!--到站签到begin-->
+    		<div id="SignDiv" class="winDiv">
+    			<div id="spanTitleId1" class="otherDivHeader"></div>
+    			<div  id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;" >
+    				<div id="user_name1" style="font-size:16px;color:#adadad;">
+    					接收人
+    				</div>
+    			</div>
+
+    			<div id="contactTelSpanId1"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+    				<div class="aui-flex-item-3 " style="height: 30px;line-height: 30px; text-align: right;color:#adadad;font-size:14px;">
+    					联系电话:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<input id="contactTelTextId1"  type="text" class="textareaborder" value="" />
+    				</div>
+    			</div>
+
+    				<div id="userLocationSpanId1"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+    				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+    					所在位置:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<textarea id="locationId1" class="dealInfo" style="padding: 5px 2px;overflow:auto; " rows="7"  cols="10"></textarea>
+    				</div>
+    			</div>
+    			<div id="opinionLabelDiv1"class="aui-flex-col" data-type="text" style="margin-right: 10px;">
+    				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+    					处理意见:
+    				</div>
+    				<div class="aui-flex-item-9 " style="padding-right: 10px">
+    					<textarea id="otherDealInfoId1" class="dealInfo" rows="5" cols="10" placeholder="若偏差超过100米，请写上原因"></textarea>
+    				</div>
+    			</div>
+    			<div class="winButtonDiv">
+    				<button class="winCancelBtn"  onclick="restartLocationFunc()">
+    					重新定位
+    				</button>
+    				<button class="winOkBtn"  onclick="signOptFunc()">
+    					确定
+    				</button>
+    			</div>
+    		</div>
+    		<!--到站签到end-->
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/aui.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="script/bill-listCon.js"></script>
+    <script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+
+    <script type="text/javascript">
+    // 工单历时自动刷新
+    setInterval(function(){
+      $('.startTime').each(function(){
+        var timestart=$(this).html();
+        var longTime2 = getDateLong(timestart);
+        $(this).siblings('span').html(longTime2);
+      });
+    },1000);
+    //点击菜单触发的事件
+    function optBill(type,mode,stationId,action) {
+
+      var billModel = mode;
+      var user=$api.getStorage('user');
+      $api.setStorage('billModel',mode);
+      $api.setStorage('actionList',action);
+
+// wxxxxxxxxxxxxxxxxxxxxxxxxx
+      api.pageParam.operateType = type;
+      api.pageParam.billId=billModel.billid;
+      api.pageParam.stationId=stationId;
+      api.pageParam.billStatus=billModel.billstatus;
+      api.pageParam.gradetype=billModel.gradetype;
+      api.pageParam.fromsource='list';
+      api.pageParam.userId=user.userid;
+      api.pageParam.leadid=user.leaderid;
+
+      //	if (billModel) {
+      //		billModel.operateType = type;
+      //	}
+      var user = $api.getStorage('user');
+      var userId = user.userid;
+      document.getElementById('transferLabelDivId').style.display = "none";
+      document.getElementById('transferSelDivId').style.display = "none";
+      // document.getElementById('shadowId').style.display = "none";
+      document.getElementById('billMenuMain').style.display = "none";
+
+      if (type == "ACCEPT") {
+        var snVal = "编号：" + billModel.billsn;
+        var titleVal = "内容：" + billModel.billtitle;
+        $api.byId('acceptSnId').innerHTML = snVal;
+        $api.byId('acceptTitleId').innerHTML = titleVal;
+        easyDialog.open({
+          container : 'acceptDiv',
+          fixed : false
+        });
+      } else if (type == "UPGRADE") {
+        $api.byId('spanTitleId').innerHTML = "工单升级";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人:" + user.username;
+    //		$('#user_name')
+    //		document.get
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $('#areaManagerLabelDivId').show();
+        $api.byId('optTypeId').value = "UPGRADE";
+        if ("GET_BILL_LIST" == api.pageParam.type) {
+          $api.byId('the_username').innerHTML = "区域经理助理:";
+          $client.getAreaManagersNext({
+            billid : billModel.billid,
+            siteid : billModel.st_id
+          }, function(ret, err) {
+            if (ret) {
+              if (ret.success) {
+
+                var areaManagers = ret.list;
+                for (var i = 0, size = areaManagers.length; i < size; i++) {
+                  $('<option>').text(areaManagers[i].username).val(areaManagers[i].userid).appendTo('#areaManagerId');
+                }
+                easyDialog.open({
+                  container : 'otherDiv',
+                  fixed : false
+                });
+              } else {
+                api.toast({
+                  msg : ret.data_info
+                });
+              }
+            } else {
+              api.toast({
+                msg : err.msg
+              });
+            }
+          });
+        } else if ("GET_BILL_UPDATE_LIST" == api.pageParam.type) {
+
+          $api.byId('isjishuSpanId').style.display = "";
+          $api.byId('the_username').innerHTML = "技术专家:";
+          $client.getTechPeople({
+            billid : billModel.billid,
+            billSn : billModel.billsn
+          }, function(ret, err) {
+            if (ret) {
+              if (ret.success) {
+                var areaManagers = ret.list;
+                for (var i = 0, size = areaManagers.length; i < size; i++) {
+                  $('<option>').text(areaManagers[i].username + "(" + areaManagers[i].type + ")").val(areaManagers[i].userid).appendTo('#areaManagerId');
+                }
+
+                easyDialog.open({
+                  container : 'otherDiv',
+                  fixed : false
+                });
+              } else {
+                api.toast({
+                  msg : ret.data_info
+                });
+              }
+            } else {
+              api.toast({
+                msg : err.msg
+              });
+            }
+          });
+
+        }
+      } else if (type == "FEEDBACK") {
+        $api.byId('spanTitleId').innerHTML = "工单反馈";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('isshowSel').style.display = "";
+        $api.byId('opinionLabelDiv').style.marginBottom="0px";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('optTypeId').value = "FEEDBACK";
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "UPSTATIONSIGN") {
+      console.log("到站！")
+        openBillList("upStationSign_win");
+    //		api.closeFrame();
+
+      }
+      else if (type == "ISUPSTATION") {//是否需要上站
+        $api.byId('spanTitleId').innerHTML = "是否需要上站";
+
+        $api.byId('opinionLabelDiv').style.display = "none";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('isUpstationSpanId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('optTypeId').value = "ISUPSTATION";
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      }else if (type == "CON_CONFIRM") {//运营商确认
+        $api.byId('spanTitleId').innerHTML = "运营商是否同意发电";
+        $api.byId('is_tipsid').innerHTML = "是否同意:";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('isUpstationSpanId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('optTypeId').value = "CON_CONFIRM";
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "CON_APPROVE") {//运营商确认
+        $api.byId('spanTitleId').innerHTML = "运营商认可";
+        $api.byId('is_tipsid').innerHTML = "是否认可:";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('isUpstationSpanId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('optTypeId').value = "CON_APPROVE";
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "REPLY") {
+        $api.byId('spanTitleId').innerHTML = "支撑回复";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('optTypeId').value = "REPLY";
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "TRANSFERS") {
+        $api.byId('spanTitleId').innerHTML = "工单转派";
+        $api.byId('optTypeId').value = "TRANSFERS";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('transferSelDivId').style.display = "";
+        var stationId = api.pageParam.stationId;
+
+        var opt = {
+          siteId : stationId,
+          countyid : billModel.countyid
+        };
+        $client.getStationUsers(opt, function(ret, err) {
+          if (ret) {
+            //var strs = $api.jsonToStr(ret);
+            //alert(strs);
+            if (ret.success) {
+              var areaManagers = ret.users;
+              for (var i = 0, size = areaManagers.length; i < size; i++) {
+                $('<option>').text(areaManagers[i].username).val(areaManagers[i].userid).appendTo('#transferSelId');
+              }
+
+            }
+            easyDialog.open({
+              container : 'otherDiv',
+              fixed : false
+            });
+          }
+        });
+      } else if (type == "SUPPORTCONFIRM") {
+        var user = $api.getStorage('user');
+        $api.byId('spanTitleId').innerHTML = "故障确认";
+        $api.byId('optTypeId').value = "SUPPORTCONFIRM";
+        //		$api.byId('contactTelTrId').style.display = "";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "ADDDEAL") {
+        var user = $api.getStorage('user');
+        $api.byId('spanTitleId').innerHTML = "故障追加描述";
+        $api.byId('optTypeId').value = "ADDDEAL";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "DEFINE") {
+        openBillList("supportDefine_win");
+    //		closeFrame('');
+      } else if (type == "REMINDER") {
+        $api.byId('spanTitleId').innerHTML = "工单催办";
+        $api.byId('contactTelSpanId').style.display = "";
+        $api.byId('transferLabelDivId').style.display = "";
+        $api.byId('user_name').innerHTML = "操作人：" + user.username;
+        $api.byId('contactTelTextId').value = user.mobilephone;
+        $api.byId('optTypeId').value = "REMINDER";
+        easyDialog.open({
+          container : 'otherDiv',
+          fixed : false
+        });
+      } else if (type == "REVERT") {
+
+        openBillList("billRevert_win");
+        // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+    //		api.closeFrame();
+      }  else if (type == "ELECTRIC_END") {
+        openBillList("billRevert_win");
+    //		api.closeFrame();
+      }  else if (type == "ELECTRIC_BEGIN") {
+        openBillList("billRevert_win");
+    //		api.closeFrame();
+      } else if (type == "ELECTRIC_JUDGE") {
+        openBillList("billElectric_win");
+    //		closeFrame('');
+      } else if (type == 'TAKEPHOTO') {
+
+        api.execScript({
+          frameName : 'billDetail',
+          script : 'cb_openBillPicDetail();'
+        });
+        api.closeFrame();
+      } else if (type == 'PERFORMANCEQUERY') {
+        api.execScript({
+          frameName : 'billDetail',
+          script : 'performanceQuery();'
+        });
+        closeFrame('');
+      } else if (type == 'REGISTER') {
+        openBillList("upStationSign_win");
+    //		api.closeFrame();
+      }  else if (type == 'NAVTOSTATION') {
+        api.openWin({
+            name : 'mapHeader',
+            url : '../mapHeader.html',
+            reload : true
+          });
+          //延时关闭
+        window.setTimeout("api.closeFrame()", 1000);
+      } else if (type == 'OPENDOOR_1') {//zhangzhitao wxx
+        // GENERELEC停电
+        // 2001开关电源设备故障
+        // 2002蓄电池设备故障
+        // 2003机房环境设备故障
+        // 2004空调设备故障
+        // NOSIGNAL无信号(已停用)
+        // OTHER其它
+        // 2005断站退服
+        // 4001室分故障
+        // var t_faulttype = billModel.faulttype;
+        // if(t_faulttype=="GENERELEC"){//停电工单
+        //
+        // }else if(t_faulttype==""){
+        //
+        // }
+        //alert("1");
+        var pageParam = {
+            // fsuid : $(el).attr("data-fsuid"),
+            // devicecode : $(el).attr("data-devicecode"),
+            // signal : $(el).attr("data-signal"),
+            // devicename : $(el).attr("data-name"),
+            // stationName : api.pageParam.stationName,
+            t_workKind:"1",
+            t_cause:"故障处理"
+        };
+        api.openWin({
+            name : 'autoOpenDoor_win',
+            url : '../autoOpenDoor_win.html',
+            bounces : false,
+            pageParam : pageParam
+        });
+        //延时关闭
+        window.setTimeout("api.closeFrame()", 1000);
+      }else if (type == 'OPENDOOR_2') {//zhangzhitao wxx
+        //alert("2");
+        var pageParam = {
+            // fsuid : $(el).attr("data-fsuid"),
+            // devicecode : $(el).attr("data-devicecode"),
+            // signal : $(el).attr("data-signal"),
+            // devicename : $(el).attr("data-name"),
+            // stationName : api.pageParam.stationName,
+            t_cause:"应急发电"
+        };
+        api.openWin({
+            name : 'autoOpenDoor_win',
+            url : '../autoOpenDoor_win.html',
+            bounces : false,
+            pageParam : pageParam
+        });
+        //延时关闭
+        window.setTimeout("api.closeFrame()", 1000);
+      } else {
+        api.toast({
+          msg : "正在开发中",
+          location : 'bottom'
+        });
+      }
+    }
+
+
+
+
+
+    function openBillList(name) {
+
+    	console.log("name:" + name);
+    	if (name == 'bill-list_win') {
+    //		api.execScript({
+    //			name : name,
+    //			script : 'refreshBillList('+2+');'
+    //		});
+    				api.execScript({
+    					name : name,
+    					frameName : 'bill-listCon_frm',
+    					script : 'cb_refresh();'
+    				});
+    	} else {
+    		api.openWin({
+    			name : name,
+    			url : name + '.html',
+    			bounces : false,
+    			rect : {
+    				x : 0,
+    				y : 0,
+    				w : 'auto',
+    				h : 'auto'
+    			},
+    			reload : true,
+    			pageParam : api.pageParam
+    		});
+    //		api.closeFrame();
+    	}
+    }
+
+
+    //关闭弹出DIV对话框
+    function closeDiv(divId) {
+    	easyDialog.close({
+    		container : divId
+    	});
+    }
+
+    function closeFrame(name) {
+    	$('.winDiv').hide();
+      $('#overlay').hide();
+    }
+
+    //其它操作
+    function otherOptFunc() {
+    	billModel = $api.getStorage('billModel');
+    	var user = $api.getStorage('user');
+    	var userId = user.userid;
+    	var billId = billModel.billid;
+    	var billSn = billModel.billsn;
+    	var taskId = billModel.taskid;
+    	//  var areamanagerId = billModel.st_areamanager;
+    	var areaMan = $('#areaManagerId').val();
+    	var optType = $api.byId('optTypeId').value;
+    	var causeDealInfo = $api.byId('otherDealInfoId').value;
+
+    	var linkInfo = $api.byId('contactTelTextId').value;
+    	if (optType == "UPGRADE") {
+    		if (areaMan != null && areaMan != "") {
+    			api.showProgress({
+    				title : '处理中'
+    			});
+    			if ("GET_BILL_LIST" == api.pageParam.type) {
+    				gradeType = "ASSIST";
+    			} else if ("GET_BILL_UPDATE_LIST" == api.pageParam.type) {
+    				if ("Y" == isJishu) {
+    					gradeType = "TECH";
+    				} else if ("N" == isJishu) {
+    					gradeType = "AREAMAN";
+    				}
+    			}
+    			var opts = {
+    				userId : userId,
+    				billSn : billSn,
+    				taskId : taskId,
+    				linkInfo : linkInfo,
+    				dealComment : causeDealInfo,
+    				areaMan : areaMan,
+    				gradeType : gradeType
+    			};
+    			$client.upgrade(opts, function(ret, err) {
+    				if (ret) {
+    					if (ret.success) {
+    						finishOptBill1(1,"升级成功", "otherDiv");
+    					} else {
+    						api.toast({
+    							msg : ret.data_info,
+    							location : 'middle'
+    						});
+    					}
+    				} else {
+    					api.toast({
+    						msg : '接口访问失败',
+    						location : 'middle'
+    					});
+    				}
+    				api.hideProgress();
+    			});
+    		} else {
+    			api.toast({
+    				msg : "请选择区域经理或者站址没有配置区域经理，无法进行升级操作",
+    				location : 'middle'
+    			});
+    		}
+    	} else if (optType == "ISUPSTATION") {
+    		var isNeedUpstation = $api.byId('isStandId').value;
+    		if ("N" == isNeedUpstation && causeDealInfo == "" || causeDealInfo == null) {
+    			api.toast({
+    				msg : '不需要上站原因必填'
+    			});
+    			return;
+    		}
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		//		userId, billSn, taskId, '', causeDealInfo
+    		$client.isNeedUpStation({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			standCause : causeDealInfo,
+    			isStand : isNeedUpstation,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill1(1,"确认成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	} else if (optType == "CON_CONFIRM") {
+    		var isNeedUpstation = $api.byId('isStandId').value;
+    		if ("N" == isNeedUpstation && causeDealInfo == "" || causeDealInfo == null) {
+    			api.toast({
+    				msg : '不同意发电，处理方法必填'
+    			});
+    			return;
+    		}
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		//		userId, billSn, taskId, '', causeDealInfo
+    		$client.isConfire({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			whetherThePower : isNeedUpstation,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill1(1,"确认成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	}else if (optType == "CON_APPROVE") {
+    		var isNeedUpstation = $api.byId('isStandId').value;
+    		if ("N" == isNeedUpstation && causeDealInfo == "" || causeDealInfo == null) {
+    			api.toast({
+    				msg : '运营商不认可，处理方法必填'
+    			});
+    			return;
+    		}
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		//		userId, billSn, taskId, '', causeDealInfo
+    		$client.isApprove({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			isApprove : isNeedUpstation,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill1(1,"确认成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	} else if (optType == "FEEDBACK") {
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		//		userId, billSn, taskId, '', causeDealInfo
+    		$client.feedBack({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    				var num=$api.getStorage('num');
+    				if(num==2){
+    				finishOptBill1(2,"反馈成功", "otherDiv");
+    				}else{
+    					finishOptBill1(1,"反馈成功", "otherDiv");
+    				}
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	} else if (optType == "REPLY") {//支撑回复
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		//		api.toast({
+    		//			msg : '数值：' + api.pageParam.gradetype
+    		//		});
+    		if ("TECH" == api.pageParam.gradetype) {
+    			$client.replyTechMan({
+    				taskId : taskId,
+    				linkInfo : linkInfo,
+    				dealComment : causeDealInfo,
+    				billSn : billSn
+    			}, function(ret, err) {
+    				if (ret) {
+    					if (ret.success) {
+    						finishOptBill("支撑回复成功", "otherDiv");
+    					} else {
+    						api.toast({
+    							msg : ret.data_info,
+    							location : 'middle'
+    						});
+    					}
+    				} else {
+    					api.toast({
+    						msg : '接口访问失败',
+    						location : 'middle'
+    					});
+    				}
+    				api.hideProgress();
+    			});
+    		} else if ("AREAMAN" == api.pageParam.gradetype) {
+    			$client.replyAreaMan({
+    				taskId : taskId,
+    				linkInfo : linkInfo,
+    				dealComment : causeDealInfo,
+    				billSn : billSn
+    			}, function(ret, err) {
+    				if (ret) {
+    					if (ret.success) {
+    						finishOptBill("支撑回复成功", "otherDiv");
+    					} else {
+    						api.toast({
+    							msg : ret.data_info,
+    							location : 'middle'
+    						});
+    					}
+    				} else {
+    					api.toast({
+    						msg : '接口访问失败',
+    						location : 'middle'
+    					});
+    				}
+    				api.hideProgress();
+    			});
+    		}
+
+    	} else if (optType == "TRANSFERS") {
+    		var transferUserId = $api.byId('transferSelId').value;
+    		if (transferUserId == null || transferUserId == "") {
+    			api.alert({
+    				msg : "请选择接收人"
+    			});
+    			return false;
+    		}
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		$client.transfers({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			billSn : billSn,
+    			notifyUserId : transferUserId
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill("转派成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	} else if (optType == "REMINDER") {
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		$client.reminder({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill("催办成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	} else if (optType == "ADDDEAL") {//追加描述
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		$client.addDeal({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill("追加描述成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	} else if (optType == "SUPPORTCONFIRM") {
+    		api.showProgress({
+    			title : '处理中',
+    			modal : true
+    		});
+    		$client.supportConfirm({
+    			taskId : taskId,
+    			linkInfo : linkInfo,
+    			dealComment : causeDealInfo,
+    			billSn : billSn
+    		}, function(ret, err) {
+    			if (ret) {
+    				if (ret.success) {
+    					finishOptBill1(1,"故障确认成功", "otherDiv");
+    				} else {
+    					api.toast({
+    						msg : ret.data_info,
+    						location : 'middle'
+    					});
+    				}
+    			} else {
+    				api.toast({
+    					msg : '接口访问失败',
+    					location : 'middle'
+    				});
+    			}
+    			api.hideProgress();
+    		});
+    	}
+    }
+
+
+
+    function finishOptBill1(num,msg, closeDivId) {
+    	easyDialog.close({
+    		container : closeDivId
+    	});
+      api.execScript({
+        name : "bill-list_win",
+        frameName : api.frameName,
+        script : 'cb_refresh();'
+      });
+
+
+    	api.toast({
+    		msg : msg,
+    		duration : 1000,
+    		location : 'bottom'
+    	});
+
+    }
+
+
+
+    //接单操作
+    function acceptFunc() {
+    	var billModel = $api.getStorage('billModel');
+    	var user = $api.getStorage('user');
+    	var userId = user.userid;
+    	var billId = billModel.billid;
+    	var billSn = billModel.billsn;
+    	var taskId = billModel.taskid;
+    	api.showProgress({
+    		title : '处理中',
+    		modal : true,
+    	});
+    	var data = {};
+    	data.userID = userId;
+    	data.billId = billId;
+    	data.billSn = billSn;
+    	data.taskId = taskId;
+    	data.billStatus = 0;
+    	data.faultCouse = "手机接单";
+    	data.handlerResult = "手机接单";
+    	$client.acceptBill(data, function(ret, err) {
+    		if (ret) {
+    			if (ret.success) {
+    				//              api.toast({
+    				//                  msg : '接单成功',
+    				//                  location : 'bottom'
+    				//              });
+    				finishOptBill1(0,"接单成功", "acceptDiv");
+    			} else {
+    				api.toast({
+    					msg : ret.data_info,
+    					location : 'bottom'
+    				});
+    			}
+    		} else {
+    			api.toast({
+    				msg : err.msg,
+    				location : 'bottom'
+    			});
+    		}
+    		api.hideProgress();
+    	});
+    }
+
+    function selectIsNeed(el) {
+    	var isNeed = $(el).val();
+    	if ("Y" == isNeed) {
+    		$api.byId('opinionLabelDiv').style.display = "none";
+    	} else {
+    		$api.byId('opinionLabelDiv').style.display = "";
+    //		$api.byId('noNeed').innerHTML = "不需要上站原因:";
+
+    	}
+    }
+
+
+    </script>
+
+
+</html>

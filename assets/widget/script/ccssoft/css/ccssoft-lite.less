@@ -1,0 +1,237 @@
+/**
+*createtime 2015-10-13
+*/
+@themeColor: #db4537;
+@backgroundColor:#eff1f0;
+@list_backgroundColor:#eff1f0;
+
+@color_green:#1ac36b;   //绿色
+@color_red:#ff3333;   //红色
+@color_pink:#ff4081;  //粉色
+@color_violet:#9f00a7; //紫色
+@color_carrot:#E67E22;  //橘色
+
+@list_border_color:#e3e2e2;  //list 线条颜色
+@tab_background_color:#f7f4f4;  //tab窗口背景颜色
+
+
+
+
+body{
+	background-color: @backgroundColor;
+}
+
+
+//aui样式 - 主题颜色
+.ccssoft-aui-bar-theme{
+	background-color:@themeColor;
+}
+
+.ccssoft-aui-list-view-divider{
+padding-top: 6px;
+padding-bottom: 6px;
+padding-left: 15px;
+margin-top: -1px;
+margin-left: 0;
+font-weight: 500;
+color: #999;
+background-color: #fafafa;
+//border-top: 1px solid #ddd;
+//border-bottom: 1px solid #ddd;
+}
+
+.aui-list-view-cell .item-left {
+    width: 33%;
+  //   margin-right: 10px;
+  //   margin-top: 11px;
+  //   margin-bottom: 11px;
+  // margin-left: 15px;
+    float: left;
+}
+.aui-list-view-cell .item-right {
+    overflow: hidden;
+    // margin-top: 11px;
+    // margin-bottom: 11px;
+    // margin-right: 20px;
+}
+
+
+#header,.titlebar{
+    background-color:@themeColor;
+}
+
+
+
+header h1{
+	font-size: 20px;
+    height: 44px;
+    line-height: 44px;
+    margin: 0em;
+    color: #fff;
+}
+
+#ccssoft-pullup{
+	display:block;
+	height:20px;
+	line-height: 20px;
+	padding:5px 15px;
+	font-weight: bold; 
+	font-size: 14px; 
+	color: #888; 
+	text-align: center;
+}
+
+#ccssoft-pullup ccssoft-pullup-label{
+
+	position: relative;
+	top:-10px;
+}
+
+#ccssoft-pullup pullup-icon{
+
+	position: relative;
+	top:-10px;
+}
+
+/** 列表模块的背景颜色 */
+.ccssoft_list{
+	background-color: @list_backgroundColor;
+	override:hidden;
+}
+
+.ccssoft_list_border{
+
+}
+
+.ccssoft_color_red{
+	color:@color_red;
+}
+
+
+.ccssoft_color_green{
+	color:@color_green;
+
+}
+
+
+.ccssoft_color_pink{
+	color:@color_pink;
+}
+
+
+.ccssoft_color_violet{
+	color:@color_violet;
+}
+
+
+.ccssoft_color_carrot{
+	color:@color_carrot;
+}
+
+
+
+.ccssoft_backgroundColor_red{
+	background-color:@color_red;
+}
+
+
+.ccssoft_backgroundColor_green{
+	background-color:@color_green;
+
+}
+
+
+.ccssoft_backgroundColor_pink{
+	background-color:@color_pink;
+}
+
+
+.ccssoft_backgroundColor_violet{
+	background-color:@color_violet;
+}
+
+
+.ccssoft_backgroundColor_carrot{
+	background-color:@color_carrot;
+}
+
+
+
+/*页签菜单栏*/
+.tabbar{
+	background-color:@tab_background_color;
+	border-bottom: 1px solid @tab_background_color;
+}
+.tab{
+	color: #454545;
+}
+.tab:active,.tab.active{
+	color: @themeColor;
+	border-bottom:2px solid @themeColor;
+}
+.tabbar-slider{
+	background-color:@tab_background_color;
+}
+.tab-more{
+	color:#aaa;
+	background-color:@tab_background_color;
+}
+
+.fixed_bottom{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    zoom: 1;
+    width: 100%;
+    //padding:5px 15px;
+	padding:5px 15px 0px 15px;
+    height: 50px;
+    z-index: 3;
+    background-color: #f7f7f7;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+.fixed_bottom:before, .fixed_bottom:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+.fixed_bottom:after {
+    clear: both;
+}
+
+.fixed_bottom .left {
+    float: left;
+    width: 45%;
+    //height: 40px;
+   // line-height: 40px;
+    text-align: center;
+    font-size: 16px;
+    margin-right:5px;
+    transition: all .5s;
+    -webkit-transition: all .5s;
+}
+
+.fixed_bottom .right {
+   
+  //  display: inline-block;
+  float:right;
+    width: 45%;
+   // height: 40px;
+ //   line-height: 40px;
+    text-align: center;
+    font-size: 16px;
+    margin-left:5px;
+    transition: all .5s;
+    -webkit-transition: all .5s;
+}
+
+.fixed_bottom .center {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    transition: all .5s;
+    -webkit-transition: all .5s;
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>现场检查项目列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" > <span class="aui-iconfont aui-icon-left"></span> </a>
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="rollback" style="display: none;" > <span class="aui-iconfont" style="font-size:16px">提交</span> </a>
+            <div class="aui-title">
+                现场检查项目列表
+            </div>
+        </header>
+        <script src="../../script/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../../script/api.js"></script>
+        <script type="text/javascript" src="../../script/common.js"></script>
+        <script type="text/javascript" src="../../script/debug.js"></script>
+        <script type="text/javascript">
+            apiready = function() {
+                initHeader();
+                 var taskstatus = api.pageParam.start_status;
+                 var resultcount= api.pageParam.resultcount;
+               	var totalcount= api.pageParam.totalcount;
+//               var editEnabled = api.pageParam.editEnabled;
+                //控制提交按钮是否显示  JJ  修改前 if (taskstatus && taskstatus == '0'&&resultcount!=totalcount) {
+                if (taskstatus && taskstatus == '0') {
+                    $('#rollback').show();
+                } 
+                
+                
+                api.openFrame({
+                    name : 'checkProjectListFrm',
+                    url : 'checkProjectListFrm.html',
+                    bounces : false,
+                    pageParam : api.pageParam,
+                    rect : frameRect(),
+                });
+                /*jQuery事件:提交按钮*/
+                $('#rollback').click(function() {
+                    api.execScript({
+                        frameName : 'checkProjectListFrm',
+                        script : 'call_rollback();'
+                    });
+                });
+                
+                 /*jQuery事件:提交按钮*/
+                $('#back').click(function() {
+                    api.execScript({
+                    	name:'check_projectList',
+                        frameName : 'checkProjectListFrm',
+                        script : 'back();'
+                    });
+                });
+                
+                api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+					api.execScript({
+                        frameName : 'checkProjectListFrm',
+                        script : 'back();'
+                    });
+						
+				});
+                
+//               /*jQuery事件:重置按钮*/
+//              $('#signid').click(function() {
+//                  api.execScript({
+//                      frameName : 'projectListFrm',
+//                      script : 'restartLocationFunc();'
+//                  });
+//              });
+            };
+            
+          
+        </script>
+    </body>
+</html>

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" android:compileSdkVersion="30" android:compileSdkVersionCodename="11" package="com.apicloud.A6973002767421" platformBuildVersionCode="30" platformBuildVersionName="11">
+    <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" android:protectionLevel="signature"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="true"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.OPSTR_GET_USAGE_STATS"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+    <uses-permission android:name="android.permission.USE_SIP"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA"/>
+    <uses-permission android:name="android.permission.ACCESS_GPS"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+    <permission android:name="com.apicloud.A6973002767421.permission.PROCESS_PUSH_MSG" android:protectionLevel="signatureOrSystem"/>
+    <permission android:name="com.apicloud.A6973002767421.permission.PUSH_PROVIDER" android:protectionLevel="signatureOrSystem"/>
+    <permission android:name="com.apicloud.A6973002767421.permission.PUSH_WRITE_PROVIDER" android:protectionLevel="signatureOrSystem"/>
+    <uses-permission android:name="com.apicloud.A6973002767421.permission.PROCESS_PUSH_MSG"/>
+    <uses-permission android:name="com.apicloud.A6973002767421.permission.PUSH_PROVIDER"/>
+    <uses-feature android:name="android.hardware.location.gps"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"/>
+    <permission android:name="com.apicloud.A6973002767421.permission.JPUSH_MESSAGE" android:protectionLevel="signature"/>
+    <permission android:name="com.apicloud.A6973002767421.permission.MIPUSH_RECEIVE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.apicloud.A6973002767421.permission.MIPUSH_RECEIVE"/>
+    <uses-permission android:name="com.apicloud.A6973002767421.permission.JPUSH_MESSAGE"/>
+    <uses-permission android:name="com.coloros.mcs.permission.RECIEVE_MCS_MESSAGE"/>
+    <uses-permission android:name="com.heytap.mcs.permission.RECIEVE_MCS_MESSAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT"/>
+    <uses-permission android:name="com.meizu.c2dm.permission.RECEIVE"/>
+    <permission android:name="com.apicloud.A6973002767421.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.apicloud.A6973002767421.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.DELETE_PACKAGES"/>
+    <application android:allowBackup="false" android:hardwareAccelerated="true" android:icon="@drawable/uz_icon" android:label="@string/app_name" android:largeHeap="true" android:name="com.uzmap.pkg.uzapp.UZApplication" android:requestLegacyExternalStorage="true" android:supportsRtl="true" android:usesCleartextTraffic="true">
+        <meta-data android:name="uz_version" android:value="3.0.45"/>
+        <meta-data android:name="android.max_aspect" android:value="2.4"/>
+        <meta-data android:name="notch.config" android:value="portrait|landscape"/>
+        <meta-data android:name="android.notch_support" android:value="true"/>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <activity android:configChanges="keyboard|keyboardHidden|locale|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode" android:label="@string/app_name" android:launchMode="singleTop" android:name="com.uzmap.pkg.LauncherUI" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustNothing|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="keyboard|keyboardHidden|locale|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode" android:label="@string/app_name" android:launchMode="singleTask" android:name="com.uzmap.pkg.EntranceActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustUnspecified|stateUnspecified">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="chinatower2"/>
+            </intent-filter>
+        </activity>
+        <provider android:authorities="com.apicloud.A6973002767421.ups" android:exported="false" android:label="udmg" android:name="com.uzmap.pkg.uzapp.UProvider"/>
+        <provider android:authorities="com.apicloud.A6973002767421.upms" android:exported="false" android:grantUriPermissions="true" android:name="com.uzmap.pkg.uzapp.DataProvider"/>
+        <service android:enabled="true" android:label="upns" android:name="com.uzmap.pkg.uzsocket.UPnsService" android:process=":remote"/>
+        <receiver android:enabled="true" android:exported="false" android:label="upns" android:name="com.uzmap.pkg.uzapp.UPExtraBridge" android:process=":remote">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.apicloud.notification"/>
+            </intent-filter>
+        </receiver>
+        <activity android:configChanges="locale|orientation" android:name="com.uzmap.pkg.uzmodules.uzimageBrowser.activity.GalleryActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Black.NoTitleBar"/>
+        <activity android:configChanges="locale|orientation" android:name="com.uzmap.pkg.uzmodules.uzimageBrowser.activity.ImageActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Black.NoTitleBar"/>
+        <activity android:exported="true" android:launchMode="singleTask" android:name="com.apicloud.A6973002767421.wxapi.WXEntryActivity" android:taskAffinity="com.apicloud.A6973002767421" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+        <meta-data android:name="com.baidu.lbsapi.API_KEY" android:value="BHmyUXygGlwAM3dyP3yivQBX4Ejuj2yj"/>
+        <meta-data android:name="JPUSH_CHANNEL" android:value="e71a46893785bcba50f37944"/>
+        <meta-data android:name="OPPO_APPKEY" android:value="OP-394862b9c31b4d0b82850e12ff83234b"/>
+        <meta-data android:name="OPPO_APPID" android:value="OP-30156752"/>
+        <meta-data android:name="XIAOMI_APPKEY" android:value="MI-5611785653932"/>
+        <meta-data android:name="com.vivo.push.api_key" android:value="5386b2a9-cb25-4593-b156-d5a44c8c41a4"/>
+        <meta-data android:name="OPPO_APPSECRET" android:value="OP-84a47abd55cf4efd8b777b7df230d652"/>
+        <meta-data android:name="JPUSH_APPKEY" android:value="98ed76e7eae84eb376e5ad03"/>
+        <meta-data android:name="XIAOMI_APPID" android:value="MI-2882303761517856932"/>
+        <meta-data android:name="com.vivo.push.app_id" android:value="18604"/>
+        <meta-data android:name="com.huawei.hms.client.appid" android:value="appid=100396401"/>
+        <activity android:name="com.tieta.moduleSo.TowerManager"/>
+        <meta-data android:name="android.support.VERSION" android:value="26.0.0"/>
+        <meta-data android:name="availableLoaded" android:value="yes"/>
+        <provider android:authorities="com.apicloud.A6973002767421.hms.update.provider" android:exported="false" android:grantUriPermissions="true" android:name="com.huawei.hms.update.provider.UpdateProvider"/>
+        <activity android:configChanges="fontScale|layoutDirection|locale|orientation|screenLayout|screenSize|smallestScreenSize" android:excludeFromRecents="true" android:exported="false" android:hardwareAccelerated="true" android:name="com.huawei.hms.activity.BridgeActivity" android:screenOrientation="behind" android:theme="@android:style/Theme.Translucent">
+            <meta-data android:name="hwc-theme" android:value="androidhwext:style/Theme.Emui.Translucent"/>
+        </activity>
+        <activity android:configChanges="keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize" android:exported="false" android:name="com.huawei.hms.activity.EnableServiceActivity"/>
+        <activity android:configChanges="keyboard|keyboardHidden|orientation|screenSize" android:name="com.apicloud.navigation.DemoGuideActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <meta-data android:name="com.huawei.hms.client.service.name:base" android:value="base:5.0.0.301"/>
+        <meta-data android:name="com.huawei.hms.min_api_level:base:hmscore" android:value="1"/>
+        <provider android:authorities="com.apicloud.A6973002767421.AGCInitializeProvider" android:exported="false" android:name="com.huawei.agconnect.core.provider.AGConnectInitializeProvider"/>
+        <service android:exported="false" android:name="com.huawei.agconnect.core.ServiceDiscovery"/>
+        <receiver android:directBootAware="true" android:name="com.huawei.hms.support.api.push.PushMsgReceiver" android:permission="com.apicloud.A6973002767421.permission.PROCESS_PUSH_MSG">
+            <intent-filter>
+                <action android:name="com.huawei.intent.action.PUSH_DELAY_NOTIFY"/>
+                <action android:name="com.huawei.intent.action.PUSH"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="true" android:name="com.huawei.hms.support.api.push.PushReceiver" android:permission="com.apicloud.A6973002767421.permission.PROCESS_PUSH_MSG">
+            <intent-filter>
+                <action android:name="com.huawei.android.push.intent.REGISTRATION"/>
+                <action android:name="com.huawei.android.push.intent.RECEIVE"/>
+            </intent-filter>
+        </receiver>
+        <service android:directBootAware="true" android:enabled="true" android:exported="true" android:name="com.huawei.hms.support.api.push.service.HmsMsgService" android:process=":pushservice">
+            <intent-filter>
+                <action android:name="com.huawei.push.msg.NOTIFY_MSG"/>
+                <action android:name="com.huawei.push.msg.PASSBY_MSG"/>
+            </intent-filter>
+        </service>
+        <provider android:authorities="com.apicloud.A6973002767421.huawei.push.provider" android:exported="true" android:name="com.huawei.hms.support.api.push.PushProvider" android:permission="com.apicloud.A6973002767421.permission.PUSH_PROVIDER" android:readPermission="com.apicloud.A6973002767421.permission.PUSH_PROVIDER" android:writePermission="com.apicloud.A6973002767421.permission.PUSH_WRITE_PROVIDER"/>
+        <meta-data android:name="com.huawei.hms.client.service.name:push" android:value="push:5.0.2.300"/>
+        <meta-data android:name="com.huawei.hms.min_api_level:push:push" android:value="1"/>
+        <activity android:name="com.king.apicloud.LocationActivity"/>
+        <activity android:name="com.king.apicloud.MainAct"/>
+        <service android:name="com.king.apicloud.LocationService"/>
+        <service android:exported="true" android:name="com.king.apicloud.ScheduleService" android:permission="android.permission.BIND_JOB_SERVICE" android:process="com.king.apiclund"/>
+        <activity android:label="警告" android:name="com.bangcle.everisk.core.activity.AlertActivity" android:theme="@style/translucent"/>
+        <activity android:configChanges="orientation|screenSize" android:exported="false" android:name="com.huawei.updatesdk.service.otaupdate.AppUpdateActivity" android:theme="@style/upsdkDlDialog">
+            <meta-data android:name="hwc-theme" android:value="androidhwext:style/Theme.Emui.Translucent.NoTitleBar"/>
+        </activity>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:exported="false" android:name="com.huawei.updatesdk.support.pm.PackageInstallerActivity" android:theme="@style/upsdkDlDialog">
+            <meta-data android:name="hwc-theme" android:value="androidhwext:style/Theme.Emui.Translucent"/>
+        </activity>
+        <provider android:authorities="com.apicloud.A6973002767421.updateSdk.fileProvider" android:exported="false" android:grantUriPermissions="true" android:name="com.huawei.updatesdk.fileprovider.UpdateSdkFileProvider"/>
+        <activity android:name="com.example.bugly.TestBugly"/>
+        <activity android:configChanges="keyboardHidden|orientation" android:name="cn.jpush.android.ui.PushActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.apicloud.A6973002767421"/>
+            </intent-filter>
+        </activity>
+        <activity android:exported="false" android:name="cn.jpush.android.ui.PopWinActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <service android:enabled="true" android:exported="false" android:name="cn.jpush.android.service.PushService" android:process=":remote">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER"/>
+                <action android:name="cn.jpush.android.intent.REPORT"/>
+                <action android:name="cn.jpush.android.intent.PushService"/>
+                <action android:name="cn.jpush.android.intent.PUSH_TIME"/>
+            </intent-filter>
+        </service>
+        <provider android:authorities="com.apicloud.A6973002767421.DownloadProvider" android:exported="false" android:name="cn.jpush.android.service.DownloadProvider"/>
+        <receiver android:enabled="true" android:exported="false" android:name="cn.jpush.android.service.PushReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY"/>
+                <category android:name="com.apicloud.A6973002767421"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="cn.jpush.android.service.AlarmReceiver"/>
+        <receiver android:exported="false" android:name="cn.jpush.android.service.SchedulerReceiver"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.dbc.jpushvip.JPushReceiver">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTRATION"/>
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/>
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/>
+                <action android:name="cn.jpush.android.intent.CONNECTION"/>
+                <category android:name="com.apicloud.A6973002767421"/>
+            </intent-filter>
+        </receiver>
+        <provider android:authorities="com.apicloud.A6973002767421.DataProvider" android:exported="false" android:name="cn.jpush.android.service.DataProvider" android:process=":pushcore"/>
+        <receiver android:name="com.dbc.jpushvip.PushMessageReceiver">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/>
+                <category android:name="com.apicloud.A6973002767421"/>
+            </intent-filter>
+        </receiver>
+        <activity android:exported="true" android:name="cn.jpush.android.service.JNotifyActivity" android:taskAffinity="jpush.custom" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.JNotifyActivity"/>
+                <category android:name="com.apicloud.A6973002767421"/>
+            </intent-filter>
+        </activity>
+        <receiver android:name="cn.jpush.android.asus.AsusPushMessageReceiver"/>
+        <service android:name="com.dbc.jpushvip.PushService" android:process=":pushcore">
+            <intent-filter>
+                <action android:name="cn.jiguang.user.service.action"/>
+            </intent-filter>
+        </service>
+        <service android:enabled="true" android:exported="false" android:name="com.xiaomi.push.service.XMJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:process=":pushcore"/>
+        <service android:enabled="true" android:name="com.xiaomi.push.service.XMPushService" android:process=":pushcore"/>
+        <service android:enabled="true" android:exported="true" android:name="com.xiaomi.mipush.sdk.PushMessageHandler"/>
+        <service android:enabled="true" android:name="com.xiaomi.mipush.sdk.MessageHandleService"/>
+        <receiver android:exported="true" android:name="com.xiaomi.push.service.receivers.NetworkStatusReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="com.xiaomi.push.service.receivers.PingReceiver" android:process=":pushcore">
+            <intent-filter>
+                <action android:name="com.xiaomi.push.PING_TIMER"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="true" android:name="cn.jpush.android.service.PluginXiaomiPlatformsReceiver">
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.MESSAGE_ARRIVED"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.ERROR"/>
+            </intent-filter>
+        </receiver>
+        <service android:exported="false" android:name="cn.jpush.android.service.PluginHuaweiPlatformsService">
+            <intent-filter>
+                <action android:name="com.huawei.push.action.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <receiver android:name="cn.jpush.android.service.PluginMeizuPlatformsReceiver">
+            <intent-filter>
+                <action android:name="com.meizu.flyme.push.intent.MESSAGE"/>
+                <action android:name="com.meizu.flyme.push.intent.REGISTER.FEEDBACK"/>
+                <action android:name="com.meizu.flyme.push.intent.UNREGISTER.FEEDBACK"/>
+                <action android:name="com.meizu.c2dm.intent.REGISTRATION"/>
+                <action android:name="com.meizu.c2dm.intent.RECEIVE"/>
+                <category android:name="com.apicloud.A6973002767421"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="cn.jpush.android.service.PluginOppoPushService" android:permission="com.coloros.mcs.permission.SEND_MCS_MESSAGE">
+            <intent-filter>
+                <action android:name="com.coloros.mcs.action.RECEIVE_MCS_MESSAGE"/>
+            </intent-filter>
+        </service>
+        <service android:name="com.heytap.msp.push.service.DataMessageCallbackService" android:permission="com.heytap.mcs.permission.SEND_PUSH_MESSAGE">
+            <intent-filter>
+                <action android:name="com.heytap.mcs.action.RECEIVE_MCS_MESSAGE"/>
+                <action android:name="com.heytap.msp.push.RECEIVE_MCS_MESSAGE"/>
+            </intent-filter>
+        </service>
+        <receiver android:name="cn.jpush.android.service.PluginVivoMessageReceiver">
+            <intent-filter>
+                <action android:name="com.vivo.pushclient.action.RECEIVE"/>
+            </intent-filter>
+        </receiver>
+        <service android:exported="true" android:name="com.vivo.push.sdk.service.CommandClientService"/>
+        <activity android:exported="false" android:name="com.vivo.push.sdk.LinkProxyClientActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:name="com.uzmap.pkg.uzmodules.uzBMap.navigation.BNaviGuideActivity" android:theme="@style/BMapTheme"/>
+        <activity android:name="com.uzmap.pkg.uzmodules.uzBMap.navigation.WNaviGuideActivity" android:theme="@style/BMapTheme"/>
+        <service android:enabled="true" android:name="com.baidu.location.f" android:process=":remote"/>
+        <activity android:configChanges="locale|orientation" android:name="com.apicloud.fileBrowser.fileexplorer.FileViewActivity" android:screenOrientation="portrait" android:theme="@style/file_Theme"/>
+        <activity android:name="com.uzmap.pkg.uzmodules.uzFNScanner.Zxing.CaptureActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <service android:name="com.heytap.msp.push.service.CompatibleDataMessageCallbackService" android:permission="com.coloros.mcs.permission.SEND_MCS_MESSAGE">
+            <intent-filter>
+                <action android:name="com.coloros.mcs.action.RECEIVE_MCS_MESSAGE"/>
+            </intent-filter>
+        </service>
+        <provider android:authorities="com.apicloud.A6973002767421.aaidinitprovider" android:exported="false" android:name="com.huawei.hms.aaid.InitProvider"/>
+        <meta-data android:name="com.huawei.hms.client.service.name:opendevice" android:value="opendevice:5.0.2.300"/>
+        <meta-data android:name="com.huawei.hms.min_api_level:opendevice:push" android:value="1"/>
+    </application>
+</manifest>

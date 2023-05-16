@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>日常维修列表</title>
+       <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+        <link rel="stylesheet" href="../../css/vueComponent.css" />
+        <style>
+            body.active{
+                background : url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                 var model = it[i];
+                var billstatus = model.bussinessid;
+               	var grade= model.hiddengrade;
+               	var source= model.hiddensource;
+               	var type= model.hiddentype;
+                var stationname =model.stationname;
+                var createtime = model.createtime;
+               
+               	var gradeName="";
+               	var hiddentype="";
+               	var hiddenSrc="";
+               	var longTime="";
+                var billStatusName="";
+
+                var billStatusColor = "";
+
+                var isfix = model.isfix;
+
+                if("A"==grade){
+                    gradeName="特别严重隐患";
+                }else if("B"==grade){
+                    gradeName="严重隐患";
+                }else if("C"==grade){
+                    gradeName="一般隐患";
+                }
+
+                if(type == "1"){
+                    hiddentype = "开关电源";
+                }else if(type == "2"){
+                    hiddentype = "蓄电池";
+
+                }else if(type == "3"){
+                    hiddentype = "空调";
+                }else if(type == "4"){
+                    hiddentype = "机房环境";
+                }else if(type == "5"){
+                    hiddentype = "铁塔环境";
+                }else if(type == "6"){
+                    hiddentype = "FSU";
+                }else if(type == "7"){
+                    hiddentype = "其他设备";
+                }
+
+                if(isfix == "N"){
+                    billStatusName = "待派单";
+                    billStatusColor = "#FF4040";
+                }else{
+                    if(billstatus == "1"){
+                        billStatusName = "待问题核实";
+                        billStatusColor = "#22AADD";
+                    }else if(billstatus == "2"){
+                        billStatusName = "待方案制定";
+                        billStatusColor = "#fb8536";
+                    }else if(billstatus == "3"){
+                        billStatusName = "待实施";
+                        billStatusColor = "#B372F6";
+                    }else if(billstatus == "4"){
+                        billStatusName = "待验收";
+                        billStatusColor = "#B372F6";
+                    }else if(billstatus == "5"){
+                        billStatusName = "待验收归档";
+                        billStatusColor = "#AED684";
+                    }else if(billstatus == "6"){
+                        billStatusName = "挂起";
+                        billStatusColor = "#7676BA";
+                    }else if(billstatus == "7"){
+                        billStatusName = "已归档";
+                        billStatusColor = "#953A6C";
+                    }else if(billstatus == "8"){
+                        billStatusName = "待方案审核";
+                        billStatusColor = "#930A6C";
+                    }
+                }
+
+
+                if("1"==source){
+                    hiddenSrc="巡检发现";
+                }else if("2"==source){
+                    hiddenSrc="运营商申告";
+                }else if("3"==source){
+                    hiddenSrc="自有人员上站巡查";
+                }else if("4"==source){
+                    hiddenSrc="业主申告";
+                }else if("5"==source){
+                    hiddenSrc="告警发现";
+                }
+
+                }}
+                <li tapmode="active"    onclick="openRest('{{=model.billsn}}','{{=model.stationid}}','{{=model.bussinessid}}','{{=model.lon}}','{{=model.lat}}','{{=isfix}}');">
+                    <div class="top-title">
+                        {{=stationname}} {{=model.hiddentype!=null?'-':''}} {{=hiddentype}}
+                        <span  style="color:{{=billStatusColor}}">
+                            {{=billStatusName}}
+                        </span>
+                    </div>
+                    {{?isfix=="Y"}}
+                        <div class="cj-l-into">
+                            维修单号：{{=model.billsn}}
+                            <div class="cj-l-date">
+                                <span>{{=gradeName}}</span>
+                            </div>
+                        </div>
+                    {{??isfix=="N"}}
+                        <div class="cj-l-into">
+                            隐患编码：{{=model.billsn}}
+                            <div class="cj-l-date">
+                                <span>{{=gradeName}}</span>
+                            </div>
+                        </div>
+                    {{?}}
+                    <div class="cj-l-into"><span style="border-right: 1px solid #ddd;" >{{=hiddenSrc}} </span><span style="margin-left: 2px;">{{=model.hiddencontent!=null?model.hiddencontent:''}}</span><span style="font-size: 10px;float: right">{{=createtime}}</span></div>
+                </li>
+                {{  } }}
+            </script>
+            <div id="app" v-cloak style="height: 40px;line-height:40px;background-color: white;position: relative;border-bottom: rgb(226,226,226) solid 1px;border-top: rgb(226,226,226) solid 1px" class="vue-dropdown">
+                <label @click="active = !active" style="z-index: 10001;"><span style="margin-left: 20px">{{selectedItem.label}}</span><span class="dropdown-title" :class="[active?'active':'']"></span></label>
+                <yt-mask :show.sync="active" @click-shadow="active = false" top="80px">
+                    <div class="list-container" v-show="active">
+                        <ul><li v-for="item in dataList" :key="item.id" @click="change(item,true)" :class="[value === item.value ? 'active' : '']"><span class="checked-badge" ></span>{{item.label}}</li></ul>
+                    </div>
+                </yt-mask>
+            </div>
+            <!-- <div class="top-title">{{=hiddentype}}<span  style="color:{{=billStatusColor}}">{{=billStatusName}}</span></div> -->
+            <ul class="ccssoft_list" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script type="text/javascript" src="../../script/vueComponent.js"></script>
+     <script>
+
+         var app = new Vue({
+             el:'#app',
+             mixins:[ORDER_OPTIONS_MIXIN],
+             mounted(){
+                 this.init();
+             },
+             methods:{
+                 init(){
+                     this.active = false;
+                     this.change(this.dataList[0]);
+                 },
+                 change(item,refresh = false) {
+                     this.selectedItem = item;
+                     this.value = item.value;
+                     this.active = false;
+                     if(refresh){
+                         listView.setQueryOptions({
+                             sortCond:this.value
+                         });
+                         // alert(JSON.stringify(listView.queryOptions))
+                         listView.refresh();
+                     }
+                 }
+             }
+         });
+
+         var beforeRefresh = function(obj,call){
+             if(app){
+                 app.init();
+                 obj.setQueryOptions({
+                     sortCond:app.value
+                 });
+             }
+             call(true);
+         }
+
+     var  listView;
+     apiready = function() {
+     		// 标识入口页面
+		$api.setStorage('billcntFrom', 'repair-listCon_frm');
+		
+		var opts={
+			billst:'ACCEPT'
+		};
+		if(api.pageParam.type=='RL_Repair'){
+			var Newtime=$api.getStorage('Newtime');
+			listView = new C.ApiListView({
+				fn : $client.getReparirCalendar,
+				listName : 'list',
+                beforeRefresh:beforeRefresh
+			});
+			listView.setQueryOptions({
+				date:Newtime
+			})
+		}else {
+			listView = new C.ApiListView({
+				fn : $client.getRepairBillList,
+				listName : 'billInfoList',
+                beforeRefresh:beforeRefresh
+			});
+		}
+
+         listView.setQueryOptions({
+             sortCond:app.value
+         })
+
+    	listView.refresh();
+
+
+     }
+
+    /**
+     *刷新页面
+        */
+    function refreshList() {
+        console.log("刷新页面")
+        console.log("refreshList")
+        listView.refresh();
+    }
+
+    function openRest(billsn, stationid,bussinessid,stationlon,stationlat,isfix) {
+        var opt = {
+            billsn : billsn,
+            stationId : stationid,
+            bussinessid:bussinessid,
+            stationlon:stationlon,
+            stationlat:stationlat,
+            isfix:isfix
+            };
+        api.openWin({
+            name : 'mainRepairBillDetail',
+            url : 'mainRepairBillDetail.html',
+            opaque : true,
+            bounces : false,
+            reload : true,
+            pageParam : opt,
+            vScrollBarEnabled : false
+        });
+    }
+
+    function cb_queryBillList(opts) {
+    //	opts.stationcode = opts.stationCode;
+    //	delete opts.stationCode;
+        listView.setQueryOptions(opts);
+        listView.refresh();
+    }
+
+
+     </script>
+</html>

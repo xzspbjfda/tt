@@ -1,0 +1,324 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>设备列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            body {
+                background-color: #eff1f0;
+            }
+            ul, li {
+                margin: 0;
+                padding: 0;
+            }
+            .ccssoft_list li {
+                list-style: none;
+                padding: 8px;
+                border-bottom: 1px solid #e3e2e2;
+                background: #fff;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .ccssoft_list li:hover {
+                background: #f9e9df;
+            }
+            .ccssoft_list li:active {
+                background: #f9e9df;
+            }
+            .liLeft {
+                float: left;
+                width: 15%;
+                height: 50px;
+                line-height: 50px;
+            }
+            .liRight {
+                float: left;
+                width: 85%;
+                height: 70px;
+            }
+            .liRightTop, .liRightDown {
+                width: 100%;
+                height: 25px;
+            }
+            .liRightTopName {
+                float: left;
+                width: 50%;
+                height: 25px;
+                text-align: left;
+                font-size: 16px;
+                font-weight: bold;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-left: 10px;
+            }
+            .liRightTopRoot {
+                float: left;
+                width: 50%;
+                height: 25px;
+                text-align: left;
+                font-size: 16px;
+                font-weight: bold;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-left: 15px;
+            }
+            .liRightDownCode {
+                float: left;
+                width: 50%;
+                height: 25px;
+                text-align: left;
+                color: #ADADAD;
+                font-size: 14px;
+                padding-left: 10px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .liRightDownCount {
+                float: left;
+                width: 50%;
+                height: 25px;
+                text-align: left;
+                color: #ADADAD;
+                font-size: 14px;
+                padding-left: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="devList-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {}}
+                <!--<li tapmode="active"  devId="{{=it[i].id}}" deviceName="{{=it[i].name}}" fsuId="{{=it[i].fsuid}}" deviceCode="{{=it[i].devicecode}}" deviceType="{{=it[i].devicetype}}"  onclick="openDevDetail(this)" >-->
+                <li tapmode="active"  devId="{{=it[i].id}}" onclick="openDevDetail('{{=it[i].devicecode}}', '{{=it[i].fsuid}}', '{{=it[i].devicetype}}', '{{=it[i].name}}')" >
+                <div class="liLeft">
+                {{? it[i].devicetype == '01' }}
+                <img src="../../image/dev_gaoyapeidian.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '02'}}
+                <img src="../../image/dev_diyapeidian.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '03' }}
+                <img src="../../image/dev_jiaoliupeidianping.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '04' }}
+                <img src="../../image/dev_zhiliupeidianping.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '05' }}
+                <img src="../../image/dev_chaiyoufadianjizu.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '06' }}
+                <img src="../../image/dev_kaiguandianyuan.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '07' }}
+                <img src="../../image/dev_xudianchizu.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '08' }}
+                <img src="../../image/dev_upsshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '09' }}
+                <img src="../../image/dev_upspeidianping.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '10' }}
+                <img src="../../image/dev_upsdianchi.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '11' }}
+                <img src="../../image/dev_240v_zhiliuxitong.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '12' }}
+                <img src="../../image/dev_zhuanyongkongtiao.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '13' }}
+                <img src="../../image/dev_zhongyangkongtiao.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '14' }}
+                <img src="../../image/dev_zhuanyongkongtiao.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '15' }}
+                <img src="../../image/dev_putongkongtiao.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '16' }}
+                <img src="../../image/dev_zhinengdianbiao.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '17' }}
+                <img src="../../image/dev_menjinxitong.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '18' }}
+                <img src="../../image/dev_jifang_jizhanhuanjing.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '19' }}
+                <img src="../../image/dev_jiankongshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '20' }}
+                <img src="../../image/dev_taiyangneng_fengnengshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '21' }}
+                <img src="../../image/dev_ranqilunjifadianjizu.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '22' }}
+                <img src="../../image/dev_fenglifadianshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '23' }}
+                <img src="../../image/dev_zhinengtongfengxitong.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '24' }}
+                <img src="../../image/dev_xinfengshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '25' }}
+                <img src="../../image/dev_rejiaohuanshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '26' }}
+                <img src="../../image/dev_reguanshebei.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '27' }}
+                <img src="../../image/dev_xudianchiwenkonggui.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '28' }}
+                <img src="../../image/dev_fangleishebei_fangleixiang.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '29' }}
+                <img src="../../image/dev_ranliaodianchi.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '30' }}
+                <img src="../../image/dev_mokuaihua_ups.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '31' }}
+                <img src="../../image/dev_240v_zhiliuxitong.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '32' || it[i].devicetype == '37' }}
+                <img src="../../image/dev_tieta.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '38' || it[i].devicetype == null }}
+                <img src="../../image/dev_gaoyapeidian.png" width="50px" height="50px"/>
+                {{?}}
+                {{? it[i].devicetype == '180' || it[i].devicetype == '181' || it[i].devicetype == '182' || it[i].devicetype == '183' || it[i].devicetype == '184' || it[i].devicetype == '185' }}
+                <img src="../../image/dev_jifang_jizhanhuanjing.png" width="50px" height="50px"/>
+                {{?}}
+                </div>
+                <div class="liRight">
+                <div class="liRightTop">
+                <div class="liRightTopName">{{=it[i].name}}</div>
+                <div class="liRightTopRoot">{{=it[i].roomname?it[i].roomname:''}}</div>
+                </div>
+                <div class="liRightDown">
+                <div class="liRightDownCode">{{=it[i].devicecode}}</div>
+                <div class="liRightDownCount">指标数：{{=it[i].indicatorcount}}</div>
+                </div>
+                <div class="liRightDown">
+                <div class="liRightDownCode">入网状态：
+                    {{
+						var userstatusname='未知';
+						if(it[i].userstatus=='init'){
+							userstatusname='初始录入';
+						}else if(it[i].userstatus =='fail'){
+							userstatusname='稽核不成功';
+						}else if(it[i].userstatus =='on'){
+							userstatusname='在网';
+						}else if(it[i].userstatus =='back'){
+							userstatusname='退网';
+						}
+					}}
+					{{=userstatusname}}
+                </div>
+                <div class="liRightDownCount"></div>
+                </div>
+                </div>
+                </li>
+                {{ } }}
+            </script>
+            <ul class="ccssoft_list" id="devList"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script>
+        function getDevList() {
+            if (api.pageParam.stationId != null) {
+                stationId = api.pageParam.stationId;
+            }
+            api.showProgress({
+                title : '加载中'
+            });
+            var opts = {
+                areaId : stationId
+            }
+            $client.getDevList(opts, function(ret, err) {
+                if (ret) {
+                    console.log("===========getDevList==================")
+                    console.log(JSON.stringify(ret.deviceList))
+                    if (ret.success) {
+                        if (ret.deviceList.length)
+                            renderTemp('devList', 'devList-template', ret.deviceList);
+                        else
+                            $('body').addClass('active');
+                    } else {
+                        api.toast({
+                            msg : ret.data_info,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : '获取站址设备列表失败',
+                        location : 'bottom'
+                    });
+                }
+                api.refreshHeaderLoadDone();
+                api.parseTapmode();
+                api.hideProgress();
+            });
+        }
+
+        function openDevDetail(deviceCode, fsuId, deviceType, deviceName) {
+            //          var deviceCode = $api.attr(el, 'deviceCode');
+            //          var fsuId = $api.attr(el, 'fsuId');
+            //          var deviceType = $api.attr(el, 'deviceType');
+            //          var deviceName = $api.attr(el, 'deviceName');
+            var pageParam = {};
+            pageParam.deviceCode = deviceCode;
+            pageParam.devFsuId = fsuId;
+            pageParam.deviceType = deviceType;
+            pageParam.deviceName = deviceName;
+            pageParam.stationId = api.pageParam.stationId;
+            pageParam.stationName = api.pageParam.stationName;
+            api.openWin({
+                name : 'mainDevDetail',
+                url : 'mainDevDetail.html',
+                opaque : true,
+                bounces : false,
+                reload : true,
+                pageParam : pageParam,
+                vScrollBarEnabled : false
+            });
+        }
+
+        apiready = function() {
+            getDevList();
+            api.setRefreshHeaderInfo({
+                visible : true,
+                bgColor : '#f2f2f2',
+                textColor : '#4d4d4d',
+                textDown : '下拉刷新...',
+                textUp : '松开刷新...',
+                showTime : true
+            }, function(ret, err) {
+                getDevList();
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>巡检任务列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+    <style>
+      	.aui-flex-col:first-child {
+			height: 30px;
+			line-height: 30px;
+			border-bottom: 1px dashed #00a0c8;
+		}
+
+		.aui-flex-col {
+			height: 25px;
+			line-height: 25px;
+		}
+
+		.ccssoft_list {
+			background-color: #eff1f0;
+			override: hidden;
+		}
+
+		.ccssoft_list {
+			margin-top: 15px;
+		}
+
+		.ccssoft_list li {
+			list-style: none;
+			border-bottom: 1px solid #e3e2e2;
+			background: #fff;
+			overflow: hidden;
+			margin-bottom: 10px;
+		}
+
+		.ccssoft_list li:hover {
+			background: #f9e9df;
+		}
+
+		.ccssoft_list li.acitve {
+			background: #f9e9df;
+		}
+
+		.cj-orange {
+			background-color: orange;
+		}
+
+		.cj-blue {
+			background-color: blue;
+		}
+
+		.cj-purple {
+			background-color: purple;
+		}
+
+		.cj-green {
+			background-color: green;
+		}
+
+		.cj-l-level {
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			line-height: 18px;
+			text-align: center;
+			display: inline-block;
+			color: #fff;
+			margin: 0 4px;
+			vertical-align: top;
+		}
+
+		.cj-ash {
+			background-color: grey;
+		}
+
+		.ccssoft_list_wxx {
+			background-color: #eff1f0;
+			overflow: hidden;
+			width: 94%;
+			margin: 0 auto;
+		}
+
+		.ccssoft_list_wxx li {
+			list-style: none;
+			border-radius: 6px;
+			padding: 3px 10px 3px 10px;
+			background: #fff;
+			overflow: hidden;
+			margin-top: 10px;
+		}
+		
+
+		/*.ccssoft_list_wxx li:hover {
+				 background: #f9e9df;
+		 }
+		 .ccssoft_list_wxx li.acitve {
+				 background: #f9e9df;
+		 }*/
+		.ccssoft_list_wxx .showBox {
+			text-align: center;
+			font-size: 12px;
+		}
+
+		#main {
+			background-color: #f4f4f4;
+			padding-top: 10px;
+		}
+
+		.cj-l-title-wxx {
+			border-bottom: 1px dashed #00a0c8;
+			font-size: 16px;
+			font-weight: bold;
+			line-height: 20px;
+			padding: 8px 70px 8px 0;
+			position: relative;
+		}
+
+		.cj-l-title-wxx span {
+			display: block;
+			width: 90px;
+			height: 20px;
+			line-height: 20px;
+			color: #666;
+			text-align: right;
+			position: absolute;
+			top: 5px;
+			right: 0;
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		.cj-l-into-wxx {
+			font-size: 12px;
+			color: #666;
+			line-height: 20px;
+			padding: 3px 0;
+			position: relative;
+		}
+
+		.cj-l-date-wxx {
+			display: block;
+			position: absolute;
+			top: 3px;
+			right: 0;
+			width: 180px;
+			text-align: right;
+		}
+
+		.cj-l-date-wxx span {
+			margin-left: 7px;
+		}
+
+		.cj-l-date-wxx:after {
+			content: "";
+			display: block;
+			width: 1px;
+			height: 12px;
+			background: #e3e3e3;
+			position: absolute;
+			top: 4px;
+			left: 60px;
+		}
+
+		.cj-l-date-wxx-2 {
+			display: block;
+			;
+			width: 1px;
+			height: 12px;
+			background: #e3e3e3;
+			position: absolute;
+			right: -4px;
+			top: 4px;
+		}
+
+		.cj-l_line {
+			position: absolute;
+			width: 5px;
+			height: 18px;
+			left: -10px;
+			top: 9px;
+			border-radius: 10px;
+		}
+
+		.cj-l_line1 {
+			background: linear-gradient(#fe7a7d, #fe4f4f);
+		}
+
+		.LC_img {
+			height: 60px;
+			display: block;
+			margin: 0 auto;
+			background-color: #ccc;
+		}
+
+		.wxx_btn_box {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.wxx_btn {
+			width: 118px;
+			height: 33px;
+			border-radius: 35px;
+			border: 1px solid #db4537;
+			line-height: 30px;
+			box-shadow: 0 3px 8px rgba(226, 132, 123, .5);
+			color: #db4537;
+			font-size: 14px;
+			text-align: center;
+			margin: 4px auto;
+		}
+
+		.none {
+			display: none;
+		}
+
+		.jifenshul {
+			background-color: #fff;
+			box-shadow: 0 10px 16px #e7eaf0;
+			width: 94%;
+			margin: 14px auto 0 auto;
+			border-radius: 3px;
+			border: none !important;
+			line-height: 40px !important;
+			height: 80px !important;
+		}
+
+		.jifenshul img {
+			margin-top: 10px;
+			margin-left: 6px;
+			float: left;
+			width: 20px;
+		}
+
+		.jifenshul span {
+			float: left;
+			margin-left: 2px;
+		}
+
+		.jifenshul .jsnum {
+			float: right;
+			margin-right: 4px;
+		}
+    </style>
+</head>
+<body>
+	<ul class="ccssoft_list_wxx" id="listView">
+		<li class="aui-content" style="padding:8px;" tapmode="active">
+			<div class="detailDiv" onclick="openStandBillDetail(this)">
+				<!--1.dingxb-->
+				<div class="aui-flex-col">
+					<div class="aui-flex-item-9"
+						style="font-weight: bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"> 中山三乡南龙市场
+						&nbsp;&nbsp; &nbsp;&nbsp;<span> 随工</span> <span style="float: right">入站审批</span> </div>
+
+					<div class="aui-flex-item-3 aui-text-right"  style="font-size: 15px;">排除（一般）</div>
+				</div>
+				<div class="aui-flex-col" style="font-size:15px;">
+					<div class="aui-flex-item-9"
+						style="font-weight: bold;overflow: hidden;font-size: 15px;">FS-XXXXXX
+					</div>
+					<div class="aui-flex-item-3 aui-text-right" style="font-size: 15px">朱德明</div>
+				</div>
+				<div class="aui-flex-col" style="font-size:15px;">
+					<div class="aui-flex-item-9">申请上站时间： 2021-xxx</div>
+				</div>
+			</div>
+		</li>
+	</ul>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+	var listView = null;
+  
+	function openStandBillDetail(el) {
+			var a_org_id=$api.attr(el, 'a_org_id');
+			var b_org_id=$api.attr(el, 'b_org_id');
+			var c_org_id=$api.attr(el, 'c_org_id');
+			var p_org_id=$api.attr(el, 'p_org_id');
+			var org_id=$api.attr(el, 'org_id');
+			var status = $api.attr(el, 'status');
+			var id = $api.attr(el, 'id');
+			var task_name = $api.attr(el, 'task_name');
+			var site_id = $api.attr(el, 'site_id');
+			var site_name = $api.attr(el, 'site_name');
+			var work_time_limit = $api.attr(el, 'work_time_limit');
+			var task_score = $api.attr(el, 'task_score');
+			var do_deal_name = $api.attr(el, 'do_deal_name');
+			var tl_ce_cola = $api.attr(el, 'tl_ce_cola');
+			var tangleicol = $api.attr(el, 'tangleicol');
+			var col_cc = $api.attr(el, 'col_cc');
+			var col_dd = $api.attr(el, 'col_dd');
+			var ceshi_new_b = $api.attr(el, 'ceshi_new_b');
+			var utf = $api.attr(el, 'utf');
+			var ceshi_new_a = $api.attr(el, 'ceshi_new_a');
+			var ceshi_new  = $api.attr(el, 'ceshi_new');
+			var p_org_name = $api.attr(el, 'p_org_name');
+			var c_org_name = $api.attr(el, 'c_org_name');
+			var a_org_name = $api.attr(el, 'a_org_name');
+			var self_task_name = $api.attr(el, 'self_task_name');
+			var task_type_name = $api.attr(el, 'task_type_name');
+			var add_man_code  = $api.attr(el, 'add_man_code');
+			var update_user   = $api.attr(el, 'update_user');
+			var create_time   = $api.attr(el, 'create_time');
+			var update_time   = $api.attr(el, 'update_time');
+			var version_id   = $api.attr(el, 'version_id');
+			var create_user   = $api.attr(el, 'create_user');
+			var do_man_code   = $api.attr(el, 'do_man_code');
+			var get_task_time = $api.attr(el, 'get_task_time');
+			var remark = $api.attr(el, 'remark');
+			var do_end_time = $api.attr(el, 'do_end_time');
+			var baidux = $api.attr(el, 'baidux');
+			var baiduy = $api.attr(el, 'baiduy');
+			var station_code = $api.attr(el, 'station_code');
+			var evaluation_content = $api.attr(el, 'evaluation_content');
+			var pageParam = {};
+			pageParam.a_org_id = a_org_id;
+			pageParam.b_org_id = b_org_id;
+			pageParam.c_org_id = c_org_id;
+			pageParam.p_org_id = p_org_id;
+			pageParam.org_id = org_id;
+			pageParam.status = status;
+			pageParam.id = id;
+			pageParam.task_name = task_name;
+			pageParam.site_id = site_id;
+			pageParam.site_name = site_name;
+			pageParam.work_time_limit = work_time_limit;
+			pageParam.task_score = task_score;
+			pageParam.do_deal_name = do_deal_name;
+			pageParam.tl_ce_cola = tl_ce_cola;
+			pageParam.tangleicol = tangleicol;
+			pageParam.col_cc = col_cc;
+			pageParam.col_dd = col_dd;
+			pageParam.ceshi_new_b = ceshi_new_b;
+			pageParam.utf = utf;
+			pageParam.ceshi_new_a = ceshi_new_a;
+			pageParam.ceshi_new  = ceshi_new;
+			pageParam.p_org_name  = p_org_name;
+			pageParam.c_org_name  = c_org_name;
+			pageParam.a_org_name  = a_org_name;
+			pageParam.self_task_name  = self_task_name;
+			pageParam.task_type_name  = task_type_name;
+			pageParam.add_man_code  = add_man_code;
+			pageParam.update_user  = update_user;
+			pageParam.create_time  = create_time;
+			pageParam.update_time  = update_time;
+			pageParam.version_id  = version_id;
+			pageParam.create_user  = create_user;
+			pageParam.do_man_code  = do_man_code;
+			pageParam.type = api.pageParam.type;
+			pageParam.get_task_time = get_task_time;
+			pageParam.remark = remark;
+			pageParam.do_end_time = do_end_time;
+			pageParam.baidux = baidux;
+			pageParam.baiduy = baiduy;
+			pageParam.station_code = station_code;
+			pageParam.evaluation_content = evaluation_content;
+			// 超时状态不允许跳转操作
+			// if(status=='9'){
+			// 	api.toast({
+			// 			msg: '已超时!',
+			// 			duration: 2000,
+			// 			location: 'bottom'
+			// 	});
+			// }else {
+			//
+			// }
+			pageParam.fromPage = "checkStandBill";
+			api.openWin({
+				name : 'checkStandBill',
+				url : 'checkStandBill.html',
+				opaque : true,
+				bounces : false,
+				reload : true,
+				pageParam : pageParam,
+				vScrollBarEnabled : false
+			});
+		}
+
+    apiready = function() {
+    
+    };
+	
+
+</script>
+</html>

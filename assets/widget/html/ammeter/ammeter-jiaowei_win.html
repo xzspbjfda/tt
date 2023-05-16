@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>电表绑定</title>
+        <!--<link rel="stylesheet" type="text/css" href="../../css/api.css" />-->
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css">
+        <link rel="stylesheet" type="text/css" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title" style="">
+                电表绑定
+            </div>
+            <a id="menuBtn" class="aui-pull-right" tapmode onclick="openMenu()" style="display: none;"> <span class="aui-iconfont aui-icon-add"></span> </a>
+           <!--  <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="submit"> <span class="aui-iconfont" style="font-size:16px">提交</span> </a> -->
+        </header>
+    </body>
+    <script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script>
+    apiready = function() {
+        var header = $api.byId('header');
+        $api.fixIos7Bar(header);
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.parseTapmode();
+        api.openFrame({
+            name : "ammeter-jiaowei_frm",
+            url : 'ammeter-jiaowei_frm.html',
+            bounces : false,
+            pageParam :api.pageParam,
+            rect : {
+                x : 0,
+                y : headerPos.h,
+                w : headerPos.w,
+                h : 'auto'
+            }
+        });
+
+    };
+
+    /*jQuery事件:提交按钮*/
+    $('#submit').click(function() {
+      api.execScript({
+        frameName : 'ammeter-jiaowei_frm',
+        script : 'call_validate();'
+      });
+    });
+
+
+
+    </script>
+</html>

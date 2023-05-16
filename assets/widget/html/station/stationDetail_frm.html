@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>站址详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<style>
+		.aui-content-wxx{
+			width: 100%;
+			margin: 0;
+		}
+		.aui-content-wxx ul{
+			background-color: #fff;
+			border-radius: 0;
+			overflow: hidden;
+			margin-bottom: 10px;
+			padding: 0 3%;
+		}
+			.lonLatCon {
+				color: #666;
+				float: left;
+				width: 35%;
+				padding-left: 20px;
+			}
+			.lonLatBtn {
+				color: #666;
+				float: left;
+				width: 30%;
+			}
+
+			.showMap {
+				color: #fff;
+				display: inline-block;
+				padding: 2px 8px;
+				background-color: #89baf9;
+				font-size: 12px;
+			}
+			.personWin {
+				width: 300px;
+				text-align: center;
+				background-color: #f2f2f2;
+			}
+			.personTitle {
+				background-color: #DB4537;
+				height: 40px;
+				line-height: 40px;
+				width: 100%;
+			}
+			.personButtom {
+				background-color: #F2F2F2;
+				height: 50px;
+				line-height: 50px;
+				width: 100%;
+				border-top: 1px solid #ADADAD;
+			}
+			.btnCls {
+				font-size: 20px;
+				background-color: #007AFF;
+				color: white;
+				width: 100%;
+				height: 40px;
+				line-height: 40px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+			.userList {
+				height: 40px;
+				line-height: 40px;
+				font-size: 16px;
+				width: 280px;
+				margin-left: 10px;
+			}
+			.equipment{
+				border-bottom: 1px dashed #00a0c8;
+			}
+			.equipment:last-child{
+				border: none;
+			}
+			div.weatherc{
+					position:absolute;
+			left:0%;
+			top:0px;
+			z-index:999999;
+			height:45px;
+			width:81px;
+			margin-top:70px;
+			margin-left:0%;
+				}
+				div.weatherc2{
+					position:absolute;
+			left:0%;
+			top:0px;
+			z-index:999999;
+			height:43px;
+			width:80px;
+			margin-right:0%;
+				}
+
+					* {
+							margin: 0;
+							padding: 0;
+							-webkit-box-sizing: border-box;
+							-moz-box-sizing: border-box;
+							box-sizing: border-box;
+					}
+					/*清除浮动*/
+					.clearfix:before, .clearfix:after {
+							display: table;
+							content: " ";
+					}
+					.clearfix:after {
+							clear: both;
+					}
+					.clearfix {
+							zoom: 1;
+					}
+					.wrapper h4{
+								padding: 0px 0 0px 15px;
+					margin: 8px 0 8px 15px;
+					border-left:4px solid #db4537;
+					}
+					.dz-table{
+						width:94%;
+						margin: 10px auto;
+						font-size: 14px;
+					}
+					.dz-table>thead{
+						background:#db4537;
+						color:#fff;
+					}
+					.dz-table>thead td{
+						padding:5px;
+						text-align: center;
+					}
+					.dz-table>tbody td{
+						padding:5px;
+						text-align: center;
+						border-bottom: 2px solid #fff;
+						font-size: 12px;
+					}
+					.dz-table>tbody tr{
+						background:#F7F7F7;
+					}
+					.dz-table>tbody tr:hover{
+						background:#ffdfdd;
+					}
+					.dian_bg{
+						width: 20px;
+						height: 20px;
+						border-radius: 50%;
+						background-color: #db4537;
+						color: #fff;
+						display: inline-block;
+					}
+					.red{
+						color: #db4537;
+					}
+
+					.today_data_w {
+	width: 120px !important;
+
+}
+.tqshow {
+	width: 120px !important;
+
+}
+.show{
+display: block;;
+}
+.Hide{
+display: none;
+}
+
+		</style>
+	</head>
+	<body>
+		<script id="personDiv-template" type="text/x-dot-template">
+			<div class="personWin">
+			<div class="personTitle">
+			<span style="font-size: 20px;color:white;">请选择</span>
+			</div>
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			{{? i<(len-1) }}
+			<div class="userList" style="border-bottom:solid 1px #E0E0E0;" onclick="showUserInfo('{{=it[i].userId}}')">
+			{{=it[i].userName}}
+			</div>
+			{{?}}
+			{{? i>=(len-1) }}
+			<div class="userList" onclick="showUserInfo('{{=it[i].userId}}')">
+			{{=it[i].userName}}
+			</div>
+			{{?}}
+			{{ } }}
+			<div class="personButtom">
+			<div style="margin-left:10px;float:left;width:50px;height:40px;"></div>
+			<div style="width:180px;height:40px;float:left;">
+			<input type="button" class="btnCls" onclick="closeDiv('personDiv')" value="关闭"/>
+			</div>
+			<div style="margin-right:10px;float:left;width:50px;height:40px;"></div>
+			</div>
+			</div>
+		</script>
+		<script id="stationDetail-template" type="text/x-dot-template">
+		<ul class="aui-list-view">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>站址信息</h2></div>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 站址编码</div>
+			<div class="aui-col-xs-12 marginTOP4" >{{=it.st_deviceid != null?it.st_deviceid:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 站址名称</div>
+			<div class="aui-col-xs-12 marginTOP4">{{=it.st_name != null?it.st_name:'-'}}</div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 备注</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.remarknew  != null?it.remarknew:'-'}}</div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 运维ID</div>
+			<div class="aui-col-xs-12 marginTOP4" id="basestationcode">{{=it.st_code != null?it.st_code:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 red">• 站址来源</div>
+			<div class="aui-col-xs-12 marginTOP4">
+			{{? it.st_sitesource == '1' }}
+			新建站
+			{{?? it.st_sitesource == '2' }}
+			存量-移动
+			{{?? it.st_sitesource == '3' }}
+			存量-联通
+			{{?? it.st_sitesource == '4' }}
+			存量-电信
+			{{?? it.st_sitesource == '6' }}
+			未填写
+			{{?}}
+			</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 基站类型</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_type != null?it.st_type:'-'}}</div>
+			<div class="aui-col-xs-3 aui-pull-left red">• FSU状态</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_status != null?it.st_status:'-'}}</div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 所属省</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_provinceid != null?it.st_provinceid:'-'}}</div>
+			<div class="aui-col-xs-3 aui-pull-left red">• 所属市</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_cityid != null?it.st_cityid:'-'}}</div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 所属区县</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_countyid != null?it.st_countyid:'-'}}</div>
+			<div class="aui-col-xs-3 aui-pull-left red">• 管理区域</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_areaname != null?it.st_areaname:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 网格名称</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.area_grid_name != null?it.area_grid_name:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 经度</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_lon != null?it.st_lon:'-'}}</div>
+			<div class="aui-col-xs-3 aui-pull-left red">• 纬度</div>
+			<div class="aui-col-xs-3 aui-pull-left">{{=it.st_lat != null?it.st_lat:'-'}}</div>
+			<div class="aui-col-xs-12 aui-pull-right" style="margin-top:6px;"><a class="showMap" onclick="showMap()">查看地图</a></div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 详细地址</div>
+			<div class="aui-col-xs-12 aui-pull-left">{{=it.st_address != null?it.st_address:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 历史告警</div>
+			<div class="aui-col-xs-3 aui-pull-right"><a class="showMap" onclick="showPopup()">查看告警</a></div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 验收交付日期</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_deliverdate == null?'-':it.st_deliverdate}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 出保时间</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_expireddate != null?it.st_expireddate:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" tapmode="" onclick="openUserInfo('{{=it.st_areamanager}}','{{=it.st_areamanager_name}}')">
+			<div class="aui-col-xs-9 aui-pull-left red">• 区域经理</div>
+			<div class="aui-col-xs-3 aui-pull-right aui-arrow-right">{{=it.st_areamanager_name != null?it.st_areamanager_name:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" tapmode="" onclick="openUserInfo('{{=it.st_maintenance_roompersonid}}','{{=it.st_maintenance_roomperson}}')">
+			<div class="aui-col-xs-9 aui-pull-left red">• 机房代维人员</div>
+			<div class="aui-col-xs-3 aui-pull-right aui-arrow-right">{{=it.st_maintenance_roomperson != null?it.st_maintenance_roomperson:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" tapmode="" onclick="openUserInfo('{{=it.st_maintenance_personid}}','{{=it.st_maintenance_person}}')">
+			<div class="aui-col-xs-8 aui-pull-left red">• 铁塔代维人员</div>
+			<div class="aui-col-xs-4 aui-pull-right aui-arrow-right">{{=it.st_maintenance_person != null?it.st_maintenance_person:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 机房产权</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_property_right != null?it.st_property_right:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 是否为免责站址</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_ifrelief != null?it.st_ifrelief:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 是否出保</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_ifexpire != null?it.st_ifexpire:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 要求夜间上站</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_night_shift != null?it.st_night_shift:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 供电方式</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_powersupplyway != null?it.st_powersupplyway:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 后备电源组数</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_backuppowernum != null?it.st_backuppowernum:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 是否具备发电条件</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_ifgenelec != null?it.st_ifgenelec:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 物业联系人</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_contact != null?it.st_contact:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 物业联系人电话</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_contact_tele != null?it.st_contact_tele:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 维保厂家</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_maintenance_factory != null?it.st_maintenance_factory:'-'}}</div>
+			</li>
+
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 基站覆盖场景</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_scene != null?it.st_scene:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 基本备电约定</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_standby_power != null?it.st_standby_power:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-9 aui-pull-left red">• 油机配置</div>
+			<div class="aui-col-xs-3 aui-pull-right">{{=it.st_configoilmachine != null?it.st_configoilmachine:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 电池保障时长</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.st_cell_security != null?it.st_cell_security:'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 直流负载电流</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.predata  != null?it.predata+'(A)':'-'}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-12 aui-pull-left red">• 业主钥匙所属信息</div>
+			<div class="aui-col-xs-12 aui-pull-right">{{=it.proprietor_key  != null?it.proprietor_key:'-'}}</div>
+			</li>
+			</ul>
+			{{
+			var yys=it.st_operators;
+			if(yys!=null&&yys!=''){
+				if(yys.indexOf('，')>-1){
+					var yysArr=yys.split("，");
+					var yysArrNum=yysArr.length;
+				}else {
+					var yysArrNum=1;
+				}
+			}
+			}}
+			<ul class="aui-list-view" >
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>站址运营商信息</h2></div>
+
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 运营商类型</div>
+			{{? yys.indexOf('移动')>-1}}
+			<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">
+			<img style="width:26px;" src="../../image/a01.png" alt=""/>
+			</div>
+			{{?}}
+			{{? yys.indexOf('联通')>-1}}
+			<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">
+			<img style="width:26px;" src="../../image/b01.png" alt=""/>
+			</div>
+			{{?}}
+			{{? yys.indexOf('电信')>-1}}
+			<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">
+			<img style="width:26px;" src="../../image/c01.png" alt=""/>
+			</div>
+			{{?}}
+			</li>
+
+			<li class="aui-list-view-cell">
+			<div class="aui-col-xs-3 aui-pull-left red">• 站址维护服务等级</div>
+			{{? yys.indexOf('移动')>-1}}
+			{{? it.st_operators_level =='BZ'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="color:#FCD209;text-align:center;">标准</div>
+			{{?? it.st_operators_level == 'GJ'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="color:#079DF9;text-align:center;">高级</div>
+			{{?}}
+			{{?}}
+
+			{{? yys.indexOf('联通')>-1}}
+			{{? it.st_ltoperators_level =='BZ'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="color:#FCD209;text-align:center;">标准</div>
+			{{?? it.st_ltoperators_level == 'GJ'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="color:#079DF9;text-align:center;">高级</div>
+			{{?}}
+			{{?}}
+
+			{{? yys.indexOf('电信')>-1}}
+			{{? it.st_dxoperators_level =='BZ'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="color:#FCD209;text-align:center;">标准</div>
+			{{?? it.st_dxoperators_level == 'GJ'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="color:#079DF9;text-align:center;">高级</div>
+			{{?}}
+			{{?}}
+			</li>
+
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 是否购买发电服务</div>
+			{{? yys.indexOf('移动')>-1}}
+			{{? it.st_ifbuyeletric =='Y'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">是</div>
+			{{?? it.st_ifbuyeletric =='N'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">否</div>
+			{{?}}
+			{{?}}
+
+			{{? yys.indexOf('联通')>-1}}
+			{{? it.ltifbuyeletric =='Y'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">是</div>
+			{{?? it.ltifbuyeletric =='N'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">否</div>
+			{{?}}
+			{{?}}
+
+			{{? yys.indexOf('电信')>-1}}
+			{{? it.dxifbuyeletric =='Y'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">是</div>
+			{{?? it.dxifbuyeletric =='N'}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">否</div>
+			{{?}}
+			{{?}}
+			</li>
+
+			<li class="aui-list-view-cell">
+			<div class="aui-col-xs-3 aui-pull-left red">• 运营商制式</div>
+			{{? yys.indexOf('移动')>-1}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">{{=it.st_ydcard != null ? it.st_ydcard:''}}</div>
+			{{?}}
+
+			{{? yys.indexOf('联通')>-1}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">{{=it.st_ltcard != null ? it.st_ltcard:''}}</div>
+			{{?}}
+
+			{{? yys.indexOf('电信')>-1}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">{{=it.st_dxcard != null ? it.st_dxcard:''}}</div>
+			{{?}}
+			</li>
+
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-3 aui-pull-left red">• 起租时间</div>
+			{{? yys.indexOf('移动')>-1}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">{{=it.rent_time != null ? it.rent_time:''}}</div>
+			{{?}}
+			{{? yys.indexOf('联通')>-1}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">{{=it.ltrent_time != null ? it.ltrent_time:''}}</div>
+			{{?}}
+			{{? yys.indexOf('电信')>-1}}
+				<div class="aui-col-xs-3 aui-pull-left" style="text-align:center;">{{=it.dxrent_time != null ? it.dxrent_time:''}}</div>
+			{{?}}
+			</li>
+
+			</ul>
+		</script>
+		<script id="stationDetail-template2" type="text/x-dot-template">
+		<ul class="aui-list-view">
+		<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>异常设备清单</h2></div>
+			<table class="dz-table" cellspacing="0">
+				<thead>
+					<tr>
+						<td>设备名称</td>
+						<td>设备类型</td>
+						<td>缺失时间</td>
+						<td>缺失信号量类型</td>
+					</tr>
+				</thead>
+				<tbody class="aui-list-view">
+				{{ for(var i=0, len=it.length; i < len; i++) {
+				var model = it[i];
+				}}
+				<tr>
+				<td >{{=it[i].device_name  != null?it[i].device_name:''}}</td>
+	      <td >{{=it[i].dev_type  != null?it[i].dev_type:''}}</td>
+				<td >{{=it[i].lost_time  != null?it[i].lost_time:''}}</td>
+				<td >{{=it[i].type  != null?it[i].type:''}}</td>
+				</tr>
+				{{  } }}
+				</tbody>
+			</table>
+			</ul>
+		</script>
+		<div class="aui-content">
+			<div class="aui-content aui-content-wxx" id="listView"></div>
+		</div>
+		<div id="personDiv" style="display:none;background-color: white;width:300px;"></div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script>
+
+	function showPopup() {
+	//	var num=api.pageParam.num;
+	 var query_setting =null;
+	 console.log("设置需要显示的内容，第281行");
+	 var st=$("#basestationcode").html();
+	 var dd=$("#provinceid").html();
+	 console.log(st+dd);
+	 console.log(api.pageParam.provinceid);
+		var num=$api.getStorage("num");
+		 query_setting = {
+			 //registStatus:true,
+			 		//alarmLevel:true,
+	        begintimetype : true,
+	        winName : api.winName,
+	        callback : 'cb_queryBillList',
+					stationcode:$("#basestationcode").html(),
+					provinceId:$("#provinceid").html()
+	    };
+
+	    api.openFrame({
+	        name : 'popup_query_frm',
+	        url : '../dialog/popup_query0.html',
+	        rect : {
+	            x : 0,
+	            y : 0,
+	            w : 'auto',
+	            h : 'auto'
+	        },
+	        bounces : false,
+	        reload : false,
+	        pageParam : query_setting
+	    });
+	}
+
+
+
+		apiready = function() {
+			initHeader();
+			api.showProgress({
+				title : '加载中'
+			});
+			var stationId = api.pageParam.stationId;
+			var billModel = $api.getStorage("billModel");
+
+
+			if (stationId != null) {
+				var user = $api.getStorage('user');
+				var userid = user.userid;
+				$client.getStationDetail({
+					id : stationId
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.success) {
+							if (isExist(ret.model)) {
+
+								getAreaman(ret.model);
+
+								$client.getBillPwDevCheck({
+									code : ret.model.st_code
+								}, function(ret, err) {
+									// console.log("fsdafasdfasdf")
+									// console.log(JSON.stringify(ret))
+									if (ret) {
+										if (ret.success) {
+											renderTemp('listView', 'stationDetail-template2', ret.checksList,true);
+											api.parseTapmode();
+										} else {
+											api.toast({
+												msg : ret.data_info,
+												location : 'bottom'
+
+											});
+										}
+									} else {
+										api.toast({
+											msg : err.msg,
+											location : 'middle'
+										});
+									}
+									api.hideProgress();
+								});
+							} else {
+								api.toast({
+									msg : '该工单无相关站址信息',
+									location : 'bottom'
+								});
+							}
+						} else {
+							api.toast({
+								msg : ret.data_info,
+								location : 'bottom'
+
+							});
+						}
+					} else {
+						api.toast({
+							msg : err.msg,
+							location : 'middle'
+						});
+					}
+					api.hideProgress();
+				});
+			} else {
+				if (billModel != null) {
+					renderTemp('listView', 'stationDetail-template', billModel,true);
+					api.parseTapmode();
+					$client.getBillPwDevCheck({
+						code : billModel.st_code
+					}, function(ret, err) {
+						if (ret) {
+							console.log(JSON.stringify(ret));
+							if (ret.success) {
+								renderTemp('listView', 'stationDetail-template2', ret.checksList,true);
+								api.parseTapmode();
+							} else {
+								api.toast({
+									msg : ret.data_info,
+									location : 'bottom'
+
+								});
+							}
+						} else {
+							api.toast({
+								msg : err.msg,
+								location : 'middle'
+							});
+						}
+						api.hideProgress();
+					});
+				}
+				api.hideProgress();
+			}
+			var billModel = $api.getStorage("billModel");
+
+		};
+
+		function getAreaman(billModel) {
+			var userNameList = new Array;
+			var userIdList = new Array;
+			$client.getAreaManagers({
+				siteid : billModel.st_id
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.success) {
+						var areaManagers = ret.list;
+						for (var i = 0, size = areaManagers.length; i < size; i++) {
+							//						$('<option>').text(areaManagers[i].username).val(areaManagers[i].userid).appendTo('#areaManagerId');
+							userNameList.push(areaManagers[i].username);
+							userIdList.push(areaManagers[i].userid);
+						}
+						var userInfoId = listToStr(userIdList);
+						//					alert(userInfoId);
+						billModel.st_areamanager = listToStr(userIdList);
+						billModel.st_areamanager_name = listToStr(userNameList);
+						renderTemp('listView', 'stationDetail-template', billModel,true);
+						console.log(getObj(billModel));
+						$api.setStorage('stationModel', billModel);
+						$api.setStorage('stationName', billModel.st_name);
+						api.parseTapmode();
+					} else {
+						renderTemp('listView', 'stationDetail-template', billModel,true);
+
+						$api.setStorage('stationModel', billModel);
+						$api.setStorage('stationName', billModel.st_name);
+						api.parseTapmode();
+					}
+				} else {
+					renderTemp('listView', 'stationDetail-template', billModel,true);
+
+					$api.setStorage('stationModel', billModel);
+					$api.setStorage('stationName', billModel.st_name);
+					api.parseTapmode();
+				}
+				api.hideProgress();
+			});
+		}
+
+		function listToStr(stringList) {
+			if (stringList == null) {
+				return null;
+			}
+			var result = "";
+			var flag = false;
+			for (var i = 0; i < stringList.length; i++) {
+				var string = stringList[i];
+				if (flag) {
+					//	                result.append(",");
+					result += ",";
+				} else {
+					flag = true;
+				}
+				result += string;
+			}
+			return result.toString();
+		}
+
+		//关闭弹出DIV对话框
+		function closeDiv(divId) {
+			easyDialog.close({
+				container : divId
+			});
+		}
+
+		function openUserInfo(userIdStr, userNameStr) {
+			if (userIdStr != null && userIdStr != "null" && userIdStr != "") {
+				var userIdArr;
+				if (userIdStr.indexOf('.') > 0) {
+					userIdArr = userIdStr.split(".");
+				} else {
+					userIdArr = userIdStr.split(",");
+				}
+				if (userIdArr != null && userIdArr.length > 1) {
+					var userJsonArr = new Array();
+					var userNameArr;
+					if (userNameStr.indexOf('.') > 0) {
+						userNameArr = userNameStr.split(".");
+					} else {
+						userNameArr = userNameStr.split(",");
+					}
+					for (var j = 0; j < userNameArr.length; j++) {
+						var per = {};
+						per.userId = userIdArr[j];
+						per.userName = userNameArr[j];
+						userJsonArr.push(per);
+					}
+					var pageParam = {};
+					pageParam.userJsonArr = $api.jsonToStr(userJsonArr);
+					api.openFrame({
+						name : 'userList',
+						url : '../userList.html',
+						bounces : false,
+						pageParam : pageParam,
+						rect : {
+							x : 0,
+							y : 0,
+							w : 'auto',
+							h : 'auto'
+						},
+						reload : true
+					});
+				} else {
+					showUserInfo(userIdStr);
+				}
+			} else {
+				api.toast({
+					msg : "人员为空，无法查看个人信息！",
+					location : 'middle'
+				});
+			}
+		}
+
+		function showUserInfo(userId) {
+			openPage_person(userId);
+		}
+
+		//打开地图
+		function showMap() {
+			api.openWin({
+				name : 'mapHeader',
+				url : '../mapHeader.html',
+				reload : true
+			});
+		}
+	</script>
+</html>

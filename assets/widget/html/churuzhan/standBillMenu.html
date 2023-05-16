@@ -1,0 +1,917 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>出入站待办操作列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<style>
+			input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="number"], input[type="week"], input[type="month"], input[type="time"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="search"], input[type="file"], input[type="color"], select, textarea {
+				outline: none;
+			}
+			html, body, #wrap, #header {
+				background: transparent;
+			}
+			#header {
+				height: 58px;
+			}
+			.shadow {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				z-index: 1;
+				background: #333;
+				opacity: 0.6;
+				filter: alpha(opacity=60);
+			}
+			.menu-list li span {
+				text-indent: 1em;
+			}
+			#revertDiv {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+			}
+			.winDiv {
+				display: none;
+				background-color: #f2f2f2;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+			}
+			#unApply{
+				margin:10px auto; 
+			}
+			.winTitleDiv {
+				text-align: center;
+				font-size: 20px;
+				color: #FFFFFF;
+				background-color: #DB4537;
+				height: 35px;
+				line-height: 35px;
+				-webkit-border-radius: 10px 10px 0 0;
+				-moz-border-radius: 10px 10px 0 0;
+				border-radius: 10px 10px 0 0;
+			}
+			.winContentSnDiv {
+				font-size: 16px;
+				height: 30px;
+				line-height: 30px;
+				margin-top: 20px;
+				text-align: center;
+				background-color: #F2F2F2;
+			}
+			.winContentTitleDiv {
+				font-size: 16px;
+				height: 30px;
+				line-height: 30px;
+				margin-bottom: 20px;
+				text-align: center;
+				background-color: #F2F2F2;
+			}
+			.winButtonDiv {
+				background-color: #e0e0e0;
+				height: 50px;
+				width: 300px;
+				-webkit-border-radius: 0 0 10px 10px;
+				-moz-border-radius: 0 0 10px 10px;
+				border-radius: 0 0 10px 10px;
+			}
+			.winOkBtn {
+				width: 130px;
+				height: 40px;
+				color: #FFFFFF;
+				text-align: center;
+				font-size: 20px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #DB4537;
+				float: right;
+				margin-top: 5px;
+				margin-right: 5px;
+			}
+			.winCancelBtn {
+				width: 130px;
+				height: 40px;
+				color: #FFFFFF;
+				text-align: center;
+				font-size: 20px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #3779d0;
+				float: left;
+				margin-left: 5px;
+				margin-top: 5px;
+			}
+			.otherDivHeader {
+				text-align: center;
+				font-size: 20px;
+				color: #FFFFFF;
+				background-color: #DB4537;
+				height: 40px;
+				line-height: 40px;
+				-webkit-border-radius: 10px 10px 0 0;
+				-moz-border-radius: 10px 10px 0 0;
+				border-radius: 10px 10px 0 0;
+			}
+		.isArgeeInfo {
+			 background-color: #FFFFFF;
+			 border: 1px solid #adadad;
+			 margin-top: 5px;
+			 -webkit-border-radius: 5px;
+			 -moz-border-radius: 5px;
+			 float:left;
+			 width:90%;
+			 border-radius: 5px;
+			 }
+			.labelDiv {
+				text-align: center;
+				font-size: 16px;
+				color: #3498DB;
+				height: 30px;
+				line-height: 30px;
+			}
+			.allDiv {
+				width: 100%;
+			}
+			.left {
+				text-align: right;
+				font-size: 16px;
+				float: left;
+				color: #000000;
+				width: 30%;
+			}
+			.right {
+				text-align: left;
+				float: right;
+				font-size: 16px;
+				color: #787878;
+				width: 67%;
+			}
+			.transferDiv {
+				width: 300px;
+				height: 40px;
+			}
+			.isAgreeSel {
+			 -webkit-border-radius: 5px;
+			 -moz-border-radius: 5px;
+			 border-radius: 5px;
+			 width:90%;
+			 margin-top:10px;
+			 float:left;
+			 border: 1px solid #adadad;
+			 background-color: #FFFFFF;
+			 /*border: none !important;*/
+			 }
+			.isArgee {
+				width: 100%;
+				height: 40px;
+				margin-right: 10px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #FFFFFF;
+				border: none !important;
+			}
+			.transferTime {
+				width: 265px;
+				height: 40px;
+				margin-left: 10px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				background-color: #FFFFFF;
+			}
+			.menuListLi {
+				height: 40px;
+				line-height: 40px;
+				color: #46a3FF;
+				text-align: center;
+				font-size: 16px;
+			}
+			.noborder {
+				border: none !important;
+			}
+			.textStyle {
+				padding-left: 3px;
+				height: 40px;
+				line-height: 40px;
+				text-align: left;
+				color: #adadad;
+			}
+		</style>
+	</head>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+
+		<script id="option-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].userid}}">{{=it[i].username}}</option>
+			{{ } }}
+		</script>
+		<script id="standBillMenu-template" type="text/x-dot-template">
+			<ul class="menu-list">
+				{{? ["0"].indexOf(it.status) > -1}}
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('AUDIT');">审核</li>
+				{{?}}
+				{{? ["1"].indexOf(it.status) > -1}}
+				<li class="menuListLi" tapmode="tap-active" onclick="openUnApply();">撤销申请</li>
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('PHONESIGN');">签到</li>
+				{{?}}
+				{{? ["2"].indexOf(it.status) > -1 && it.authStatus!='1'}}
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('FACECHECK');">身份识别</li>
+				{{?}}
+				{{? ["2"].indexOf(it.status) > -1 && it.authStatus=='1' && it.openWay=='0'}}
+				<li class="menuListLi" tapmode="tap-active" onclick="openTheDoor()">远程开门</li>
+				{{?}}
+				{{? ["3"].indexOf(it.status) > -1}}
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('WORKPRE')">施工前照片上传</li>
+				{{?}}
+				{{? ["4"].indexOf(it.status) > -1}}
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('WORKCENTER')">施工中照片上传</li>
+				{{?}}
+				{{? ["5"].indexOf(it.status) > -1}}
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('OFFSITE')">离站确认</li>
+				{{?}}
+				{{? ["6"].indexOf(it.status) > -1}}
+				<li class="menuListLi" tapmode="tap-active" onclick="optBill('RETURNKEY')">归还钥匙</li>
+				{{?}}
+			</ul>
+		</script>
+		<script id="standBillMenu-template2" type="text/x-dot-template">
+			<ul class="menu-list">
+				<li class="menuListLi" tapmode="tap-active" onclick="openUnApply();">撤销申请</li>
+			</ul>
+		</script>
+		<!--<li class="menuListLi" tapmode="tap-active" style="color:#ccc">↓以下测试用↓</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('AUDIT');">审核</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('PHONESIGN');">签到</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('FACECHECK');">身份识别</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="openTheDoor()">远程开门</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('WORKPRE')">施工前照片上传</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('WORKCENTER')">施工中照片上传</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('OFFSITE')">离站确认</li>
+		<li class="menuListLi" tapmode="tap-active" style="color:#ccc" onclick="optBill('RETURNKEY')">归还钥匙</li>-->
+		<div id="wrap" >
+			<div id="shadowId" class="shadow" tapmode="" onclick="closeFrame('standBillMenu')"></div>
+			<div id="header"></div>
+			<div id="standBillMenuMain"></div>
+		</div>
+		<!--是否及时上站-->
+		<div id="ispromptModelPanel" class="winDiv" >
+			<div class="winTitleDiv">
+				是否及时上站？
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					是否及时上站
+				</div>
+			</div>
+			<div class="transferDiv">
+				<select id="isStandSelId" class="transferSel noborder" value="">
+					<option value="Y">是</option>
+					<option value="N">否</option>
+				</select>
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					实际上站时间
+				</div>
+			</div>
+			<div class="transferDiv">
+				<input type="datetime-local" id="standTimeId" class="" value="" style="width: 94%;"/>
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					未及时上站原因
+				</div>
+			</div>
+			<div>
+				<textarea id="dealCommentId" class="otherDealInfo" rows="5" cols="5"></textarea>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="isStandFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--是否及时上站-->
+		<!--同意-->
+		<div id="isAgreeModelPanel" class="aui-content winDiv" style="width: 300px; background-color: #f2f2f2; display: none;">
+			<div class="winTitleDiv">
+				是否同意？
+			</div>
+			<div  class="aui-flex-col aui-flex-middle">
+				<div class="aui-flex-item-4 aui-flex-middle" style="text-align: center">
+					是否同意:
+				</div>
+				<div class="aui-flex-item-8">
+					<select id="isAgreeSelId" class="isAgreeSel" data-valid="required" onchange="isAgree()" data-error="请选择是否同意"  value="">
+						<option value="">请选择</option>
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div  class="aui-flex-col aui-flex-middle" id="test1">
+				<div class="aui-flex-item-4 aui-flex-middle" style="text-align: center">
+					是否免责:
+				</div>
+				<div class="aui-flex-item-8">
+					<select id="isreiefId" name="isreief" class=" isAgreeSel" onchange="isrelief()"  data-valid="required" data-error="请选择是否免责"  value="">
+						<option value="">请选择</option>
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div  class="aui-flex-col aui-flex-middle"  id="test2">
+				<div class="aui-flex-item-4 aui-flex-middle" style="text-align: center">
+					免责条款:
+				</div>
+				<div class="aui-flex-item-8">
+					<select id="isreieftypeId" name="isreieftype" class="isAgreeSel" data-valid="isRelief" data-error="请选择免责条款"  value="">
+						<option value="">请选择</option>
+						<option value="1">免责条款1-不可抗力</option>
+						<option value="2">免责条款2-夜间免责</option>
+						<option value="3">免责条款3-客户原因</option>
+						<option value="4">免责条款4-免责站址</option>
+						<option value="5">免责条款5-其他免责</option>
+					</select>
+				</div>
+			</div>
+			<div  class="aui-flex-col aui-flex-middle" id="test3">
+				<div class="aui-flex-item-4 aui-flex-middle" style="text-align: center">
+					免责具体原因:
+				</div>
+				<div class="aui-flex-item-8">
+					<textarea id="reliefDealcommentId" rows="2"  class="isArgeeInfo"></textarea>
+				</div>
+			</div>
+			<div class="aui-flex-col aui-flex-middle">
+				<div class="aui-flex-item-4 " style="margin-bottom: 10px;text-align: center;">
+					处理措施:
+				</div>
+				<div class="aui-flex-item-8">
+					<textarea id="agreeDealCommentId" class="isArgeeInfo" rows="5" cols="5"></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="isAgreeFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--是否同意begin-->
+		<!--<div id="isAgreeModelPanel" class="winDiv">
+		<div class="winTitleDiv">
+		是否同意？
+		</div>
+		<div class="labelDiv">
+		<div style="font-size:16px;color:#adadad;">
+		是否同意
+		</div>
+		</div>
+		<div class="transferDiv">
+		<select id="isAgreeSelId" class="transferSel" data-valid="required" onchange="isAgree()" data-error="请选择是否同意"  value="">
+		<option value="">请选择</option>
+		<option value="Y">是</option>
+		<option value="N">否</option>
+		</select>
+		</div>
+		<div class="labelDiv" id="a1" style="display: none;">
+		<div id="relief1" style="font-size:16px;color:#adadad;">
+		是否免责
+		</div>
+		</div>
+		<div class="transferDiv" id="a2" style="display: none;">
+		<select id="isreiefId" name="isreief" class=" transferSel" onchange="isrelief()"  data-valid="required" data-error="请选择是否免责"  value="">
+		<option value="">请选择</option>
+		<option value="Y">是</option>
+		<option value="N">否</option>
+		</select>
+		</div>
+		<div class="labelDiv" id="a3" style="display: none;">
+		<div id="relief2" style="font-size:16px;color:#adadad;">
+		免责条款
+		</div>
+		</div>
+		<div class="transferDiv" id="a4" style="display: none;">
+		<select id="isreieftypeId" name="isreieftype" class="transferSel" data-valid="isRelief" data-error="请选择免责条款"  value="">
+		<option value="">请选择</option>
+		<option value="1">免责条款1-不可抗力</option>
+		<option value="2">免责条款2-夜间免责</option>
+		<option value="3">免责条款3-客户原因</option>
+		<option value="4">免责条款4-免责站址</option>
+		<option value="5">免责条款5-其他免责</option>
+		</select>
+		</div>
+		<div class="labelDiv" id="a5" style="display: none;">
+		<div id="relief3" style="font-size:16px;color:#adadad;">
+		免责具体原因
+		</div>
+		</div>
+		<div id="a6" style="display: none;">
+		<textarea id="reliefDealcommentId" rows="2"  class="otherDealInfo"></textarea>
+		</div>
+		<div class="labelDiv">
+		<div style="font-size:16px;color:#adadad;">
+		处理意见
+		</div>
+		</div>
+		<div>
+		<textarea id="agreeDealCommentId" class="otherDealInfo" rows="5" cols="5"></textarea>
+		</div>
+		<div class="winButtonDiv">
+		<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+		取消
+		</button>
+		<button class="winOkBtn"  onclick="isAgreeFunc()">
+		确定
+		</button>
+		</div>
+		</div>-->
+		<!--是否同意end-->
+		<!--到站签到begin-->
+		<!--		<div id="SignDiv" class="winDiv">
+		<div id="spanTitleId1" class="otherDivHeader"></div>
+		<div  id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;" >
+		<div id="user_name1" style="font-size:16px;color:#adadad;">
+		接收人
+		</div>
+		</div>
+		<div id="contactTelSpanId1"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+		<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+		联系电话:
+		</div>
+		<div class="aui-flex-item-9 " style="padding-right: 10px">
+		<input id="contactTelTextId1"  type="text" class="textareaborder" value="" />
+		</div>
+		</div>
+		<div id="userLocationSpanId1"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+		<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+		所在位置:
+		</div>
+		<div class="aui-flex-item-9 " style="padding-right: 10px">
+		<textarea id="locationId1" class="dealInfo" style="padding: 5px 2px;overflow:auto; " rows="7"  cols="10"></textarea>
+		</div>
+		</div>
+		<div id="opinionLabelDiv1"class="aui-flex-col" data-type="text" style="margin-right: 10px;">
+		<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+		处理意见:
+		</div>
+		<div class="aui-flex-item-9 " style="padding-right: 10px">
+		<textarea id="otherDealInfoId1" class="dealInfo" rows="5" cols="10" placeholder="若偏差超过100米，请写上原因"></textarea>
+		</div>
+		</div>
+		<div class="winButtonDiv">
+		<button class="winCancelBtn"  onclick="restartLocationFunc()">
+		重新定位
+		</button>
+		<button class="winOkBtn"  onclick="signOptFunc()">
+		确定
+		</button>
+		</div>
+		</div>-->
+		<!--协调上站begin-->
+		<div id="coordinateModelPanel" class="winDiv">
+			<div class="winTitleDiv">
+				协调上站？
+			</div>
+			<div id="contactTelSpanId1"class="aui-flex-col" data-type="text" style="margin-top: 10px;">
+				<div class="aui-flex-item-4 aui-flex-middle textStyle" >
+					是否需要随工
+				</div>
+				<div class="aui-flex-item-8 " >
+					<select id="isNeedSelId" class="textareaborder" style="padding: 5px 0px;padding-left: 5px;width: 92%;" value=""  onchange="toggleFsuStatus(this)">
+						<option value="">请选择</option>
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div id="fsuStatusLabel"class="aui-flex-col " data-type="text"  style="display: none">
+				<div class="aui-flex-item-4 textStyle" style="text-align: right">
+					FSU状态
+				</div>
+				<div class="aui-flex-item-8 " >
+					<select id="fsuStatus" class="textareaborder" style="padding: 5px 0px;padding-left: 5px;width: 92%" value=""  >
+						<option value="">请选择</option>
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div id="contactTelSpanId1"class="aui-flex-col" data-type="text" >
+				<div class="aui-flex-item-4 textStyle" >
+					是否如约上站
+				</div>
+				<div class="aui-flex-item-8 " >
+					<select id="isBookSelId" class="textareaborder" style="padding: 5px 0px;padding-left: 5px;width: 92%" value=""  onchange="isOnTime()">
+						<option value="">请选择</option>
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div class="aui-flex-col" data-type="text" >
+				<div class="aui-flex-item-4 textStyle" >
+					协调上站时间
+				</div>
+				<div  id="applyStandDateDivId" class="aui-flex-item-8 " style="display:none" >
+					<input type="text" id="applyStandDateId" readonly="readonly" class="" value="" style="width: 92%;" />
+				</div>
+				<div  id="coorStandDateDivId" class="aui-flex-item-8 "  >
+					<input type="datetime-local" id="coorStandDateId"  class="" value="" style="width: 92%;padding-left: 2px;" />
+				</div>
+			</div>
+			<div class="aui-flex-col" data-type="text" >
+				<div class="aui-flex-item-4 textStyle" >
+					协调离站时间
+				</div>
+				<div  id="applyStandDateDivId" class="aui-flex-item-8 "  >
+					<input type="datetime-local" id="outStandDateId"  class="textareaborder" value="" style="float:left; margin-left: 10px; padding: 5px 2px;width: 92%;" />
+				</div>
+			</div>
+			<div class="aui-flex-col" data-type="text" >
+				<div class="aui-flex-item-4 textStyle"  style="text-align: right">
+					处理意见
+				</div>
+				<div  class="aui-flex-item-8 "  >
+					<textarea id="coorDealCommentId" class="otherDealInfo" rows="5" cols="5" style="width: 92%"></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="coordinateFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--协调上站end-->
+		<!--接单begin-->
+		<div id="acceptDiv" class="winDiv">
+			<div class="winTitleDiv">
+				确定接单？
+			</div>
+			<div  id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;" >
+				<div id="user_name1" style="font-size:16px;color:#adadad;">
+					接收人
+				</div>
+			</div>
+			<!--<div class="aui-flex-col" data-type="text" >
+			<div  style="margin-left:5px;width:30%  height: 30px;line-height: 30px; text-align: right;color:#adadad;">
+			工单编号:
+			</div>
+			<div  id="acceptSnId"  style="width:70%; font-size:16px;line-height: 1.2;text-align: left;">
+			</div>
+			</div>-->
+			<div class="aui-flex-col" data-type="text" >
+				<div  style="margin-left:5px;width:30%  height: 30px;line-height: 30px; text-align: right;color:#adadad;">
+					上站原因：
+				</div>
+				<div  id="acceptTitleId"  style="width:70%; text-align: left;height: 30px;line-height: 30px;"></div>
+			</div>
+			<div id="opinionLabelDiv1"class="aui-flex-col" data-type="text"style="margin-top: 5px;">
+				<div class="aui-flex-item-3 " style="margin-left:2px; height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					处理意见:
+				</div>
+				<div class="aui-flex-item-8 " >
+					<textarea id="acceptDealCommentId" class="dealInfo" rows="5" cols="10" ></textarea>
+				</div>
+			</div>
+			<!--<div class="winContentSnDiv" id="acceptSnId"></div>-->
+			<!--<div class="winContentTitleDiv" id="acceptTitleId"></div>-->
+			<!--<div class="labelDiv">
+			<div style="font-size:16px;color:#adadad;">
+			处理意见
+			</div>
+			</div>
+			<div>
+			<textarea id="acceptDealCommentId" class="otherDealInfo" rows="5" cols="5"></textarea>
+			</div>-->
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="acceptFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--接单end-->
+		<!--离站begin-->
+		<div id="leaveStation" class="winDiv">
+			<div class="winTitleDiv">
+				确定离站？
+			</div>
+			<div id="opinionLabelDiv1"class="aui-flex-col" data-type="text"style="margin-top: 5px;">
+				<div class="aui-flex-item-3 " style="margin-left:2px; height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					离站说明:
+				</div>
+				<div class="aui-flex-item-8 " >
+					<textarea id="dealComment" class="dealInfo" rows="5" cols="10" ></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="leaveStation()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--离站end-->		
+		<!--撤销申请begin-->
+		<div id="unApply" class="winDiv">
+			<div class="winTitleDiv">
+				确定撤销上站申请吗？
+			</div>
+			<div id="opinionLabelDiv1" class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+				<div class="aui-flex-item-3 " style="margin-left:2px;text-align: right; color:#adadad;">
+					操作人:
+				</div>
+				<div class="aui-flex-item-8 " style="margin-left:2px; color:#adadad;" id="operationUserName">
+				</div>
+			</div>
+			<div id="opinionLabelDiv2" class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+				<div class="aui-flex-item-3 " style="margin-left:2px;text-align: right; color:#adadad;">
+					操作时间:
+				</div>
+				<div class="aui-flex-item-8" style="margin-left:2px;color:#adadad;" id="currentTime">
+				</div>
+			</div>
+			<div id="opinionLabelDiv1"class="aui-flex-col" data-type="text"style="margin-top: 5px;">
+				<div class="aui-flex-item-3 " style="margin-left:2px;text-align: right; color:#adadad;">
+					撤销原因:
+				</div>
+				<div class="aui-flex-item-8 " >
+					<textarea id="unApplyComment" class="dealInfo" rows="5" cols="10" ></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="unApply()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--撤销申请end-->
+		<!--审批begin-->
+		<div id="auditModelPanel" class="winDiv">
+			<div class="winTitleDiv">
+				是否审批？
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					审批是否通过
+				</div>
+			</div>
+			<div class="transferDiv">
+				<select id="auditFlagId" class="transferSel" value="">
+					<option value="">请选择</option>
+					<option value="Y">通过</option>
+					<option value="N">不通过</option>
+				</select>
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					处理意见
+				</div>
+			</div>
+			<div>
+				<textarea name="dealCommentId" class="otherDealInfo" rows="5" cols="5"></textarea>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="auditFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--审批end-->
+		<!--上站确认begin-->
+		<div id="confireDiv" class="winDiv">
+			<div class="winTitleDiv">
+				确认上站？
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					FSU是否正常
+				</div>
+			</div>
+			<div class="transferDiv">
+				<select name="fsuStatus" class="transferSel" value="" disabled style="text-align: center"></select>
+			</div>
+			<div class="labelDiv" >
+				<div style="font-size:16px;color:#adadad;">
+					上站方式
+				</div>
+			</div>
+			<div class="transferDiv" style="margin-bottom: 10px;">
+				<select id="standType" class="transferSel" value="">
+					<option value="">请选择</option>
+					<option value="1">借钥匙</option>
+					<option value="2">自行上站</option>
+				</select>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="confireFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--上站确认end-->
+		<!--最终审核begin-->
+		<div id="lastConfireData" class="winDiv">
+			<div class="winTitleDiv">
+				最终审核
+			</div>
+			<div id="info" style="text-align: center;font-size:18px;margin-top: 15px;"></div>
+			<div  id="isreliefType" class="aui-list-view-cell">
+				<div id="reliefLeft" class="left" ></div>
+				<div id="reliefRight" class="right"  ></div>
+			</div>
+			<div id="isreliefCause" class="aui-list-view-cell">
+				<div class="left" >
+					免责原因：
+				</div>
+				<div id="reliefCause" class="right" ></div>
+			</div>
+			<div class="aui-list-view-cell">
+				<div class="left" >
+					是否同意：
+				</div>
+				<div class="right" >
+					<select  id="isArgeeConfire"  value="">
+						<option value="">请选择</option>
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="lastConfireFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--最终审核end-->
+		
+			<!--远程开门 -->
+		<div id="openoor" class="winDiv" style = "text-align:center;margin-top:250px;margin-left:60px" >
+			<div class="winTitleDiv">
+				是否进行远程开门操作
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn" style="margin-left:10px"  onclick="closeFrame('standBillMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  style="margin-right:10px" onclick="getDoorsLists()">
+					确定
+				</button>
+			</div>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+	<script type="text/javascript" src="script/standBillMenu.js"></script>
+	<script type="text/javascript" src="../../script/request.js"></script>
+	<script type="text/javascript">
+			function leaveStation(){
+					var userId = $api.getStorage('user').userid;
+					var remark = $('#dealComment').val();
+					var opts={
+						applyId:menuApplyId,
+						standCause:standCause,
+						userId:userId,
+						remark:remark
+					}
+					$client.leaveStation(opts,function(ret,err){
+						if(ret.success){
+							finishOptBill("离站确认成功",'leaveStation');
+						}else {
+							api.toast({
+									msg: ret.errorMsg,
+									duration: 2000,
+									location: 'bottom'
+							});
+						}
+					})
+			}
+			function openUnApply(){
+				document.getElementById("shadowId").style.display = "none";
+				document.getElementById("standBillMenuMain").style.display = "none";
+				var user = $api.getStorage("user");
+				$("#currentTime").text(new Date().pattern("yyyy-MM-dd HH:mm:ss"));
+				$("#operationUserName").text(user.username);
+				$('#unApply').show();
+			}
+			function unApply(){
+				var userId = $api.getStorage('user').userid;
+				var standBillModel = $api.getStorage("standBillModel");
+				var remark = $('#unApplyComment').val();//撤销原因
+				if (remark==null || remark=="") {
+					return api.toast({msg: "请填写撤销原因", duration: 1000, location: 'middle'});
+				}
+				console.log("===unApply====")
+				console.log(JSON.stringify(standBillModel));
+
+				request.unApply = function(data,callback){
+					service({
+						url: "/enterStationBill/unApply.do",
+						data: data
+					},callback)
+				}
+				var opts={
+					id:standBillModel.id,
+					remark:remark
+				}
+				api.showProgress({title: '请求中', modal: false});
+				request.unApply(opts, function(ret, err) {
+					if (ret) {
+						if (ret.success) {
+							api.toast({msg: "撤销完成！", duration: 800, location: 'middle'});
+							window.setTimeout(function() {
+								api.hideProgress();
+								api.sendEvent({name: 'churuzhanBillAudit', extra: {state: 'auditOver'}});
+								api.closeWin({name : 'standBillMenu'});
+								api.closeWin();
+							},1000);
+							return;
+						} else {
+							api.toast({msg: ret.msg, location: 'middle'});
+						}
+					} else {
+						api.toast({msg: err.msg, location: 'middle'});
+					}
+					api.hideProgress();
+				});
+
+				
+				//var remark = $('#dealComment').val();
+				/*var opts={
+					applyId:menuApplyId,
+					standCause:standCause,
+					userId:userId,
+					remark:remark
+				}
+				$client.leaveStation(opts,function(ret,err){
+					if(ret.success){
+						finishOptBill("离站确认成功",'leaveStation');
+					}else {
+						api.toast({
+								msg: ret.errorMsg,
+								duration: 2000,
+								location: 'bottom'
+						});
+					}
+				})*/
+			}
+	</script>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>title</title>
+        <link rel="stylesheet" type="text/css" href="../../../css/aui.css"/>
+        <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+        <style>
+            body {
+                background-color: #fff;
+                height: 100%;
+            }
+            .removebtn{
+                position: absolute;
+                right: 0;
+                top: 10px;
+                width: 20px!important;
+                height: 20px;
+                padding: 0;
+                margin: 0;
+        	}
+        </style>
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div class="aui-title">
+                图片上传
+            </div>
+            <a class="aui-pull-right" tapmode onclick="SaveSelect()"> <span class="aui-iconfont aui-icon-upload"></span> </a>
+        </header>
+        <script id="img-template" type="text/x-dot-template">
+            <li class="aui-list-view-cell aui-img aui-col-xs-4">
+            <img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+            <button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+            </li>
+        </script>
+        <ul id="list-view" class="aui-list-view aui-grid-view">
+            <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="call_getPic(this)">
+                <img class="aui-img-object" src="../../../image/icons/png/icon_addpic_focused.png">
+            </li>
+            <canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+      			<img style="display:none;" class='imgPath'  src=''/>
+        </ul>
+    </body>
+    <script type="text/javascript" src="../../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../../script/api.js"></script>
+    <script type="text/javascript" src="../../../script/aui.js"></script>
+    <script type="text/javascript" src="../../../script/config.js"></script>
+    <script type="text/javascript" src="../../../script/common.js"></script>
+    <script type="text/javascript" src="../../../script/debug.js"></script>
+    <script type="text/javascript" src="../../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../../script/xunjian_db.js"></script>
+    <script type="text/javascript" src="../../../script/utils/ImageUtil.js"></script>
+    <script type="text/javascript">
+        var user, lastLocation;
+        var billModel;
+        apiready = function() {
+            initHeader();
+            lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+            billModel = $api.getStorage('billModel');
+//          console.log("id:"+billModel.businesstype);
+            if (!lastLocation) {
+                $aui.toast({
+                    msg : '暂未定位\n无法上传照片！',
+                    style : 'fail'
+                });
+                window.setTimeout(function() {
+                    api.closeWin();
+                }, 2000);
+            } else {
+                user = $api.getStorage('user');
+                db_init();
+                imageUtil.init({
+                    uploadFn : $client.uploadBillImage,
+                    saveFn : db_saveBillPic
+                });
+//              select_add();
+            }
+        };
+        /**
+         * 展示图片信息，数据源： data
+         */
+        function showPic(data) {
+            var content = $api.byId('list-view');
+            var tpl = $api.byId('img-template').text;
+            var tempFn = doT.template(tpl);
+            $('#addPic').before(tempFn(data));
+            $new = $('#addPic').prev();
+            $new.css('height', $new.css('width'));
+        }
+
+        /**
+         * popup_select.html页面的回调函数
+         */
+        function call_getPic(result) {
+            if (result === '拍照') {
+                imageUtil.add('camera', addPic);
+            } else if (result === '从手机相册选择') {
+                imageUtil.add('album', addPic);
+            }
+        }
+
+
+ function call_getPic(e) {
+		var permission = 'camera';
+		var resultList = api.hasPermission({
+		    list: [permission]
+		});
+		if (resultList[0].granted) {
+		    // 已授权，可以继续下一步操作
+		} else {
+		    api.confirm({
+		        msg: '应用需要您的授权才能访问相机',
+		        buttons: ['取消', '去设置']
+		    }, function(ret) {
+		        if (ret.buttonIndex == 2) {
+		            api.requestPermission({
+		                list: [permission],
+		            }, function(res) {
+		                if (res.list[0].granted) {
+		                    // 已授权，可以继续下一步操作
+		                }
+		            });
+		        }
+		    });
+		}
+//          if (result === '拍照') {
+                var curentTime2 = CurentTime2();
+                $api.setStorage('newtime', curentTime2);
+                var lon1=displaynum(lastLocation.lon);
+                var lat1=displaynum(lastLocation.lat);
+                $api.setStorage('lon1', lon1);
+          			$api.setStorage('lat1', lat1);
+
+                imageUtil.add('camera', addPic,e,true,true);
+//          } else if (result === '从手机相册选择') {
+//              imageUtil.add('album', addPic);
+//          }
+        }
+ //保留6位小数点
+ function displaynum(x)
+{
+var num = new Number(x);
+ return  num.toFixed(6);
+}
+
+        /**
+         * 添加照片
+         */
+        function addPic(ret, err) {
+
+            showlog($api.jsonToStr(ret));
+
+            if (ret && ret.data && ret.data.length > 0) {
+              ////////////////////////////////////////////
+      				var user=$api.getStorage('user');
+      				var newtime = $api.getStorage('newtime');
+              var lon1 = $api.getStorage('lon1');
+              var lat1 = $api.getStorage('lat1');
+      				///////////////////////////////
+
+              var stationname=api.pageParam.stationname;
+              var billId=api.pageParam.billId;
+              var billSn=api.pageParam.billSn;
+              var businessid = billModel.businesstype;
+
+                // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        				var oldret = ret.data.split(".");
+                var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+billId+';'+businessid+';'+billSn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+                console.log(newret);
+        				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                var filePath = ret.data;
+                var imgModel = {
+                    userid : user.userid,
+                    billid : api.pageParam.billId,
+                    businessid : billModel.businesstype,
+                    beiyong:"",
+                    stationname : api.pageParam.stationname,
+                    billsn : api.pageParam.billSn,
+                    imgpath : newret,
+                    phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+                    lon : lon1,
+                 	lat : lat1,
+                    photoaddress : lastLocation.photoaddress,
+                    state:api.pageParam.billStatus
+                };
+                imageUtil.getImageArray().push(imgModel);
+                setTimeout(function(){
+                  showPic(imgModel);
+                }, 2400);
+            }
+        }
+
+        //保存
+        function SaveSelect(){
+            if(api.pageParam.pageFrom=="billDetail_frm"){////来自听发电工单详情直接保存
+                api.confirm({
+                    title : '保存提醒',
+                    msg : '照片将上传到服务器，上传后不可修改，确认上传吗?',
+                    buttons : ['确认上传', '取消']
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 1) {
+                        upload();
+                    } else if (ret.buttonIndex == 2) {
+                       
+                    }
+                });
+            }else{//选择保存方式
+                select();
+            }
+        }
+
+        /**
+         *  选择上传方式：1.保存到本地缓存，2. 直接上传到服务器
+         */
+        function select() {
+            var optList = ['保存到本地缓存', '直接上传到服务器'];
+            var cbTarget = {
+                name : api.winName,
+                frameName : 'billPicDetail_frm',
+                cbFn : 'call_upload'
+            };
+            $api.setStorage('optList', optList);
+            $api.setStorage('cbTarget', cbTarget);
+            api.openFrame({
+                name : 'popup_select_frm',
+                url : '../../dialog/popup_select.html',
+                pagePara : api.pageParam
+            });
+        }
+
+        /**
+         *  选择获取图片方式：1.拍照，2. 从手机相册选择
+         */
+        function select_add() {
+            var optList = ['拍照', '从手机相册选择'];
+            var cbTarget = {
+                name : api.winName,
+                frameName : 'billPicDetail_frm',
+                cbFn : 'call_getPic'
+            };
+            $api.setStorage('optList', optList);
+            $api.setStorage('cbTarget', cbTarget);
+            api.openFrame({
+                name : 'popup_select_frm',
+                url : '../../dialog/popup_select.html',
+                pagePara : api.pageParam,
+                bounces : false
+            });
+        }
+
+        /**
+         *  popup_select.html页面的回调函数
+         */
+        function call_upload(result) {
+            if (result === '保存到本地缓存') {
+                saveLocal();
+            } else if (result === '直接上传到服务器') {
+                upload();
+            }
+        }
+
+        /**
+         *  保存到本地缓存
+         */
+        function saveLocal() {
+            imageUtil.save(function(num) {
+                //刷新首页的图片上传模块头标
+                api.execScript({
+                    name : 'home_win',
+                    frameName : 'footer_tab_1',
+                    script : 'setofflineUploadCount();'
+                });
+                var length = imageUtil.getImageArray().length;
+                if (num == length) {
+                    $('#list-view li:not(:last)').empty();
+                    window.setTimeout(function() {
+                        api.closeWin();
+                    }, 1100);
+                } else if (num && num < length) {
+                    $('#list-view li:lt(' + num + ')').remove();
+                }
+            });
+        }
+
+        /*
+         * 上传服务器
+         */
+        function upload() {
+            imageUtil.upload(function(num) {
+                if (num) {
+                    if(api.pageParam.pageFrom=="billDetail_frm"){//来自听发电工单详情
+                        var data={}
+                        data.imageArray=imageUtil.getImageArray();
+                        data.billStatus=api.pageParam.billStatus;
+                        var objStr =JSON.stringify(data);
+                        api.execScript({
+                            name:'main_bill_detail_win',
+                            frameName : 'billDetail',
+                            script : 'refreshImageList('+objStr+')'
+                        });
+                        window.setTimeout(function() {
+                            api.closeFrame();
+                        }, 1100);
+                    }else{
+                        setTimeout(function() {
+                                api.closeWin();
+                        }, 1100);
+                    }
+                }
+            });
+        }
+
+        function back() {
+            if (imageUtil.getImageArray().length > 0) {
+                api.confirm({
+                    title : '关闭提醒',
+                    msg : '当前照片还没保存，是否需要保存',
+                    buttons : ['保存', '返回', '取消']
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 1) {
+                        SaveSelect();
+                    } else if (ret.buttonIndex == 2) {
+                        api.closeFrame();
+                    }
+                });
+            } else {
+                api.closeFrame();
+            }
+        }
+        /**
+         *删除图片
+        */
+        function removeImg(imgPath) {
+            var imageArray = imageUtil.getImageArray();
+            var size = imageArray.length;
+            for (var i = 0; i < size; i++) {
+                var data = imageArray[i];
+                if (data.imgpath == imgPath) {
+                    imageArray.remove(i);
+                    break;
+                }
+            }
+            $(event.target).parents('.picBox').find('#add').show();
+            $(event.target).parents('li.aui-img').remove();
+        }
+    </script>
+</html>

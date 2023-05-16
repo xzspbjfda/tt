@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>首页</title>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+        <link rel="stylesheet" href="../home/css/home.css" />
+        
+        <style>
+        	
+            * {
+                margin: 0;
+                padding: 0;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+            /*清除浮动*/
+            .clearfix:before, .clearfix:after {
+                display: table;
+                content: " ";
+            }
+            .clearfix:after {
+                clear: both;
+            }
+            .clearfix {
+                zoom: 1;
+            }
+            .wrapper h4{
+            	    padding: 0px 0 0px 15px;
+    				margin: 8px 0 8px 15px;
+    				border-left:4px solid #db4537;
+            }
+        </style>
+    </head>
+    <body>
+    	<script id="banner-template" type="text/x-dot-template">
+			<div>
+				<img src="../../image/home_viewpage_01.png" />
+				<label><div class="blur"></div></label>
+			</div>
+			<div>
+				<img src="../../image/home_viewpage_02.png" />
+				<label><div class="blur"></div></label>
+			</div>
+			<div>
+				<img src="../../image/home_viewpage_03.png" />
+				<label><div class="blur"></div></label>
+			</div>
+		</script>
+    	<div id='slide' class='swipe'>
+			<div class='swipe-wrap' id="banner-content"></div>
+			<ul id="pointer">
+				<li>
+					<a class="active"></a>
+				</li>
+				<li>
+					<a></a>
+				</li>
+				<li>
+					<a></a>
+				</li>
+			</ul>
+		</div>
+        <div  class="wrapper">
+        
+        	<ul class="clearfix">
+                <li id="createBillId" style="position:relative;display:none;" class="home_person_create">
+                    <a tapmode="active" onclick="openWinList('outStation/createBillSelStation_win','选择站址','createBill')" style="font-size: 14px">人工派单</a>
+                </li>
+                <li id="standStaBillId" style="position:relative;display:none;" class="home_stand_create">
+                    <a tapmode="active" onclick="openWinList('outStation/createBillSelStation_win','选择站址','createStandBill')" style="font-size: 14px">进站派单</a>
+                </li>
+                
+                
+            </ul>
+        	
+        	<div style="display:none;">
+        	
+        	<h4>工单监控</h4>
+            <ul class="clearfix">
+                 
+                <li id="monitorLiId" class="home_gv_prework" style="position:relative;display:none;">
+                    <div id="monitorTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','监控箱','GET_BILL_MONITOR_LIST')" style="font-size: 14px">监控箱</a>
+                </li>
+                <li id="workerLiId" style="position:relative;display:none;" class="home_gv_worker">
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','工单已办','GET_BILL_FINISH_LIST')" style="font-size: 14px">工单已办</a>
+                </li>
+                <li id="standStaFinishBillId" class="home_stand_pre" style="position:relative;display:none;">
+                    <a tapmode="active" onclick="openWinList('standBill/standFinishBillListWin','上站已办','STATION_BILL_FINISH_LIST')" style="font-size: 14px">上站已办</a>
+                </li>
+                
+                <li id="taskMonitorId" style="position:relative;display:none;" class="home_gv_xunjian_monitor">
+                    <a tapmode="active" onclick="openWinList('xunjian/monitorListWin','巡检监控箱','XUNJIAN_MONITOR')" style="font-size: 14px">巡检监控箱</a>
+                </li>
+                <li id="taskMonitorNewId" style="position:relative;display:none;" class="home_gv_xunjian_monitor_new">
+                    <a tapmode="active" onclick="openWinList('xunjian/monitorListWin','巡检监控箱','NEW_XUNJIAN_MONITOR')" style="font-size: 14px">巡检监控箱</a>
+                </li> 
+            </ul>
+            <h4>动环监控</h4>
+            <ul class="clearfix">
+                <li id="preBillLiId" class="home_gv_prework" style="position:relative;display:none;">
+                    <div id="preBillTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','工单待办','GET_BILL_LIST')" style="font-size: 14px">工单待办</a>
+                </li>
+                
+                
+                
+                <li id="standStaPreBillId" class="home_stand_fault" style="position:relative;display:none;">
+                    <div id="standStaPreBillTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('standBill/standBillListWin','上站待办','STATION_BILL_WAITLIST')" style="font-size: 14px">上站待办</a>
+                </li>
+                
+               
+                <li id="upgradeBillId" style="position:relative;display:none;" class="home_person_upgrade">
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','升级箱','GET_BILL_UPDATE_LIST')" style="font-size: 14px">升级箱</a>
+                </li>
+                <li id="checkId" style="position:relative;display:none;" class="home_gv_check">
+                    <a tapmode="active" onclick="openWinList('check/check_list_win','现场检查','')" style="font-size: 14px">现场检查</a>
+                </li>
+                <li id="taskNewLiId" class="home_gv_xunjian_new" style="position:relative;display:none;">
+                    <div id="taskNewTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('xunjian/task_list_win','巡检任务','NEW_XUNJIAN_TASK')" style="font-size: 14px">巡检标准化</a>
+                </li>
+                <li id="offlineUploadId" style="position:relative;display:none;" class="home_offline_upload">
+                    <div id="offlineUploadTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('offlineUpload/offlineUpload_win','图片上传','')" style="font-size: 14px">图片上传</a>
+                </li>
+                 <li id="gvFsuLiId" style="position:relative;display:none;" class="home_gv_fsu">
+                    <a tapmode="active" onclick="openWinList('station/station-list','站址列表','')" style="font-size: 14px">动环监控</a>
+                </li>
+                
+                <li id="alarmLiId" style="position:relative;display:none;" class="home_gv_alarm">
+                    <a tapmode="active" onclick="openWinList('alarm/alarm-list_win','告警列表','ALARMLIST')" style="font-size: 14px">告警管理</a>
+                </li>
+            </ul>
+        	<h4>待办</h4>
+            
+            
+            <h4>通知</h4>
+            <ul class="clearfix">
+                <li id="noticeLiId" style="position:relative;display:none;" class="home_gv_preread"  >
+                    <a tapmode="active" onclick="openWinList('bulle/bulle_list_win','公告列表','')" style="font-size: 14px">公告栏</a>
+                </li>
+                
+                <li id="contactLiId" style="position:relative;display:none;" class="home_gv_contactor">
+                    <a tapmode="active" onclick="openWinList('contact/contact-list','通讯录','')" style="font-size: 14px">通讯录</a>
+                </li>
+                
+            </ul>
+            
+            
+            
+            
+            <h4>受理</h4>
+            <ul class="clearfix">
+               
+                
+                
+                
+                
+                <li id="taskLiId" class="home_gv_xunjian" style="position:relative;display:none;">
+                    <div id="taskTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('xunjian/task_list_win','巡检任务','XUNJIAN_TASK')" style="font-size: 14px">巡检</a>
+                </li>
+                 
+                
+                 
+                
+                
+                
+                
+            </ul>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/GPS.js"></script>
+    <!--<script type="text/javascript" src="../../script/home_frm.js"></script>-->
+    <script type="text/javascript" src="../../script/swipe.js"></script>	
+    <script type="text/javascript" src="../../script/xunjian_db.js"></script>
+    
+    <script type="text/javascript"></script>
+</html>

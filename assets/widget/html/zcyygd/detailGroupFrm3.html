@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>处理流程</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		.aui-timeline:before {
+			left: 17px;
+		}
+
+		.aui-timeline > li > .aui-iconfont {
+			left: 3px;
+		}
+
+		.aui-timeline > li > .aui-timeline-item {
+			margin-left: 45px;
+		}
+	</style>
+</head>
+<body style="background-color:#FFFFFF;">
+    <div class="aui-content" id="app">
+        <ul class="aui-timeline" id="checkBackDetail" style="margin: 10px">
+			<template v-if="!entity.operationLogList || entity.operationLogList.length < 1">
+				<li>
+					<div style="width:100%;height:auto;text-align:center">暂无处理流程信息</div>
+				</li>
+			</template>
+			<template v-else>
+				<li v-for="(item,index) in entity.operationLogList">
+					<i class="aui-iconfont aui-icon-mark aui-bg-warning"></i>
+					<div class="aui-timeline-item">
+						<div class="aui-timeline-body">
+							{{convertMsg(item)}}
+						</div>
+						<div class="aui-timeline-footer" style="text-align:right;">{{item.operateBeginTime}}</div>
+					</div>
+				</li>
+			</template>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/vueComponent.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+	var app = new Vue({
+		el:'#app',
+		data:function (){
+			return {
+				entity:{}
+			}
+		},
+		methods:{
+			convertMsg:function(item){
+				return this.entity.energy != 0 ? (item.remark || '') : (this.$getTaskStatus(item.taskStatus) || '') + "（" + (item.operatorName || '') + "）";
+			}
+		}
+	});
+
+	apiready = function() {
+		api.sendEvent({
+			name: 'getDetailInfo',
+			extra: {frameName:"detailGroupFrm3"}
+		});
+	};
+
+	function detailOnLoad(ret){
+		app.entity = ret;
+	}
+
+
+</script>
+</html>

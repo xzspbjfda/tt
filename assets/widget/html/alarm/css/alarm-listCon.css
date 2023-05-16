@@ -1,0 +1,86 @@
+body {
+    background-color: #eff1f0;
+}
+ul, li {
+    margin: 0;
+    padding: 0;
+}
+.ccssoft_list li {
+    list-style: none;
+    padding: 8px;
+    border-bottom: 1px solid #e3e2e2;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.ccssoft_list li:hover {
+    background: #f9e9df;
+}
+.ccssoft_list li:active {
+    background: #f9e9df;
+}
+.cj-l-title, .cj-f-title {
+    border-bottom: 1px solid #e3e2e2;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 8px 10px 8px 10px;
+    position: relative;
+}
+.ccssoft_list .cj-green .cj-l-title:before {
+    background: #1ac36b;
+}
+.ccssoft_list .cj-red .cj-l-title:before {
+    background: #ff3333;
+}
+.ccssoft_list .cj-grey .cj-l-title:before {
+    background: #8f9693;
+}
+.cj-l-title span, .cj-f-title span {
+    display: block;
+    width: 80px;
+    height: 20px;
+    line-height: 20px;
+    /*    color: #666;*/
+    text-align: right;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    font-size: 12px;
+    font-weight: normal;
+}
+.cj-l-into {
+    font-size: 12px;
+    color: #666;
+    line-height: 20px;
+    padding: 3px 0;
+    position: relative;
+    margin-left: 10px;
+    /*   padding-right: 210px;*/
+}
+.cj-l-date {
+    display: block;
+    position: absolute;
+    top: 3px;
+    right: 0;
+    width: 80px;
+    text-align: right;
+}
+.cj-l-date span {
+    margin-left: 7px;
+}
+.cj-l-date:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 12px;
+    background: #ddd;
+    position: absolute;
+    top: 4px;
+    left: 2px;
+}
+.cj-l-date i {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}

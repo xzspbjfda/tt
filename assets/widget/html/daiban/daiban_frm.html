@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>首页</title>
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" href="../home/css/home.css" />
+
+    <style>
+        div.weatherc {
+            position: absolute;
+            left: 0%;
+            top: 0px;
+            z-index: 999999;
+            height: 45px;
+            width: 81px;
+            margin-top: 65px;
+            margin-left: 0%;
+        }
+
+        div.weatherc2 {
+            position: absolute;
+            left: 0%;
+            top: 0px;
+            z-index: 999999;
+            height: 43px;
+            width: 80px;
+            margin-right: 0%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        /*清除浮动*/
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: " ";
+        }
+
+        .clearfix:after {
+            clear: both;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        .wrapper h4 {
+            padding: 0 0 0 16px;
+            margin: 10px 0 10px 0;
+            position: relative;
+        }
+
+        .tianqBox{
+          padding-bottom: 10px;
+          text-align: center;
+          position: relative;
+          background-color: #fff;
+          box-shadow: 0 10px 16px #e7eaf0;
+          width: 94%;
+          margin: 14px auto;
+          border-radius: 7px;
+        }
+        .tianqBox iframe {
+          display: inline-block;
+          padding-top: 10px;
+          height: 60px;
+          width: 100%;
+          padding-left: 30px;
+        }
+        .tianqBoxDD{
+          height: 60px;
+          width: 100%;
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+        /*wxxxxxxxxxxxxxxxx*/
+        .wrapper{
+          background-color: #f5f5f5;
+        }
+        .index_sbox{
+          width: 94%;
+          margin: 14px auto;
+          background-color: #fff;
+          border-radius: 7px;
+          box-shadow: 0 10px 16px #e7eaf0;
+          overflow: hidden;
+        }
+        .cj-l_line{
+          position: absolute;
+          width:5px;
+          height: 18px;
+          left: 0px;
+          top: 3px;
+          border-radius: 10px;
+        }
+        .cj-l_line1{
+          background: linear-gradient(#fe7a7d, #fe4f4f);
+        }
+        .cj-l_line4{
+          background: linear-gradient(#f8a435, #f99803);
+        }
+        .cj-l_line3{
+          background: linear-gradient(#81a4ff, #4d7ffe);
+        }
+        .cj-l_line2{
+          background: linear-gradient(#fe7a7d, #fe4f4f);
+        }
+        .cj-l_line5{
+          background: linear-gradient(#69d4d2, #36cdb7);
+        }
+        .cj-l_line6{
+          background: linear-gradient(#f8a435, #f99803);
+        }
+
+        .wrapper .clearfix{
+          border: none;
+        }
+
+        .order_btn_box{
+          display: flex!important;
+          justify-content: space-between;
+          width: 90%;
+          margin: 0 auto;
+          margin-bottom: 14px;
+          border: none!important;
+        }
+          .order_btn{
+            border:1px solid  #dfeeff;
+            box-shadow: 0 0 3px #dfeeff;
+            width: 31%!important;
+            font-size: 12px;
+            border-radius:6px;
+            padding: 6px 0;
+          }
+          .order_btn_num{
+            color: #43acfe;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 14px;
+            margin-top: 4px;
+          }
+    </style>
+</head>
+
+<body>
+    <script id="banner-template" type="text/x-dot-template">
+        <div>
+            <img src="../../image/home_viewpage_01.png" />
+            <label><div class="blur"></div></label>
+        </div>
+        <div>
+            <img src="../../image/home_viewpage_02.png" />
+            <label><div class="blur"></div></label>
+        </div>
+        <div>
+            <img src="../../image/home_viewpage_03.png" />
+            <label><div class="blur"></div></label>
+        </div>
+    </script>
+
+
+
+    <div id='slide' class='swipe' style="display:none;">
+        <div class='swipe-wrap' id="banner-content"></div>
+        <ul id="pointer">
+            <li>
+                <a class="active"></a>
+            </li>
+            <li>
+                <a></a>
+            </li>
+            <li>
+                <a></a>
+            </li>
+        </ul>
+    </div>
+    <div class="wrapper">
+      <!-- <div class="tianqBox">
+        <div class="tianqBoxDD"></div>
+        <iframe id='iframeID' scrolling="no" frameborder="0" allowtransparency="true" src='http://i.tianqi.com/index.php?c=code&id=12&icon=1&num=2&site=12'></iframe>
+      </div> -->
+        <div class="index_sbox" id="faultDiv" style="display: none;">
+            <ul class="clearfix">
+
+              <li  class="home_gv_prework" style="position:relative;">
+
+                  <a tapmode="active" onclick="openWinList('bill/all_bill_list_win','','0')" style="font-size: 12px">待接单</a>
+              </li>
+              <li  class="home_gv_xunjian_new" style="position:relative;">
+
+                  <a tapmode="active" onclick="openWinList('bill/all_bill_list_win','','1')" style="font-size: 12px">处理中</a>
+              </li>
+
+              <li  style="position:relative;" class="home_stand_create">
+
+                  <a tapmode="active" onclick="openWinList('bill/all_bill_list_win','','2')" style="font-size: 12px">待回单</a>
+              </li>
+
+              <li id="upgradeBillId" style="position:relative;display:none;" class="home_person_upgrade">
+                  <a tapmode="active" onclick="openWinList('bill/bill-list_win','升级箱','GET_BILL_UPDATE_LIST')" style="font-size: 12px">升级箱</a>
+              </li>
+
+              <li onclick="openWinList('xunjian/task_list_win0','离线巡检','NEW_XUNJIAN_TASK',true)" style="position:relative;" class="home_gv_preread3">
+                  <a tapmode="active" style="font-size: 12px">离线巡检</a>
+              </li>
+
+              <li id="checkId" style="position:relative;display:none;" class="home_gv_check">
+                  <a tapmode="active" onclick="openWinList('check/check_list_win','现场检查','')" style="font-size: 12px">现场检查</a>
+              </li>
+
+              <li id="workerLiId" style="position:relative;display:none;" class="home_gv_worker_yb">
+                  <a tapmode="active" onclick="openWinList('bill/bill-list_win','工单已办','GET_BILL_FINISH_LIST')" style="font-size: 12px">工单已办</a>
+              </li>
+
+              <li id="offlineUploadId" style="position:relative;display:none;" class="home_stand_pre3">
+                  <!-- <div id="offlineUploadTip" class="cellTip">
+                      0
+                  </div> -->
+                  <a tapmode="active" onclick="openWinList('offlineUpload/offlineUpload_win','图片上传','')" style="font-size: 12px">图片上传</a>
+              </li>
+              <li style="position:relative;" class="home_stand_pre4">
+
+                  <a tapmode="active" onclick="goScan()" style="font-size: 12px">位置上报</a>
+              </li>
+              <li  class="home_gv_prework" style="position:relative;">
+                  <a tapmode="active" onclick="openApp()" style="font-size: 12px">作战室</a>
+              </li>
+              <li  class="home_gv_prework" style="position:relative;">
+                  <a tapmode="active" onclick="rili()" style="font-size: 12px">日程</a>
+              </li>
+              <li  class="home_gv_near" style="position:relative;">
+                  <a tapmode="active" onclick="openNearby()" style="font-size: 12px">我的附近</a>
+              </li>
+              <li  class="home_gv_prework" style="position:relative;">
+                  <a tapmode="active" onclick="openWinList('ammeter/ammeterSelStation_win','电表装维','')" style="font-size: 12px">电表装维</a>
+              </li>
+              <li  class="home_gv_prework" style="position:relative;">
+                  <a tapmode="active" onclick="openWinList('standBill/standOnCheckWin','上站核实工单','')" style="font-size: 12px">上站核实工单</a>
+              </li>
+              <!--<li  class="home_gv_prework" style="position:relative;">
+                <a tapmode="active" onclick="openWinList('churuzhan/newFinishStandBillListWin','出入站','')" style="font-size: 12px">出入站</a>
+            </li>-->
+              <li id="energyWorkOrder" class="home_gv_energyOrder" style="position:relative;">
+                <a tapmode="active" onclick="openWinList('energyWorkOrder/mainWin','能源工单','')" style="font-size: 12px">能源工单</a>
+<!--                <a tapmode="active" onclick="energyWorkOrder('energyWorkOrder/mainWin.html','energyWorkOrder/mainWin','')" style="font-size: 12px">能源工单2</a>-->
+              </li>
+            </ul>
+        </div>
+
+
+        <div class="index_sbox" id="faultDiv2">
+            <h4><div class="cj-l_line cj-l_line2"></div>待办事宜</h4>
+            <ul class="order_btn_box">
+                <li id="preBillLiId" class="order_btn" style="position:relative;" onclick="openWinList('bill/bill-list_win','工单待办','GET_BILL_LIST_0')">
+                  <div>故障工单</div>
+                  <div id="preBillTip" class="order_btn_num">0</div>
+                </li>
+
+                <li id="preBillLiId2" class="order_btn" style="position:relative;" onclick="openWinList('bill/bill-list_win','停发电工单','GET_BILL_FD')">
+                  <div>停发电工单</div>
+                  <div id="allElectBillCount" class="order_btn_num">0</div>
+                </li>
+
+                <li id="" class="order_btn" style="position:relative;" onclick="openWinList('generation/generationBillListWin','代维调度','')" >
+                  <div>调度工单</div>
+                  <div id="userListClaimedCount" class="order_btn_num">0</div>
+                </li>
+            </ul>
+
+            <ul class="order_btn_box">
+                <li class="order_btn" style="position:relative;" onclick="$api.setStorage('billcntFrom', 'projectListFrm');openWinList('xunjian/task_list_win','巡检任务','NEW_XUNJIAN_TASK',false)">
+                  <div>巡检任务</div>
+                  <div id="taskNewTip" class="order_btn_num">0</div>
+                </li>
+
+                <li id="standStaPreBillId" class="order_btn" style="position:relative;" onclick="openWinList('standBill/standBillListWin','上站待办','STATION_BILL_WAITLIST')" >
+                  <div>上站待办</div>
+                  <div id="standStaPreBillTip" class="order_btn_num">0</div>
+                </li>
+
+                <li id="repairBillId" class="order_btn" style="position:relative;" onclick="openWinList('repair/repair-list_win','日常修理','')" >
+                  <div>日常维修</div>
+                  <div id="repairBillIdTip" class="order_btn_num">0</div>
+                </li>
+            </ul>
+            <ul class="order_btn_box">
+                <li id="newStandStaPreBillId" class="order_btn" style="position:relative;display:none;" onclick="openWinList('churuzhan/standBillListWin','新上站待办','STATION_BILL_WAITLIST_NEW')" >
+                  <div>新上站待办</div>
+                  <div id="standStaPreBillTipNew" class="order_btn_num">0</div>
+                </li>
+                <li id="zcyygdId" class="order_btn" style="position:relative;display:none;" onclick="openWinList('zcyygd/listWin','资产运营工单','5')">
+                    <div>资产工单</div><div id="zcyygdNum" class="order_btn_num">0</div>
+                </li>
+                <li class="order_btn" style="position:relative;opacity: 0">
+<!--                    <div>资产工单</div><div class="order_btn_num">0</div>-->
+                </li>
+<!--                <li class="order_btn" style="position:relative;" onclick="openWinList('zcyygd/listWin','资产运营工单','5')">-->
+<!--                    <div>资产·待接单</div>-->
+<!--                </li>-->
+<!--                <li class="order_btn" style="position:relative;" onclick="openWinList('zcyygd/listWin','资产运营工单','6')">-->
+<!--                    <div>资产·已接单</div>-->
+<!--                </li>-->
+<!--                <li class="order_btn" style="position:relative;" onclick="openWinList('zcyygd/listWin','资产运营工单','14')">-->
+<!--                    <div>资产·待审核</div>-->
+<!--                </li>-->
+            </ul>
+
+
+          <!--<ul class="order_btn_box">
+          	<li class="order_btn" id="standStaPreBillId" style="position:relative;" onclick="openLeaveStationConfirmFrm()">
+                <div>离站确认[新]</div>
+                </li>
+           </ul>-->
+        </div>
+
+
+
+
+        <!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <!-- <div  class="index_sbox" id="taskNewLiId" style="display:none;">
+            <h4><div class="cj-l_line cj-l_line3"></div>巡检工单</h4>
+            <ul class="clearfix">
+                <li style="position:relative;" class="home_gv_preread">
+                    <div id="taskNewTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('xunjian/task_list_win','巡检任务','NEW_XUNJIAN_TASK',false)" style="font-size: 12px">巡检任务</a>
+                </li>
+
+            </ul>
+        </div> -->
+
+        <!-- <div  class="index_sbox" id="otherDiv" style="display: none;">
+            <h4><div class="cj-l_line cj-l_line4"></div>其他工单</h4>
+            <ul class="clearfix">
+                <li id="standStaPreBillId" class="home_stand_fault" style="position:relative;display:none;">
+                    <div id="standStaPreBillTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('standBill/standBillListWin','上站待办','STATION_BILL_WAITLIST')" style="font-size: 12px">上站待办</a>
+                </li>
+
+
+                <li id="repairBillId" style="position:relative;display:none;" class="home_gv_worker">
+                    <div id="repairBillIdTip" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('repair/repair-list_win','日常修理','')" style="font-size: 12px">日常修理</a>
+                </li>
+                <li id="#" style="position:relative;" class="home_gv_dD">
+                    <div id="userListClaimedCount" class="cellTip">
+                        0
+                    </div>
+                    <a tapmode="active" onclick="openWinList('generation/generationBillListWin','代维调度','')" style="font-size: 12px">代维调度</a>
+                </li>
+
+            </ul>
+        </div> -->
+        <!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+
+        <div  class="index_sbox" id="historyDiv" style="display: none;">
+            <h4><div class="cj-l_line cj-l_line5"></div>历史查询</h4>
+            <ul class="clearfix">
+
+                <li style="position:relative;" class="home_gv_worker_yb">
+                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','故障已办','GET_BILL_FINISH_LIST')" style="font-size: 12px">故障已办</a>
+                </li>
+
+                <li id="standStaFinishBillId" class="home_stand_pre" style="position:relative;display:none;">
+                    <a tapmode="active" onclick="openWinList('standBill/standFinishBillListWin','上站已办','STATION_BILL_FINISH_LIST')" style="font-size: 12px">上站已办</a>
+                </li>
+
+                <li style="position:relative;" class="home_gv_worker_yb">
+                    <a tapmode="active" onclick="openWinList('xunjian/historyXunjian_win','巡检已办','NEW_XUNJIAN_HISTORY_TASK')" style="font-size: 12px">巡检已办</a>
+                </li>
+
+                <li style="position:relative;" class="home_gv_worker_yb">
+                  <a tapmode="active" onclick="openWinList('bill/historyHidden_win','隐患上报','NEW_YINHUAN_HISTORY_TASK')" style="font-size: 12px">隐患上报</a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+<script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/GPS.js"></script>
+<script type="text/javascript" src="../../script/home_frm.js"></script>
+<script type="text/javascript" src="../../script/swipe.js"></script>
+<script type="text/javascript" src="../../script/xunjian_wxx.js"></script>
+<script type="text/javascript" src="../../script/request.js"></script>
+
+
+<script type="text/javascript">
+function rili(){
+  api.openWin({
+    name : 'calendarWin',
+    url : '../H5calendar/calendarWin.html',
+    reload : true,
+    bounces : false,
+    vScrollBarEnabled : false,
+    pageParam : {}
+  });
+}
+// 我的附近
+function openNearby(){
+  api.openWin({
+    name : 'nearbyMapWin',
+    url : '../../html/nearbyMapWin.html',
+    reload : true,
+    bounces : false,
+    vScrollBarEnabled : false,
+    pageParam : {}
+  });
+}
+
+// ssss=()=>{}
+function goScan() {
+  var FNScanner = api.require('FNScanner');
+  FNScanner.openScanner({
+    autorotation : true
+  }, function(ret, err) {
+    if (ret) {
+      if (ret.content != 'undefined' && ret.content != undefined) {
+        var EWM=ret.content;
+        if(EWM.slice(0,1)=="c"){
+          var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+          var oilcode=ret.content.slice(1);
+          var opts={
+            code:oilcode,
+            lon:lastLocation.lon,
+            lat:lastLocation.lat
+          }
+          $client.setBillCar(opts,function(ret,err){
+            console.log(getObj(ret));
+            if (ret.success) {
+              api.toast({
+                msg : '上报车辆经纬度成功！'
+              });
+            } else {
+              api.toast({
+                msg : '上报车辆经纬度失败！'
+              });
+            }
+          })
+
+
+        }else if (EWM.slice(0,1)=="o") {
+          var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+          var oilcode=ret.content.slice(1);
+          var opts={
+            code:oilcode,
+            lon:lastLocation.lon,
+            lat:lastLocation.lat
+          }
+          $client.setBillCar(opts,function(ret,err){
+            console.log(getObj(ret));
+            if (ret.success) {
+              api.toast({
+                msg : '上报油机经纬度成功！'
+              });
+            } else {
+              api.toast({
+                msg : '上报油机经纬度失败！'
+              });
+            }
+          })
+        }else {
+          $client.getScanInfo({
+            number : ret.content
+          }, function(ret, err) {
+            if (ret) {
+              //          api.hideProgress();
+              if (ret.success) {
+                //						var opt = {'erweima':ret.model}
+                api.openWin({
+                  name : 'erweimainfo_win',
+                  url : '../../html/erweima/erweimainfo_win.html',
+                  reload : true,
+                  bounces : false,
+                  vScrollBarEnabled : false,
+                  pageParam : {
+                    'erweima' : ret.model
+                  }
+                });
+              } else {
+                api.toast({
+                  msg : ret.data_info
+                });
+              }
+            } else {
+              api.toast({
+                msg : '获取信息出错!'
+              });
+            }
+            api.hideProgress();
+          });
+        }
+
+      }
+    } else {
+      alert(JSON.stringify(err));
+    }
+  });
+}
+// 打开监控APP
+function openApp(){
+    //异步返回结果：
+    if (api.systemType == "ios") {
+      var loginname = $api.getStorage(constant.LOGIN_LOGINNAME);
+      var password = $api.getStorage(constant.LOGIN_PASSWORD);
+      var user=$api.getStorage('user');
+
+          api.openApp({
+            iosUrl: 'ttwar://',
+            appParam: {
+                username:loginname,
+                userId:user.userid,
+                loginname:user.username,
+                roomId:'',
+                isList:''
+            }
+          }, function(ret, err) {
+
+              if (ret) {
+              } else {
+                //应用未安装
+                api.confirm({
+                  title : '确认提示',
+                  msg : '应用未安装,是否下载安装？'
+                }, function(ret) {
+                  if (ret.buttonIndex == 2) {
+                    // 应用未安装
+                    api.openWin({
+                      name : 'app',
+                      url : '../xiaApp/xiaApp_win.html',
+                      reload : true,
+                      bounces : false,
+                      vScrollBarEnabled : false,
+                      pageParam : {}
+                    });
+                  }
+                })
+              }
+          });
+    }else {
+      api.appInstalled({
+          appBundle: 'com.metarnet.IndependentWarSupport'
+      }, function(ret, err) {
+          if (ret.installed) {
+              var loginname = $api.getStorage(constant.LOGIN_LOGINNAME);
+              var password = $api.getStorage(constant.LOGIN_PASSWORD);
+              var user=$api.getStorage('user');
+              console.log(getObj(user));
+              console.log(password);
+              console.log("indepentwar://android/?username="+loginname+"&userId="+user.userid);
+              // indepentwar://android
+              window.location.href = "indepentwar://android/?username="+loginname+"&userId="+user.userid+"&loginname="+user.username+"&roomId=''&isList=''";
+          } else {
+            var user=$api.getStorage('user');
+            console.log(getObj(user));
+              //应用未安装
+              api.confirm({
+                title : '确认提示',
+                msg : '应用未安装,是否下载安装？'
+              }, function(ret) {
+                if (ret.buttonIndex == 2) {
+                  //Android中的使用方法如下：
+                  // window.location.href = 'https://www.pgyer.com/wSIE'
+                  api.openApp({
+                                androidPkg : 'android.intent.action.VIEW',
+                                mimeType : 'text/html',
+                                uri : 'https://www.pgyer.com/wSIE'
+                        }, function(ret, err) {
+
+                        });
+                }
+              })
+          }
+      });
+    }
+
+}
+
+
+    function showAlert(){
+      api.openWin({
+        name : 'ammeterListWin',
+        url : '../../html/ammeter/ammeter-detail_win.html',
+        reload : true,
+        bounces : false,
+        vScrollBarEnabled : false,
+        pageParam : {}
+      });
+    }
+    // 同步数据到本地
+    function synchron() {
+        api.showProgress({
+            title: '努力同步中...',
+            text: '先喝杯茶...'
+        });
+        var userid = $api.getStorage('user').userid;
+        var opts = {
+            userid: userid,
+            start: 1,
+            limit: 20
+        };
+        $client.synchronization(opts, function(ret, err) {
+
+            if (ret.success) {
+                db_initwxx(ret)
+                api.hideProgress();
+                api.toast({
+                    msg: '同步数据到本地成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            } else {
+                api.hideProgress();
+                api.toast({
+                    msg: '同步数据到本地失败，请重试',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        });
+    }
+    // 同步本地到服务
+    var inspstandRelProjInfoDetailList, inspstandRelProjInfoList, taskInfoList;
+
+    function synchronService() {
+        var userid = $api.getStorage('user').userid;
+        db = api.require('db');
+        db.selectSql({
+            name: 'xunjian',
+            sql: 'SELECT * FROM taskInfoList'
+        }, function(ret, err) {
+            console.log(getObj(ret));
+            if (ret.status) {
+                if (ret.data.length > 0) {
+                    api.showProgress({
+                        title: '努力同步中...',
+                        text: '先喝杯茶...'
+                    });
+                    db.selectSql({
+                        name: 'xunjian',
+                        sql: 'SELECT * FROM inspstandRelProjInfoDetailList'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            if (ret.data) {
+                                inspstandRelProjInfoDetailList = ret.data;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                    db.selectSql({
+                        name: 'xunjian',
+                        sql: 'SELECT * FROM inspstandRelProjInfoList'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            if (ret.data) {
+                                inspstandRelProjInfoList = ret.data;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                    db.selectSql({
+                        name: 'xunjian',
+                        sql: 'SELECT * FROM taskInfoList'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            if (ret.data) {
+                                taskInfoList = ret.data;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                    setTimeout(function() {
+                        var opts = {
+                            inspstandRelProjInfoDetailList: inspstandRelProjInfoDetailList,
+                            inspstandRelProjInfoList: inspstandRelProjInfoList,
+                            taskInfoList: taskInfoList,
+                            userid: userid
+                        };
+                        console.log(getObj(opts));
+                        $client.synchronizationService(opts, function(ret, err) {
+                            // console.log('9999999999999999999999999');
+                            // console.log(getObj(ret));
+                            if (ret.success) {
+                                api.hideProgress();
+                                api.toast({
+                                    msg: '同步本地到服务成功',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+
+                            } else {
+                                api.hideProgress();
+                                api.toast({
+                                    msg: '同步本地到服务失败，请重试',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        });
+                    }, 2000);
+
+                }
+            } else {
+                api.toast({
+                    msg: '本地数据为空，请先同步数据到本地',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        })
+    }
+
+    //删除本地数据
+    function synchrondelete() {
+        var fs = api.require('fs');
+        var db = api.require('db');
+        db.selectSql({
+            name: 'xunjian',
+            sql: 'SELECT * FROM taskInfoList'
+        }, function(ret, err) {
+            console.log(getObj(ret));
+            if (ret.status) {
+                // if (ret.data.length > 0) {
+                    fs.rmdir({
+                        path: 'fs://xunjian/DB/inspection'
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            api.toast({
+                                msg: '删除本地数据成功',
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        } else {
+                            api.toast({
+                                msg: '删除本地数据失败',
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        }
+                    });
+                // }
+            } else {
+                api.toast({
+                    msg: '本地数据为空',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        })
+    }
+
+
+    // 全部工单
+    function goAllaction(){
+      // 存储处理中的站址信息
+      openWinList('allWork/allWorklist_win','站址列表','GET_BILL_FD');
+    }
+    // 进入到能源工单中去
+    function energyWorkOrder(url, name){
+      api.openWin({
+        name: name,
+        url: url,
+      })
+
+    }
+
+    // 打开待办页面
+    function openDaibaiList(tabPage, stationCode, billType){
+    //alert(tabPage);
+    	setTimeout(function() {
+		//openWinList('bill/all_bill_list_win','','1');
+		openWinBillList(tabPage,stationCode, billType);
+	}, 500);
+    }
+
+	function openNewOutStationPic() {
+	var opts ={"orderno":"SZ-20211020-1634699430303", "orderlink":"5", "billid":"a2bd026676b842af960e36ed5895049d"};
+	api.openFrame({
+		name : 'stationPicDetail_frm',
+		url : '../newOutStation/stationPicDetail_frm.html',
+		bounces : false,
+		pageParam : opts
+	});
+    }
+
+	function openLeaveStationConfirmFrm() {
+		var opts ={"orderno":"SZ-20211020-1634699430303", "orderlink":"5", "billid":"a2bd026676b842af960e36ed5895049d"};
+		api.openFrame({
+			name : 'stationLeaveConfirm_frm',
+			url : '../newOutStation/stationLeaveConfirm_frm.html',
+			bounces : false,
+			pageParam : opts
+		});
+	}
+
+</script>
+
+</html>

@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>上站核实操作列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css"  disabled>
+		<link rel="stylesheet" href="../../css/bill-listCon_frm.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/billMenu.css" />
+		<style>
+		input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="number"], input[type="week"], input[type="month"], input[type="time"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="search"], input[type="file"], input[type="color"], select, textarea {
+			outline: none;
+		}
+		html, body, #wrap, #header {
+			background: transparent;
+		}
+		#header {
+			height: 58px;
+		}
+		.shadow {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			left: 0;
+			top: 0;
+			z-index: 1;
+			background: #333;
+			opacity: 0.6;
+			filter: alpha(opacity=60);
+		}
+		.menu-list li span {
+			text-indent: 1em;
+		}
+		#revertDiv {
+			-webkit-box-flex: 1;
+			-webkit-flex: 1;
+			flex: 1;
+		}
+		.winDiv {
+			display: none;
+			background-color: #f2f2f2;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			border-radius: 10px;
+		}
+		.winTitleDiv {
+			text-align: center;
+			font-size: 20px;
+			color: #FFFFFF;
+			background-color: #DB4537;
+			height: 35px;
+			line-height: 35px;
+			-webkit-border-radius: 10px 10px 0 0;
+			-moz-border-radius: 10px 10px 0 0;
+			border-radius: 10px 10px 0 0;
+		}
+		.winContentSnDiv {
+			font-size: 16px;
+			height: 30px;
+			line-height: 30px;
+			margin-top: 20px;
+			text-align: center;
+			background-color: #F2F2F2;
+		}
+		.winContentTitleDiv {
+			font-size: 16px;
+			height: 30px;
+			line-height: 30px;
+			margin-bottom: 20px;
+			text-align: center;
+			background-color: #F2F2F2;
+		}
+		.winButtonDiv {
+			background-color: #e0e0e0;
+			height: 50px;
+			width: 300px;
+			-webkit-border-radius: 0 0 10px 10px;
+			-moz-border-radius: 0 0 10px 10px;
+			border-radius: 0 0 10px 10px;
+		}
+		.winOkBtn {
+			width: 130px;
+			height: 40px;
+			color: #FFFFFF;
+			text-align: center;
+			font-size: 20px;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			background-color: #DB4537;
+			float: right;
+			margin-top: 5px;
+			margin-right: 5px;
+		}
+		.winCancelBtn {
+			width: 130px;
+			height: 40px;
+			color: #FFFFFF;
+			text-align: center;
+			font-size: 20px;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			background-color: #3779d0;
+			float: left;
+			margin-left: 5px;
+			margin-top: 5px;
+		}
+		.otherDivHeader {
+			text-align: center;
+			font-size: 20px;
+			color: #FFFFFF;
+			background-color: #DB4537;
+			height: 40px;
+			line-height: 40px;
+			-webkit-border-radius: 10px 10px 0 0;
+			-moz-border-radius: 10px 10px 0 0;
+			border-radius: 10px 10px 0 0;
+		}
+		.labelDiv {
+			font-size: 16px;
+			color: #3498DB;
+			height: 30px;
+			line-height: 30px;
+			white-space: nowrap;
+		}
+		.allDiv {
+			width: 100%;
+		}
+		.left {
+			text-align: right;
+			font-size: 16px;
+			float: left;
+			color: #000000;
+			width: 30%;
+		}
+		.right {
+			text-align: left;
+			float: right;
+			font-size: 16px;
+			color: #787878;
+			width: 67%;
+		}
+		.transferDiv {
+			width: 100px;
+			height: 40px;
+		}
+		.menuListLi {
+			height: 40px;
+			line-height: 40px;
+			color: #46a3FF;
+			text-align: center;
+			font-size: 16px;
+		}
+		.noborder {
+			border: none !important;
+		}
+		.textStyle {
+			padding-left: 3px;
+			height: 40px;
+			line-height: 40px;
+			text-align: left;
+			color: #adadad;
+		}
+		</style>
+	</head>
+	<body>
+		<script id="standcheckMenu-template" type="text/x-dot-template">
+			<ul class="menu-list">
+			{{? it.status == '1'  }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('acceptDiv');">接单</li>
+			{{?}}
+			{{? it.status == '2'  }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('ispromptModelPanel');">是否上站</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('FEEDBACK');">反馈</li>
+			{{?}}
+			{{? it.status == '3'  }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('confireDivs');">签到</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('FEEDBACK');">反馈</li>
+			{{?}}
+			{{? it.status == '4'  }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('REVERT');">回单</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBills('FEEDBACK');">反馈</li>
+			{{?}}
+			</ul>
+		</script>
+		<div id="wrap" >
+			<div id="shadowId" class="shadow" tapmode="" onclick="closeFrame('standCheckMenu')"></div>
+			<div id="header"></div>
+			<div id="standCheckMenuMain"></div>
+		</div>
+		<!--接单begin-->
+		<div id="acceptDiv" class="winDiv" style = "text-align:center;margin-top:250px;margin-left:60px">
+			<div class="winTitleDiv">
+				确定接单？
+			</div>
+		<div class="winButtonDiv">
+				<button class="winCancelBtn" style="margin-left:10px" onclick="closeFrame('standCheckMenu')">
+					取消
+				</button>
+				<button class="winOkBtn" style="margin-right:10px"  onclick="acceptConfirm()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--上站begin-->
+		<div id="ispromptModelPanel" class="winDiv" style = "text-align:center;margin-top:150px;margin-left:60px">
+			<div class="winTitleDiv">
+				是否上站
+			</div>
+			<div class="labelDiv">
+				<span id="user_name1" name="user_name1"></span>
+			</div>
+		<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					是否需要上站
+				</div>
+			</div>
+			<div class="transferDiv">
+				<select id="isneedonStation" class="transferSel noborder" value="">
+					<option value="1">是</option>
+					<option value="0" selected>否</option>
+				</select>
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					是/否上站原因描述
+				</div>
+			</div>
+			<div>
+				<textarea id="onstandReason" class="otherDealInfo" rows="5" cols="5"></textarea>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standCheckMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="ensure()">
+					确定
+				</button>
+			</div>
+		</div>
+
+		<!--AI事件begin-->
+		<div id="AI_EVENT" class="winDiv" style = "text-align:center;margin-top:150px;margin-left:60px">
+			<div class="winTitleDiv">
+				存在AI事件,请选择
+			</div>
+			<div class="labelDiv">
+				<span id="user_name2" name="user_name2"></span>
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					事件消除原因
+				</div>
+			</div>
+			<div class="transferDiv">
+				<select id="detailedReason" class="transferSel noborder" value="">
+					<option value="" selected>请选择</option>
+				</select>
+			</div>
+			<div class="labelDiv">
+				<div style="font-size:16px;color:#adadad;">
+					事件消除详细原因
+				</div>
+			</div>
+			<div>
+				<textarea id="clearReason" class="otherDealInfo required" data-valid="required" data-error="请填写事件消除详细原因！" rows="5" cols="5" maxlength="300"></textarea>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standCheckMenu')">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="clearAI()">
+					确定
+				</button>
+			</div>
+		</div>
+
+		<!--反馈begin-->
+		<div id="FEEDBACK" class="winDiv" style = "text-align:center;margin-top:150px;margin-left:60px">
+				<div class="winTitleDiv">
+				工单反馈
+				</div>
+				<div  class="selectLabelDiv" style="margin-top: 10px;" >
+					<div id="user_name" style="font-size:16px;color:#adadad;">
+						接收人
+					</div>
+				</div>
+				<div id="contactTelSpanId"class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+					<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+							联系电话:
+					</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+						<input id="contactTelTextId"  type="text" readonly="readonly" class="textareaborder" value=""/>
+				</div>
+			</div>
+			<div id="opinionLabelDiv"class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+				<div id="contInfo" class="aui-flex-item-3 " style=" padding-left:2px;font-size:16px;width: 28%;height: 100px;line-height: 1.5;text-align: left;color:#adadad;">
+					反馈内容:
+				</div>
+				<div class="cardTextareaCon" style="height: 100px;">
+							<textarea id="Info" name="Info" rows="4" class="noborder required" data-valid="required" data-error="请填写处理方法！" ></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame('standCheckMenu')">
+						取消
+				</button>
+				<button class="winOkBtn"  onclick="coupleSubmit()">
+						确定
+				</button>
+			</div>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+    <script type="text/javascript" src="../script/request.js"></script>
+	<script type="text/javascript" src="script/standCheckMenu.js"></script>
+</html>

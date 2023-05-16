@@ -1,0 +1,208 @@
+.titlebar .cui-input-bd* {
+  /* margin: 0; */
+  /* padding: 0; */
+  /* -webkit-box-sizing: border-box; */
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body, button {
+    font: 400 14px/1.5 Arial, "Lucida Grande", Verdana, "Microsoft YaHei", hei;
+}
+article {
+    display: block;
+}
+address, cite, dfn, em, var, i {
+    font-style: normal;
+    font-weight: 400;
+}
+input {
+    width: 100%;
+    height: 42px;
+    line-height: 42px;
+    font-size: 14px;
+    border: 0;
+    padding: 0 5px;
+    background: transparent;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    outline: 0;
+}
+.cui-pro-radius {
+    width: 18px;
+    height: 18px;
+    border-left: #c5c5c5 1px solid;
+    display: block;
+    border-bottom: #c5c5c5 1px solid;
+    border-radius: 50%;
+}
+.cui-pro-logo {
+    width: 12px;
+    height: 13px;
+    display: block;
+    margin: -16px 0 0 3px;
+    background-position: -74px -58px;
+}
+.cui-i, .cui-i:before {
+    background: url(http://pic.c-ctrip.com/h5/common/cui_img.png);
+    background-size: 200px 71px;
+}
+.cui-pro-load {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 38px;
+    top: 50%;
+    margin-top: -9px;
+}
+.cui-pro-radius {
+    width: 18px;
+    height: 18px;
+    border-left: #c5c5c5 1px solid;
+    display: block;
+    border-bottom: #c5c5c5 1px solid;
+    border-radius: 50%;
+}
+.cui-w-loading, .cui-pro-radius {
+    -webkit-animation: cui-loading 1.58s linear infinite;
+    -moz-animation: cui-loading 1.58s linear infinite;
+    -ms-animation: cui-loading 1.58s linear infinite;
+    animation: cui-loading 1.58s linear infinite;
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    opacity: 0;
+}
+.back-icon {
+    display: inline-block;
+    width: 10%;
+    height: 28px;
+    background: url(../image/icon_arrow.png) no-repeat center center;
+    -webkit-background-size: 14px 18px;
+    background-size: 36px 36px;
+    float: left;
+}
+
+.titlebar {
+  position: relative;
+  min-height: 44px;
+}
+
+.titlebar .cui-input-bd {
+    position: absolute;
+    display: block;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 500;
+    left: 47%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    white-space: nowrap;
+    width: 70%;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 28px;
+    line-height: normal;
+    display: inline-block;
+    padding: 0 60px 0 28px;
+    background-color: #FFF;
+    border-radius: 20px;
+}
+.titlebar .cui-input-bd .cui-input-box {
+    height: 28px;
+    line-height: 20px;
+    font-size:14px;
+}
+.titlebar .iconfont {
+  font-size: 24px;
+  width: 24px;
+}
+.titlebar .iconfont {
+  height: 24px;
+  line-height: 24px;
+  display: inline-block;
+  overflow: hidden;
+  float: left;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+}
+[class^="iconline-"], [class*=" iconline-"] {
+  font-family: 'iconline';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.titlebar a:first-child {
+  left: 8px;
+}
+
+
+.titlebar a:last-child {
+    right: 0;
+    margin : 0 5px;
+    text-align:center;
+}
+.titlebar a {
+  position: absolute;
+  display: block;
+  height: 32px;
+  line-height: 32px;
+  min-width: 32px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  font-size: 14px;
+    color: #fff;
+}
+a, button, input {
+  -webkit-tap-highlight-color: rgba(255,0,0,0);
+}
+a {
+  background: transparent;
+  text-decoration: none;
+}
+.ccssoft_list li {
+    list-style: none;
+    padding: 4px;
+    border-bottom: 1px solid #e3e2e2;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.ccssoft_list li:hover {
+    background: #f9e9df;
+}
+.cj-l-title, .cj-f-title {
+    /*border-bottom: 1px solid #e3e2e2;*/
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 2px 12px 0px 12px;
+    position: relative;
+}
+.cj-l-level-info {
+    /*border-bottom: 1px solid #e3e2e2;*/
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 28px;
+    padding: 2px 12px 0px 12px;
+    color:gray;
+    position: relative;
+}
+.cj-l-into {
+    font-size: 12px;
+    color: #666;
+    line-height: 20px;
+    padding: 3px 0;
+    position: relative;
+    margin-left: 12px;
+    /*   padding-right: 210px;*/
+}

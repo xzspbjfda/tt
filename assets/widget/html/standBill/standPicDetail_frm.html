@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<style>
+			body {
+				background-color: #fff;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<a class="aui-pull-left" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+			<div class="aui-title">
+				图片上传
+			</div>
+			<a class="aui-pull-right" tapmode onclick="select()"> <span class="aui-iconfont aui-icon-upload"></span> </a>
+		</header>
+		<script id="img-template" type="text/x-dot-template">
+			<li class="aui-list-view-cell aui-img aui-col-xs-4" onclick="imageUtil.show('{{=it.imgpath}}')">
+			<img class="aui-img-object" src="{{=it.imgpath}}">
+			</li>
+		</script>
+		<ul id="list-view" class="aui-list-view aui-grid-view">
+			<li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="call_getPic(this)">
+				<img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+			</li>
+			<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+			<img style='display:none;' class='imgPath'  src=''/>
+		</ul>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script type="text/javascript">
+		var user, lastLocation;
+		apiready = function() {
+			initHeader();
+			//漏洞测试用开始，该代码需要删除 debug by lsj
+			//var aa=JSON.parse('{"status":true,"timestamp":1656468210000,"lon":121.59407716141587,"lat":38.90176618774335,"locationType":"NetWork","time":"上午10:03:30","photoaddress":"北京市朝阳区珠江路67号"} ');
+			//$api.setStorage('LAST_GPS_LOCATION',aa);
+			//漏洞测试用结束
+			lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			console.log("===上传照片====");
+			console.log(lastLocation);
+			console.log(JSON.stringify(lastLocation));
+			if (!lastLocation) {
+				$aui.toast({
+					msg : '暂未定位\n无法上传照片！',
+					style : 'fail'
+				});
+				window.setTimeout(function() {
+					api.closeWin();
+				}, 2000);
+			} else {
+				user = $api.getStorage('user');
+				db_init();
+				imageUtil.init({
+					uploadFn : $client.uploadStandBillImage,
+					saveFn : db_saveStandBillPic
+				});
+				//              select_add();
+			}
+		};
+		/**
+		 * 展示图片信息，数据源： data
+		 */
+		function showPic(data) {
+			var content = $api.byId('list-view');
+			var tpl = $api.byId('img-template').text;
+			var tempFn = doT.template(tpl);
+			$('#addPic').before(tempFn(data));
+			$new = $('#addPic').prev();
+			$new.css('height', $new.css('width'));
+		}
+
+		function call_getPic(e) {
+			var permission = 'camera';
+			var resultList = api.hasPermission({
+			    list: [permission]
+			});
+			if (resultList[0].granted) {
+			    // 已授权，可以继续下一步操作
+			} else {
+			    api.confirm({
+			        msg: '应用需要您的授权才能访问相机',
+			        buttons: ['取消', '去设置']
+			    }, function(ret) {
+			        if (ret.buttonIndex == 2) {
+			            api.requestPermission({
+			                list: [permission],
+			            }, function(res) {
+			                if (res.list[0].granted) {
+			                    // 已授权，可以继续下一步操作
+			                }
+			            });
+			        }
+			    });
+			}
+			var curentTime2 = CurentTime2();
+			$api.setStorage('newtime', curentTime2);
+			var lon1=displaynum(lastLocation.lon);
+			var lat1=displaynum(lastLocation.lat);
+			$api.setStorage('lon1', lon1);
+			$api.setStorage('lat1', lat1);
+			imageUtil.add('camera', addPic,e,true);
+		}
+
+		//保留6位小数点
+		function displaynum(x) {
+			var num = new Number(x);
+			return num.toFixed(6);
+		}
+
+		/**
+		 * 添加照片
+		 */
+		function addPic(ret, err) {
+            console.log("====上传图片完成后回调=====ret.data:"+ret.data)
+			////////////////////////////////////////////
+			var user=$api.getStorage('user');
+			var newtime = $api.getStorage('newtime');
+			var lon1 = $api.getStorage('lon1');
+			var lat1 = $api.getStorage('lat1');
+			var applyid = api.pageParam.applyid;
+			var stationname=api.pageParam.stationname;
+			///////////////////////////////
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			var oldret = ret.data.split(".");
+			console.log("上传图片回调更改前地址="+ret.data)
+			oldret[0]=ret.data.replace("."+oldret[oldret.length-1],'')
+			oldret[1]=oldret[oldret.length - 1];
+			var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+applyid+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+			console.log("上传图片回调更改后地址="+newret)
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			if (ret && ret.data && ret.data.length > 0) {
+				var filePath = ret.data;
+				var imgModel = {
+					userid : user.userid,
+					applyid : api.pageParam.applyid,
+					stationname : api.pageParam.stationname,
+					imgpath : newret,
+					test: '',
+					phototime : (new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+					lon : lon1,
+					lat : lat1,
+					photoaddress : lastLocation.photoaddress
+				};
+				imageUtil.getImageArray().push(imgModel);
+				setTimeout(function(){
+					showPic(imgModel);
+				}, 2400);
+			}
+		}
+
+		/**
+		 *  选择上传方式：1.保存到本地缓存，2. 直接上传到服务器
+		 */
+		function select() {
+			var optList = ['保存到本地缓存', '直接上传到服务器'];
+			var cbTarget = {
+				name : api.winName,
+				frameName : 'standPicDetail_frm',
+				cbFn : 'call_upload'
+			};
+			$api.setStorage('optList', optList);
+			$api.setStorage('cbTarget', cbTarget);
+			api.openFrame({
+				name : 'popup_select_frm',
+				url : '../dialog/popup_select.html',
+				pagePara : api.pageParam
+			});
+		}
+
+		/**
+		 *  popup_select.html页面的回调函数
+		 */
+		function call_upload(result) {
+			if (result === '保存到本地缓存') {
+				saveLocal();
+			} else if (result === '直接上传到服务器') {
+				upload();
+			}
+		}
+
+		/**
+		 *  保存到本地缓存
+		 */
+		function saveLocal() {
+			imageUtil.save(function(num) {
+				//刷新首页的图片上传模块头标
+				api.execScript({
+					name : 'home_win',
+					frameName : 'footer_tab_1',
+					script : 'setofflineUploadCount();'
+				});
+				var length = imageUtil.getImageArray().length;
+				if (num == length) {
+					$('#list-view li:not(:last)').empty();
+					window.setTimeout(function() {
+						api.closeWin();
+					}, 1100);
+				} else if (num && num < length) {
+					$('#list-view li:lt(' + num + ')').remove();
+				}
+			});
+		}
+
+		/*
+		 * 上传服务器
+		 */
+		function upload() {
+			imageUtil.upload(function(num) {
+				if (num) {
+					setTimeout(function() {
+						api.closeWin();
+					}, 1100);
+				}
+			});
+		}
+
+		function back() {
+			if (imageUtil.getImageArray().length > 0) {
+				api.confirm({
+					title : '关闭提醒',
+					msg : '当前照片还没保存，是否需要保存',
+					buttons : ['保存', '返回', '取消']
+				}, function(ret, err) {
+					if (ret.buttonIndex == 1) {
+						select();
+					} else if (ret.buttonIndex == 2) {
+						api.closeFrame();
+					}
+				});
+			} else {
+				api.closeFrame();
+			}
+		}
+	</script>
+</html>

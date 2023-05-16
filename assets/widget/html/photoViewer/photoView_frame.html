@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>图片展示</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+
+    <style>
+        body {
+            margin: 0;
+            border: 0;
+            padding: 0;
+            /*font-style:normal;*/
+        }
+
+        header {
+            width: 100%;
+            height: 60px;
+            background-color: #EEEEEE;
+        }
+
+        .right {
+            /* float: left; */
+            width: 20%;
+            height: 60px;
+            display: inline;
+        }
+
+        .page {
+            /* float: left; */
+            width: 60%;
+            height: 60px;
+            color: #fff;
+            display: inline;
+        }
+
+        .left {
+            /* float: left; */
+            width: 20%;
+            height: 60px;
+            display: inline;
+        }
+
+        .txt {
+            text-align: center;
+            line-height: 60px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <div class="left txt" onclick="fnBack()">
+            <a class="aui-pull-left" tapmode onclick="fnBack()"> <span class="aui-iconfont aui-icon-left"></span></a>
+        </div>
+        <div id="paget" class="page txt">
+            第1张
+        </div>
+        <div class="right txt" onclick="fnOk()" style="visibility: hidden;">
+            确定
+        </div>
+    </header>
+    <nav>
+    </nav>
+    <footer>
+    </footer>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+
+<script type="text/javascript">
+    
+    apiready = function () {
+        var paget = null;
+        paget = $api.byId('paget');
+        var paddingTop = api.systemType === "ios" ? api.safeArea.top : 0;
+        if(paddingTop == 0){
+            paddingTop = api.systemType === "ios" ? 20 : 0;
+        }
+        $api.dom('header').style.paddingTop = paddingTop + 'px';
+        api.addEventListener({
+            name: 'myEvent'
+        }, function (ret, err) {
+            if (ret) {
+                var page = ret.value.key1;
+                $api.html(paget, '第 ' + page + ' 张，共' + api.pageParam.total + '张');
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    };
+
+    function fnBack() {
+        api.execScript({
+            // frameName: 'imageViewer',
+            name: 'imageViewer',
+            script: 'closeView()'
+        });
+        api.closeFrame();
+    }
+
+    function fnOk() {
+        api.execScript({
+            // frameName: 'imageViewer',
+            name: 'imageViewer',
+            script: 'getIndexU()'
+        });
+
+        console.log(`getNowFormatDate>${getNowFormatDate()}`);
+        var imageUrl = 'http://7zudal.com1.z0.glb.clouddn.com/apicloud/f90e15ace048f17799cc91331a9312b5.jpg';
+        console.log(`getImageExtentionName>${getImageExtentionName(imageUrl)}`);
+        var savePath = 'fs://' + getNowFormatDate() + '.' + getImageExtentionName(imageUrl);
+        api.download({
+            url: imageUrl,
+            savePath: savePath,
+            report: true,
+            cache: true,
+            allowResume: true
+        }, function (ret, err) {
+            if (ret.state == 1) {
+                //下载成功
+                api.saveMediaToAlbum({
+                    path: savePath
+                }, function (ret, err) {
+                    if (ret && ret.status) {
+                        // alert('保存成功');
+                        showToast('保存成功');
+                    } else {
+                        // alert('保存失败');
+                        showToast('保存失败');
+                    }
+                });
+            } else {
+            }
+        });
+    }
+
+    /* 
+    2022-06-28-13-58-20
+    2022-06-28T13:54:39
+    */
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = "-";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        var s = date.getSeconds();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        if (hour >= 0 && hour <= 9) {
+            hour = "0" + hour;
+        }
+        if (min >= 0 && min <= 9) {
+            min = "0" + min;
+        }
+        if (s >= 0 && s <= 9) {
+            s = "0" + s;
+        }
+        // var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + "T" + hour + seperator2 + min + seperator2 + s;
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + "-" + hour + seperator2 + min + seperator2 + s;
+        return currentdate;
+    }
+
+    function getImageExtentionName(url){
+        return url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+    }
+</script>
+
+</html>

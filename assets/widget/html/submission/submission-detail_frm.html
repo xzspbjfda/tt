@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>应急信息详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+	</head>
+	<style>
+		input[disabled=disabled],textarea[disabled=disabled]{
+			background-color: rgb(235, 235, 228);
+		}
+		.ziyiframe {
+			width: 100%;
+			min-height: 340px;
+		}
+		.red{
+			color: red;
+		}
+
+		.aui-list-view-cell:after{
+			border: none!important;
+		}
+		.emergency-select{
+			margin: 0px;
+			padding:0;
+			font-size: 14px;
+			padding-left:10px;
+		}
+		#list-view input,#list-view select{
+			font-size: 14px;
+		}
+		.picFJ{
+			display: none;
+		}
+		.oilBox{
+			display: none;
+		}
+	</style>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].hiddencontent}}">{{=it[i].hiddencontent}}</option>
+			{{ } }}
+		</script>
+		<div class="aui-content">
+			<form enctype = "multipart/form-data">
+				<ul id="list-view" class="aui-list-view"></ul>
+				<ul id="list-view2" class="aui-list-view"></ul>
+				<ul id="list-view3" class="aui-list-view"></ul>
+			</form>
+		</div>
+
+		<!--项目详情-->
+		<script id="parol-template" type="text/html">
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider" style="border-bottom:1px solid #c8c7cc">
+			基本信息
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			事件编码<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.sn?it.sn:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			事件名称<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventName ?it.eventName:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			事件类型<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventType  ?it.eventType :''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			影响级别<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it. responseLevel  ?it. responseLevel :''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				事件发生时间<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change"  disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventRaiseTime ?it.eventRaiseTime :''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			报送单位<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventLocalCity?it.eventLocalCity:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			省份<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventLocalProvince ?it.eventLocalProvince :''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			地市<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventLocalCity?it.eventLocalCity:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			区县<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventLocalCounty?it.eventLocalCounty:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			填报人姓名<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.createPerson?it.createPerson:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			联系方式<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.submitterTelPhone?it.submitterTelPhone:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			报送时间<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.createTime?it.createTime:''}}" />
+			</div>
+			</li>
+
+			<li class="isshow" data-win="list-image" style="padding:5px 15px;">
+				事件简述<span class="red">*</span>:
+			<textarea name="remark" disabled="disabled"  style="width:100%;height:100px; margin-bottom:0px;margin-top:6px;">{{=it.eventResume?it.eventResume:''}}</textarea>
+			</li>
+
+		</script>
+
+		<!--项目详情补充-->
+		<script id="parol-template2" type="text/html">
+
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider" style="border-bottom:1px solid #c8c7cc">
+			通信影响及保障
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			受影响地市名称<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventLocalCity?it.eventLocalCity:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			受影响区县单位<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.affectedCountiesCount ?it.affectedCountiesCount :''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与运营商确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.operatorsDetermineSiteCount?it.operatorsDetermineSiteCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与移动确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobileDetermineSiteCount?it.mobileDetermineSiteCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与电信确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomDetermineSiteCount?it.telecomDetermineSiteCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与联通确定重保站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomDetermineSiteCount?it.unicomDetermineSiteCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与运营商确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required"  disabled="disabled"value="{{=it.operatorsFixElectricCount?it.operatorsFixElectricCount:''}}"   style="width:100%;margin: 0px;padding : 0px,3%;"   />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与移动确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required"  disabled="disabled"value="{{=it.mobileFixElectricCount?it.mobileFixElectricCount:''}}"   style="width:100%;margin: 0px;padding : 0px,3%;" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与电信确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required"  disabled="disabled"value="{{=it.telecomFixElectricCount?it.telecomFixElectricCount:''}}"   style="width:100%;margin: 0px;padding : 0px,3%;"/>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			与联通确定发电需求站数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change required"  disabled="disabled"value="{{=it.unicomFixElectricCount?it.unicomFixElectricCount:''}}"   style="width:100%;margin: 0px;padding : 0px,3%;"  />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+		发电保障基站总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.powerGenerationCount?it.powerGenerationCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			发电保障基站总数（移动）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobilePowerGenerationCount?it.mobilePowerGenerationCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			发电保障基站总数（电信）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomPowerGenerationCount?it.telecomPowerGenerationCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			发电保障基站总数（联通）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomPowerGenerationCount?it.unicomPowerGenerationCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			铁塔损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.towerLoss?it.towerLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			机房损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.computerRoomLoss?it.computerRoomLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			一体化柜损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.integratedCabinetLoss?it.integratedCabinetLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			FSU损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.fsuLoss?it.fsuLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			蓄电池损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.batteryLoss?it.batteryLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			开关电源损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.switchingPowerLoss?it.switchingPowerLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			空调损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.airLoss?it.airLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			外市电损失站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.outsideCityLossCount?it.outsideCityLossCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日直接经济损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.economicDayLoss?it.economicDayLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计直接经济损失<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.sumEconomicDayLoss?it.sumEconomicDayLoss:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日出动应急人员<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.economicDayPersonCount?it.economicDayPersonCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计出动应急人员<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.sumEconomicDayPersonCount?it.sumEconomicDayPersonCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日出动应急车辆<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.economicDayCarCount?it.economicDayCarCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计出动应急车辆<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.sumEconomicDayCarCount?it.sumEconomicDayCarCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			当日调遣油机数量<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.economicOilMachineCount?it.economicOilMachineCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计调遣油机数量<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.sumEconomicOilMachineCount?it.sumEconomicOilMachineCount:''}}" />
+			</div>
+			</li>
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			组成抢修队伍（个）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" disabled="disabled" value="{{=it.rushRepairTeamNum?it.rushRepairTeamNum:''}}"  style="width:100%;margin: 0px;padding : 0px,3%;" />
+			</div>
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			累计组成抢修队伍（个）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input  type="text"  class="textareaborder change required" disabled="disabled" value="{{=it.totalRushRepairTeanNum?it.totalRushRepairTeanNum:''}}"  style="width:100%;margin: 0px;padding : 0px,3%;"  />
+			</div>
+			</div>
+			</li>
+		</script>
+
+		<!--最新一小时告警统计-->
+		<script id="parol-template3" type="text/html">
+
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider" style="border-bottom:1px solid #c8c7cc">
+			最新一小时告警统计
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			受影响的地市<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.eventLocalCity?it.eventLocalCity:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			受影响的基站总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.affectedStationCount?it.affectedStationCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			3家运营商共享站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.involvingAllOperatorsCount?it.involvingAllOperatorsCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			电信和联通共享站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomUnicomSharingCount?it.telecomUnicomSharingCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			电信和移动共享站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomMobileSharingCount?it.telecomMobileSharingCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			移动和联通共享站址数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobileUnicomSharingCount?it.mobileUnicomSharingCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电告警总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.totalPowerFailureNum?it.totalPowerFailureNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电告警数量（移动）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobilePowerFailureNum?it.mobilePowerFailureNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电告警数量（电信）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomPowerFailureNum?it.telecomPowerFailureNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电告警数量（联通）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomPowerFailureNum?it.unicomPowerFailureNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电基站总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.totalPowerFailureCount?it.totalPowerFailureCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电基站数量（移动）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobilePowerFailureCount?it.mobilePowerFailureCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				停电基站数量（电信）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomPowerFailureCount?it.telecomPowerFailureCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			停电基站数量（联通）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomPowerFailureCount?it.unicomPowerFailureCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服告警总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.outServiceNum?it.outServiceNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服告警数量（移动）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobileOutServiceNum?it.mobileOutServiceNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服告警数量（电信）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomOutServiceNum?it.telecomOutServiceNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服告警数量（联通）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomOutServiceNum?it.unicomOutServiceNum:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服基站总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.outServiceCount?it.outServiceCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服基站数量（移动）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobileOutServiceCount?it.mobileOutServiceCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服基站数量（电信）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomOutServiceCount?it.telecomOutServiceCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			退服基站数量（联通）<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomOutServiceCount?it.unicomOutServiceCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			水浸站点总数<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.floodingSitesCount?it.floodingSitesCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+				水浸站点数量(移动)<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.mobileFloodingSitesCount?it.mobileFloodingSitesCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			水浸站点数量(电信)<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.telecomFloodingSitesCount?it.telecomFloodingSitesCount:''}}" />
+			</div>
+			</li>
+
+			<li class="aui-list-view-cell" data-win="list_arrow">
+			<div class="item-left">
+			水浸站点数量(联通)<span class="red">*</span>:
+			</div>
+			<div class="item-right">
+				<input type="text"  class="textareaborder change" disabled="disabled" style="width:100%;margin: 0px;padding : 0px,3%;"  value="{{=it.unicomFloodingSitesCount?it.unicomFloodingSitesCount:''}}" />
+			</div>
+			</li>
+		</script>
+
+		<!--图片模板-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col" style="padding:0;">
+			<div class=" aui-flex-item-2">
+			<img class="aui-img-object aui-pull-left" style='width:50px;height:50px;' src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">X</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+	</body>
+	<!-- third -->
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/template-native.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script src="../../script/GPS.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil0.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+	<script>
+
+		apiready = function() {
+			var optsDeatil={
+				id:api.pageParam.id
+			}
+			console.log(getObj(optsDeatil));
+			$client.getsubmissionDetail(optsDeatil,function(ret,err){
+				if(ret.success==0){
+					console.log(getObj(ret.entity));
+					renderTemp('list-view', 'parol-template', ret.entity, false);
+					$api.setStorage('emEventReport', ret.entity);
+
+				}else {
+					api.toast({
+						msg : '加载详情失败！'
+					});
+				}
+
+			})
+
+
+			var optsDeatil2={
+				eventId:api.pageParam.id,
+				eventLocalCity:api.pageParam.eventLocalCity
+			}
+			console.log(getObj(optsDeatil2));
+			$client.getsubmissionDetailSupplement(optsDeatil2,function(ret,err){
+				console.log(getObj(ret));
+				if(ret.success==0){
+					renderTemp('list-view2', 'parol-template2', ret.eventReportAffect, false);
+					$api.setStorage('eventReportAffect', ret.eventReportAffect);
+				}else {
+					api.toast({
+						msg : '加载详情失败！'
+					});
+				}
+
+			})
+
+			var optsDeatil3={
+				eventId:api.pageParam.id
+			}
+			console.log(getObj(optsDeatil3));
+			$client.getsubmissionDetailStatistics(optsDeatil3,function(ret,err){
+				console.log(getObj(ret));
+				if(ret[0]){
+					renderTemp('list-view3', 'parol-template3', ret[0], false);
+				}else {
+					api.toast({
+						msg : '加载详情失败！'
+					});
+				}
+
+			})
+			/**
+			 *加载巡检项目详情
+			 */
+			renderTemp('list-view', 'parol-template', api.pageParam, false);
+
+
+			// 获取工单编号
+			var isdisabledVal=api.pageParam.level;
+			if(isdisabledVal!=undefined){
+				var opts={};
+				$client.getEmergencyNum(opts,function(ret,err){
+					$('#emergencyNum').val(ret.sn);
+				})
+			}
+		};
+
+		/**
+		 * 生成一个用不重复的ID
+		 */
+		function GenNonDuplicateID(randomLength){
+		  return Number(Math.random().toString().substr(3,randomLength) + Date.now()).toString(36)
+		}
+
+
+		/**
+		 *获取当前时间
+		 */
+		function CurentTime(){
+				var now = new Date();
+
+				var year = now.getFullYear();       //年
+				var month = now.getMonth() + 1;     //月
+				var day = now.getDate();            //日
+
+				var hh = now.getHours();            //时
+				var mm = now.getMinutes();          //分
+				var ss = now.getSeconds();           //秒
+
+				var clock = year + "-";
+
+				if(month < 10)
+						clock += "0";
+
+				clock += month + "-";
+
+				if(day < 10)
+						clock += "0";
+
+				clock += day + " ";
+
+				if(hh < 10)
+						clock += "0";
+
+				clock += hh + ":";
+				if (mm < 10) clock += '0';
+				clock += mm + ":";
+
+				if (ss < 10) clock += '0';
+				clock += ss;
+				return(clock);
+		}
+		// 验证手机号
+		function isPoneAvailable(str) {
+					var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+					if (!myreg.test(str)) {
+							return false;
+					} else {
+							return true;
+					}
+			}
+
+// 提交接口
+		function uploadData(opt) {
+			// if(isPoneAvailable($("#phoneNum").val())&&isPoneAvailable($("#phoneNum2").val())){
+				showMask("提交中…");
+				var connectionType = api.connectionType;
+				$client.addEmergency(opt, function(ret, err) {
+					hideMask();
+					if (err) {
+							api.toast({
+								msg : err.body
+							});
+
+
+							if (imageUtil.getImageArray().length) {
+								imageUtil.upload(function(count) {
+									api.execScript({
+										name : 'emergency-list_win',
+										frameName : 'emergency-list_frm',
+										script : 'refreshList();'
+									});
+									setTimeout(function() {
+										api.closeWin();
+									}, 1000);
+								});
+							} else {
+								api.toast({
+									msg : '提交成功!'
+								});
+								api.execScript({
+									name : 'emergency-list_win',
+									frameName : 'emergency-list_frm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									api.hideProgress();
+									api.closeWin();
+								}, 1100);
+							}
+
+					} else {
+						api.toast({
+							msg : ret.data_info
+						});
+					}
+				});
+
+		}
+		// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		function call_validate() {
+			var user = $api.getStorage('user');
+			$('#userName').val(user.loginname);
+			if (formUtil.validate()) {
+				var opts={};
+				$('form').find("[name]:visible,input[type=hidden]").each(function() {
+            var name = $(this).attr('name');
+            var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+            if ($(this).attr('type') == 'datetime-local') {
+                val = val.replace(/T/, " ").replace(/\.\d+/, "");
+                //如果出现不带有秒数的时间字符串，补充
+                if (!(/\d{2}:\d{2}:\d{2}/.test(val))) {
+                    val += ':00';
+                }
+            }
+
+            if($(this).attr('type')=='radio'){
+            val=$("input[type='radio']:checked").val();
+
+            }
+            opts[name] = val;
+
+        });
+				console.log("ppppppppppppppppppppppppppppppppp");
+				console.log(JSON.stringify(opts));
+				// 这里
+				uploadData(opts);
+			}
+		}
+
+// 删除接口
+
+		function emergencyRemoveDetail(){
+			var ida = api.pageParam.id;
+			var opts={
+				prefix: 'materialInfo',
+				ids:ida
+			}
+			api.confirm({
+			    title: '提示',
+			    msg: '是否删除此工单？',
+			    buttons: ['确定', '取消']
+			}, function(ret, err) {
+			    var index = ret.buttonIndex;
+					if(index==1){
+						$client.removeEmergency(opts,function(ret,err){
+							if(err.statusCode==200){
+								api.toast({
+									msg : '删除成功!'
+								});
+								api.execScript({
+									name : 'emergency-list_win',
+									frameName : 'emergency-list_frm',
+									script : 'refreshList();'
+								});
+								setTimeout(function() {
+									api.closeWin();
+								}, 1000);
+							}else {
+								api.toast({
+									msg : '删除失败!'
+								});
+							}
+						})
+					}
+			});
+
+		}
+
+
+	</script>
+</html>

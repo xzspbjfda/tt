@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>筛选框</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body {
+				background-color: transparent !important;
+				color: rgba(0,0,0,0.0)
+			}
+			.otherDealInfo {
+				background-color: #FFFFFF;
+				border: 1px solid #DBDBDB;
+				margin-right: 20px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+			.clear {
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				margin: 6px 0 0 -20px;
+				background: url(../../image/icons/png/close.png) no-repeat;
+				outline: none;
+			}
+		</style>
+	</head>
+	<body>
+		<!--设置遮罩层-->
+		<div id="popupWrapper" style="display: none">
+			<div id="shadeWrapper" class="popup-mask active"></div>
+			<div id="queryListBox" class="view agile-popup bottom">
+				<div id="options" class="hotel-p-s-filter js_price_star_filter">
+					<dl>
+						<div id="stationNameOpt" class=" aui-flex-col" data-type="text" style="display: none">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								站址名称
+							</div>
+							<div class="aui-flex-item-9"  onclick="openQueryStationWin()">
+								<input id="stationname" type="text" value="" class="otherDealInfo" />
+							</div>
+						</div>
+						<div id="stationNameOpt2" class=" aui-flex-col" data-type="text" style="display: none">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								站址名称
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="stationname" type="text" value="" class="otherDealInfo" />
+							</div>
+						</div>
+						<div id="alarmNameOpt"class="aui-flex-col" data-type="text" style="display: none;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								告警名称
+							</div>
+							<div class="aui-flex-item-9">
+								<input id="alarmname" type="text" value="" class="otherDealInfo"/>
+								<!--<img class="close" src="../../image/icons/png/close.png"/>-->
+							</div>
+						</div>
+						<div id="stationCodeOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								运维ID
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="stationCode" type="text"  class="otherDealInfo"/>
+								<!--<img class="close" src="../../image/icons/png/close.png"/>-->
+								<!--<span id="cancleBtn2" style="position: absolute;display: block;height: 40px;line-height: 40px;min-width: 32px;top:0;right:0;margin-top: 150px;margin-right: 15px;"><img width="28" height="28"  src="../../image/icons/png/cancle.png"/></span>-->
+							</div>
+						</div>
+												<!-- 日常维修-合同查询开始 -->
+						<div id="contractnoOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								合同号
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="contractno" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+
+						<div id="paytypeOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								维修项目
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="paytype" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="itemtypeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								计费方式
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="itemtype" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">按次</option>
+									<option value="2">按月包干</option>
+								</select>
+							</div>
+						</div>
+
+						<!--日常维修合同查询结束-->
+						<!-- 日常维修查询开始 -->
+						<div id="billsnOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								维修单号
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="billsn" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="billStatusOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								工单状态
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="bussinessid" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">待问题核实</option>
+									<option value="2">待方案制定</option>
+									<option value="3">待实施</option>
+									<option value="4">待验收</option>
+									<option value="5">待验收归档</option>
+									<option value="6">挂起</option>
+									<option value="7">已归档</option>
+								</select>
+							</div>
+						</div>
+						<div id="hiddenTypeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								隐患种类
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="hiddentype" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">开关电源</option>
+									<option value="2">蓄电池</option>
+									<option value="3">空调</option>
+									<option value="4">红外</option>
+									<option value="5">分路计量</option>
+									<option value="6">FSU</option>
+									<option value="7">抱杆</option>
+									<option value="8">水浸</option>
+									<option value="9">温湿感</option>
+									<option value="10">烟感设备</option>
+								</select>
+							</div>
+						</div>
+						<div id="hiddensrcOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								隐患来源
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="hiddensource" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">巡检发现</option>
+									<option value="2">运营商申告</option>
+									<option value="3">自有人员上站巡查</option>
+									<option value="4">业主申告</option>
+									<option value="5">告警发现</option>
+
+								</select>
+							</div>
+						</div>
+						<div id="hiddenGradeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								隐患等级
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="hiddengrade" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">特别严重</option>
+									<option value="2">严重</option>
+									<option value="3">一般</option>
+								</select>
+							</div>
+						</div>
+						<!--日常维修查询结束-->
+						<!-- 应急物资查询开始 -->
+						<div id="emergencyQuery1" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								物资编码
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="sn" name='sn' type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="emergencyQuery2" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								物资类型
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="type" name="type" class="otherDealInfo"   value="" onchange="changeName(this)">
+									<option value="应急通信保障物资">应急通信保障物资</option>
+									<option value="应急信息传报类物资">应急信息传报类物资</option>
+									<option value="应急辅助物资">应急辅助物资</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery3" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								物资名称
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="name" name="name" class="otherDealInfo"   value="">
+									<option value="应急发电车">应急发电车</option>
+									<option value="越野车">越野车</option>
+									<option value="皮卡车">皮卡车</option>
+									<option value="应急油机(5KW及以上)(代维产权)">应急油机(5KW及以上)(代维产权)</option>
+									<option value="应急油机(5KW及以下)(代维产权)">应急油机(5KW及以下)(代维产权)</option>
+									<option value="应急油机(5KW及以上)(铁塔产权)">应急油机(5KW及以上)(铁塔产权)</option>
+									<option value="应急油机(5KW及以下)(铁塔产权)">应急油机(5KW及以下)(铁塔产权)</option>
+									<option value="应急油机(5KW及以上)(代维产权)">应急油机(5KW及以上)(其他第三方产权)</option>
+									<option value="应急油机(5KW及以下)(代维产权)">应急油机(5KW及以下)(其他第三方产权)</option>
+									<option value="一体化柜(含电源、蓄电池等配套)">一体化柜(含电源、蓄电池等配套)</option>
+									<option value="锂电池包">锂电池包</option>
+									<option value="便携塔">便携塔</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery4" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								设备工况
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="workStatus"  name="workStatus" class="otherDealInfo"   value="">
+									<option value="性能良好">性能良好</option>
+									<option value="正常可用">正常可用</option>
+									<option value="基本可用">基本可用</option>
+									<option value="无法正常工作">无法正常工作</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery5" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								库存状态
+							</div>
+							<div class="aui-flex-item-9" >
+								<select id="status" name="status" class="otherDealInfo"   value="">
+									<option value="在库">在库</option>
+									<option value="领用出库">领用出库</option>
+									<option value="调度出库">调度出库</option>
+									<option value="维护出库">维护出库</option>
+									<option value="维修出库">维修出库</option>
+									<option value="消耗">消耗</option>
+									<option value="遗失">遗失</option>
+								</select>
+							</div>
+						</div>
+						<div id="emergencyQuery1" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								责任人
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="contactPerson" name="contactPerson" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="emergencyQuery1" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								联系方式
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="contactPersonTelephone"  name="contactPersonTelephone" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<!--应急物资查询结束-->
+						<div id="status" data-type="radio" style="display: none">
+							<dt>
+								站址状态（单选）
+							</dt>
+							<dd class="js_star_h js_star_all current" data-value="">
+								不限
+							</dd>
+							<dd  class="js_star_h" data-value="1">
+								工程
+							</dd>
+							<dd  class="js_star_h" data-value="2">
+								交维
+							</dd>
+							<dd  class="js_star_h" data-value="3">
+								退网下线
+							</dd>
+							<dd  class="js_star_h" data-value="6">
+								测试
+							</dd>
+							<dd  class="js_star_h" data-value="7">
+								存量监控
+							</dd>
+							<dd  class="js_star_h" data-value="8">
+								检修
+							</dd>
+						</div>
+						<div id="unitOpt" data-type="text" style="display: none">
+							<dt>
+								省份/城市/区域
+							</dt>
+							<dd class="js_price_h" style="width:100%;height:40px;padding:0;" onclick="toggleQueryUnit()">
+								<input id="unit" type="text" readonly/>
+								<input id="provId" type="hidden" />
+								<input id="cityId" type="hidden" />
+								<input id="areaId" type="hidden" />
+								<img class="close" src="../../image/icons/png/close.png"/ onclick＝"clearUnit(this)">
+							</dd>
+						</div>
+						<div id="begintimetype" data-type="radio" style="display: none;overflow:hidden;">
+							<dt>
+								时间范围（单选）
+							</dt>
+							<dd  class="js_star_h js_star_all current" data-value="0">
+								全部
+							</dd>
+							<dd id="time0" class="js_star_h" data-value="1">
+								今天
+							</dd>
+							<dd id="time1" class="js_star_h" data-value="2">
+								昨天
+							</dd>
+							<dd id="time2" class="js_star_h" data-value="3">
+								三天前
+							</dd>
+							<dd id="time3" class="js_star_h" data-value="4">
+								一个星期前
+							</dd>
+							<dd id="time4" class="js_star_h" data-value="5">
+								一个月前
+							</dd>
+							<dd id="time5" class="js_star_h" data-value="6">
+								自定义
+							</dd>
+						</div>
+						<div id='timeStrat' class="aui-flex-col zdyTime" data-type="text" style="display:none;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								开始时间
+							</div>
+							<div class="aui-flex-item-9">
+								<input id="alarmTimeStart" type="date" value="" class="otherDealInfo"/>
+							</div>
+						</div>
+
+						<div id='timeEnd' class="aui-flex-col zdyTime" data-type="text" style="display:none;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								结束时间
+							</div>
+							<div class="aui-flex-item-9">
+								<input id="alarmTimeEnd" type="date" value="" class="otherDealInfo"/>
+							</div>
+						</div>
+
+									<!-- 日常维修查询开始 -->
+						<div id="standBillsnOpt" class="aui-flex-col"  data-type="text" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								上站单号
+							</div>
+							<div class="aui-flex-item-9" >
+								<input id="applyid" type="text"  class="otherDealInfo"/>
+							</div>
+						</div>
+						<div id="standbillStatusOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								工单状态
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="processflag" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="ACCEPT">待接单</option>
+									<option value="AUDIT">待审批</option>
+									<option value="COORDINATE">待协调上站</option>
+									<option value="REVERT">待回单</option>
+									<option value="ISPROMPT">是否及时上站</option>
+									<option value="ISAGREE">是否同意</option>
+									<option value="SENISPROMPT">待最终确认</option>
+									<option value="PHONESIGN">待手机签到</option>
+									<option value="CONFIRE">待上站确认</option>
+								</select>
+							</div>
+						</div>
+						<div id="causeOpt" class="aui-flex-col"  data-type="select" style="display: none ;margin-top: 10px;">
+							<div class="aui-flex-item-3" style="height: 40px;line-height: 40px;">
+								上站原因
+							</div>
+							<div class="aui-flex-item-9" >
+								<!--<input id="bussinessid" type="text"  class="otherDealInfo"/>-->
+								<select id="cause" name="hiddenGrade" class="otherDealInfo"   value="">
+									<option value="">全部</option>
+									<option value="1">抢修（紧急故障处理）</option>
+									<option value="2">排障（一般故障处理）</option>
+									<option value="3">施工（安装设备）</option>
+									<option value="4">勘察</option>
+									<option value="5">巡检</option>
+									<option value="6">发电</option>
+									<option value="7">检查</option>
+									<option value="8">保障</option>
+									<option value="99">其他</option>
+								</select>
+							</div>
+						</div>
+
+						<!--日常维修查询结束-->
+
+						<!--出入站已办工单筛选条件begin-->
+						<div id="daytype" data-type="radio" style="display: none">
+							<dt>
+								时间范围（单选）
+							</dt>
+							<dd class="js_star_h current" id="daytype1" data-value="1">
+								一周内
+							</dd>
+							<dd id="daytype2" class="js_star_h" data-value="2">
+								一个月内
+							</dd>
+							<dd id="daytype3" class="js_star_h" data-value="3">
+								三个月内
+							</dd>
+							<dd id="daytype4" class="js_star_h" data-value="4">
+								三个月以前
+							</dd>
+						</div>
+						<!--出入站已办工单筛选条件end-->
+						<div id="billStatus" data-type="checkbox" style="display: none">
+							<dt>
+								工单状态（多选）
+							</dt>
+							<dd class="js_star_h js_star_all current" data-value="">
+								不限
+							</dd>
+							<dd id="ACCEPT" class="js_star_h" data-value="ACCEPT">
+								待接单
+							</dd>
+							<dd id="REVERT" class="js_star_h" data-value="REVERT">
+								待回单
+							</dd>
+							<dd id="SUPPORTCONFIRM" class="js_star_h" data-value="SUPPORTCONFIRM">
+								待确认
+							</dd>
+							<dd id="ELECTRIC_JUDGE" class="js_star_h" data-value="ELECTRIC_JUDGE">
+								待发电
+							</dd>
+							<dd id="DEFINE" class="js_star_h" data-value="DEFINE">
+								待定位
+							</dd>
+							<dd id="ARCHIVE" class="js_star_h" data-value="ARCHIVE">
+								归档
+							</dd>
+						</div>
+						<!--<div id="isOutdate" data-type="radio" style="display: none">
+						<dt>
+						是否超期
+						</dt>
+						<dd class="js_star_h current" data-value="">
+						全部
+						</dd>
+						<dd class="js_star_h" data-value="1">
+						是
+						</dd>
+						<dd class="js_star_h" data-value="0">
+						否
+						</dd>
+						</div>-->
+						<div id="registStatus" data-type="radio" style="display: none">
+							<dt>
+								设备类型
+							</dt>
+							<dd class="js_star_h current" data-value="0">
+								全部
+							</dd>
+							<dd class="js_star_h" data-value="1">
+								FSU
+							</dd>
+							<dd class="js_star_h" data-value="2">
+								抱杆
+							</dd>
+							<dd class="js_star_h" data-value="3">
+								分路计量
+							</dd>
+							<dd class="js_star_h" data-value="4">
+								红外
+							</dd>
+							<dd class="js_star_h" data-value="5">
+								抱杆
+							</dd>
+							<dd class="js_star_h" data-value="6">
+								开关电源
+							</dd>
+							<dd class="js_star_h" data-value="7">
+								水浸
+							</dd>
+							<dd class="js_star_h" data-value="8">
+								温湿感
+							</dd>
+							<dd class="js_star_h" data-value="9">
+								蓄电池
+							</dd>
+							<dd class="js_star_h" data-value="10">
+								烟感设备
+							</dd>
+						</div>
+						<div id="isroomfault" data-type="radio" style="display: none">
+							<dt>
+								是否室分故障
+							</dt>
+							<dd class="js_star_h current" data-value="">
+								全部
+							</dd>
+							<dd class="js_star_h" data-value="Y">
+								是
+							</dd>
+							<dd class="js_star_h" data-value="N">
+								否
+							</dd>
+						</div>
+						<div id="alarmLevel" data-type="radio" style="display: none">
+							<dt>
+								告警级别
+							</dt>
+							<dd class="js_star_h current" data-value="0">
+								全部
+							</dd>
+							<dd class="js_star_h" data-value="1">
+								一级
+							</dd>
+							<dd class="js_star_h" data-value="2">
+								二级
+							</dd>
+							<dd class="js_star_h" data-value="3">
+								三级
+							</dd>
+							<dd class="js_star_h" data-value="4">
+								四级
+							</dd>
+						</div>
+						<div class="mt10">
+							<button class="g_btn_s js_price_star_filter_ok" onclick="query()">
+								查询
+							</button>
+						</div>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/component.js"></script>
+	<script type="text/javascript">
+		var winName;
+		var frameName;
+		var callback;
+		apiready = function() {
+			winName = api.pageParam.winName;
+			frameName = api.pageParam.frameName;
+			callback = api.pageParam.callback;
+			initQueryBox();
+			popup_query.init();
+			popup_query.showPopup();
+		}
+		function initQueryBox() {
+			$('dl>div').each(function() {
+				var id = $(this).attr('id');
+				if (api.pageParam[id]) {
+					$(this).show();
+				}
+			});
+		}
+
+		/**
+		 *打开站址查询接口
+		 */
+		function openQueryStationWin() {
+			//          api.openWin({
+			//              name : 'query',
+			//              url : 'query.html',
+			//              bounces : false,
+			//              pageParam : {
+			//                  winName : api.winName,
+			//                  frameName : api.frameName
+			//              }
+			//          });
+			api.openWin({
+				name : 'stationSearch_win',
+				url : 'stationSearch_win.html',
+				bounces : false,
+				pageParam : {
+					winName : api.winName,
+					frameName : api.frameName
+				}
+			});
+		}
+
+
+/*
+getAbsoluteUrl
+*/
+function getAbsoluteUrl(relativeUrl) {
+    //  http://127.0.0.1:8080/html/home/win_hone.html
+    //  http://127.0.0.1:8080/html/bill-list.html
+
+    var locationUrl = window.location.href;
+
+    var href = null;
+
+    var debugMode = false;
+
+    if ( typeof (isDebug) != "undefined") {
+        debugMode = isDebug();
+    }
+    if (!debugMode) {
+        var patt1 = new RegExp("/wgt/[a-zA-z0-9]+?/.+");
+        var patt2 = new RegExp("/wgt/[a-zA-z0-9]+?/");
+
+        href = patt1.exec(locationUrl);
+
+        if (href == null) {
+            patt1 = new RegExp("/widget/.+");
+            patt2 = new RegExp("/widget/");
+
+            href = patt1.exec(locationUrl);
+
+            if (href == null) {
+                //              alert(locationUrl);
+                return relativeUrl;
+            }
+        }
+
+        var allStr = href[0];
+        var header = patt2.exec(href)[0];
+
+        var body = allStr.substring(header.length, allStr.length);
+
+        //将相对路径字符串前面的"/"符号去掉
+        if (relativeUrl.startWith("/")) {
+            relativeUrl = relativeUrl.substring(1, relativeUrl.length);
+        }
+
+        var level = body.split("/").length;
+
+        var qianzhui = "";
+
+        for (var i = 1; i < level; i++) {
+            qianzhui += "../";
+        }
+
+        return qianzhui + relativeUrl;
+
+    } else {
+        //网页模式
+        //将相对路径字符串前面的"/"符号去掉
+        if (relativeUrl.startWith("/")) {
+            relativeUrl = relativeUrl.substring(1, relativeUrl.length);
+        }
+        var url = window.location.origin + "/" + relativeUrl;
+
+        return url;
+    }
+}
+
+
+/*
+*	openSingleWindow
+*/
+function openSingleWindow(config) {
+
+    // var singlePanelUrl = getAbsoluteUrl("html/common/singlePanel.html");
+    //  if(typeof(showlog)!="undefined"){
+    //      showlog("打开window页面:"+config.name+",config:"+getObj(config));
+    //  }
+
+    if ( typeof (config.url) == "undefined") {
+        alert("方法openSigleFrame的config对象中缺少url参数！");
+        return;
+    }
+    var targetUrl = getAbsoluteUrl(config.url);
+
+    var delay = 0;
+
+    if (config.delay) {
+        delay = config.delay;
+        // alert("delay:"+delay);
+    }
+
+    var bounces = false;
+
+    if ( typeof (config.bounces) != "undefined") {
+        bounces = config.bounces;
+    }
+
+    var vScrollBarEnabled = false;
+
+    if ( typeof (config.vScrollBarEnabled) != "undefined") {
+        vScrollBarEnabled = config.vScrollBarEnabled;
+    }
+
+    var hScrollBarEnabled = false;
+
+    if ( typeof (config.hScrollBarEnabled) != "undefined") {
+        hScrollBarEnabled = config.hScrollBarEnabled;
+    }
+
+    var reload = false;
+
+    if ( typeof (config.reload) != "undefined") {
+        reload = config.reload;
+    }
+
+    var slidBackEnabled = false;
+
+    //是否支持滑动返回。iOS7.0及以上系统中，在新打开的页面中向右滑动，可以返回到上一个页面，该字段只iOS有效
+    if ( typeof (config.slidBackEnabled) != "undefined") {
+        slidBackEnabled = config.slidBackEnabled;
+        //  alert(slidBackEnabled);
+        //  consoleObj(config);
+    }
+
+    api.openWin({
+        name : config.name,
+        //  url : singlePanelUrl,
+        url : targetUrl,
+        bounces : bounces,
+        slidBackEnabled : slidBackEnabled,
+        delay : delay,
+        vScrollBarEnabled : vScrollBarEnabled,
+        hScrollBarEnabled : hScrollBarEnabled,
+        reload : reload,
+        pageParam : config
+    });
+}
+
+
+/*
+*		打开新窗口，参数依次为路径，标题，类型
+*/
+function CurentTime(){
+		var now = new Date();
+
+		var year = now.getFullYear();       //年
+		var month = now.getMonth() + 1;     //月
+		var day = now.getDate();            //日
+
+		var hh = now.getHours();            //时
+		var mm = now.getMinutes();          //分
+		var ss = now.getSeconds();           //秒
+
+		var clock = year + "-";
+
+		if(month < 10)
+				clock += "0";
+
+		clock += month + "-";
+
+		if(day < 10)
+				clock += "0";
+
+		clock += day + " ";
+
+		if(hh < 10)
+				clock += "0";
+
+		clock += hh + ":";
+		if (mm < 10) clock += '0';
+		clock += mm + ":";
+
+		if (ss < 10) clock += '0';
+		clock += ss;
+		return(clock);
+}
+//返回 01-12 的月份值
+function getMonth(date){
+ var month = "";
+ month = date.getMonth() + 1; //getMonth()得到的月份是0-11
+ if(month<10){
+  month = "0" + month;
+ }
+ return month;
+}
+//返回01-30的日期
+function getDay(date){
+ var day = "";
+ day = date.getDate();
+ if(day<10){
+  day = "0" + day;
+ }
+ return day;
+}
+//小时
+function getHours(date){
+ var hours = "";
+ hours = date.getHours();
+ if(hours<10){
+  hours = "0" + hours;
+ }
+ return hours;
+}
+//分
+function getMinutes(date){
+ var minute = "";
+ minute = date.getMinutes();
+ if(minute<10){
+  minute = "0" + minute;
+ }
+ return minute;
+}
+//秒
+function getSeconds(date){
+ var second = "";
+ second = date.getSeconds();
+ if(second<10){
+  second = "0" + second;
+ }
+ return second;
+}
+function datetimeFormat(longTypeDate){ 
+ var dateTypeDate = ""; 
+ var date = new Date(); 
+ date.setTime(longTypeDate); 
+ dateTypeDate += date.getFullYear(); //年 
+ dateTypeDate += "-" + getMonth(date); //月 
+ dateTypeDate += "-" + getDay(date); //日 
+ dateTypeDate += " " + getHours(date); //时 
+ dateTypeDate += ":" + getMinutes(date);  //分
+ dateTypeDate += ":" + getSeconds(date);  //分
+ return dateTypeDate;
+} 
+
+function openWinList(name, title, type,info) {//ding
+
+		console.log("查询条件,依次为时间，设备类型，告警等级"+getObj(info));
+		var jsonData = JSON.stringify(info);// 转成JSON格式
+    var result = $.parseJSON(jsonData);// 转成JSON对象
+		// var new_alarmLevel=result.alarmLevel;//获取告警等级
+		// var new_deviceType=result.registStatus;//获取设备类型
+		var time=result.begintimetype;//获取查询时间条件
+		// console.log("告警等级"+new_alarmLevel);
+    // console.log("设备类型"+new_deviceType);
+
+		var endtime=CurentTime();//获取当前系统时间
+		var end_time=new Date(endtime.replace(/-/g, "/"));//格式化时间
+		var new_end_time=new Date(end_time);//将时间转化为日期类型
+		console.log("结束时间"+new_end_time.getTime());
+		console.log("开始时间"+(new_end_time.getTime()-864000000));
+	  //小时,分钟，秒，毫秒
+		var timeStamp = new Date(new Date().setHours(0, 0, 0, 0));	//一天是86400秒   故n天前的时间戳为n*86400000
+		var ThreeDayAgo = timeStamp - 86400000 * 3;
+		console.log("三天前的时间："+ThreeDayAgo)
+
+		var new_end_time;
+		var new_begin_time
+		if(result.begintimetype==1){//今天
+		  var endtime=CurentTime();//获取当前系统时间
+			var end_time=new Date(endtime.replace(/-/g, "/"));//格式化时间
+		  new_end_time=new Date(end_time);//将时间转化为日期类型,结束时间
+			new_end_time=new_end_time.getTime();
+			new_begin_time = new Date(new Date().setHours(0, 0, 0, 0));//开始时间
+			new_begin_time=new_begin_time.getTime();
+		}else if(result.begintimetype==2){//昨天
+		  new_end_time = new Date(new Date().setHours(0, 0, 0, 0));//开始时间
+			new_end_time=new_end_time.getTime();
+			new_begin_time=new_end_time-86400000;
+		}else if(result.begintimetype==3){//三天前
+			new_end_time = new Date(new Date().setHours(0, 0, 0, 0));
+			new_end_time=new_end_time-86400000*3
+			new_begin_time=new_end_time-86400000*30
+		}else if(result.begintimetype==4){//一周前
+			new_end_time = new Date(new Date().setHours(0, 0, 0, 0));
+			new_end_time=new_end_time-86400000*7
+			new_begin_time=new_end_time-86400000*360
+		}else if(result.begintimetype==5){//一个月前
+			new_end_time = new Date(new Date().setHours(0, 0, 0, 0));
+			new_end_time=new_end_time-86400000*30
+			new_begin_time=new_end_time-86400000*360
+		}else if(result.begintimetype==0){//全部
+			var endtime=CurentTime();//获取当前系统时间
+			var end_time=new Date(endtime.replace(/-/g, "/"));//格式化时间
+			new_end_time=new Date(end_time);//将时间转化为日期类型,结束时间
+			new_end_time=new_end_time.getTime();
+			new_begin_time=new_end_time-86400000*360
+		}else if(result.begintimetype==6){//自定义
+				console.log(result.alarmTimeStart);
+				var d=new Date(result.alarmTimeStart);
+				new_begin_time=d.getTime(d);
+				console.log(result.alarmTimeEnd);
+				var d=new Date(result.alarmTimeEnd);
+				new_end_time=d.getTime(d);
+
+		}
+		console.log("开始时间"+datetimeFormat(new_begin_time));
+		console.log("结束时间"+datetimeFormat(new_end_time));
+    var delay = 0;
+    var nickName;
+    if (api.systemType == "android") {
+        delay = 200;
+    }
+    if (name == 'bulle/bulle_list_win') {
+        nickName = "bulle_list_win";
+    } else if (name == 'bill/bill-list_win') {
+        nickName = "bill-list_win";
+    } else if (name == 'alarm/alarm-list_win') {
+        nickName = "alarm-list_win";
+    } else if (name == 'alarm/alarm-list_win0') {
+        nickName = "alarm-list_win0";
+    } else if (name == 'station/station-list') {
+        nickName = "station-list";
+    } else if (name == 'xunjian/task_list_win') {
+        nickName = "task_list_win";
+    } else if (name == 'xunjian/monitorListWin') {
+        nickName = "monitor_list";
+    } else if (name == 'contact/contact-list') {
+        nickName = "contact-list";
+    } else if (name == 'outStation/createBillSelStation_win') {
+        nickName = "createBillSelStation_win";
+    } else if (name == 'standBill/standFinishBillListWin') {
+        nickName = "standFinishBillListWin";
+    } else if (name == 'standBill/standBillListWin') {
+        nickName = "standBillListWin";
+    } else if (name == 'offlineUpload/offlineUpload_win') {
+        nickName = "picOfflineUpload";
+    } else if (name == 'check/check_list_win') {
+        nickName = "check_list_win";
+    } else if (name == 'generation/generationBillListWin') {
+        nickName = "generationBillListWin";
+    } else {
+        nickName = name;
+    }
+    //$api.setStorage("modelType", type);
+    openSingleWindow({
+        url : "html/" + name + ".html",
+        name : nickName,
+				stationcode:api.pageParam.stationcode,//站址编码
+				provinceid:api.pageParam.provinceId,//省份编码
+				begintime:new_begin_time,//开始时间
+				endtime:new_end_time,//结束时间
+				// alarmlevel:new_alarmLevel,
+				// devicetype:new_deviceType,
+        title : title,
+        type : type,
+        opaque : true,
+        bounces : false,
+        reload : true,
+        slidBackEnabled : true,
+        vScrollBarEnabled : false
+    });
+}
+
+function serializeAll() {
+		var opts = {};
+		$('dl>div[id]:visible').each(function() {
+				var type = $(this).attr('data-type');
+				var value = '';
+				var id = null;
+				switch(type) {
+						case 'text':
+								var inputList = $(this).find('input');
+//                          alert("inputList:"+inputList.length);
+								for (var i = 0, size = inputList.length; i < size; i++) {
+										value = $(inputList[i]).val();
+										id = $(inputList[i]).attr("id");
+										if (id != null && value != null) {
+												opts[id] = value;
+										}
+								}
+								break;
+						 case 'select':
+								var inputList = $(this).find("option:selected");
+//                          alert("inputList:"+inputList.length);
+								for (var i = 0, size = inputList.length; i < size; i++) {
+										value = $(inputList[i]).val();
+										id = $(inputList[i]).attr("id");
+										if (id != null && value != null) {
+												opts[id] = value;
+										}
+								}
+								break;
+						case 'radio' :
+								value = $(this).find('dd.current').attr('data-value');
+								id = $(this).attr('id');
+								opts[id] = value;
+								break;
+						case 'checkbox' :
+								value = "";
+								$(this).find('dd.current').each(function(index, element) {
+										value += "'" + $(this).attr('data-value') + "',";
+								});
+								if (value.trim() == "'',") {
+										value = '';
+								} else {
+										value = value.substr(0, value.length - 1);
+								}
+								id = $(this).attr('id');
+								opts[id] = value;
+								break;
+				}
+
+		});
+		return opts;
+}
+
+
+		//站址名称查询
+		function query() {
+		var info=serializeAll();
+		console.log(getObj(info));
+		openWinList('alarm/alarm-list_win0','历史告警工单信息','ALARMLIST',info);
+		console.log("这是传过来的站址编码"+api.pageParam.stationcode);
+		console.log("这是传过来省份编码"+api.pageParam.provinceId);
+
+		}
+
+		// 物资类型 物资名称 联动
+		function changeName(e){
+			var materialType=$(e).val();
+			var materialNameList;
+			if(materialType=="应急通信保障物资"){
+				materialNameList=[
+					'应急发电车',
+					'越野车',
+					'皮卡车',
+					'应急油机(5KW及以上)(代维产权)',
+					'应急油机(5KW及以下)(代维产权)',
+					'应急油机(5KW及以上)(铁塔产权)',
+					'应急油机(5KW及以下)(铁塔产权)',
+					'应急油机(5KW及以上)(其他第三方产权)',
+					'应急油机(5KW及以下)(其他第三方产权)',
+					'一体化柜(含电源、蓄电池等配套)',
+					'锂电池包',
+					'便携塔'
+				]
+			}else if (materialType=="应急信息传报类物资") {
+				materialNameList=[
+					'卫星电话(带数据传送)',
+					'卫星电话(仅语音功能)',
+					'应急智能手机'
+				]
+			}else if (materialType=="应急辅助物资") {
+				materialNameList=[
+					'冲锋舟',
+					'皮划艇',
+					'潜水泵',
+					'抽水机',
+					'无人机',
+					'对讲机',
+					'便携式扩音器',
+					'大功率探照灯',
+					'广告帐篷',
+					'抗震帐篷',
+					'防汛沙袋沙包',
+					'油机并发器',
+					'汽车防滑链',
+					'应急电源灯',
+					'应急保障桌子',
+					'应急保障椅子'
+				]
+			}
+			$('#materialName').empty();
+			if (materialNameList != null && materialNameList.length > 0) {
+				for (var i = 0; i < materialNameList.length; i++) {
+					$('<option>').text(materialNameList[i]).val(materialNameList[i]).appendTo('#materialName');
+				}
+			}
+		}
+
+		/**
+		 *设置站址名称和站址编码
+		 */
+		function onStationSelect(stationname, stationcode) {
+			$("#stationname").val(stationname).parent().addClass('active');
+			$("#stationCode").val(stationcode).parent().addClass('active');
+		}
+
+		/**
+		 * 打开部门查询组件
+		 */
+		function toggleQueryUnit() {
+			var query_setting = {
+				name : api.winName,
+				frameName : 'popup_query_frm'
+			}
+			api.openWin({
+				name : 'unitSelect',
+				url : '../common/unitSelect_win.html',
+				opaque : true,
+				bounces : false,
+				reload : false,
+				vScrollBarEnabled : false,
+				pageParam : query_setting,
+				animation : {
+					type : "push",
+					subType : "from_right",
+					duration : 300
+				}
+			});
+		}
+
+		/**
+		 * 设置省市区的值
+		 */
+		function fillUnitData(provId, provStr, cityId, cityStr, objId, objText, unitId, unitStr) {
+			var $unit = $('#unit');
+			$unit.val(unitStr).attr('data-unitId', unitId).parent().addClass('active');
+			$('#provId').val(provId);
+			$('#cityId').val(cityId);
+			$('#areaId').val(objId);
+		}
+
+		function clearUnit(target) {
+			$(target).siblings('[type=hidden]').each(function() {
+				$(this).val('');
+			});
+		}
+	</script>
+</html>

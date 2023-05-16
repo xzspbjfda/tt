@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html >
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单详情</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+				<style>
+				.aui-content-wxx{
+		      width: 100%;
+		      margin: 0;
+		    }
+		    .aui-content-wxx ul{
+		      background-color: #fff;
+		      border-radius: 0;
+		      overflow: hidden;
+		      margin-bottom: 10px;
+		      padding: 0 3%;
+		    }
+				.beizhu{
+					height: 26px;
+					line-height: 26px;
+					width: 120px!important;
+				}
+				.beizhubtn{
+					width: 50px;
+					text-align: center;
+					background-color: red;
+					display: inline-block;
+					color: #fff;
+					border-radius: 3px;
+					margin-left: 5px;
+				}
+				</style>
+	</head>
+	<body style="width: 100%">
+		<script id="typeGenerationArr-template2" type="text/x-dot-template">
+		<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>发布人信息</h2></div>
+			{{ for(var key in it) {}}
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">{{= key != null ? key:''}}</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it[key] != null ? it[key]:''}}</div>
+			</li>
+			{{ } }}
+		</script>
+		<!-- <div class="darktitle titleinfo" ><h2>出入站申请单信息</h2></div> -->
+		<script id="billDetail-template" type="text/x-dot-template">
+
+		{{
+			var status = it.status;
+			var processflagName = "";
+			if(status=="5"){
+			processflagName = "未领取";
+			}else if(status=="6"){
+			processflagName = "已领取";
+		}else if(status=="7"){
+			processflagName = "超时未领取";
+		}else if(status=="8"){
+			processflagName = "完成待确认";
+		}else if(status=="9"){
+			processflagName = "超时未完成";
+		}else if(status=="10"){
+			processflagName = "未完成";
+		}else if(status=="11"){
+			processflagName = "已归档";
+		}
+		var work_time_limit=it.work_time_limit;
+		}}
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>代维调度任务单信息</h2></div>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 模板名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.self_task_name != null ? it.self_task_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 任务类型</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.task_type_name != null ? it.task_type_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 站址名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.site_name != null ? it.site_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 站址运维ID</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.site_id != null ? it.site_id :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 网格名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.area_grid_name != null ? it.area_grid_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 省份</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.p_org_name != null ? it.p_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 地市</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.c_org_name != null ? it.c_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 区县</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.a_org_name  != null ? it.a_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 工单发起人</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.add_man_code  != null ? it.add_man_code :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 工单处理人</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.do_man_code != 'null'? it.do_man_code :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 状态</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=processflagName}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 发布人</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.create_user  != 'null'?it.create_user :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 要求完成时限</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.work_time_limit!= 'null'?it.work_time_limit :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 剩余时长</div>
+			<div class="aui-col-xs-7 aui-pull-right" id="surplusTime"></div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 创建时间</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.create_time != 'null'?it.create_time  :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 领取时间</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.get_task_time!= 'null'&&it.get_task_time!=null?it.get_task_time :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 回单时间</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.do_end_time!='null'&&it.do_end_time!=null?it.do_end_time :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 退回原因</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.evaluation_content!='null'&&it.evaluation_content!=null?it.evaluation_content :''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 备注</div>
+			<div class="aui-col-xs-7 aui-pull-right"><input class="beizhu" id="beizhu" type="text" value="{{=it.remark!='null'&&it.remark!=null?it.remark :''}}"/><div class="beizhubtn" onclick="beizhufun()">确定</div></div>
+			</li>
+		</script>
+		<script id="alarmDetail-template" type="text/x-dot-template">
+			<div id = "alarmInfo" >
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>告警信息</h2></div>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red" >• 告警编号</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.alarm_id != 'null' && it.alarm_id != undefined ? it.alarm_id:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 告警名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.alarm_title != 'null' && it.alarm_title != undefined ? it.alarm_title:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 告警等级</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.alarm_severity != 'null' && it.alarm_severity != undefined ? it.alarm_severity:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 设备ID</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.object_id != 'null' && it.object_id != undefined ? it.object_id:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• FSU状态</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.device_status != 'null' && it.device_status != undefined ? it.device_status:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 站址编码</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.device_id != 'null' && it.device_id != undefined ? it.device_id:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 站址名称</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.site_name != 'null'&& it.site_name != undefined ?  it.site_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell border_b" >
+				<div class="aui-col-xs-4 aui-pull-left red">• 站址来源</div>
+				<div class="aui-col-xs-7 aui-pull-right">{{=it.site_source != 'null' && it.site_source != undefined ? it.site_source:''}}</div>
+			</li>
+		</div>
+	</script>
+		<script id="GenerationArr-template" type="text/x-dot-template">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>回单信息</h2></div>
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left">{{=it[i].name != null ? it[i].name:''}}</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it[i].num != null ? it[i].num:''}}</div>
+			</li>
+			{{ } }}
+		</script>
+		<script id="typeGenerationArr-template" type="text/x-dot-template">
+		{{? it.length>0}}
+		<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>发布人信息</h2></div>
+		{{?}}
+
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left">{{=it[i].name != null ? it[i].name:''}}</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it[i].num != null ? it[i].num:''}}</div>
+			</li>
+			{{ } }}
+		</script>
+		<script id="ImageArr-template" type="text/x-dot-template">
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>附件信息</h2></div>
+			{{
+				for(var i=0, len=it.length; i < len; i++) {
+					var ip = $api.getStorage('ip');
+					if('180.153.49.251:58090'==ip){
+			    	ip='180.153.49.251:59015';
+			    }
+					var src = 'http://'+ip+'/ftp'+it[i].file_path;
+			}}
+			<li class="aui-list-view-cell border_b">
+			<div class="aui-col-xs-12" ><h2>{{=it[i].remark!= null ? it[i].remark:''}}</h2></div>
+			<div class="aui-col-xs-12 aui-list-view aui-grid-view">
+					<img class="aui-img-object"  src="{{=src}}" onclick="imageUtil.show('{{=src}}')">
+				</div>
+			</div>
+			</li>
+			{{ } }}
+		</script>
+		<script id="GenerationTools-template" type="text/x-dot-template">
+			{{? it.length>0}}
+			<div class="darktitle" ><h2><img class="tit_img" src="../../image/bt_icon2.png" alt=""/>工具信息</h2></div>
+			{{?}}
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<li class="aui-list-view-cell border_b" >
+			<div class="aui-col-xs-4 aui-pull-left red">• 所需工具</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it[i].tool_type_name != null ? it[i].tool_type_name:''}}</div>
+			</li>
+			{{ } }}
+		</script>
+		<div class="aui-content aui-content-wxx">
+			<ul class="aui-list-view" id="standBillDetail" style="margin-bottom:0;"></ul>
+			<ul class="aui-list-view" id="alarmDetail" style="margin-bottom:0;"></ul>
+			<ul class="aui-list-view" id="standBillDetail2" style="margin-bottom:0;display:none;" ></ul>
+			<ul class="aui-list-view" id="standBillDetail3" style="margin-bottom:0;display:none;" ></ul>
+			<ul class="aui-list-view" id="standBillDetail4" style="margin-bottom:0;" ></ul>
+			<ul class="aui-list-view" id="imagedata" style="margin-bottom:0;display:none;" ></ul>
+			<ul class="aui-list-view" id="listView2"></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+
+	<script>
+
+		var opts = {};
+
+		apiready = function() {
+			//alert(  document.getElementById('billDetail-template'))
+
+			api.addEventListener({
+				name: 'generationBill_detail_frm'
+			}, function(ret, err) {
+				if (ret.value.state == 'checkSign') {
+					api.closeWin();
+				}
+			});
+
+			var user = $api.getStorage('user');
+			// 工单剩余时间自动刷新
+
+				var work_time_limit=api.pageParam.work_time_limit;
+				work_time_limit=work_time_limit.replace(/-/g, "/");
+				setTimeout(function(){
+					setInterval(function(){
+						var longTime2 = getDateLong(new Date(work_time_limit).getTime()-new Date().getTime());
+						 $('#surplusTime').html(longTime2);
+					},1000);
+				},500);
+			console.log(getObj(api.pageParam));
+			$api.setStorage('generationBillMenu',api.pageParam);
+			$api.setStorage('transfer',api.pageParam);//2.dingxb,通过缓存传参
+			renderTemp('standBillDetail', 'billDetail-template', api.pageParam);
+			$api.setStorage('parolData', api.pageParam);
+			// 6F9EE86A95412955E05011AC26FB2E97
+			// api.pageParam.versionid
+			var opts={
+					id:api.pageParam.id,
+					versionid:api.pageParam.version_id
+			};
+			console.log(JSON.stringify(opts));
+			$client.getGenerationFinshDetail(opts,function(ret,err){
+				if(ret.success){
+					console.log(JSON.stringify(ret));
+					var GenerationArr=[];
+					var typeGenerationArr=[];
+					var tableColumnCnList = ret.tableColumnCnList;
+					var tableColumnZnList = ret.tableColumnZnList;
+					var typeTableColumnCnList = ret.typeTableColumnCnList;
+					var typeTableColumnZnList = ret.typeTableColumnZnList;
+					var imageData=ret.billAttachList;
+					var GenerationModel = ret.model;
+					for (var i = 0; i < tableColumnCnList.length; i++) {
+						var index =tableColumnCnList[i];
+						for (var j in GenerationModel) {
+							if(j==index){
+									var GenerationJson = {};
+									GenerationJson.num = GenerationModel[j];
+									GenerationJson.name=tableColumnZnList[i];
+									GenerationArr.push(GenerationJson);
+							}
+						}
+					};
+					renderTemp('standBillDetail2', 'GenerationArr-template', GenerationArr);
+					renderTemp('imagedata', 'ImageArr-template', imageData);
+					var taskInfo=ret.taskInfo;
+					for (var i = 0; i < typeTableColumnZnList.length; i++) {
+						var index =typeTableColumnZnList[i];
+						for (var j in taskInfo) {
+							if(j==index){
+									var typeGenerationJson = {};
+									typeGenerationJson.num = taskInfo[j];
+									typeGenerationJson.name=typeTableColumnCnList[i];
+									typeGenerationArr.push(typeGenerationJson);
+									console.log(JSON.stringify(typeGenerationArr));
+
+							}
+						}
+					};
+					console.log(JSON.stringify(typeGenerationArr));
+
+					renderTemp('standBillDetail4', 'typeGenerationArr-template', typeGenerationArr);
+				}
+			});
+
+			var opts2={
+					versionid:api.pageParam.version_id
+			};
+			$client.getGenerationTools(opts2,function(ret,err){
+				if(ret.success){
+					var twZndwToolsList= ret.twZndwToolsList;
+					renderTemp('standBillDetail3', 'GenerationTools-template', twZndwToolsList);
+					if(twZndwToolsList.length>0){
+						$("#standBillDetail3").show();
+					}
+				}
+			});
+
+			if(api.pageParam.status==8){
+				$("#standBillDetail2").show();
+				$('#imagedata').show();
+			}
+
+
+			api.showProgress({
+				title: '处理中',
+				modal: true,
+			});
+
+			var opts = {
+				versionid: api.pageParam.version_id,
+				id:api.pageParam.id
+			};
+		// 获取需填写字段
+			$client.getWriteGeneration(opts, function(ret, err) {
+				console.log(JSON.stringify(ret));
+
+				if (ret) {
+					if (ret.success) {
+						api.hideProgress();
+						var ruleList = ret.ruleList;
+						if(ret.taskPublish){
+							var taskPublish = JSON.parse(ret.taskPublish) ;
+						}
+						if(taskPublish&&Object.keys(taskPublish).length>0){
+							renderTemp('listView2', 'typeGenerationArr-template2', taskPublish);
+						}
+					} else {
+						api.hideProgress();
+						showToast(ret.data_info);
+					}
+				} else {
+					api.hideProgress();
+					showToast(err.msg);
+				}
+			});
+
+
+			var opt={
+				mainId:api.pageParam.id,
+			};
+			$client.getAlarmByMainId(opt,function(ret,err){
+				if(ret.success){
+					renderTemp('alarmDetail', 'alarmDetail-template', ret.alarms[0]);
+					var alarmId = ret.alarms[0].alarm_id;
+					if(alarmId != 'null' && alarmId != null && alarmId != '' && alarmId != undefined && alarmId != 'undefined'){
+						$('#alarmInfo').show();
+					}else{
+						$('#alarmInfo').hide();
+					}
+				}
+			});
+
+
+		};
+
+		function getDateLong(date3){
+
+				var days=Math.floor(date3/(24*3600*1000));
+		//	console.log('天数：'+days+"原数值："+date3/(24*3600*1000));
+				//计算出小时数
+
+				var leave1=date3%(24*3600*1000) ;   //计算天数后剩余的毫秒数
+				var hours=Math.floor(leave1/(3600*1000))  ;
+				//计算相差分钟数
+				var leave2=leave1%(3600*1000)  ;      //计算小时数后剩余的毫秒数
+				var minutes=Math.floor(leave2/(60*1000))  ;
+				//计算相差秒数
+				var leave3=leave2%(60*1000) ;     //计算分钟数后剩余的毫秒数
+				var seconds=Math.round(leave3/1000)  ;
+		//  alert(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
+			var allTime=(hours+days*24)+"小时 "+minutes+" 分钟"+seconds+" 秒";
+			return allTime;
+		}
+
+		function beizhufun(){
+			api.showProgress({
+				title : '处理中',
+				modal : true,
+			});
+
+			var opts={
+					id:api.pageParam.id,
+					remark:$('#beizhu').val(),
+					isfile:api.pageParam.type
+			};
+			$client.zndwTaskRemark(opts,function(ret,err){
+				if(ret.success){
+					api.hideProgress();
+					api.toast({
+							msg: '提交成功',
+							duration: 2000,
+							location: 'bottom'
+					});
+				}else {
+							api.hideProgress();
+							showToast(ret.data_info);
+				}
+			});
+		}
+
+	</script>
+</html>

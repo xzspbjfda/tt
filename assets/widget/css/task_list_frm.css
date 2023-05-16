@@ -1,0 +1,205 @@
+ .ccssoft_list {
+  background-color: #eff1f0;
+  override: hidden;
+}
+.ccssoft_list li {
+    list-style: none;
+    padding:3px 5px 3px 5px;
+    border-bottom: 1px solid #e3e2e2;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.ccssoft_list li:hover {
+    background: #f9e9df;
+}
+.ccssoft_list li.acitve {
+    background: #f9e9df;
+}
+.ccssoft_list .showBox{
+    text-align:center;
+    font-size:12px;
+}
+.liTop{
+	width:100%;
+	height:35px;
+}
+.liDown,.liFinishMiddle{
+	width:100%;
+	height:30px;
+	border-top:1px #999 solid;
+}
+.liDown{
+  border-top: 1px dashed #00a0c8;
+}
+.lastDown{
+	width:100%;
+	height:20px;
+}
+.liTopIcon{
+	height:35px;
+	line-height:35px;
+	float:left;
+}
+.redIconCls{
+	margin-top:5px;
+	margin-left:5px;
+	height:20px;
+	width:20px;
+	border-radius:10px;
+	background-color:red;
+}
+.greenIconCls{
+	margin-top:5px;
+	margin-left:5px;
+	height:20px;
+	width:20px;
+	border-radius:10px;
+	background-color:green;
+}
+.liTopTitle{
+	font-weight:bold;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	font-size: 16px;
+	width:60%;
+	height:35px;
+	line-height:35px;
+	float:left;
+}
+.liTopProgress,.liTopFinishTotal{
+	text-align:right;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	font-size:12px;
+	color:#666;
+	width:30%;
+	height:35px;
+	line-height:35px;
+	float:left;
+}
+.liDownPerson{
+	text-align:left;
+	white-space:nowrap;
+/* 	overflow:hidden;
+	text-overflow:ellipsis; */
+	float:left;
+	font-size:12px;
+	color:#666;
+	width:33%;
+	height:15px;
+	line-height:15px;
+	margin-top:7px;
+	border-right:solid #999 1px;
+}
+.liDownRemark{
+	text-align:left;
+	overflow:hidden;
+	float:left;
+	font-size:12px;
+	color:#666;
+	height:15px;
+	line-height:15px;
+}
+.liDownPersonRight{
+	text-align:left;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	float:left;
+	padding-left:3px;
+	font-size:12px;
+	color:#666;
+	width:44%;
+	height:15px;
+	line-height:15px;
+	margin-top:7px;
+	padding-right:3px;
+}
+.line{
+border-left: solid #999 1px;
+padding-left: 3px;
+}
+.liDownBegin{
+	text-align:right;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	float:left;
+	font-size:12px;
+	color:#666;
+	width:30%;
+	height:15px;
+	line-height:15px;
+	margin-top:7px;
+}
+.liDownEnd{
+	text-align:right;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	float:left;
+	font-size:12px;
+	color:#666;
+	width:30%;
+	height:15px;
+	line-height:15px;
+	margin-top:7px;
+}
+.liTopFinishTitle{
+	font-weight:bold;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	font-size: 16px;
+	width:70%;
+	height:30px;
+	line-height:30px;
+	float:left;
+}
+.liFinishDown{
+	height:35px;
+	width:100%;
+	line-height:35px;
+	margin-top:5px;
+}
+.liDownFinishBegin,.liDownFinishEnd{
+	width:50%;
+	height:35px;
+	line-height:35px;
+	float:left;
+	font-size:12px;
+	color: #009688;
+	text-align:left;
+}
+
+.ccssoft_list li:first-child {
+	margin-top:10px;
+}
+
+.cj-orange{
+  background-color: orange;
+}
+.cj-blue{
+  background-color: blue;
+}
+.cj-purple{
+  background-color: purple;
+}
+.cj-green{
+  background-color: green;
+}
+.ccssoft_list_wxx li {
+    list-style: none;
+    border-radius: 6px;
+    padding:3px 10px 3px 10px;
+    background: #fff;
+    overflow: hidden;
+    margin-top: 10px;
+}
+.ccssoft_list_wxx .showBox{
+    text-align:center;
+    font-size:12px;
+}

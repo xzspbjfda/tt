@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>选项列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/easydialog/easydialog.css" />
+		<link rel="stylesheet" href="../../css/lightForBillMenu.css" class="light-style">
+		<link rel="stylesheet" href="../../css/darkForBillMenu.css" class="dark-style" disabled>
+		<link rel="stylesheet" type="text/css" href="../../css/bill-list.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+		<link rel="stylesheet" type="text/css" href="css/billMenu.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body, #wrap, #header {
+				background: transparent;
+			}
+			#header {
+				height: 58px;
+			}
+			.noborder {
+				border: none !important;
+			}
+		</style>
+	</head>
+	<body>
+		<script id="option-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].userid}}">{{=it[i].username}}</option>
+			{{ } }}
+		</script>
+		<script id="billMenu-template" type="text/x-dot-template">
+			<ul id="billMenuUl" class="menu-list">
+			{{? it.billFromType == "GET_BILL_LIST" && ((it.dispatch_role == '1' && it.leadid == "4")||(it.dispatch_role == '2' && it.leadid == "12")) }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('TRANSFERS');">转派</li>
+			{{?}}
+
+			{{? it.billstatus == 'ACCEPT' && it.billFromType == "GET_BILL_LIST" }}
+			<!--<a href="chinatower://userName=donglei&siteCode=120101908000000142&openclassname=CTResStationResultViewController">打开应用</a>-->
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ACCEPT');">接单</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+
+
+
+			{{? it.billstatus == 'ISSTAND' && it.billFromType == "GET_BILL_LIST" }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ISUPSTATION');">是否上站</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+
+			{{? it.billstatus == 'ARRIVE' && it.billFromType == "GET_BILL_LIST" }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPSTATIONSIGN');">到站</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+
+			{{? it.billFromType == "GET_BILL_UPDATE_LIST"&&it.gradetype=="ASSIST" }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			{{?  it.billstatus != 'HANGUP' && it.billstatus != 'ACCEPT'}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('TRANSFERS');">转派</li>
+			{{?}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			{{?}}
+			{{? it.billFromType == "GET_BILL_UPDATE_LIST"&&(it.gradetype=="AREAMAN"||it.gradetype=="TECH" )}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('REPLY');">支撑回复</li>
+			{{?}}
+			{{? it.billstatus != 'ACCEPT' && it.billFromType == "GET_BILL_LIST" && it.str_field4 != 'Y'}}
+			<li id="registerId" class="menuListLi" tapmode="tap-active" onclick="optBill('REGISTER');">签到</li>
+			{{?}}
+			{{? it.billstatus == 'SUPPORTCONFIRM' && it.billFromType == "GET_BILL_LIST"}}
+			{{? it.businesstype.indexOf('运营商工单')==-1}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('SUPPORTCONFIRM');">故障确认</li>
+			{{?}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billstatus == 'DEFINE' && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('DEFINE');">故障定位</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billFromType == "GET_BILL_MONITOR_LIST" }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('REMINDER');">催办</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billFromType == "GET_BILL_MONITOR_LIST" && it.billstatus != 'HANGUP' && it.billstatus != 'ACCEPT'&&it.leadid=='12'}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('TRANSFERS');">转派</li>
+			{{?}}
+			{{? it.billstatus == 'REVERT'  && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('REVERT');">回单</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billstatus == 'ELECTRIC_BEGIN'  && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ELECTRIC_BEGIN');">开始发电</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billstatus == 'ELECTRIC_END'  && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ELECTRIC_END');">结束发电</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billstatus == 'CON_CONFIRM'  && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('CON_CONFIRM');">运营商确认</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billstatus == 'CON_APPROVE'  && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('CON_APPROVE');">是否认可</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			{{? it.billstatus == 'AUDIT' && it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('AUDIT');">审核</li>
+			{{?}}
+			{{? it.billstatus == 'ELECTRIC_JUDGE' && it.billFromType == "GET_BILL_LIST" }}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ELECTRIC_JUDGE');">是否发电</li>
+						<li class="menuListLi" tapmode="tap-active" onclick="optBill('UPGRADE');">升级</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('FEEDBACK');">反馈</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('ADDDEAL');">追加描述</li>
+			{{?}}
+			<!--{{? it.businesstype.indexOf('运营商工单')!=-1}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('DELAY');">延时</li>
+			{{?}}-->
+			{{? it.billFromType == "GET_BILL_LIST"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('NAVTOSTATION')">导航</li>
+			{{?}}
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('TAKEPHOTO')">上传图片</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('PERFORMANCEQUERY')">关键性能</li>
+			<li class="menuListLi" tapmode="tap-active" onclick="optBill('SHARE')">分享</li>
+			{{? it.st_author == "Y"}}
+			<li class="menuListLi" tapmode="tap-active" onclick="showDoorDeviceList()">门禁</li>
+			{{?}}
+			</ul>
+		</script>
+		<div id="wrap">
+			<div id="shadowId" class="shadow" tapmode＝"" onclick="closeFrame('billMenu_frm');"></div>
+			<div id="header"></div>
+			<div id="billMenuMain"></div>
+		</div>
+		<!--接单begin-->
+		<div id="acceptDiv" class="winDiv">
+			<div class="winTitleDiv">
+				确定接单？
+			</div>
+			<div class="winContentSnDiv" id="acceptSnId"></div>
+			<div class="winContentTitleDiv" id="acceptTitleId"></div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame()">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="acceptFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--接单end-->
+		<!--升级、反馈和转派等begin-->
+		<div id="otherDiv" class="winDiv">
+			<div id="spanTitleId" class="otherDivHeader"></div>
+			<input type="hidden" id="optTypeId" value=""/>
+			<div  id="transferLabelDivId" class="selectLabelDiv" style="margin-top: 10px;" >
+				<div id="user_name" style="font-size:16px;color:#adadad;">
+					接收人
+				</div>
+			</div>
+			<!--<div id="transferSelDivId" class="transferDiv" style="display:none;">
+				<select id="transferSelId" class="transferSel" value="">
+					<option value="">请选择</option>
+				</select>
+			</div>-->
+
+			<div id="contactTelSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					联系电话:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<input id="contactTelTextId"  type="text" class="textareaborder" value=""/>
+				</div>
+			</div>
+
+			<div id="delayHourSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+
+				<div id="delayHourId" class="aui-flex-item-3 " style=" padding-left:2px;font-size:16px;line-height: 1.5;text-align: left;color:#adadad;">
+					申请延时的时间(小时):
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<input id="delayHourTextId"  type="text" class="textareaborder" value=""/>
+				</div>
+			</div>
+
+			<div id="transferSelDivId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					接收人:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<select id="transferSelId" class="textareaborder2" value="">
+					<option value="">请选择</option>
+				</select>
+				</div>
+			</div>
+
+			<div id="isjishuSpanId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+				<div  style="height: 40px;line-height: 40px; padding-left:2px;color:#adadad;">
+					是否技术问题:
+				</div>
+				<div class="aui-flex-auto " style="padding-right: 10px;width：65%;">
+					<select id="isStandSelId" class="textareaborder2" value="" onchange="selectIsJishu(this);">
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+			<div id="areaManagerLabelDivId"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+				<div id="the_username" class="aui-flex-item-3 " style=" padding-left:2px;font-size:16px;line-height: 1.5;text-align: left;color:#adadad;">
+					区域经理:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<select id="areaManagerId" class="textareaborder2"  style="padding: 0px;padding-left: 5px;" value="">
+					<option value="">请选择</option>
+				</select>
+				</div>
+			</div>
+
+
+
+
+				<div id="userLocationSpanId"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					所在位置:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<textarea id="locationId" class="dealInfo" style="padding: 5px 2px;overflow:auto; " rows="7"  cols="10"></textarea>
+				</div>
+			</div>
+			<div id="isUpstationSpanId"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+				<div id="is_tipsid" style="height: 40px;line-height: 40px; padding-left:2px;color:#adadad;">
+					是否需要上站:
+				</div>
+				<div class="aui-flex-auto " style="padding-right: 10px;width：65%;">
+					<select id="isStandId" class="textareaborder2" value="" onchange="selectIsNeed(this);">
+						<option value="Y">是</option>
+						<option value="N">否</option>
+					</select>
+				</div>
+			</div>
+				    <div id="opinionLabelDiv"class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+			        <!--<div id="opinionLabelDiv" class="cardTextareaDiv aui-flex-col" style="margin-top: 10px;margin-right: 10px;height:100px;margin-bottom: 20px;padding-right:2px;">-->
+                        <!--<div id="dealWayLabelId" class="cardTextareaLabel aui-flex-item-3 " style="height: 100px;font-size: 16px;width: 28%;text-align:left;padding-left: 3px;">
+                            处理方法:
+                        </div>-->
+                        <div id="dealWayLabelId" class="aui-flex-item-3 " style=" padding-left:2px;font-size:16px;width: 28%;height: 100px;line-height: 1.5;text-align: left;color:#adadad;">
+					处理方法:
+						</div>
+                        <div class="cardTextareaCon" style="height: 100px;">
+                            <textarea id="otherDealInfoId" name="handlerResult" rows="4" class="noborder required" data-valid="required" data-error="请填写处理方法！" ></textarea>
+                         <!--<select id='isshowSel' onchange="commonDoWith(this)" value="" style="width:100%; height: 30%;line-height:30%;display: none">
+                                <option value="" style="font-size: 10px;">常用语</option>
+                                <option value="供电公司原因">供电公司原因</option>
+                                <option value="运营商原因">运营商原因</option>
+                                <option value="站点设备故障">站点设备故障</option>
+                                <option value="铁塔公司原因">铁塔公司原因</option>
+                            </select>-->
+                        </div>
+                    </div>
+                     <div id='isshowSel'  style="height:30px;margin-bottom: 20px;margin-top: 0px;padding-top:0px; padding-right: 12px;display: none">
+                    <div style="width: 71%;height: 30px;float: right;" >
+                         <select onchange="commonDoWith(this)" value="" style="width:100%;padding: 0px 5px;font-size: 12px; ">
+                                <option value="" style="font-size: 10px;">常用语</option>
+                                <option value="供电公司原因">供电公司原因</option>
+                                <option value="运营商原因">运营商原因</option>
+                                <option value="站点设备故障">站点设备故障</option>
+                                <option value="铁塔公司原因">铁塔公司原因</option>
+                            </select>
+                        </div>
+                    </div>
+
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="closeFrame()">
+					取消
+				</button>
+				<button class="winOkBtn"  onclick="otherOptFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--升级、反馈和转派等end-->
+
+				<!--到站签到begin-->
+		<div id="SignDiv" class="winDiv">
+			<div id="spanTitleId1" class="otherDivHeader"></div>
+			<div  id="transferLabelDivId1" class="selectLabelDiv" style="margin-top: 10px;" >
+				<div id="user_name1" style="font-size:16px;color:#adadad;">
+					接收人
+				</div>
+			</div>
+
+			<div id="contactTelSpanId1"class="aui-flex-col" data-type="text" style="display:none;margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					联系电话:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<input id="contactTelTextId1"  type="text" class="textareaborder" value="" />
+				</div>
+			</div>
+
+				<div id="userLocationSpanId1"class="aui-flex-col" data-type="text" style="display:none; margin-top: 10px;margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					所在位置:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<textarea id="locationId1" class="dealInfo" style="padding: 5px 2px;overflow:auto; " rows="7"  cols="10"></textarea>
+				</div>
+			</div>
+			<div id="opinionLabelDiv1"class="aui-flex-col" data-type="text" style="margin-right: 10px;">
+				<div class="aui-flex-item-3 " style="height: 40px;line-height: 40px; text-align: right;color:#adadad;">
+					处理意见:
+				</div>
+				<div class="aui-flex-item-9 " style="padding-right: 10px">
+					<textarea id="otherDealInfoId1" class="dealInfo" rows="5" cols="10" placeholder="若偏差超过100米，请写上原因"></textarea>
+				</div>
+			</div>
+			<div class="winButtonDiv">
+				<button class="winCancelBtn"  onclick="restartLocationFunc()">
+					重新定位
+				</button>
+				<button class="winOkBtn"  onclick="signOptFunc()">
+					确定
+				</button>
+			</div>
+		</div>
+		<!--到站签到end-->
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/theme.js"></script>
+	<script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+	<script type="text/javascript" src="script/billMenu.js"></script>
+</html>

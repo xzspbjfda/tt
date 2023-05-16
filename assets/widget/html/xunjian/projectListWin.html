@@ -1,0 +1,321 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>巡检任务项目列表</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="back();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="rollback" style="display: none;"> <span class="aui-iconfont" style="font-size:16px">回退</span> </a>
+			<!-- wxx -->
+			<!-- <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="openDoorWx" onclick="t_openDoor(this)" style="display: none;"> <span class="aui-iconfont" style="font-size:16px">开门</span> </a> -->
+			<!-- wxx -->
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="signid" style="display: none;"> <span class="aui-iconfont" style="font-size:16px">签到</span> </a>
+			<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="jumpid" style="display: none;"> <span class="aui-iconfont" style="font-size:16px">跳转</span> </a>
+			<div class="aui-title">
+				巡检项目列表
+			</div>
+			<!-- <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="transfertodoman">转派</a> -->
+			<a class="aui-pull-right"  tapmode onclick="openMenu()"> <span class="aui-iconfont aui-icon-add"></span> </a>
+		</header>
+		<script src="../../script/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/common.js"></script>
+		<script type="text/javascript" src="../../script/debug.js"></script>
+		<script type="text/javascript" src="../../script/config.js"></script>
+		<script type="text/javascript" src="../../script/client.api.js"></script>
+		<script type="text/javascript">
+
+			apiready = function() {
+
+				initHeader();
+				var offline=$api.getStorage('offline');
+				var taskstatus = api.pageParam.taskstatus;
+				var isMonitor = api.pageParam.isMonitor;
+				var taskstate = api.pageParam.taskstate;
+				var indexId = $api.getStorage("indexId");
+				var pos=api.pageParam.index_id;
+				// alert("小标："+pos);
+				// alert('是否签到(taskstate)：'+taskstate);
+				if ("2"==pos) {
+					$('#rollback').show();
+				}
+
+
+				if (taskstate == '1') {
+					$('#signid').show();
+				}
+					// wxx
+				if("2"!=pos && taskstate != '1' && taskstate != '0'){
+					$('#openDoorWx').show();
+				}
+//				console.log("pos:"+pos);
+//				console.log("taskstatus:"+taskstatus);
+//				console.log("taskstate:"+taskstate);
+//				console.log("indexId:"+indexId);
+
+				// if("2"!=pos && taskstate != '1' && taskstate != '0'){
+				// 	$('#jumpid').show();
+				// }
+				// wxx
+				api.openFrame({
+					name : 'projectListFrm',
+					url : 'projectListFrm.html',
+					bounces : false,
+					pageParam : api.pageParam,
+					rect : frameRect(),
+				});
+				/*jQuery事件:重置按钮*/
+				$('#rollback').click(function() {
+					api.execScript({
+						frameName : 'projectListFrm',
+						script : 'call_rollback();'
+					});
+				});
+				//巡检工单签到时风险提醒监听事件
+				api.addEventListener({name: 'onRiskTipDone'}, function(ret) {
+					switch (ret.value) {
+						case "done":
+							api.closeFrame({name:"riskTip"})
+							var connectionType = api.connectionType;
+							var taskid = $api.getStorage('taskid');
+							if(offline=="true"||offline==true){
+								api.confirm({
+									title: '提示',
+									msg: '离线签到',
+										buttons: ['确定', '取消']
+								}, function(ret, err) {
+										if(ret.buttonIndex=='1'){
+											api.pageParam.operateType="XUNJIAN";
+											api.pageParam.online=8;
+											api.openWin({
+											name : 'upStationSign_win',
+											url : '../bill/upStationSign_win.html',
+											bounces : false,
+											rect : {
+												x : 0,
+												y : 0,
+												w : 'auto',
+												h : 'auto'
+											},
+											reload : true,
+											pageParam : api.pageParam
+										});
+										}
+								});
+							}else {
+									api.pageParam.operateType="XUNJIAN";
+									api.openWin({
+									name : 'upStationSign_win',
+									url : '../bill/upStationSign_win.html',
+									bounces : false,
+									rect : {
+										x : 0,
+										y : 0,
+										w : 'auto',
+										h : 'auto'
+									},
+									reload : true,
+									pageParam : api.pageParam
+								});
+							};
+							break;
+						case "cancel":
+							api.closeFrame({name:"riskTip"})
+							break;
+					}
+				});
+				/*jQuery事件:重置按钮*/
+				$('#signid').click(function() {
+					//巡检工单签到时风险提醒
+					api.openFrame({
+						name : 'riskTip',
+						url : env.getRiskTipUrl() + "?time=10&event=onRiskTipDone&v=" + new Date().getTime(),
+						bounces : false,
+						rect : {x : 0, y : 0, w : 'auto', h : 'auto'},
+						pageParam : api.pageParam,
+						reload : true
+					});
+					/*
+					var connectionType = api.connectionType;
+					var taskid = $api.getStorage('taskid');
+					if(offline=="true"||offline==true){
+						api.confirm({
+						    title: '提示',
+						    msg: '离线签到',
+								buttons: ['确定', '取消']
+						}, function(ret, err) {
+								if(ret.buttonIndex=='1'){
+									api.pageParam.operateType="XUNJIAN";
+									api.pageParam.online=8;
+									api.openWin({
+									name : 'upStationSign_win',
+									url : '../bill/upStationSign_win.html',
+									bounces : false,
+									rect : {
+										x : 0,
+										y : 0,
+										w : 'auto',
+										h : 'auto'
+									},
+									reload : true,
+									pageParam : api.pageParam
+								});
+								}
+						});
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+					}else {
+							api.pageParam.operateType="XUNJIAN";
+							api.openWin({
+							name : 'upStationSign_win',
+							url : '../bill/upStationSign_win.html',
+							bounces : false,
+							rect : {
+								x : 0,
+								y : 0,
+								w : 'auto',
+								h : 'auto'
+							},
+							reload : true,
+							pageParam : api.pageParam
+						});
+					};
+					*/
+				});
+
+				/*jQuery事件:重置按钮
+				   跳转到资源App*/
+				$('#jumpid').click(function() {
+						var deviceid = api.pageParam.index_id;;
+						console.log("deviceid:"+deviceid);
+						var user= $api.getStorage("user");
+		//				console.log("ChinaTower://userName="+user.loginname+"&siteCode="+deviceid+"&openclassname=CTResStationResultViewController");
+
+						if(api.systemType=='ios'){
+				        	api.openApp({
+		                    iosUrl:"ChinaTower://userName="+user.loginname+"&siteCode="+deviceid+"&openclassname=CTResStationResultViewController"
+		                });
+		        }else if(api.systemType=='android'){
+		                	console.log("ChinaTower://userName="+user.loginname+"&siteCode="+deviceid+"&openclassname=CTResStationResultViewController");
+		                	api.openApp({
+							    		androidPkg:'com.android.activity.CHINATOWER_ACTION',
+						        	appParam: {
+						            userName: user.loginname,
+						            siteCode: deviceid,
+						            openclassname:'CTResStationResultViewController'
+											}
+											});
+          	}
+//					console.log("android3");
+				});
+
+
+
+				api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+						api.closeWin();
+				});
+			};
+
+			function back(){//返回就關閉gps
+						api.closeWin();
+			}
+
+
+			function t_openDoor(el){
+			// 	// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  暂留 确定开门不需要关联门禁后删除
+			// 	var stationid = $api.getStorage('stationid');
+			//
+			// 	// var applyId = '';
+			// 	// if ( typeof (api.pageParam.applyId) != 'undefined') {
+			// 	// 	applyId = api.pageParam.applyId;
+			// 	// }
+			// 	var opts = {
+			// 		// stationid : '0235543'
+			// 		// applyId : applyId
+			// 		stationcode:'43010200000038'
+			// 	};
+			// 	alert(getObj(opts))
+			// 	$client.getWxx(opts, function(ret, err) {
+			// 		alert(getObj(ret))
+			// 			if (ret) {
+			//
+			// 			}
+			// 	});
+			//
+			// // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+				var connectionType = api.connectionType;
+				if(offline=="true"||offline==true){
+					api.confirm({
+							title: '提示',
+							msg: '网络未连接状态下不可操作'
+					})
+				}else {
+					var taskid = $api.getStorage('taskid');
+					console.log('4444444444444444444444444444');
+					console.log(getObj(api.pageParam));
+					var pageParam = {
+							// fsuid : $(el).attr("data-fsuid"),
+							// devicecode : $(el).attr("data-devicecode"),
+							// signal : $(el).attr("data-signal"),
+							// devicename : $(el).attr("data-name"),
+							// stationName : api.pageParam.stationName,
+							stationcode:api.pageParam.stationcode,
+							taskid:taskid,
+							t_workKind:"3",
+							t_cause:"日常巡检"
+					};
+					api.openWin({
+							name : 'autoOpenDoor_win',
+							url : '../autoOpenDoor_win.html',
+							bounces : false,
+							pageParam : pageParam
+					});
+				}
+			}
+			// 打开菜单
+	    function openMenu() {
+			console.log("rererersdfS001")
+			console.log(api.pageParam.taskstate)
+
+	        api.openFrame({
+	            name : 'xunjianMenu_frm',
+	            url : 'xunjianMenu_frm.html',
+	            bounces : false,
+	            rect : {
+	                x : 0,
+	                y : 0,
+	                w : 'auto',
+	                h : 'auto'
+	            },
+	            pageParam : api.pageParam,
+	            reload : true
+	        });
+	    }
+		function ref(){
+			console.log("rererersdfS")
+			console.log(api.pageParam.taskstate)
+			api.pageParam.taskstate = '2';
+			console.log(api.pageParam.taskstate)
+
+			$('#signid').hide();
+			api.execScript({
+				name : 'xunjian_projectList',
+				frameName : 'projectListFrm',
+				script : 'reftaskstate();'
+			});
+			api.execScript({
+				name : 'xunjian_projectList',
+				frameName : 'projectListFrm',
+				script : 'refreshList();'
+			});
+		}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="assets/css/public.css" />
+		<link rel="stylesheet" href="assets/css/iconfont/iconfont.css" />
+		<link rel="stylesheet" href="assets/groupRule/css/groupRule.css" />
+    <style>
+
+		.list b{
+			color: #444444;
+		}
+		.btn-toggle{
+			line-height: 30px;
+		}
+		body{padding: 0}
+    </style>
+</head>
+<body>
+		<div>
+            <ul id="listView"></ul>
+						<!-- <ul id="groupRule"></ul> -->
+
+    </div>
+		<!-- {{ for(var i=0, len=it.length; i < len; i++) {}}
+		<li>
+			 <p class="authitem  auth4 pr" onclick="seeDetail({{=it[i].userid}})">
+						<span class="btn-toggle">
+								<span>
+										<i class="iconfont icon-checkbox">&#xe64d;</i>
+								</span>
+								<span class="username">
+								{{=it[i].username}}
+								</span>
+								{{=it[i].mobilephone}}
+						</span>
+						<i class="iconfont right">&#xe62c;</i>
+				</p>
+		 </li>
+		{{ } }} -->
+		<script id="user-template" type="text/x-dot-template">
+
+			{{
+			var userList=it.userList;
+			var areaList=it.areaList;
+			var provinceName=it.provinceName;
+			var cityName=it.cityName;
+			var countName=it.countName;
+				if(countName){
+					var style="auth5"
+				}else if(cityName){
+					var style="auth4"
+				}else if(provinceName){
+					var style="auth3"
+				}
+			}}
+			{{?areaList}}
+			{{for(var i=0, len=areaList.length; i < len; i++) {}}
+			<li><p class="authitem  {{=style}} pr" onclick="showUser(this,'{{=areaList[i].objectid}}','{{=areaList[i].treecode}}')"><span class="btn-toggle"> {{=areaList[i].objectname}}</span><i class="iconfont icon-right-down">&#xe62c;</i></p>
+			<ul class="hide">
+
+			</ul>
+			</li>
+			{{ } }}
+			{{?}}
+				{{for(var j=0, len=userList.length; j < len; j++) {}}
+				 <li>
+						<p class="authitem {{=style}} pr" onclick="seeDetail({{=userList[j].userid}})">
+								 <span class="btn-toggle">
+										 <span class="username">
+										 <i class="iconfont icon-checkbox">&#xe66f;</i>
+										 {{=userList[j].username}}
+										 </span>
+										 <span>
+										 <i class="iconfont icon-checkbox">&#xe64d;</i>
+										 {{=userList[j].mobilephone}}
+										 </span>
+								 </span>
+								 <i class="iconfont right">&#xe62c;</i>
+						 </p>
+					</li>
+					{{ } }}
+
+		</script>
+    <script id="listView-template" type="text/x-dot-template">
+
+						<ul class="auth-list">
+								 <li><p class="authitem listClick auth1 pr"><span>中国铁塔集团</span><i class="iconfont icon-right-down">&#xe62c;</i></p>
+		 						{{
+		 						var userList=it.userList;
+		 						var areaList=it.areaList;
+								var provinceName=it.provinceName;
+								var cityName=it.cityName;
+		 						var countName=it.countName;
+								if(countName){
+									var style="auth5"
+								}else if(cityName){
+									var style="auth4"
+								}else if(provinceName){
+									var style="auth3"
+								}
+								}}
+							{{?provinceName}}
+								<ul class="hide">
+								 <li class="auth-li"><p class="authitem listClick auth2 pr"><span class="btn-toggle">{{=provinceName}}</span><i class="iconfont icon-right-down">&#xe62c;</i></p>{{ } }}
+							{{?cityName}}
+								 <ul class="hide">
+									 <li class="auth-li"><p class="authitem listClick auth3 pr"><span class="btn-toggle">{{=cityName}}</span><i class="iconfont icon-right-down">&#xe62c;</i></p>{{ } }}
+							{{?countName}}
+									 <ul class="hide">
+										<li class="auth-li"><p class="authitem listClick auth4 pr"><span class="btn-toggle">{{=countName}}</span><i class="iconfont icon-right-down">&#xe62c;</i></p>{{ } }}
+									      <ul class="hide">
+
+												{{?areaList}}
+												{{for(var i=0, len=areaList.length; i < len; i++) {}}
+												<li><p class="authitem  {{=style}} pr" onclick="showUser(this,'{{=areaList[i].objectid}}','{{=areaList[i].treecode}}')"><span class="btn-toggle"> {{=areaList[i].objectname}}</span><i class="iconfont icon-right-down">&#xe62c;</i></p>
+												<ul class="hide">
+
+												</ul>
+												</li>
+											 	{{ } }}
+												{{?}}
+													{{for(var j=0, len=userList.length; j < len; j++) {}}
+													 <li>
+													 		<p class="authitem  {{=style}} pr" onclick="seeDetail({{=userList[j].userid}})">
+			                             <span class="btn-toggle">
+			                                 <span class="username">
+																			 <i class="iconfont icon-checkbox">&#xe66f;</i>
+			                                 {{=userList[j].username}}
+			                                 </span>
+																			 <span>
+																			 <i class="iconfont icon-checkbox">&#xe64d;</i>
+			                                 {{=userList[j].mobilephone}}
+																			 </span>
+			                             </span>
+			                             <i class="iconfont right">&#xe62c;</i>
+			                         </p>
+														</li>
+														{{ } }}
+
+
+									      </ul>
+												{{?provinceName}}
+															</li>
+														</ul>
+												{{?}}
+												{{?cityName}}
+													</li>
+												</ul>
+												{{?}}
+										{{?countName}}
+											</li>
+										</ul>
+										{{?}}
+
+									</li>
+						  </ul>
+    </script>
+</body>
+
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+<script src="assets/js/jquery-2.2.4.js"></script>
+<!--  <script src="assets/groupRule/js/groupRule.js"></script> -->
+<script type="text/javascript">
+	var listView = null;
+	var finishLoadDone  = false;
+	var finishStart = 0;
+	var queryOpts ={
+		username:'',
+		mobilephone:'',
+		email:'',
+        sorgid : ''
+	};
+	apiready = function(){
+
+		var user = $api.getStorage('user');
+		var userid = user.userid;
+		console.log('userid ===' + userid);
+		api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+		var opts={
+			start:1,
+			limit:10000
+		};
+		$client.getNewContactList(opts,function(ret,err){
+			if (ret.success) {
+				var data=JSON.parse(ret.data_info);
+				console.log(JSON.stringify(data));
+				// tree(data)
+				renderTemp('listView', 'listView-template', data);
+				// 通讯录点击
+				$(".listClick").click(function(){
+						 $(this).find(".icon-right-down").toggleClass("icon-close");
+						 if($(this).find(".icon-right-down").hasClass("icon-close")){
+								$(this).find(".icon-right-down").html('&#xe62b;');
+						 }else {
+							 $(this).find(".icon-right-down").html('&#xe62c;');
+						 }
+						 $(this).next().slideToggle(200);
+				})
+
+			}else {
+				api.toast({
+					msg : ret.data_info
+				});
+			}
+		})
+
+		api.hideProgress();
+
+	};
+
+	// 显示区县人员
+	function showUser(e,objectid,treecode){
+		api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+		var opts={
+			start:1,
+			limit:10000,
+			objectid:objectid,
+			treecode:treecode
+		};
+		console.log(JSON.stringify(opts));
+		$client.getNewContactList(opts,function(ret,err){
+			console.log(JSON.stringify(ret));
+
+			if (ret.success) {
+				var data=JSON.parse(ret.data_info);
+				var tpl = $api.byId('user-template').text;
+				var tempFn = doT.template(tpl);
+				$(e).next().empty().append(tempFn(data));
+				api.parseTapmode();
+				// 通讯录点击
+				$(e).find(".icon-right-down").toggleClass("icon-close");
+				if($(e).find(".icon-right-down").hasClass("icon-close")){
+					 $(e).find(".icon-right-down").html('&#xe62b;');
+				}else {
+					$(e).find(".icon-right-down").html('&#xe62c;');
+				}
+				$(e).next().slideToggle(200);
+
+			}else {
+				api.toast({
+					msg : ret.data_info
+				});
+			}
+		})
+
+		api.hideProgress();
+
+	}
+
+
+	/**
+     * 打开下拉刷新
+     */
+    function openRefreshHeader() {
+        api.setRefreshHeaderInfo({
+            visible : true,
+            bgColor : '#f2f2f2',
+            textColor : '#4d4d4d',
+            textDown : '下拉刷新...',
+            textUp : '松开刷新...',
+            showTime : true
+        }, function(ret, err) {
+       		finishStart = 0;
+             listView.refresh();
+        });
+    }
+
+	seeDetail = function(e){
+	    openPage_person(String(e));
+	};
+
+	startSort = function(list ){
+		list.sort(function(a,b){
+			var name1 = a['orgname'];
+			var name2 = b['orgname'];
+			return name1.localeCompare(name2);
+		});//汉字拼音排序方法
+	}
+
+	queryContact = function(opts){
+		console.log('queryContact callback');
+		finishStart == 0;
+		for(var name in opts){
+			console.log('opt.key = ' + name + ' opt[name] = ' + opts[name] );
+		}
+//		if(typeof(opts.name)!="undefined" && opts['name']!=null){
+			queryOpts.username = opts['name'];
+//		} else{ queryOpts.username =""}
+
+		if(typeof(opts.mobilephone)!="undefined" && opts.mobilephone!=null){
+			queryOpts.mobilephone = opts.mobilephone;
+		}else{ queryOpts.mobilephone =""}
+
+		if(typeof(opts.email)!="undefined" && opts.email!=null){
+			queryOpts.email = opts.email;
+		}else{ queryOpts.email =""}
+
+		if(typeof(opts.unit)!="undefined" && opts.unit!=null){
+			 var unitIdList = opts.unit.split('/');
+               if (unitIdList.length >= 1) {
+                    queryOpts.sorgid = unitIdList[0];
+                }
+                if (unitIdList.length >= 2) {
+                    queryOpts.sorgid = unitIdList[1];
+                }
+                if (unitIdList.length >= 3) {
+                    queryOpts.sorgid = unitIdList[2];
+                }
+		}else{ queryOpts.sorgid =""}
+
+		showlog(getObj(queryOpts));
+
+		queryOpts.start=1;
+		queryOpts.limit=10000;
+		api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+		$client.getNewContactList(queryOpts,function(ret,err){
+			if (ret.success) {
+				var data=ret.list;
+				console.log(JSON.stringify(ret.list));
+				tree(data)
+			}else {
+				api.toast({
+					msg : ret.data_info
+				});
+			}
+		})
+
+	};
+
+</script>
+</html>

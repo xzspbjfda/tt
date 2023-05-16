@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>api</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <style>
+    	#main .list{
+		    padding: 0px 0px 20px;
+		}
+		#main .list li{
+		    position: relative; overflow: hidden; 
+		    border-bottom: 1px solid #d9d9d9;
+		}
+		#main .list li a{
+		    display: block; padding: 10px;
+		}
+		#main .list li a.active{
+			background-color: #d9e4e9;
+		}
+		#main .list img{
+		    float: left; width: 60px; height: 60px; border-radius: 4px;
+		}
+		#main .list h3, #main .list .info{
+		    margin-left: 0px; 
+		}
+		#main .list h3{
+		    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+		    width: 70%; margin-bottom: 5px; position: relative;
+		}
+		#main .list h3:after{
+		    content: ""; display: inline-block; width: 14px; height: 17px;
+		    margin-left: 10px;
+		    vertical-align: middle;
+		    -webkit-background-size: contain;
+		    background-size: contain;
+		}
+		#main .list .info, #main .list .info em, #main .list .info span{
+		    color: #999; font-size: 14px; 
+		}
+		#main .list .info span{
+		    white-space: nowrap; overflow: hidden;text-overflow: ellipsis;
+		    width: 95%; margin-bottom: 5px; position: relative;
+		}
+		#main .list .info span:nth-child(2){
+		    margin-left: 10px;
+		}
+		#main .list .info em{
+		    float: right; margin-right: 6px;
+		}
+    </style>
+</head>
+<body>
+    <div id="main">
+    
+    	<script id="noticeList-template" type="text/x-dot-template">
+	        {{ for(var i=0, len=it.length; i < len; i++) {}}
+	          <li>
+	            <a tapmode="active" noticeUrl="{{=it[i].url}}" noticeId="{{=it[i].id}}" onclick="openNoticeDetail(this)">
+		            <h3>{{=it[i].title}}</h3>
+		            <div class="info clearfix">
+		                <span>{{=it[i].summary}}</span>
+                        <br><span style="font-size: 9px;">{{=it[i].publishername}}   {{=it[i].publishtime}}</span>
+                        <!--<em>120km</em>-->
+		            </div>
+	            </a>
+	          </li>
+	        {{ } }}
+	    </script>
+    	
+        <ul class="list" id="noticeList">
+        
+        </ul>
+    </div>
+</body>
+<script src="../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script> 
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/client.api.js"></script>
+<script type="text/javascript" src="../script/aui-alert.js"></script>
+<script>
+var start = 0;
+var loadDone = false;
+var showProgress = true;
+function getNoticeList() {
+	var user = $api.getStorage('user');
+	var userid = user.userid;
+	if(showProgress){
+		api.showProgress({
+			title : '加载中',
+			modal : false
+		});
+	}
+	$client.getNoticeList(userid,start, function(ret, err) {
+		if (ret) {
+			if (ret.success) {
+				//var strs = $api.jsonToStr(ret);
+				if(ret.list == null || ret.list.length<1){
+					loadDone = true;
+				}else{
+					var content = $api.byId('noticeList');
+		            var tpl = $api.byId('noticeList-template').text;
+		            var tempFn = doT.template(tpl);
+		            if(start == 0){
+		            	content.innerHTML = tempFn(ret.list);
+		            }else{
+		            	content.innerHTML += tempFn(ret.list);
+		            }
+				}
+			} else {
+				api.toast({msg: ret.data_info, location: 'middle'});
+			}
+		} else {
+            api.toast({msg: err.msg, location: 'middle'})
+        }
+        if(start == 0){
+        	api.refreshHeaderLoadDone();
+			api.parseTapmode();
+        }
+        window.setTimeout(function(){
+			api.parseTapmode();
+			api.hideProgress();
+		},500);
+	});
+}
+function openNoticeDetail(el) { 
+    var noticeUrl = $api.attr(el, 'noticeUrl');
+    api.openWin({
+        name: 'mainNoticeDetail',
+        url: 'mainNoticeDetail.html',
+        opaque: true,
+        bounces: false,
+        reload:true,
+        pageParam: {noticeUrl: noticeUrl},
+        vScrollBarEnabled: false
+    });
+
+}
+
+apiready = function () {
+    getNoticeList();
+    $(window).scroll(function(){
+		if($(document).scrollTop()>=$(document).height()-$(window).height()){
+			if(!loadDone){
+	    		start += 1;
+	    		showProgress = true;
+	        	getNoticeList();
+	    	}
+		}
+	});
+	
+    api.setRefreshHeaderInfo({
+        visible: true,
+        bgColor: '#f2f2f2',
+        textColor: '#4d4d4d',
+        textDown: '下拉刷新...',
+        textUp: '松开刷新...',
+        showTime: true
+    }, function (ret, err) {
+        start = 0;
+        showProgress = false;
+        getNoticeList();
+    });
+	
+}
+</script>
+</html>

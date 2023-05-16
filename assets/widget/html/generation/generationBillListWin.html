@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>代维调度待办列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <style media="screen">
+      .numtip{
+        display: inline-block;
+        padding: 2px 3px;
+        background-color:#1abc9c;
+        color: #fff!important;
+        line-height: normal!important;
+        font-size: 10px;
+        border-radius: 4px;
+        margin-left: 5px;
+        display: none;
+        width: 14px;
+        text-align: center;
+      }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        <div class="aui-title" id='titname'>
+            代维调度
+        </div>
+        <a id="menuBtn" class="aui-pull-right" tapmode onclick="openMenu()"> <span class="aui-iconfont aui-icon-settings"></span></a>
+        <a id="showPopup" class="aui-pull-right" tapmode onclick="showPopup()" style="display:none;"> <span class="aui-iconfont aui-icon-search"></span> </a>
+        <a id="queryScreen" class="aui-pull-right" tapmode onclick="queryScreen()"> <span class="aui-iconfont aui-icon-search"></span> </a>
+    </header>
+    <div id="isshow" class="aui-tab" style="display:none;">
+        <ul id="tabBox" class="aui-tab-nav">
+            <li tabName = 'generationBillListFrm' tag="0" id="activ1" class="active" tapmode>
+                未领取<span class="numtip">0</span>
+            </li>
+            <li tabName = "generationBillListgetFrm" tag="3" id="activ2" tapmode >
+                已领取<span class="numtip">0</span>
+            </li>
+            <li tabName = "generationBillListFinshFrm" tag="1" tapmode >
+                已完成<span class="numtip">0</span>
+            </li>
+           <!-- <li tabName = "generationBillListFinshedFrm" tapmode >
+                已归档<span class="numtip">0</span>
+            </li>  -->
+            <li tabName = "generationBillListFrmNum" tapmode style="display:none;">
+                站址模式
+            </li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript">
+var query_setting;
+    function isshow(istrue){
+      if(istrue){
+        $("#showPopup").hide();
+        $("#queryScreen").show();
+        $("#isshow").show();
+        api.setFrameGroupAttr({
+            name: 'xunjian_header_tab',
+            rect : frameRect(),
+            scrollEnabled:true
+        });
+        api.setFrameGroupIndex({
+            name: 'xunjian_header_tab',
+            index: 0
+        });
+      }else {
+        $("#showPopup").show();
+        $("#queryScreen").hide();
+        $("#isshow").hide();
+        api.setFrameGroupAttr({
+            name: 'xunjian_header_tab',
+            rect : frameRect1(),
+            scrollEnabled:false
+        });
+        api.setFrameGroupIndex({
+            name: 'xunjian_header_tab',
+            index: 4
+        });
+      }
+    }
+    // 打开菜单
+    function openMenu() {
+        api.openFrame({
+            name : 'generationBillMenuQh',
+            url : 'generationBillMenuQh.html',
+            bounces : false,
+            rect : {
+                x : 0,
+                y : 0,
+                w : 'auto',
+                h : 'auto'
+            },
+            pageParam : api.pageParam,
+            reload : true
+        });
+    }
+    // 筛选页面
+    function showPopup() {
+
+        api.openFrame({
+            name : 'popup_query_' + $('#tabBox li.active').attr('tabName'),
+            url : '../dialog/popup_query.html',
+            rect : {
+                x : 0,
+                y : 0,
+                w : 'auto',
+                h : 'auto'
+            },
+            bounces : false,
+            reload : true,
+            pageParam : query_setting
+        });
+    }
+
+    refreshFrame = function() {
+        var header = initHeader();
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        var type=api.pageParam.type;
+        // wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        if(type=='RL_DW'){
+          $('#menuBtn').hide();
+          $('#showPopup').hide();
+          $("#queryScreen").hide();
+          api.openFrameGroup({
+              name : 'xunjian_header_tab',
+              rect : frameRect2(),
+              pareload : 0,
+              scrollEnabled:false,
+              index: 0,
+              frames : [{
+                  name : 'generationBillListFrm',
+                  url : 'generationBillListFrm.html',
+                  pageParam : {
+                    type:type
+                  },
+                  bounces : false
+              }]
+          }, function(ret, err) {
+              if (ret) {
+                  $('#titname').html('工单模式');
+              }
+          });
+
+        }else {
+          api.openFrameGroup({
+              name : 'xunjian_header_tab',
+              rect : frameRect1(),
+              preload : 0,
+              scrollEnabled:false,
+              index: 0,
+              frames : [{
+                  name : 'generationBillListFrm',
+                  url : 'generationBillListFrm.html',
+                  pageParam : {
+                    type:0
+                  },
+                  bounces : false
+              },{
+                  name : 'generationBillListgetFrm',
+                  url : 'generationBillListFrm.html',
+                  pageParam : {
+                    type:3
+                  },
+                  bounces : false
+              }, {
+                  name : 'generationBillListFinshFrm',
+                  url : 'generationBillListFrm.html',
+                  pageParam : {
+                    type:1
+                  },
+                  bounces : false
+              },{
+                  name : 'generationBillListFinshedFrm',      //已归档的  已注释
+                  url : 'generationBillListFrm.html',
+                  pageParam : {
+                    type:4
+                  },
+                  bounces : false
+              },{
+                  name : 'generationBillListFrmNum',
+                  url : 'generationBillListFrm.html',
+                  pageParam : {
+                    type:2
+                  },
+                  bounces : false
+              }]
+          }, function(ret, err) {
+              if (ret) {
+                  $('#tabBox li:eq(' + ret.index + ')').addClass('active').siblings().removeClass('active');
+                  if(ret.index==0 || ret.index==1 || ret.index== 2){
+                    query_setting = {
+                        stationNameOpt2 : true,
+                        stationNameOpt3 : true,
+                        stationNameOpt4 : true,
+                        // stationNameOpt5 : true,
+                        begintimetype:true,
+                        winName : api.winName,
+                        frameName : $('#tabBox li.active').attr('tabName'),
+                        callback : 'cb_queryWaitTaskList'
+                    };
+                    $('#titname').html('工单模式');
+                    $("#isshow").show();
+                    api.setFrameGroupAttr({
+                        name: 'xunjian_header_tab',
+                        rect : frameRect(),
+                        scrollEnabled:true
+                    });
+                  }else {
+                    query_setting = {
+                        stationNameOpt2 : true,
+                        winName : api.winName,
+                        frameName : $('#tabBox li.active').attr('tabName'),
+                        callback : 'cb_queryWaitTaskList'
+                    };
+                    $('#titname').html('站址模式');
+                  }
+              }
+          });
+          /*jquery事件:tab切换*/
+          //add at 20210907
+          $api.setStorage('parType','0');//未领取/领取/已完成
+          $api.setStorage('type', '0');//1运营商业务 2.智联业务类 0所有业务
+          $api.setStorage('typeName','');
+            
+          $('#tabBox li').click(function() {
+                //add at 20210907
+                var parType=$(this).attr('tag');
+                console.log($(this).index()+"=========tab切换================="+parType);
+                $api.setStorage('parType',parType);//未领取/领取/已完成
+
+                $(this).addClass('active').siblings().removeClass('active');
+                if(parType==0){//未领
+                    api.sendEvent({
+                        name: 'receive',
+                        extra: {
+                        }
+                    });
+                }else if(parType==3){//已领
+                    api.sendEvent({
+                        name: 'receipt',
+                        extra: {
+                        }
+                    });
+                }else if(parType==1){//完成
+                    api.sendEvent({ 
+                        name: 'finish',
+                        extra: {
+                        }
+                    });
+                }
+                api.setFrameGroupIndex({
+                    name : 'xunjian_header_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+          });
+        }
+    }
+    apiready = function() {
+    	// 标识入口页面
+	    $api.setStorage('billcntFrom', 'generationBillListWin');
+        refreshFrame();
+        $api.addEvt($api.byId('back'), 'click', function() {
+            api.closeWin();
+        });
+        //回完单后监听已领取页面是否还有该站址数据
+        api.addEventListener({
+            name: 'myDeleteClsEvent'
+        }, function(ret, err){
+            api.setFrameGroupIndex({
+                name : 'xunjian_header_tab',
+                index : 0,
+                scroll : true
+            });
+            $("#activ2").removeClass('.active');
+            $("#activ1").addClass('.active');
+            var parType=$("#activ1").attr('tag');
+            $api.setStorage('parType',parType);//未领取/领取/已完成
+        });
+        //监听筛选页面调用 add at 20210907
+        api.addEventListener({
+            name: 'queryDwList'
+        }, function(ret, err){
+            if( ret ){
+                var opts = ret.value.key
+                cb_queryDwList(opts);
+            }
+        });
+        /**
+         * 外链页面操作回调
+         * done : 已阅读完所选条目
+         * cancel : 在选择项目时点击了取消
+         */
+        api.addEventListener({name: 'onRiskTipDone'}, function(ret) {
+            //alert("来自风险提示外链页面的回调：" + JSON.stringify(ret.value));
+            switch (ret.value) {
+                case "done":
+                    api.closeFrame({name:"riskTip"})
+                    console.log(JSON.stringify(api.pageParam));
+                    if(api.pageParam.isneedsignin == "1" && api.pageParam.signed == "0"){
+                        return gotoSignPage(type,api.pageParam);
+                    }
+                    openBillList("generationWriteWin");
+                    break;
+                case "cancel":
+                    api.closeFrame({name:"riskTip"})
+                    api.closeFrame({name:"generationBillMenuQh"})
+                    break;
+            }
+        });
+    };
+    function openBillList(name) {
+        api.openWin({
+            name : name,
+            url : name + '.html',
+            bounces : false,
+            rect : {
+                x : 0,
+                y : 0,
+                w : 'auto',
+                h : 'auto'
+            },
+            reload : true,
+            pageParam : api.pageParam
+        });
+    }
+    function changetipnum(num,type){
+      if(type==1){
+        $('.numtip').eq(0).html(num);
+        $('.numtip').eq(0).show(0);
+      }else if(type==2) {
+        $('.numtip').eq(1).html(num);
+        $('.numtip').eq(1).show(0);
+      }else if(type==3) {
+        $('.numtip').eq(2).html(num);
+        $('.numtip').eq(2).show(0);
+      }else if(type==4) {
+        $('.numtip').eq(3).html(num);
+        $('.numtip').eq(3).show(0);
+      }
+    }
+
+    //工单筛选点击跳转 add at 20210907
+    function queryScreen(){
+        api.openWin({
+            name : "generationScreen",
+            url : "generationScreenWin.html",
+            opaque : true,
+            bounces : false,
+            reload : true,
+            vScrollBarEnabled : false,
+            pageParam : api.pageParam,
+            delay : 300,
+            animation : {
+                type : "push",
+                subType : "from_right",
+                duration : 300
+            }
+        });
+    }
+    //加载工单查询过来的数据 add at 20210907
+	function cb_queryDwList(opts){
+        var parType=$api.getStorage('parType');
+		console.log("类型："+parType);
+        var fun="cb_queryWaitTaskListBystr('"+JSON.stringify(opts)+"')";  
+        var frame="";//0未领
+        if(parType==0){//0未领
+            frame="generationBillListFrm";
+        }else if(parType==3){//3已领
+            frame="generationBillListgetFrm";
+        }else if(parType==1){//1完成
+            frame="generationBillListFinshFrm";
+        }
+        api.execScript({
+            frameName : frame,
+            script : fun
+        });
+	}
+</script>
+
+</html>

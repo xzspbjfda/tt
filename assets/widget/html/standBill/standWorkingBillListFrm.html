@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>上站已办->已办工单(tab)</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../../css/standBill.css" />
+    <style>  	
+    </style>
+</head>
+<body>
+	<script id="listView-template" type="text/x-dot-template">
+        {{ for(var i=0, len=it.length; i < len; i++) {
+        	var processflag = it[i].processflag;
+        	var processflagName = "";
+        	var pcolor = "";
+        	if(processflag=="ACCEPT"){
+        		processflagName = "接单";
+        		pcolor = "#22AADD";
+        	}else if(processflag=="COORDINATE"){
+        		processflagName = "协调上站";
+        		pcolor = "#7676BA";
+        	}else if(processflag=="REVERT"){
+        		processflagName = "回单";
+        		pcolor = "#B372F6";
+        	}else if(processflag=="ISPROMPT"){
+        		processflagName = "是否及时上站";
+        		pcolor = "#E088CF";
+        	}else if(processflag=="ISAGREE"){
+        		processflagName = "是否同意";
+        		pcolor = "#AED684";
+        	}else if(processflag=="SENISPROMPT"){
+        		processflagName = "最终确认";
+        		pcolor = "#E088CF";
+        	}else if(processflag=="PHONESIGN"){
+        		processflagName = "手机签到";
+        		pcolor = "#9fbe3b";
+        	}else if(processflag=="ARCHIVE"){
+        		processflagName = "归档";
+        		pcolor = "#953A6C";
+        	}
+        }}
+        
+        <li tapmode="active" applyId="{{=it[i].applyid}}" stationId="{{=it[i].stationid}}" stationName="{{=it[i].stationname}}" onclick="openStandBillDetail(this)">
+			<div class="liTop">
+				{{=it[i].stationname}}
+				{{?it[i].isneedperson=="Y"}}
+					<span class="hasFellow" style="color:#4AB518;">随工</span>
+            		{{?}}
+				{{?it[i].isneedperson== null }}
+					{{?it[i].applyisneedperson=='Y'}}
+						<span class="hasFellow" style="color:#4AB518;">随工</span>
+					{{?}}
+            		{{?}}
+	            	{{?it[i].isneedperson=="N"}}
+	            		<span class="hasFellow" style="color:#F4AB15;">不随工</span>
+	            	{{?}}				
+	            	{{?it[i].isneedperson==null }}
+	            		{{?it[i].applyisneedperson=='N'}}
+	            			<span class="hasFellow" style="color:#F4AB15;">不随工</span>
+	            		{{?}}
+	            	{{?}}						
+				<span class="billStatus" style="color:{{=pcolor}}">{{=processflagName}}</span>
+			</div>
+			<div class="liMiddle">					
+				{{=it[i].applyid}}
+				<span class="bugType">
+				{{? it[i].cause == '1' }}
+					紧急故障处理
+				{{?}}
+				{{? it[i].cause == '2' }}
+					一般故障处理
+				{{?}}
+				{{? it[i].cause == '3' }}
+					安装设备
+				{{?}}
+				{{? it[i].cause == '4' }}
+					勘察设计
+				{{?}}
+				{{? it[i].cause == '5' }}
+					日常巡检
+				{{?}}
+				{{? it[i].cause == '6' }}
+					其它
+				{{?}}
+				</span>
+			</div>
+			<div class="liDown">
+				申请上站时间：{{=it[i].applystanddate != null ? it[i].applystanddate:''}}
+				<span class="dealPerson">{{=it[i].contact_person != null ? it[i].contact_person:''}}</span>
+			</div>
+		</li>
+        {{ } }}
+    </script>
+    	
+
+	<div class="aui-content">
+    	<ul class="ccssoft_list" id="listView">
+    	    			
+    	</ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/navigate.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+	var listView;
+    apiready = function() {
+        listView = new C.ApiListView({
+            fn : $client.getStandWorkingBillList
+        });
+        listView.refresh();
+    };
+
+	function openStandBillDetail(el) { 
+	    var applyId = $api.attr(el, 'applyId');
+	    var stationId = $api.attr(el, 'stationId');
+	    var stationName = $api.attr(el, 'stationName');
+	    
+	    var pageParam = {};
+	    pageParam.applyId = applyId;
+	    pageParam.stationId = stationId;
+	    pageParam.stationName = stationName;
+	    //页面来源，这里表示从上站已办跳过来
+	    pageParam.fromPage = "standFinishBillListWin";
+
+	    api.openWin({
+	        name: 'mainStandBillDetail',
+	        url: 'mainStandBillDetail.html',
+	        opaque: true,
+	        bounces: false,
+	        reload:true,
+	        pageParam: pageParam,
+	        vScrollBarEnabled: false
+	    });
+	}
+</script>
+</html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>应急物资列表</title>
+       <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+        <style>
+            body.active{
+                background : url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+            }
+            .ccssoft_list_wxx {
+             background-color: #eff1f0;
+             override: hidden;
+             width: 94%;
+             margin: 0px auto;
+             padding-top: 10px;
+            }
+            .ccssoft_list_wxx li {
+               list-style: none;
+               border-radius: 6px;
+               padding:3px 10px 3px 10px;
+               background: #fff;
+               overflow: hidden;
+               margin-bottom: 10px;
+               position: relative;
+            }
+            .top-title{
+              margin: 10px 0;
+              padding-bottom: 10px;
+              height: auto;
+            }
+            .wxx_btn_box{
+              display: flex;
+              justify-content: space-between;
+            }
+            .wxx_btn{
+              width: 118px;
+              height: 33px;
+              border-radius: 35px;
+              border: 1px solid #db4537;
+              line-height: 30px;
+              box-shadow: 0 3px 8px rgba(226,132,123,.5);
+              color: #db4537;
+              font-size: 14px;
+              text-align: center;
+              margin: 4px auto;
+            }
+
+            .btnrh{
+              position: absolute;
+              right: 10px;
+              bottom: 4px;
+              font-size: 12px;
+              color: #db4537;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <script id="listView-template" type="text/x-dot-template">
+                {{ for(var i=0, len=it.length; i < len; i++) {
+                 var model = it[i];
+                }}
+                <li tapmode="active">
+                <div onclick="openRest('{{=model.id!=null?model.id:""}}','{{=model.eventLocalCity!=null?model.eventLocalCity:""}}','{{=model.statusText!=null?model.statusText:''}}','{{=model.province!=null?model.province:''}}','{{=model.city!=null?model.city:''}}','{{=model.createPerson!=null?model.createPerson:''}}')">
+                <div class="top-title">{{=model.eventName!=null?model.eventName:''}}</div>
+                <div class="aui-flex-col" style="font-size:12px;">
+          			<div class="aui-flex-item-9">事件状态：{{=model.statusText!=null?model.statusText:''}}</div>
+          			</div>
+                </div>
+
+                </li>
+                {{  } }}
+            </script>
+            <ul class="ccssoft_list_wxx" id="listView"></ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite00.js"></script>
+     <script>
+    //  <div class='btnrh' onclick="openRH('{{=model.id!=null?model.id:""}}')">日耗</div>
+     var  listView;
+     apiready = function() {
+       var user=$api.getStorage('user');
+       listView = new C.ApiListView({
+    			fn : $client.getsubmissionList,
+    			statusText:'in@待地市主任审核,待省主任审核,待省主管审核,待地市主管审核,已审核,待报送',
+          listName : 'rows',
+          userName:user.loginname
+  		  });
+
+      	listView.refresh();
+        var opt={
+          userName:user.loginname
+        }
+        $client.getSubmissionUserinfo(opt,function(ret,err){
+          $api.setStorage('submissioncurrentUser', ret);
+        })
+
+     }
+
+     /**
+		 *刷新页面
+		 */
+		function refreshList() {
+      api.closeFrame({
+          name: 'submissionBillMenu'
+      });
+			listView.refresh();
+		}
+
+     function openRest(id,eventLocalCity,statusText,province,city,createPerson) {
+
+    	var opt = {
+        id:id,
+        eventLocalCity:eventLocalCity,
+        statusText:statusText,
+        province:province,
+        city:city,
+        createPerson:createPerson
+    	};
+
+    	api.openWin({
+    		name : 'submission-detail_win',
+    		url : 'submission-detail_win.html',
+    		opaque : true,
+    		bounces : false,
+    		reload : true,
+    		pageParam : opt,
+    		vScrollBarEnabled : false
+    	});
+    }
+
+    function openRH(id){
+      var opt = {
+        id:id
+    	};
+      api.openWin({
+    		name : 'submission-RH_win',
+    		url : 'http://101.227.247.207:58080/gc/eventReport-DailyConsum.html?eventID=0ca44f20-c7e7-4f0b-8232-ffb0b5f74f44',
+    		opaque : true,
+    		bounces : false,
+    		reload : true,
+    		pageParam : opt,
+    		vScrollBarEnabled : false
+    	});
+    }
+
+    function cb_queryBillList(opts) {
+
+    console.log(JSON.stringify(opts));
+
+
+      api.closeFrame({
+  			name : 'submissionBillMenu'
+  		});
+    	listView.setQueryOptions(opts);
+    	listView.refresh();
+    }
+
+     </script>
+</html>

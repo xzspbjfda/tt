@@ -1,0 +1,1230 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>工单列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/query-list.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../bill/css/bill-listCon_frm.css" />
+        <link rel="stylesheet" type="text/css" href="css/billMenu.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/task_list_frm.css" />
+
+
+        <style>
+        body.active{
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+        .cj-orange{
+          background-color: orange;
+        }
+        .cj-blue{
+          background-color: blue;
+        }
+        .cj-purple{
+          background-color: purple;
+        }
+        .cj-green{
+          background-color: green;
+        }
+
+        .cj-l-level{
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          line-height: 18px;
+          text-align: center;
+          display: inline-block;
+          color: #fff;
+          margin: 0 4px;
+          vertical-align:top;
+        }
+
+        .cj-ash{
+          background-color: grey;
+        }
+
+        .ccssoft_list_wxx {
+         background-color: #eff1f0;
+         override: hidden;
+         width: 94%;
+         margin: 0 auto;
+       }
+       .ccssoft_list_wxx li {
+           list-style: none;
+           border-radius: 6px;
+           padding:3px 10px 3px 10px;
+           background: #fff;
+           overflow: hidden;
+           margin-bottom: 10px;
+           position: relative;
+       }
+
+       .ccssoft_list_wxx .showBox{
+           text-align:center;
+           font-size:12px;
+       }
+       #main{
+         background-color: #f4f4f4;
+         padding-top: 10px;
+       }
+       .cj-l-title-wxx{
+           border-bottom: 1px dashed #00a0c8;
+           font-size: 16px;
+           font-weight: bold;
+           line-height: 20px;
+           padding: 8px 70px 8px 0;
+           position: relative;
+       }
+
+       .cj-l-title-wxx span {
+           display: block;
+           width: 90px;
+           height: 20px;
+           line-height: 20px;
+           color: #666;
+           text-align: right;
+           position: absolute;
+           top: 5px;
+           right: 0;
+           font-size: 12px;
+           font-weight: bold;
+       }
+       .cj-l-into-wxx {
+           font-size: 12px;
+           color: #666;
+           line-height: 20px;
+           padding: 3px 0;
+           position: relative;
+       }
+       .cj-l-date-wxx {
+           display: block;
+           position: absolute;
+           top: 3px;
+           right: 0;
+           width: 180px;
+           text-align: right;
+       }
+       .cj-l-date-wxx span {
+           margin-left: 7px;
+       }
+       .cj-l-date-wxx:after {
+           content: "";
+           display: block;
+           width: 1px;
+           height: 12px;
+           background: #e3e3e3;
+           position: absolute;
+           top: 4px;
+           left: 60px;
+       }
+       .cj-l-date-wxx-2{
+         display: block;;
+         width: 1px;
+         height: 12px;
+         background: #e3e3e3;
+         position: absolute;
+         right: -4px;
+         top:4px;
+       }
+
+       .cj-l_line{
+         position: absolute;
+         width:5px;
+         height: 18px;
+         left: -10px;
+         top: 9px;
+         border-radius: 10px;
+       }
+       .cj-l_line_box{
+         position: absolute;
+         width:5px;
+         height: 18px;
+         left: 0px;
+         top: 12px;
+         border-radius: 10px;
+         background: linear-gradient(#fe7a7d, #fe4f4f);
+       }
+       .cj-l_line_box2{
+         position: absolute;
+         width:5px;
+         height: 18px;
+         left: 0px;
+         top: 9px;
+         border-radius: 10px;
+         background: linear-gradient(#fe7a7d, #fe4f4f);
+       }
+       .cj-l_line1{
+         background: linear-gradient(#fe7a7d, #fe4f4f);
+       }
+        .LC_img{
+          height: 60px;
+          display: block;
+          margin: 0 auto;
+          background-color:#ccc;
+        }
+        .wxx_btn{
+          width: 118px;
+          height: 33px;
+          border-radius: 35px;
+          border: 1px solid #db4537;
+          line-height: 30px;
+          box-shadow: 0 3px 8px rgba(226,132,123,.5);
+          color: #db4537;
+          font-size: 14px;
+          text-align: center;
+          margin: 10px auto;
+        }
+        .none{
+          display: none;
+        }
+        .aui-flex-col{
+          height: 28px;
+          line-height: 28px;
+        }
+        .cj-l-into,.top-title{
+          height: 28px;
+          line-height: 28px;
+        }
+        .top-title span{
+          height: 30px;
+          line-height: 30px;
+        }
+        .liDown{
+          height: 40px;
+          line-height: 40px;
+        }
+        .liDown div{
+          height: 40px;
+          line-height: 40px;
+        }
+        .liTop{
+          height: 40px;
+          line-height: 40px;
+        }
+
+        </style>
+    </head>
+
+<!-- 故障工单 -->
+    <script id="listView-template1" type="text/x-dot-template">
+      {{ for(var i=0, len=it.length; i < len; i++) {
+      var model = it[i];
+      var billstatus = model.billstatus;
+      var time= model.dispatch_time;
+      var businesstype=model.businesstype;
+      var faultType=model.faulttype;
+      var action=model.actionlist;
+      var alarmStatus="";
+      var alarmColor="";
+      var longTime="";
+      var billStatusName="";
+      var billStatusImage='';
+      var billStatusImagenone="";
+      var mode2=JSON.stringify(model.mode);
+      var billModel2=model.mode;
+
+      var billStatusColor = "";
+      if(billstatus == "ACCEPT"){
+      billStatusName = "待接单";
+
+      billStatusColor = "#22AADD";
+      if(billModel2){
+        if((billModel2.faulttype == "GENERELEC" && billModel2.istemperature == "Y")
+        ||(billModel2.faulttype =="2005"&&(billModel2.businesstype.indexOf('运营商工单')!=-1||billModel2.businesstype.indexOf('千寻公司工单')!=-1))
+        || (billModel2.faulttype =="2005"&&(billModel2.rev_is_empty_run=='0'||billModel2.rev_is_empty_run=='1'||billModel2.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==billstatus||'ELECTRIC_END'==billstatus))){
+          billStatusImage="fd1.png";
+        }else {
+          billStatusImage="gz1.png";
+        }
+      }else {
+        billStatusImagenone="none";
+      }
+
+      }else if(billstatus == "SUPPORTCONFIRM"){
+      billStatusName = "待确认";
+      billStatusColor = "#fb8536";
+      billStatusImagenone="none";
+      }else if(billstatus == "REVERT"){
+      billStatusName = "待回单";
+      billStatusColor = "#B372F6";
+      if(billModel2){
+        if((billModel2.faulttype == "GENERELEC" && billModel2.istemperature == "Y")
+        ||(billModel2.faulttype =="2005"&&(billModel2.businesstype.indexOf('运营商工单')!=-1||billModel2.businesstype.indexOf('千寻公司工单')!=-1))
+        || (billModel2.faulttype =="2005"&&(billModel2.rev_is_empty_run=='0'||billModel2.rev_is_empty_run=='1'||billModel2.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==billstatus||'ELECTRIC_END'==billstatus))){
+
+          billStatusImage="fd5.png";
+
+        }else {
+          var qiand=false;
+          for (var j = 0; j < action.length; j++) {
+
+            if(action[j].task_status == '签到'){
+              qiand=true;
+            }
+          }
+
+          if(qiand){
+            billStatusImage="gz4.png";
+          }else {
+            billStatusImage="gz3.png";
+          }
+
+        }
+      }else {
+        billStatusImagenone="none";
+      }
+
+      }else if(billstatus == "REVERTED"){
+      billStatusName = "已回单";
+      billStatusColor = "#B372F6";
+      billStatusImagenone="none";
+
+      }else if(billstatus == "AUDIT"){
+      billStatusName = "待审核";
+      billStatusColor = "#AED684";
+      billStatusImagenone="none";
+
+      }else if(billstatus == "ELECTRIC_JUDGE"){
+      billStatusName = "待发电";
+      billStatusColor = "#7676BA";
+      if(billModel2){
+        billStatusImage="fd2.png";
+      }else {
+        billStatusImagenone="none";
+
+      }
+      }else if(billstatus == "ARCHIVE"){
+      billStatusName = "归档";
+      billStatusColor = "#953A6C";
+      billStatusImagenone="none";
+
+      }else if(billstatus == "DEFINE"){
+      billStatusName = "待定位";
+      billStatusColor = "#00DB00";
+      billStatusImagenone="none";
+
+      }else if(billstatus == "HANGUP"){
+      billStatusName = "挂起";
+      billStatusColor = "#F9F900";
+      billStatusImagenone="none";
+
+      }else if(billstatus == "ISSTAND"){
+      billStatusName = "待上站";
+      billStatusColor = "#A79F00";
+      if(billModel2){
+        billStatusImage="gz2.png";
+      }else {
+        billStatusImagenone="none";
+      }
+      }else if(billstatus == "ARRIVE"){
+      billStatusName = "到站签到";
+      billStatusColor = "#04B88B";
+      if(billModel2){
+        billStatusImage="gz3.png";
+      }else {
+        billStatusImagenone="none";
+      }
+      }else if(billstatus == "ELECTRIC_BEGIN"){
+      billStatusName = "开始发电";
+      billStatusColor = "#8470FF";
+      if(billModel2){
+        billStatusImage="fd3.png";
+      }else {
+        billStatusImagenone="none";
+
+      }
+      }else if(billstatus == "ELECTRIC_END"){
+      billStatusName = "结束发电";
+      billStatusColor = "#8FBC8F";
+      if(billModel2){
+        billStatusImage="fd4.png";
+      }else {
+        billStatusImagenone="none";
+
+      }
+
+      }else if(billstatus == "CON_CONFIRM"){
+      billStatusName = "运营商确认";
+      billStatusColor = "#D067AC";
+      billStatusImagenone="none";
+
+      }else if(billstatus == "CON_APPROVE"){
+      billStatusName = "是否认可";
+      billStatusColor = "#008AD4";
+      billStatusImagenone="none";
+
+      }
+
+
+      if(time!=null){
+      longTime=getDateLong(time);
+      }
+
+      if("人工受单"==businesstype){
+        alarmStatus="人工";
+
+      }else if("设备告警工单"==businesstype&&model.alarmactivecount=="0"){
+
+        alarmStatus="告警已消除";
+        alarmColor="#19743b";
+      }else{
+        alarmStatus="告警未消除";
+        alarmColor="#d8544d";
+
+      }
+
+      var mark;
+      var markColorClass;
+      if("GJ"==model.basestationlevel){
+          mark='高';
+          markColorClass="cj-orange";
+      }else if ("BZ"==model.basestationlevel) {
+          mark='标';
+          markColorClass="cj-blue";
+      }else if ("GSHD"==model.basestationlevel) {
+          mark='山';
+          markColorClass="cj-purple";
+      }else if ("BKH"==model.basestationlevel) {
+          mark='免';
+          markColorClass="cj-green";
+      }else if ("KONG"==model.basestationlevel){
+          mark='';
+          markColorClass="cj-ash";
+      }
+      }}
+      <li>
+
+      <div class='liBTn'  tapmode="active" billStatus="{{=model.billstatus}}" stationId="{{=model.stationid}}" billId="{{=model.billid}}" billSn="{{=model.billsn}}" onclick="openRest('{{=model.billsn}}','{{=model.billid}}','{{=model.stationid}}','{{=model.billstatus}}','{{=model.gradetype}}','故障');">
+      <div class="cj-l-title-wxx">
+        <div class="cj-l_line cj-l_line1"></div>
+        故障工单
+        <span style="color:{{=billStatusColor}}">{{=billStatusName}}</span>
+      </div>
+      <div class="cj-l-into-wxx">{{=model.billsn}}<div class="cj-l-date-wxx"><span>{{=model.businesstype}}</span></div></div>
+      <div class="cj-l-into-wxx">
+        <span style="color:{{=alarmColor}};position:relative;" >{{=alarmStatus}}<div class="cj-l-date-wxx-2"></div> </span>
+        <span style="margin-left: 2px;text-align:center;">
+          {{=model.billtitle}}
+        </span>
+
+      </div>
+      <div class="cj-l-into-wxx">
+        工单历时:<span>{{=longTime}}</span>
+
+        <div class="startTime none">{{=time}}</div>
+
+      </div>
+
+      <img class="LC_img {{=billStatusImagenone}}" src="../../image/{{=billStatusImage}}" alt=""/>
+      </div>
+      </li>
+      {{  } }}
+  </script>
+
+
+  <script id="listView-template2" type="text/x-dot-template">
+    {{ for(var i=0, len=it.length; i < len; i++) {
+    var processflag = it[i].processflag;
+    var processflagName = "";
+    var pcolor = "";
+    if(processflag=="ACCEPT"){
+    processflagName = "接单";
+    pcolor = "#22AADD";
+    }else if(processflag=="AUDIT"){
+    processflagName = "审批";
+    pcolor = "#1cc472";
+    }else if(processflag=="COORDINATE"){
+    processflagName = "协调上站";
+    pcolor = "#7676BA";
+    }else if(processflag=="REVERT"){
+    processflagName = "回单";
+    pcolor = "#B372F6";
+    }else if(processflag=="ISPROMPT"){
+    processflagName = "是否及时上站";
+    pcolor = "#E088CF";
+    }else if(processflag=="ISAGREE"){
+    processflagName = "是否同意";
+    pcolor = "#AED684";
+    }else if(processflag=="SENISPROMPT"){
+    processflagName = "最终确认";
+    pcolor = "#E088CF";
+    }else if(processflag=="PHONESIGN"){
+    processflagName = "手机签到";
+    pcolor = "#9fbe3b";
+    }else if(processflag=="ARCHIVE"){
+    processflagName = "归档";
+    pcolor = "#953A6C";
+    }else if(processflag=="CONFIRE"){
+    processflagName = "上站确认";
+    pcolor = "#fb8536";
+    }else if(processflag=="LEAVECONFIRM"){
+    processflagName = "离站确认";
+    pcolor = "#3693fb";
+    }
+    }}
+    <li class="aui-content" style="padding:8px;" tapmode="active" applyId="{{=it[i].applyid}}" stationId="{{=it[i].stationid}}" stationName="{{=it[i].stationname}}" isneedperson="{{=it[i].isneedperson}}" applyisneedperson="{{=it[i].applyisneedperson}}"  onclick="openStandBillDetail(this)">
+    <div class="cj-l_line_box"></div>
+    <div class="aui-flex-col" style="border-bottom: 1px dashed #00a0c8;">
+    <div class="aui-flex-item-6" style="font-weight: bold;font-size:16px; overflow: hidden;text-overflow: ellipsis;white-space: nowrap; position:relative;">
+     出入站
+     </div>
+    {{?it[i].isneedperson=="Y" || (it[i].isneedperson == 'null' && it[i].applyisneedperson=='Y')}}
+    <div class="aui-flex-item-2 aui-text-right" style="color:#4AB518;">随工</div>
+    {{?}}
+    {{?it[i].isneedperson=="N" || (it[i].isneedperson == 'null' && it[i].applyisneedperson=='N')}}
+    <div class="aui-flex-item-2 aui-text-right" style="color:#F4AB15">不随工</div>
+    {{?}}
+    <div class="aui-flex-item-4 aui-text-right" style="color:{{=pcolor}}">{{=processflagName}}</div>
+    </div>
+    <div class="aui-flex-col" style="font-size:12px;">
+    <div class="aui-flex-item-7"> {{=it[i].applyid}}</div>
+    <div class="aui-flex-item-5 aui-text-right" style="color:{{=it[i].cause == '1'?'#ff3333':'#000'}}">
+
+    {{? it[i].cause == '1' }}
+    抢修（紧急故障处理）
+    {{?? it[i].cause == '2' }}
+    排障（一般故障处理）
+    {{?? it[i].cause == '3' }}
+    施工（安装设备）
+    {{?? it[i].cause == '4' }}
+    勘察
+    {{?? it[i].cause == '5' }}
+    巡检
+    {{?? it[i].cause == '6' }}
+    发电
+    {{?? it[i].cause == '7' }}
+    检查
+    {{?? it[i].cause == '8' }}
+    保障
+    {{?? it[i].cause == '99' }}
+    其他
+    {{??}}
+    其它
+    {{?}}
+
+    </div>
+    </div>
+    <div class="aui-flex-col" style="font-size:12px;">
+    <div class="aui-flex-item-9">申请上站时间：{{=it[i].applystanddate != null ? it[i].applystanddate:''}}</div>
+    <div class="aui-flex-item-3 aui-text-right">{{=it[i].contact_person != null ? it[i].contact_person:''}}</div>
+    </div>
+    </li>
+    {{ } }}
+  </script>
+
+
+<script id="listView-template3" type="text/x-dot-template">
+    {{ for(var i=0, len=it.length; i < len; i++) {
+     var model = it[i];
+    var billstatus = model.bussinessid;
+    var grade= model.hiddengrade;
+    var source= model.hiddensource;
+    var type= model.hiddentype;
+    var gradeName="";
+    var hiddentype="";
+    var hiddenSrc="";
+    var longTime="";
+    var billStatusName="";
+
+    var billStatusColor = "";
+
+    if("A"==grade){
+    gradeName="特别严重隐患";
+    }else if("B"==grade){
+    gradeName="严重隐患";
+    }else if("C"==grade){
+    gradeName="一般隐患";
+    }
+
+    if(type == "1"){
+    hiddentype = "开关电源";
+    }else if(type == "2"){
+    hiddentype = "蓄电池";
+
+    }else if(type == "3"){
+    hiddentype = "空调";
+
+    }else if(type == "4"){
+    hiddentype = "机房环境";
+
+    }else if(type == "5"){
+    hiddentype = "铁塔环境";
+
+    }else if(type == "6"){
+    hiddentype = "FSU";
+
+    }else if(type == "7"){
+    hiddentype = "其他设备";
+
+    }
+
+       if(billstatus == "1"){
+    billStatusName = "待问题核实";
+    billStatusColor = "#22AADD";
+    }else if(billstatus == "2"){
+    billStatusName = "待方案制定";
+    billStatusColor = "#fb8536";
+    }else if(billstatus == "3"){
+    billStatusName = "待实施";
+    billStatusColor = "#B372F6";
+    }else if(billstatus == "4"){
+    billStatusName = "待验收";
+    billStatusColor = "#B372F6";
+    }else if(billstatus == "5"){
+    billStatusName = "待验收归档";
+    billStatusColor = "#AED684";
+    }else if(billstatus == "6"){
+    billStatusName = "挂起";
+    billStatusColor = "#7676BA";
+    }else if(billstatus == "7"){
+    billStatusName = "已归档";
+    billStatusColor = "#953A6C";
+    }else if(billstatus == "8"){
+    billStatusName = "待方案审核";
+    billStatusColor = "#930A6C";
+    }
+
+
+    if("1"==source){
+      hiddenSrc="巡检发现";
+    }else if("2"==source){
+      hiddenSrc="运营商申告";
+    }else if("3"==source){
+      hiddenSrc="自有人员上站巡查";
+    }else if("4"==source){
+      hiddenSrc="业主申告";
+    }else if("5"==source){
+      hiddenSrc="告警发现";
+    }
+
+    }}
+    <li tapmode="active"    onclick="openRest2('{{=model.billsn}}','{{=model.stationid}}','{{=model.bussinessid}}');">
+    <div class="cj-l_line_box2"></div>
+    <div class="top-title">
+    日常维修
+    {{=hiddentype}}
+    <span  style="color:{{=billStatusColor}}">{{=billStatusName}}</span></div>
+    <div class="cj-l-into">工单编号：{{=model.billsn}}</div>
+    <div class="cj-l-into">
+    <span style="margin-right:20px;" >{{=hiddenSrc}} </span>
+    <span style="margin-left: 2px;">{{=model.hiddencontent!=null?model.hiddencontent:''}}</span>
+    <div class="cj-l-date-wxx"><span>{{=gradeName}}</span></div>
+    </div>
+    </li>
+    {{  } }}
+</script>
+
+
+<script id="listView-template4" type="text/x-dot-template">
+      {{ for(var i=0, len=it.length; i < len; i++) {
+        var model=it[i];
+        var time= model.date;
+        if(time!=null&&time!=''){
+        time=time.substring(0,time.lastIndexOf('-')).replace('-','年')+'月';
+        }else{
+        time='';
+        }
+      }}
+      <li tapmode="active" onclick="openWaitTask('{{=it[i].date != null ? it[i].date:""}}','{{=it[i].taskid != null ? it[i].taskid:""}}','{{=it[i].starttime != null ? it[i].starttime:""}}',
+     '{{=it[i].taskstatus != null ? it[i].taskstatus:""}}','{{=it[i].taskstate != null ? it[i].taskstate:""}}','{{=it[i].lon != null ? it[i].lon:""}}','{{=it[i].lat != null ? it[i].lat:""}}',
+     '{{=it[i].stationname != null ? it[i].stationname:""}}','{{=it[i].stationcode != null ? it[i].stationcode:""}}','{{=it[i].siteid != null ? it[i].siteid:""}}','{{=it[i].operators != null ? it[i].operators:""}}',
+     '{{=it[i].countyname != null ? it[i].countyname:""}}', '{{=it[i].deviceid != null ? it[i].deviceid:""}}','{{=it[i].signtime != null ? it[i].signtime:""}}');">
+     <div class="liTop">
+       <div class="liTopIcon" style="padding-top: 3px;width: 18px;height: 18px;">
+       <!--<div class="{{=it[i].istimeout=="0" ? "greenPic" :"redPic"}}"></div>-->
+       {{? it[i].taskstate=='1'}}
+       {{? it[i].istimeout=='1'}}
+       <img src="../../image/red_sign.png" width="18px" height="18px;"/>
+       {{??}}
+       <img src="../../image/green_sign.png" width="18px" height="18px;"/>
+       {{?}}
+       {{??}}
+       {{? it[i].istimeout=='1'}}
+       <img src="../../image/red_com.png" width="18px" height="18px;"/>
+       {{??}}
+       <img src="../../image/green_com.png" width="18px" height="18px;"/>
+       {{?}}
+       {{?}}
+       </div>
+       <div class="liTopTitle" style="margin-left: 3px;">巡检工单</div>
+       <div class="liTopProgress">进度:{{=it[i].finishcount != null ? it[i].finishcount:""}}/{{=it[i].projectcount != null ? it[i].projectcount:""}}</div>
+   </div>
+   <div class="liDown">
+     <div class="liDownPerson" style="border-right: transparent;width: 50%">巡检人:{{=it[i].taskuser != null ? it[i].taskuser:""}}</div>
+     <div class="liDownBegin" style="float: right;width: 45%">执行时间:{{=time}}</div>
+   </div>
+  </li>
+      {{ } }}
+  </script>
+
+
+
+  <script id="listView-template5" type="text/x-dot-template">
+    {{ for(var i=0, len=it.length; i < len; i++) {
+    var model = it[i];
+    var billstatus = model.billstatus;
+    var time= model.dispatch_time;
+    var businesstype=model.businesstype;
+    var faultType=model.faulttype;
+    var action=model.actionlist;
+    var alarmStatus="";
+    var alarmColor="";
+    var longTime="";
+    var billStatusName="";
+    var billStatusImage='';
+    var billStatusImagenone="";
+    var mode2=JSON.stringify(model.mode);
+    var billModel2=model.mode;
+
+    var billStatusColor = "";
+    if(billstatus == "ACCEPT"){
+    billStatusName = "待接单";
+
+    billStatusColor = "#22AADD";
+    if(billModel2){
+      if((billModel2.faulttype == "GENERELEC" && billModel2.istemperature == "Y")
+      ||(billModel2.faulttype =="2005"&&(billModel2.businesstype.indexOf('运营商工单')!=-1||billModel2.businesstype.indexOf('千寻公司工单')!=-1))
+      || (billModel2.faulttype =="2005"&&(billModel2.rev_is_empty_run=='0'||billModel2.rev_is_empty_run=='1'||billModel2.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==billstatus||'ELECTRIC_END'==billstatus))){
+        billStatusImage="fd1.png";
+      }else {
+        billStatusImage="gz1.png";
+      }
+    }else {
+      billStatusImagenone="none";
+    }
+
+    }else if(billstatus == "SUPPORTCONFIRM"){
+    billStatusName = "待确认";
+    billStatusColor = "#fb8536";
+    billStatusImagenone="none";
+    }else if(billstatus == "REVERT"){
+    billStatusName = "待回单";
+    billStatusColor = "#B372F6";
+    if(billModel2){
+      if((billModel2.faulttype == "GENERELEC" && billModel2.istemperature == "Y")
+      ||(billModel2.faulttype =="2005"&&(billModel2.businesstype.indexOf('运营商工单')!=-1||billModel2.businesstype.indexOf('千寻公司工单')!=-1))
+      || (billModel2.faulttype =="2005"&&(billModel2.rev_is_empty_run=='0'||billModel2.rev_is_empty_run=='1'||billModel2.rev_is_empty_run=='2'||'ELECTRIC_BEGIN'==billstatus||'ELECTRIC_END'==billstatus))){
+
+        billStatusImage="fd5.png";
+
+      }else {
+        var qiand=false;
+        for (var j = 0; j < action.length; j++) {
+
+          if(action[j].task_status == '签到'){
+            qiand=true;
+          }
+        }
+
+        if(qiand){
+          billStatusImage="gz4.png";
+        }else {
+          billStatusImage="gz3.png";
+        }
+
+      }
+    }else {
+      billStatusImagenone="none";
+    }
+
+    }else if(billstatus == "REVERTED"){
+    billStatusName = "已回单";
+    billStatusColor = "#B372F6";
+    billStatusImagenone="none";
+
+    }else if(billstatus == "AUDIT"){
+    billStatusName = "待审核";
+    billStatusColor = "#AED684";
+    billStatusImagenone="none";
+
+    }else if(billstatus == "ELECTRIC_JUDGE"){
+    billStatusName = "待发电";
+    billStatusColor = "#7676BA";
+    if(billModel2){
+      billStatusImage="fd2.png";
+    }else {
+      billStatusImagenone="none";
+
+    }
+    }else if(billstatus == "ARCHIVE"){
+    billStatusName = "归档";
+    billStatusColor = "#953A6C";
+    billStatusImagenone="none";
+
+    }else if(billstatus == "DEFINE"){
+    billStatusName = "待定位";
+    billStatusColor = "#00DB00";
+    billStatusImagenone="none";
+
+    }else if(billstatus == "HANGUP"){
+    billStatusName = "挂起";
+    billStatusColor = "#F9F900";
+    billStatusImagenone="none";
+
+    }else if(billstatus == "ISSTAND"){
+    billStatusName = "待上站";
+    billStatusColor = "#A79F00";
+    if(billModel2){
+      billStatusImage="gz2.png";
+    }else {
+      billStatusImagenone="none";
+    }
+    }else if(billstatus == "ARRIVE"){
+    billStatusName = "到站签到";
+    billStatusColor = "#04B88B";
+    if(billModel2){
+      billStatusImage="gz3.png";
+    }else {
+      billStatusImagenone="none";
+    }
+    }else if(billstatus == "ELECTRIC_BEGIN"){
+    billStatusName = "开始发电";
+    billStatusColor = "#8470FF";
+    if(billModel2){
+      billStatusImage="fd3.png";
+    }else {
+      billStatusImagenone="none";
+
+    }
+    }else if(billstatus == "ELECTRIC_END"){
+    billStatusName = "结束发电";
+    billStatusColor = "#8FBC8F";
+    if(billModel2){
+      billStatusImage="fd4.png";
+    }else {
+      billStatusImagenone="none";
+
+    }
+
+    }else if(billstatus == "CON_CONFIRM"){
+    billStatusName = "运营商确认";
+    billStatusColor = "#D067AC";
+    billStatusImagenone="none";
+
+    }else if(billstatus == "CON_APPROVE"){
+    billStatusName = "是否认可";
+    billStatusColor = "#008AD4";
+    billStatusImagenone="none";
+
+    }
+
+
+    if(time!=null){
+    longTime=getDateLong(time);
+    }
+
+    if("人工受单"==businesstype){
+      alarmStatus="人工";
+
+    }else if("设备告警工单"==businesstype&&model.alarmactivecount=="0"){
+
+      alarmStatus="告警已消除";
+      alarmColor="#19743b";
+    }else{
+      alarmStatus="告警未消除";
+      alarmColor="#d8544d";
+
+    }
+
+    var mark;
+    var markColorClass;
+    if("GJ"==model.basestationlevel){
+        mark='高';
+        markColorClass="cj-orange";
+    }else if ("BZ"==model.basestationlevel) {
+        mark='标';
+        markColorClass="cj-blue";
+    }else if ("GSHD"==model.basestationlevel) {
+        mark='山';
+        markColorClass="cj-purple";
+    }else if ("BKH"==model.basestationlevel) {
+        mark='免';
+        markColorClass="cj-green";
+    }else if ("KONG"==model.basestationlevel){
+        mark='';
+        markColorClass="cj-ash";
+    }
+    }}
+    <li>
+
+    <div class='liBTn'  tapmode="active" billStatus="{{=model.billstatus}}" stationId="{{=model.stationid}}" billId="{{=model.billid}}" billSn="{{=model.billsn}}" onclick="openRest('{{=model.billsn}}','{{=model.billid}}','{{=model.stationid}}','{{=model.billstatus}}','{{=model.gradetype}}','发电');">
+    <div class="cj-l-title-wxx">
+      <div class="cj-l_line cj-l_line1"></div>
+      停发电工单
+      <span style="color:{{=billStatusColor}}">{{=billStatusName}}</span>
+    </div>
+    <div class="cj-l-into-wxx">{{=model.billsn}}<div class="cj-l-date-wxx"><span>{{=model.businesstype}}</span></div></div>
+    <div class="cj-l-into-wxx">
+      <span style="color:{{=alarmColor}};position:relative;" >{{=alarmStatus}}<div class="cj-l-date-wxx-2"></div> </span>
+      <span style="margin-left: 2px; text-align:center;">
+      {{=model.billtitle}}
+      </span>
+    </div>
+    <div class="cj-l-into-wxx">
+      工单历时:<span>{{=longTime}}</span>
+
+      <div class="startTime none">{{=time}}</div>
+
+    </div>
+
+    <img class="LC_img {{=billStatusImagenone}}" src="../../image/{{=billStatusImage}}" alt=""/>
+    </div>
+    </li>
+    {{  } }}
+</script>
+
+
+
+    <body>
+        <div id="main">
+        <ul class="ccssoft_list_wxx" id="listView2"></ul>
+        <ul class="ccssoft_list_wxx" id="listView3"></ul>
+
+        <ul class="ccssoft_list_wxx" id="listView4"></ul>
+        <ul class="ccssoft_list_wxx" id="listView5"></ul>
+
+        <ul class="ccssoft_list_wxx" id="listView1"></ul>
+
+        <ul class="ccssoft_list_wxx" id="listView6"></ul>
+        </div>
+
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/aui.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../bill/script/bill-listCon.js"></script>
+    <script type="text/javascript" src="../../script/easydialog/easydialog.js"></script>
+
+
+
+    <script type="text/javascript">
+        apiready = function() {
+          fiveList();
+
+        }
+
+        //加载5大工单
+        function fiveList(){
+          api.showProgress({
+        		title : '加载中...',
+        		modal : true
+        	});
+          // 故障
+          billaction();
+          // 上站工单
+          standaction();
+          // 日常维修
+          repairaction();
+          // 巡检
+          xunjianaction();
+          // 发电
+          FDaction();
+
+          // 下拉刷新
+          api.setRefreshHeaderInfo({
+            visible : true,
+            bgColor : '#f2f2f2',
+            textColor : '#4d4d4d',
+            textDown : '下拉刷新...',
+            textUp : '松开刷新...',
+            showTime : true
+          }, function(ret, err) {
+            api.showProgress({
+          		title : '加载中...',
+          		modal : true
+          	});
+              // 故障
+              billaction();
+              // 上站工单
+              standaction();
+              // 日常维修
+              repairaction();
+              // 巡检
+              xunjianaction();
+              // 发电
+              FDaction();
+              //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+               setTimeout('api.refreshHeaderLoadDone()', '500');
+          });
+        }
+
+        // 故障工单
+        function billaction(){
+          var opts1={
+            stationcode:api.pageParam.stationcode,
+            billst:'',
+            start:1,
+            limit:20
+          }
+          $client.getFaultBillList(opts1,function(ret,err){
+              if(ret.status=="OK"){
+                  api.hideProgress();
+                  renderTemp('listView1','listView-template1',ret.billList)
+              } else {
+                  api.hideProgress();
+                  api.toast({
+                      msg : ret.data_info
+                  });
+              }
+          })
+
+          // 工单历时自动刷新
+          setInterval(function(){
+            $('.startTime').each(function(){
+              var timestart=$(this).html();
+              var longTime2 = getDateLong(timestart);
+              $(this).siblings('span').html(longTime2);
+            });
+          },1000);
+        }
+
+        // 上站工单
+        function standaction(){
+          var opts2={
+            stationcode:api.pageParam.stationcode,
+            start:1,
+            limit:20
+          }
+          $client.getStandBillList(opts2,function(ret,err){
+            console.log(getObj(ret));
+              if(ret.status=="OK"){
+                  api.hideProgress();
+                  renderTemp('listView2','listView-template2',ret.list)
+              } else {
+                  api.hideProgress();
+                  api.toast({
+                      msg : ret.data_info
+                  });
+              }
+          })
+        }
+
+        function openStandBillDetail(el) {
+          showlog("isneedperson=" + $api.attr(el, 'isneedperson') + '， applyisneedperson＝' + $api.attr(el, 'applyisneedperson'));
+          var applyId = $api.attr(el, 'applyId');
+          var stationId = $api.attr(el, 'stationId');
+          var stationName = $api.attr(el, 'stationName');
+          var pageParam = {};
+          pageParam.applyId = applyId;
+          pageParam.stationId = stationId;
+          pageParam.stationName = stationName;
+          //页面来源，这里表示从上站待办跳过来
+          pageParam.fromPage = "standBillListWin";
+          api.openWin({
+            name : 'mainStandBillDetail',
+            url : '../standBill/mainStandBillDetail.html',
+            opaque : true,
+            bounces : false,
+            reload : true,
+            pageParam : pageParam,
+            vScrollBarEnabled : false
+          });
+        }
+
+
+        // 日常维修
+        function repairaction(){
+          var opts3={
+            stationcode:api.pageParam.stationcode,
+            start:1,
+            limit:20
+          }
+          $client.getRepairBillList(opts3,function(ret,err){
+            console.log(getObj(ret));
+              if(ret.status=="OK"){
+                  api.hideProgress();
+                  renderTemp('listView3','listView-template3',ret.billInfoList)
+              } else {
+                  api.hideProgress();
+                  api.toast({
+                      msg : ret.data_info
+                  });
+              }
+          })
+        }
+
+
+        function openRest2(billsn, stationid,bussinessid) {
+       	var opt = {
+       		billsn : billsn,
+       		stationId : stationid,
+       		bussinessid:bussinessid
+       	};
+       	api.openWin({
+       		name : 'mainRepairBillDetail',
+       		url : '../repair/mainRepairBillDetail.html',
+       		opaque : true,
+       		bounces : false,
+       		reload : true,
+       		pageParam : opt,
+       		vScrollBarEnabled : false
+       	});
+       }
+
+      //  巡检工单
+      function xunjianaction(){
+        var opts4={
+          stationcode:api.pageParam.stationcode,
+          start:1,
+          limit:20
+        }
+        $client.getUnstartNewTaskList(opts4,function(ret,err){
+          console.log(getObj(ret));
+            if(ret.status=="OK"){
+                api.hideProgress();
+                renderTemp('listView4','listView-template4',ret.taskInfoList)
+            } else {
+                api.hideProgress();
+                api.toast({
+                    msg : ret.data_info
+                });
+            }
+        })
+        $client.getUnfinishTaskList(opts4,function(ret,err){
+          console.log(getObj(ret.taskInfoList));
+            if(ret.status=="OK"){
+                api.hideProgress();
+                renderTemp('listView5','listView-template4',ret.taskInfoList)
+            } else {
+                api.hideProgress();
+                api.toast({
+                    msg : ret.data_info
+                });
+            }
+        })
+      }
+
+
+      /**
+       *打开待办任务的详情
+       * readyStartTime 计划开始时间
+       */
+      function openWaitTask(readyStartTime, taskId, starttime, taskstatus,taskstate,lon,lat,stationname,stationcode,stationid,operators,county,deviceid,signtime) {
+          var fromNotifition = "N";
+          var user= $api.getStorage("user");
+
+              openPage_taskProjectList( taskId, starttime, fromNotifition, taskstatus, readyStartTime,api.pageParam.start_status,"",taskstate,lon,lat,stationname,stationcode,stationid,operators,county,api.pageParam.index_id,deviceid,signtime);
+
+      }
+
+      // 发电工单
+      function FDaction(){
+        var opts5={
+          stationcode:api.pageParam.stationcode,
+          billst:'',
+          start:1,
+          limit:20
+        }
+        $client.getElectricityList(opts5,function(ret,err){
+          console.log(getObj(ret));
+            if(ret.status=="OK"){
+                api.hideProgress();
+                renderTemp('listView6','listView-template5',ret.billList)
+            } else {
+                api.hideProgress();
+                api.toast({
+                    msg : ret.data_info
+                });
+            }
+        })
+      }
+
+
+      /**
+       *从查询条件跳转过来的信息
+       */
+      function cb_queryStationList(opts) {
+        api.showProgress({
+          title : '加载中...',
+          modal : true
+        });
+          opts.limit=100;
+          if(opts.billType==''){
+            $('#listView1').show(0);
+            $('#listView2').show(0);
+            $('#listView3').show(0);
+            $('#listView4').show(0);
+            $('#listView5').show(0);
+            $('#listView6').show(0);
+            // 故障
+            billaction();
+            // 上站工单
+            standaction();
+            // 日常维修
+            repairaction();
+            // 巡检
+            xunjianaction();
+            // 发电
+            FDaction();
+          }else if (opts.billType=='1') {
+            // 上站工单
+            $('#listView1').hide(0);
+            $('#listView2').show(0);
+            $('#listView3').hide(0);
+            $('#listView4').hide(0);
+            $('#listView5').hide(0);
+            $('#listView6').hide(0);
+            standaction();
+
+          }else if (opts.billType=='2') {
+            $('#listView1').hide(0);
+            $('#listView2').hide(0);
+            $('#listView3').show(0);
+            $('#listView4').hide(0);
+            $('#listView5').hide(0);
+            $('#listView6').hide(0);
+            // 日常维修
+            repairaction();
+
+          }else if (opts.billType=='3') {
+            $('#listView1').hide(0);
+            $('#listView2').hide(0);
+            $('#listView3').hide(0);
+            $('#listView4').show(0);
+            $('#listView5').show(0);
+            $('#listView6').hide(0);
+            // 巡检
+            xunjianaction();
+
+          }else if (opts.billType=='4') {
+            $('#listView1').show(0);
+            $('#listView2').hide(0);
+            $('#listView3').hide(0);
+            $('#listView4').hide(0);
+            $('#listView5').hide(0);
+            $('#listView6').hide(0);
+            // 故障
+            billaction();
+
+          }else if (opts.billType=='5') {
+            $('#listView1').hide(0);
+            $('#listView2').hide(0);
+            $('#listView3').hide(0);
+            $('#listView4').hide(0);
+            $('#listView5').hide(0);
+            $('#listView6').show(0);
+
+            // 发电
+            FDaction();
+          }
+
+      }
+
+    </script>
+
+
+</html>

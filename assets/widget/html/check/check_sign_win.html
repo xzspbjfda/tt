@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<style>
+			body {
+				background-color: #fff;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+			<a class="aui-pull-left" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+			<div class="aui-title">
+				现场检查签到
+			</div>
+			<a class="aui-pull-right" tapmode onclick="select()"> <span class="aui-iconfont aui-icon-upload"></span> </a>
+		</header>
+		<!--  <script id="img-template" type="text/x-dot-template">
+		<li class="aui-list-view-cell aui-img aui-col-xs-4" onclick="imageUtil.show('{{=it.imgpath}}')">
+		<img class="aui-img-object" src="{{=it.imgpath}}">
+		</li>
+		</script>-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col">
+			<div class=" aui-flex-item-2">
+			<img class="aui-img-object aui-pull-left" src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			<div class="aui-pull-left aui-flex-item-8">
+			{{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+			<p class='aui-ellipsis-1'>
+			经度:{{=it.lon}}
+			</p>
+			<p class='aui-ellipsis-1'>
+			纬度: {{=it.lat}}
+			</p>
+			<p >
+			地址:{{=it.photoaddress}}
+			</p>
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger" onclick="removeImg('{{=it.imgpath}}');">X</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+		<ul id="list-view" class="aui-list-view ">
+			<li class="aui-list-view-cell" data-win="list-image"  >
+				<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="addPic()"/>
+			</li>
+			<!--<li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="call_getPic()">
+			<img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+			</li>-->
+		</ul>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script type="text/javascript">
+		var user, lastLocation;
+		var billModel;
+		apiready = function() {
+			initHeader();
+			lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			billModel = $api.getStorage('billModel');
+			user = $api.getStorage('user');
+			db_init();
+			imageUtil.init({
+				uploadFn : $client.uploadCheckImage,
+				saveFn : db_saveCheckPic
+			});
+			//              select_add();
+		};
+		/**
+		 * 展示图片信息，数据源： data
+		 */
+		function showPic(data) {
+			var content = $api.byId('list-view');
+			var tpl = $api.byId('img-template').text;
+			var tempFn = doT.template(tpl);
+			$('#addPic').before(tempFn(data));
+			$new = $('#addPic').prev();
+			$new.css('height', $new.css('width'));
+		}
+
+		//保留6位小数点
+		function displaynum(x) {
+			var num = new Number(x);
+			return num.toFixed(6);
+		}
+
+		/**
+		 *  选择上传方式：1.保存到本地缓存，2. 直接上传到服务器
+		 */
+		function select() {
+			var optList = ['保存到本地缓存', '直接上传到服务器'];
+			var cbTarget = {
+				name : api.winName,
+				frameName : 'checkSign_frm',
+				cbFn : 'call_upload'
+			};
+			$api.setStorage('optList', optList);
+			$api.setStorage('cbTarget', cbTarget);
+			api.openFrame({
+				name : 'popup_select_frm',
+				url : '../dialog/popup_select.html',
+				pagePara : api.pageParam
+			});
+		}
+
+		function sign(result) {
+			showMask("加载中...");
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			$client.checkSign({
+				resultid : api.pageParam.resultid,
+				lon : lon1,
+				lat : lat1,
+				signuserid : user.userid
+			}, function(ret, err) {
+				hideMask();
+				if (ret) {
+					if (ret.success) {
+						if (result === '保存到本地缓存') {
+							saveLocal();
+						} else if (result === '直接上传到服务器') {
+							upload();
+						}
+					} else {
+						showToast(ret.data_info);
+					}
+				} else {
+					showToast(err.msg);
+				}
+				
+			});
+		}
+
+		/**
+		 *  popup_select.html页面的回调函数
+		 */
+		function call_upload(result) {
+			if (imageUtil.getImageArray().length) {
+				sign(result);
+			} else {
+				api.toast({
+					msg : '现场检查签到必须要上传图片！'
+				});
+			}
+		}
+
+		/**
+		 *  保存到本地缓存
+		 */
+		function saveLocal() {
+			imageUtil.save(function(num) {
+				//刷新首页的图片上传模块头标
+				api.execScript({
+					name : 'home_win',
+					frameName : 'footer_tab_1',
+					script : 'setofflineUploadCount();'
+				});
+				var length = imageUtil.getImageArray().length;
+				if (num == length) {
+					$('#list-view li:not(:last)').empty();
+					api.execScript({
+						name : 'check_list_win',
+						frameName : 'unfinishList',
+						script : 'cb_refresh();'
+					});
+					window.setTimeout(function() {
+						api.closeFrame();
+					}, 1100);
+				} else if (num && num < length) {
+					$('#list-view li:lt(' + num + ')').remove();
+				}
+			});
+		}
+
+		/*
+		 * 上传服务器
+		 */
+		function upload() {
+			imageUtil.upload(function(num) {
+				if (num) {
+						api.execScript({
+						name : 'check_list_win',
+						frameName : 'unfinishList',
+						script : 'cb_refresh();'
+					});
+					window.setTimeout(function() {
+						api.closeFrame();
+					}, 1100);
+				}
+			});
+		}
+
+		/**
+		 * 添加图片
+		 */
+		function addPic() {
+			if (!lastLocation || !lastLocation.status) {
+				api.toast({
+					msg : '暂未定位\n无法上传照片！'
+				});
+				window.setTimeout(function() {
+					api.closeFrame();
+				}, 2000);
+			}
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			imageUtil.add('camera', function(ret, err) {
+				var imageInfo = {
+					userid : user.userid,
+					detailid : api.pageParam.resultid,
+					itemname : api.pageParam.itemname,
+					imgpath : ret.data,
+					test : '',
+					lon : lon1,
+					lat : lat1,
+					photoaddress : lastLocation.photoaddress,
+					phototime : (new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+				};
+				imageUtil.getImageArray().push(imageInfo);
+				showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+				renderTemp('list-view', 'img-template', imageInfo, true);
+				$('#add').parent().insertAfter('#list-view li:last');
+			});
+		}
+
+		function back() {
+			if (imageUtil.getImageArray().length > 0) {
+				api.confirm({
+					title : '关闭提醒',
+					msg : '当前照片还没保存，是否需要保存',
+					buttons : ['保存', '返回', '取消']
+				}, function(ret, err) {
+					if (ret.buttonIndex == 1) {
+						select();
+					} else if (ret.buttonIndex == 2) {
+						api.closeFrame();
+					}
+				});
+			} else {
+				api.closeFrame();
+			}
+		}
+	</script>
+</html>

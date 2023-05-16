@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>站址查询</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css">
+        <link rel="stylesheet" type="text/css" href="../../css/query.css" />
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="main">
+                <header id="header">
+                    <div class="titlebar">
+                        <h1></h1>
+                        <a class="aui-iconfont aui-icon-left left-icon" tapmode onclick="back();"></a>
+                        <div class="cui-input-bd">
+                            <input id="keyInput" type="text"  class="cui-input-box js_kw_input" style="float: left;border:none;" placeholder="搜索关键字">
+                            <span id="cancleBtn" style="position: absolute;display: block;height: 28px;line-height: 28px;min-width: 32px;top:0;right:0;"><img width="28" height="28"  src="../../image/icons/png/cancle.png"/></span>
+                        </div>
+                        <a id="searchBtn" style="width:15%;"><i class="iconfont" style="float: right;font-size:16px;line-height:32px;width:100%;height:32px;">搜索</i></a>
+                    </div>
+                </header>
+            </div>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+        var lastSearchKey = "";
+        apiready = function() {
+            var header = initHeader();
+            var pos = $api.offset(header);
+            var h1 = $api.dom(header, '#wrap');
+//          var frameY = $('#header').height();
+            var frameHeight = $('body').height() - $('#header').height();
+            api.openFrame({
+                name : 'stationSearch_frm',
+                url : 'stationSearch_frm.html',
+                pageParam : api.pageParam,
+                rect : {
+                    x : 0,
+                    y : pos.h,
+                    w : 'auto',
+                    h : frameHeight
+                }
+            });
+            $('#keyInput').focus(function(){
+              api.execScript({
+                  frameName : 'stationSearch_frm',
+                  script : 'showSearch();'
+              });
+            });
+
+            function keyInputVal(searchHis){
+              $('#keyInput').val(searchHis);
+            }
+            //          $('#keyInput').bind('input', delayRun);
+            $('#searchBtn').click(function() {
+                api.execScript({
+                    frameName : 'stationSearch_frm',
+                    script : 'searchHide();'
+                });
+                var searchKey = $.trim($('#keyInput').val());
+                if (!searchKey || searchKey == "") {
+                    api.toast({
+                        msg : '请输入查询关键字'
+                    });
+                    return;
+                }
+                queryKey();
+            });
+            $('#cancleBtn').click(function() {
+                $('#keyInput').val('');
+                $('#listView').empty();
+            });
+        };
+        /*
+         * 查询关键字
+         */
+        function queryKey() {
+            var searchKey = $.trim($('#keyInput').val());
+            api.execScript({
+                frameName : 'stationSearch_frm',
+                script : 'call_queryKey("' + searchKey + '");'
+            });
+        }
+
+        function searchVal(val){
+            $("#keyInput").val(val);
+        }
+    </script>
+</html>

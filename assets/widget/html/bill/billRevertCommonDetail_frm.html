@@ -1,0 +1,971 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>普通回单详情</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" type="text/css" href="css/billRevertDetail.css" />
+	</head>
+	<style>
+	.cardCon2 {
+			width: 57%;
+			float: left;
+			border-radius: 4px;
+			overflow: hidden;
+			margin-right: 0px;
+			margin-top: 10px;
+	}
+	.cardDiv {
+	    width: 100%;
+	    font-size: 14px;
+	    margin-top: 10px;
+			overflow: hidden;
+	}
+	.removebtn{
+		position: absolute;
+		right: 0;
+		top: 10px;
+		width: 20px!important;
+		height: 20px;
+		padding: 0;
+		margin: 0;
+	}
+	</style>
+	<body>
+		<!--下拉列表-->
+		<script id="dict-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemname}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+		<!--下拉列表-->
+		<script id="m-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+
+		<script id="img-template" type="text/x-dot-template">
+				<li class="aui-list-view-cell aui-img aui-col-xs-4">
+				<img class="aui-img-object" src="{{=it.imgpath}}"  onclick="imageUtil.show('{{=it.imgpath}}')">
+				<button class="aui-btn aui-btn-danger removebtn" onclick="removeImg('{{=it.imgpath}}');">X</button>
+				</li>
+		</script>
+
+		<div id="wrap" style="display: none;">
+			<!--普通回单begin-->
+			<form>
+				<div id="billRevertDivId" style="overflow:auto;margin-bottom:55px;">
+					<div id="isStandStaHidDivId" class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>是否上站：
+						</div>
+						<div class="cardCon">
+							<select id="isStandStaHid" name="isUpStation" class="selector required" data-valid="required" data-error="请选择是否上站！"  value=""  >
+								<option value="">请选择</option>
+								<option value="Y">是</option>
+								<option value="N">否</option>
+							</select>
+						</div>
+					</div>
+					<div id='isTowershow' style="display: none">
+						<div class="cardDiv">
+							<div class="cardLabel">
+								<div class="cardLabelTop">
+									<font color="red" >*</font>申告工单&nbsp;
+								</div>
+								<div class="cardLabelDown">
+									是否铁塔原因：
+								</div>
+								<!--<font color="red" >*</font>申告工单是否铁塔原因：-->
+							</div>
+							<div class="cardCon">
+								<select  name="strfield1" class="required" data-valid="required" data-error="请选择申告工单是否铁塔原因！"  onchange="onSelTower(this)" value="">
+									<option value="">请选择</option>
+									<option value="Y">铁塔原因</option>
+									<option value="N">非铁塔原因</option>
+									<option value="A">双方原因</option>
+								</select>
+							</div>
+						</div>
+						<div class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>申告工单故障分类：
+							</div>
+							<div class="cardCon" >
+								<select id="towerCause" name="strfield2"  class="required" data-valid="required" data-error="请选择申告工单故障分类！"  value=""  >
+									<option value="">请选择</option>
+									<option value="11">无动环</option>
+									<option value="12">动环故障</option>
+									<option value="13">开关电源故障</option>
+									<option value="14">无蓄电池或性能差</option>
+									<option value="15">室分站点</option>
+								</select>
+								<select id="notowerCause" name="strfield2" class="required" data-valid="required" data-error="请选择申告工单故障分类！"  value=""  >
+									<option value="">请选择</option>
+									<option value="21">未移交机房站点</option>
+									<option value="22">站址对应关系错误</option>
+									<option value="23">非铁塔配套原因故障</option>
+									<option value="24">非铁塔原因-其它</option>
+								</select>
+								<select id="yystowerCause" name="strfield2" class="required" data-valid="required" data-error="请选择申告工单故障分类！"  value=""  >
+									<option value="">请选择</option>
+									<option value="31">站址对应关系错误</option>
+								</select>
+							</div>
+						</div>
+						<div id="reliefTypeDivId" class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>运营商联系人：
+							</div>
+							<div class="cardCon">
+								<input  name="strfield3" type="text" class="required" data-valid="required" data-error="请填写运营商联系人！" value=""  style="height:35px; line-height:35px;"  >
+							</div>
+						</div>
+						<div id="reliefTypeDivId" class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>运营商联系方式：
+							</div>
+							<div class="cardCon">
+								<input  name="strfield5" type="number" class="required" data-valid="required" data-error="请填写运营商联系方式！" value=""  style="height:35px; line-height:35px;" >
+							</div>
+						</div>
+						<div id="reliefTypeDivId" class="cardDiv" >
+							<div class="cardLabel">
+								获取实时电压值：
+							</div>
+							<div class="cardCon" style="width:35%">
+								<input id="realValueId"  name="realValue" type="text" disabled="disabled" value=""  style="height:35px; line-height:35px;"  >
+							</div>
+							<span style="float: right;background-color: #E74C3C;margin-right: 10px;height: 25px;line-height:25px;padding-top: 0px;" class="curStatus" onclick="getData()">获取</span>
+						</div>
+							<div id="reliefTypeDivId" class="cardDiv" style="margin-top: 0px;">
+							<span style="float: right;background-color: #E74C3C;margin-right: 10px;height: 25px;line-height:25px;padding-top: 0px;" class="curStatus" onclick="clearData()">重置</span>
+							<font color="red" style="float: right;margin-top: 5px;margin-right: 10px;" >注释：开关电源直流电压值</font>
+
+						</div>
+					</div>
+					<div class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>是否免责：
+						</div>
+						<div class="cardCon">
+							<select id="isRefiefHid" name="isRelief" class="required" data-valid="required" data-error="请选择是否免责！"  value="" onchange="onSelrefief(this)" >
+								<option value="">请选择</option>
+								<option value="Y">是</option>
+								<option value="N">否</option>
+							</select>
+						</div>
+					</div>
+					<div id="reliefTypeDivId" class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>免责条款：
+						</div>
+						<div class="cardCon">
+							<select id="refiefTypeId" name="reliefType" class="required" data-valid="isRelief" data-error="请选择免责条款！"  value=""  >
+								<option value="">请选择</option>
+								<option value="1">免责条款1-不可抗力</option>
+								<option value="2">免责条款2-夜间免责</option>
+								<option value="3">免责条款3-客户原因</option>
+								<option value="4">免责条款4-免责站址</option>
+								<option value="5">免责条款5-其他免责</option>
+							</select>
+						</div>
+					</div>
+					<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+						<div class="cardTextareaLabel">
+							<font color="red" >*</font>免责具体原因：
+						</div>
+						<div class="cardTextareaCon" style="background-color: #fff">
+							<textarea id="reliefDealInfoId" name="reliefCause" rows="4" class="noborder required" data-valid="isRelief" data-error="请填写免责具体原因！"  ></textarea>
+						</div>
+					</div>
+					<div id="minVauleId" class="cardDiv" style="display: none;">
+							<div class="cardLabel">
+								<font color="red" >*</font>申请减免分钟数：
+							</div>
+							<div class="cardCon">
+								<input id="minValue" name="minValue" type="number"  data-valid="minValue" data-error="请填写申请减免分钟数！" value=""  style="height:35px; line-height:35px;"  >
+							</div>
+						</div>
+					<div id='isFaultshow' >
+						<div class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>故障类型：
+							</div>
+							<div class="cardCon">
+								<select id="mainCause" name="faultType" class="required" data-valid="required" data-error="请选择故障类型！"  onchange="onSelCause(this)" value="">
+									<option value="">请选择</option>
+									<option value="站址-电源设备系统">站址-电源设备系统</option>
+									<option value="站址-机房及铁塔">站址-机房及铁塔</option>
+									<option value="站址-动环设备">站址-动环设备</option>
+									<option value="站址-动环监控设备">站址-动环监控设备</option>
+									<option value="站址-其他原因">站址-其他原因</option>
+								</select>
+								<select name="faultType" style="display: none;" disabled="disabled" value=""  >
+									<option value="室内分布系统故障原因">室内分布系统故障原因</option>
+								</select>
+							</div>
+						</div>
+						<div class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>故障原因：
+							</div>
+							<div class="cardCon" id="stationCauseBox">
+								<select id="oneCause" name="faultCouse"  data-valid="required" data-error="请选择故障原因1！"  value="1"  >
+									<option value="">请选择</option>
+									<option value="电力停电（直供电）-市电停电">电力停电（直供电）-市电停电</option>
+									<option value="电力停电（直供电）-电力检修（计划）">电力停电（直供电）-电力检修（计划）</option>
+									<option value="物业停电（转供电）-市电停电">物业停电（转供电）-市电停电</option>
+									<option value="物业停电（转供电）-电力检修（计划）">物业停电（转供电）-电力检修（计划）</option>
+									<option value="配电设备故障-市电引入故障">配电设备故障-市电引入故障</option>
+									<option value="配电设备故障-设备故障">配电设备故障-设备故障</option>
+									<option value="配电设备故障-电力输出故障">配电设备故障-电力输出故障</option>
+									<option value="开关电源故障-空开跳闸">开关电源故障-空开跳闸</option>
+									<option value="开关电源故障-电源模块故障">开关电源故障-电源模块故障</option>
+									<option value="开关电源故障-设备故障">开关电源故障-设备故障</option>
+									<option value="蓄电池故障-蓄电池容量下降">蓄电池故障-蓄电池容量下降</option>
+									<option value="蓄电池故障-蓄电池单体故障">蓄电池故障-蓄电池单体故障</option>
+									<option value="蓄电池故障-蓄电池整体故障">蓄电池故障-蓄电池整体故障</option>
+								</select>
+								<select id="twoCause" name="faultCouse"  data-valid="required" data-error="请选择故障原因2！"  value="2"  >
+									<option value="">请选择</option>
+									<option value="铁塔（含抱杆）损坏-塔杆（含拉线）损坏">铁塔（含抱杆）损坏-塔杆（含拉线）损坏</option>
+									<option value="机房（含机架、走线架、管孔）损坏-机房损坏">机房（含机架、走线架、管孔）损坏-机房损坏</option>
+									<option value="机房（含机架、走线架、管孔）损坏-机架损坏">机房（含机架、走线架、管孔）损坏-机架损坏</option>
+									<option value="机房（含机架、走线架、管孔）损坏-走线架损坏">机房（含机架、走线架、管孔）损坏-走线架损坏</option>
+									<option value="机房（含机架、走线架、管孔）损坏-管孔损坏">机房（含机架、走线架、管孔）损坏-管孔损坏</option>
+									<option value="机房（含机架、走线架、管孔）损坏-地基问题">机房（含机架、走线架、管孔）损坏-地基问题</option>
+								</select>
+								<select id="threeCause" name="faultCouse"  data-valid="required" data-error="请选择故障原因3！" value="3"  >
+									<option value="">请选择</option>
+									<option value="空调故障-智能板故障">空调故障-智能板故障</option>
+									<option value="空调故障-压缩机故障">空调故障-压缩机故障</option>
+									<option value="空调故障-整机故障">空调故障-整机故障</option>
+									<option value="烟雾传感器故障-设备故障">烟雾传感器故障-设备故障</option>
+									<option value="门禁传感器故障-门禁故障">门禁传感器故障-门禁故障</option>
+									<option value="节能设备故障-设备故障">节能设备故障-设备故障</option>
+									<option value="环境原因-环境恶劣">环境原因-环境恶劣</option>
+									<option value="红外传感器故障-设备故障">红外传感器故障-设备故障</option>
+									<option value="防雷接地设备故障-设备故障">防雷接地设备故障-设备故障</option>
+									<option value="水浸传感器故障-设备故障">水浸传感器故障-设备故障</option>
+								</select>
+								<select id="fourCause" name="faultCouse"  data-valid="required" data-error="请选择故障原因4！"  value="4"  >
+									<option value="">请选择</option>
+									<option value="动环监控设备故障-FSU设备损坏">动环监控设备故障-FSU设备损坏</option>
+									<option value="动环监控设备故障-FSU监控线损坏">动环监控设备故障-FSU监控线损坏</option>
+									<option value="动环监控设备故障-FSU告警误传">动环监控设备故障-FSU告警误传</option>
+									<option value="动环监控设备故障-FSU频繁中断">动环监控设备故障-FSU频繁中断</option>
+									<option value="动环监控设备故障-FSU接收信号较弱">动环监控设备故障-FSU接收信号较弱</option>
+									<option value="动环监控设备故障-FSU无信号">动环监控设备故障-FSU无信号 </option>
+								</select>
+								<select id="fiveCause" name="faultCouse"  data-valid="required" data-error="请选择故障原因5！" style="display:none;" value="5"  >
+									<option value="">请选择</option>
+									<option value="人为原因-人为施工">人为原因-人为施工</option>
+									<option value="人为破坏-人为破坏">人为破坏-人为破坏</option>
+									<option value="自然灾害-自然灾害">自然灾害-自然灾害</option>
+									<option value="其他原因">其他原因 </option>
+								</select>
+								<select id="roomFault" name="faultCouse"  data-valid="required" data-error="请选择故障原因6！" style="display:none;" value="6"  >
+									<option value="">请选择</option>
+									<option value="电力原因">电力原因</option>
+									<option value="POI单元故障">POI单元故障</option>
+									<option value="功分器单元故障">功分器单元故障</option>
+									<option value="耦合器单元故障">耦合器单元故障</option>
+									<option value="天线故障">天线故障</option>
+									<option value="馈线故障">馈线故障</option>
+									<option value="运营商信源故障">运营商信源故障</option>
+									<option value="自然灾害">自然灾害</option>
+									<option value="人为破坏">人为破坏</option>
+									<option value="其他">其他</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div id='isshow' style="display: none">
+						<div id="reliefTypeDivId" class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>故障名称：
+							</div>
+							<div class="cardCon">
+								<input id="faultId" name="faultname" type="text"  value="" disabled="disabled" style="height:35px; line-height:35px;"  >
+							</div>
+						</div>
+						<div id="reliefTypeDivId" class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>原因细分：
+							</div>
+							<div class="cardCon">
+								<select id="causeid" name='faultid' class="required" data-valid="required" data-error="请选择原因细分！"  value="" onchange="onSelBigData(this)" >
+									<option value="">请选择</option>
+								</select>
+								<input id='causetxt_id' type="text"  value="暂未细分原因" disabled="disabled" style="height:35px; line-height:35px;display: none;"  >
+							</div>
+						</div>
+						<div class="cardTextareaDiv" style="margin-bottom:20px;">
+							<div class="cardTextareaLabel">
+								<font color="red" >*</font>
+								推荐方案：
+							</div>
+							<div class="cardTextareaCon">
+								<textarea id='commend_id' rows="8" class="noborder"  disabled="disabled"  ></textarea>
+							</div>
+						</div>
+						<div id="reliefTypeDivId" class="cardDiv">
+							<div class="cardLabel">
+								<font color="red" >*</font>具体措施：
+							</div>
+							<div class="cardCon">
+								<select id="dealway_id" name='dealid'  class="required" data-valid="required" data-error="请选择具体措施！"  value=""  onchange="onSelBigDetail(this)">
+									<option value="">请选择</option>
+								</select>
+								<input  id='dealtxt_id' type="text"  value="暂无具体措施" disabled="disabled" style="height:35px; line-height:35px;display: none;"  >
+							</div>
+						</div>
+					</div>
+					<div class="cardDiv">
+						<div class="cardLabel">
+							<font color="red" >*</font>修复时间：
+						</div>
+						<div class="cardCon">
+							<input id="recoverTimeId" name="recoveryTime" type="datetime-local" class="required" data-valid="required||checkCommomsTime" data-error="请填写修复时间！||修复时间不能大于当前时间!" style="line-height:40px;"  >
+						</div>
+					</div>
+					<div class="cardTextareaDiv" style="height:100px;">
+						<div class="cardTextareaLabel" style="height: 100px;">
+							<font color="red" >*</font>处理方法：
+						</div>
+						<div class="cardTextareaCon" style="height: 100px;">
+							<textarea id="causeDealInfoId" name="handlerResult" rows="4" class="noborder required" data-valid="required||checkChineseCount" data-error="请填写处理方法！||处理方法内容不符合规范，必须包含4个文字" style="background-color:#FFFFFF;width:100%;height:70%;margin:0"  ></textarea>
+							<select id="dealId" onchange="commonDoWith(this)" value="" style="width:100%;height: 30%">
+								<option value="">常用处理步骤</option>
+								<option value="来电恢复">来电恢复</option>
+								<option value="发电恢复">发电恢复</option>
+								<option value="维修恢复">维修恢复</option>
+								<option value="更换恢复">更换恢复</option>
+								<option value="整修恢复">整修恢复</option>
+								<option value="合上空开恢复">合上空开恢复</option>
+								<option value="更换空开恢复">更换空开恢复</option>
+								<option value="更换后恢复">更换后恢复</option>
+								<option value="重启恢复">重启恢复</option>
+								<option value="调整恢复">调整恢复</option>
+								<option value="抢修恢复">抢修恢复</option>
+								<option value="自然恢复">自然恢复 </option>
+								<option value="人为原因-人为施工">人为原因-人为施工</option>
+								<option value="人为破坏-人为破坏">人为破坏-人为破坏</option>
+								<option value="自然灾害-自然灾害">自然灾害-自然灾害</option>
+								<option value="其他原因">其他原因 </option>
+							</select>
+						</div>
+					</div>
+
+					<div class="cardDiv2">
+						<div class="cardLabel">
+							上传照片：
+						</div>
+						<div class="cardCon2">
+							<ul id="list-view" class="aui-list-view aui-grid-view">
+			            <li id="addPic" class="aui-list-view-cell aui-img aui-col-xs-4" onclick="addPic(this)">
+			                <img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+			            </li>
+			            <canvas style="display:none;">您的浏览器不支持Canvas</canvas>
+			      			<img class='imgPath' style="display:none;"  src=''/>
+			        </ul>
+						</div>
+					</div>
+
+				</div>
+				<div id="hiddenForm" style="display: none">
+					<script id="hiddenParam-template" type="text/x-dot-template">
+						<input name="billId" type="hidden" value="{{=it.billid}}"/>
+						<input name="billSn" type="hidden" value="{{=it.billsn}}"/>
+						<input name="taskId" type="hidden" value="{{=it.taskid}}"/>
+						<input name="billStatus" type="hidden" value="1" />
+					</script>
+				</div>
+				<!--普通回单end-->
+				<footer style="height:50px;">
+					<div class="cardButtonDiv">
+						<button class="billRevertCancelBtn"  onclick="api.closeWin()">
+							取消
+						</button>
+						<button id="submitBtn" class="billRevertOkBtn">
+							确定
+						</button>
+					</div>
+				</footer>
+			</form>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/gongdan.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- <script type="text/javascript" src="../../script/cache.js"></script> -->
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<!-- wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<script type="text/javascript" src="script/billForm.js"></script>
+
+
+	<script>
+		var billModel;
+		var provinceid;
+		var bigData;
+		var imageUtil;
+
+		apiready = function() {
+			db_init();
+
+			imageUtil.init({
+					uploadFn : $client.uploadBillImage,
+					saveFn : db_saveBillPic
+			});
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+			provinceid = $api.getStorage('provinceid');
+			billModel = $api.getStorage('billModel');
+
+			if (billModel.businesstype == "移动运营商工单" || billModel.businesstype == "联通运营商工单" || billModel.businesstype == "电信运营商工单"|| billModel.businesstype == "千寻公司工单") {
+				$('#isFaultshow').hide();
+				$('#isTowershow').show();
+				$('#minVauleId').show();
+				$('#minValue').addClass('required')
+				$("[name='faultType']").removeClass('required');
+				$("#oneCause").removeClass('required');
+				$("#twoCause").removeClass('required');
+				$("#threeCause").removeClass('required');
+				$("#fourCause").removeClass('required');
+				$("#fiveCause").removeClass('required');
+				$("#roomFault").removeClass('required');
+			} else {
+				$("[name='strfield1']").removeClass('required');
+				$("[name='strfield2']").removeClass('required');
+				$("[name='strfield3']").removeClass('required');
+				$("[name='strfield5']").removeClass('required');
+			}
+			if (billModel.st_provinceid == '广东分公司' && ("设备告警工单" == billModel.businesstype)) {
+				$('#isshow').show();
+				getBigData();
+			} else {
+				$('#causeid').removeClass('required');
+				$('#dealway_id').removeClass('required');
+				$('#wrap').show();
+			}
+			initDict();
+			initRelief();
+			var billForm = new BillForm($('form'), $('#submitBtn'), $client.genelecRevertBill,true);
+			billForm.init();
+			renderTemp('hiddenForm', 'hiddenParam-template', billModel);
+			//jquery事件:故障原因
+			$('form [name=faultCouse]:visible').on('change', function() {
+				var text = $(this).find(':selected').val();
+				$(this).attr('value', text);
+			});
+			$('form [name=strfield2]:visible').on('change', function() {
+				var text = $(this).find(':selected').val();
+				$(this).attr('value', text);
+			});
+
+			var actionList = $api.getStorage('actionList');
+			console.log(JSON.stringify(actionList));
+			var qiand=false;
+			for (var i = 0; i < actionList.length; i++) {
+				console.log(getObj(actionList[i]));
+
+				if(actionList[i].task_status == '签到'){
+					qiand=true;
+				}
+			}
+
+			if(qiand){
+					$('.selector').val('Y');
+					$(".selector").attr("disabled",true);
+			}
+			// 填充本地数据start
+			// doJluSetBill();
+			// setImgArr();
+			// 填充本地数据end
+
+		};
+		function getBigData() {
+			api.showProgress({
+				title : '加载中...'
+			});
+			$client.getRevertCauseDetail({
+				billsn : billModel.billsn
+			}, function(ret, err) {
+				if (ret) {
+					//          api.hideProgress();
+					if (ret.success) {
+						var bigList = ret.list;
+						if (bigList != null && bigList.length > 0) {
+							$('#faultId').val(bigList[0].fault_name);
+							for (var i = 0, size = bigList.length; i < size; i++) {
+								$('<option>').text(bigList[i].name).val(bigList[i].id).appendTo('#causeid');
+							}
+							$('<option>').text('其他').val('-1').appendTo('#causeid');
+						} else {
+							$('#causeid').removeClass('required');
+							$('#dealway_id').removeClass('required');
+							$('#causeid').hide();
+							$('#dealway_id').hide();
+							$('#causetxt_id').show();
+							$('#dealtxt_id').show();
+						}
+						$('#wrap').show();
+					} else {
+						api.toast({
+							msg : ret.data_info
+						});
+					}
+				} else {
+					api.toast({
+						msg : '获取工单详情出错!'
+					});
+				}
+				api.hideProgress();
+			});
+		}
+
+		function initDict() {
+			//回单-运营商-铁塔原因
+			var towerList = $api.getStorage("towerList");
+			//回单-运营商-非铁塔原因
+			var noTowerList = $api.getStorage("noTowerList");
+			//回单-运营商铁塔双方原因
+			var yysTowerList = $api.getStorage("yysTowerList");
+			var roomFaultList = $api.getStorage("roomFaultList");
+			//室分故障
+			var disclaimerList = $api.getStorage("disclaimerList");
+			//免责条款
+			var dealList = $api.getStorage("dealList");
+			//故障类型
+			var mainCauseList = $api.getStorage("mainCauseList");
+			//故障原因1
+			var oneCauseList = $api.getStorage("oneCauseList");
+			//故障原因2
+			var towCauseList = $api.getStorage("towCauseList");
+			//故障原因3
+			var threeCauseList = $api.getStorage("threeCauseList");
+			//故障原因4
+			var fourCauseList = $api.getStorage("fourCauseList");
+			//故障原因5
+			var fiveCauseList = $api.getStorage("fiveCauseList");
+
+			if (mainCauseList != null && mainCauseList.length > 0) {
+				//				alert("集合数：" + roomFaultList.length);
+				$('#mainCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#mainCause');
+				renderTemp('mainCause', 'dict-template', mainCauseList, true);
+			}
+			if (oneCauseList != null && oneCauseList.length > 0) {
+				//				alert("集合数：" + roomFaultList.length);
+				$('#oneCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#oneCause');
+				renderTemp('oneCause', 'dict-template', oneCauseList, true);
+			}
+			if (towCauseList != null && towCauseList.length > 0) {
+				//				alert("集合数：" + roomFaultList.length);
+				$('#twoCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#twoCause');
+				renderTemp('twoCause', 'dict-template', towCauseList, true);
+			}
+			if (threeCauseList != null && threeCauseList.length > 0) {
+				//				alert("集合数：" + roomFaultList.length);
+				$('#threeCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#threeCause');
+				renderTemp('threeCause', 'dict-template', threeCauseList, true);
+			}
+			if (fourCauseList != null && fourCauseList.length > 0) {
+				//				alert("集合数：" + fourCauseList.length);
+				$('#fourCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#fourCause');
+				renderTemp('fourCause', 'dict-template', fourCauseList, true);
+			}
+			if (fiveCauseList != null && fiveCauseList.length > 0) {
+				//				alert("集合数：" + roomFaultList.length);
+				$('#fiveCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#fiveCause');
+				renderTemp('fiveCause', 'dict-template', fiveCauseList, true);
+			}
+			if (roomFaultList != null && roomFaultList.length > 0) {
+				//				alert("集合数：" + roomFaultList.length);
+				$('#roomFault').empty();
+				$('<option>').text('请选择').val('').appendTo('#roomFault');
+				renderTemp('roomFault', 'dict-template', roomFaultList, true);
+			}
+			//免责条款
+			if (disclaimerList != null && disclaimerList.length > 0) {
+				//				alert("集合数：" + disclaimerList.length);
+				$('#refiefTypeId').empty();
+				$('<option>').text('请选择').val('').appendTo('#refiefTypeId');
+				renderTemp('refiefTypeId', 'm-template', disclaimerList, true);
+			}
+			//铁塔原因
+			if (towerList != null && towerList.length > 0) {
+				//				alert("集合数：" + disclaimerList.length);
+				$('#towerCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#towerCause');
+				renderTemp('towerCause', 'm-template', towerList, true);
+			}
+			//非铁塔原因
+			if (noTowerList != null && noTowerList.length > 0) {
+				//				alert("集合数：" + disclaimerList.length);
+				$('#notowerCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#notowerCause');
+				renderTemp('notowerCause', 'm-template', noTowerList, true);
+			}
+			//铁塔双方原因
+			if (yysTowerList != null && yysTowerList.length > 0) {
+				//				alert("集合数：" + disclaimerList.length);
+				$('#yystowerCause').empty();
+				$('<option>').text('请选择').val('').appendTo('#yystowerCause');
+				renderTemp('yystowerCause', 'm-template', yysTowerList, true);
+			}
+			//处理措施
+			if (dealList != null && dealList.length > 0) {
+				//				alert("集合数：" + dealList.length);
+				$('#dealId').empty();
+				$('<option>').text('常用处理步骤').val('').appendTo('#dealId');
+				renderTemp('dealId', 'dict-template', dealList, true);
+			}
+		}
+
+		function initRelief() {
+			var isrecovery = billModel.alarm_isrecovery;
+			var recoveryTime = billModel.recovery_time;
+			var st_ifrelief = billModel.st_ifrelief;
+			var st_ifnight_mz = billModel.st_ifnight_mz;
+			var issign = billModel.issign;
+			if (recoveryTime != null) {
+				recoveryTime = recoveryTime.replace(" ", "T");
+			}
+			if (issign == "Y") {
+				$('[name=isUpStation]').val('Y');
+			} else if (issign == "N") {
+				$('[name=isUpStation]').val('N');
+			}
+			if (st_ifrelief == "是" || st_ifnight_mz == "是") {
+				$('[name=isRelief]').val('Y');
+				if (st_ifrelief == "是") {
+					$('[name=reliefType]').val('4')
+				} else if (st_ifnight_mz == "是") {
+					$('[name=reliefType]').val('2')
+				}
+			}
+			//判断是否为室分故障单，如果是，故障类型设置为“室内分布系统故障原因”
+			if (billModel.faulttype == '4001') {
+				var $faultType = $('[name=faultType]:eq(1)');
+				//清除required，校验器会忽略该校验
+				$faultType.show().siblings().hide().removeClass('required');
+				$('[name=faultCouse]:last').show().addClass('required').siblings().hide().removeClass('required');
+			}
+			//＊修复ios无法显示时间问题
+			$('[name=recoveryTime]').focus(function() {
+				$(this).css('border', 'red');
+			});
+			if ("人工受单" != billModel.businesstype) {//故障
+				if (isrecovery != null && isrecovery == 'Y' && recoveryTime != null) {
+					$api.byId('recoverTimeId').value = recoveryTime;
+				} else {
+					$api.byId('recoverTimeId').value = getNowFormatDate();
+				}
+			} else {//人工受单
+				$api.byId('recoverTimeId').value = getNowFormatDate();
+			}
+		}
+
+		function getNowFormatDate() {
+			var date = new Date();
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1;
+			var strDate = date.getDate();
+			var hour = date.getHours();
+			var min = date.getMinutes();
+			var s = date.getSeconds();
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			if (hour >= 0 && hour <= 9) {
+				hour = "0" + hour;
+			}
+			if (min >= 0 && min <= 9) {
+				min = "0" + min;
+			}
+			if (s >= 0 && s <= 9) {
+				s = "0" + s;
+			}
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + "T" + hour + seperator2 + min + seperator2 + s;
+			return currentdate;
+		}
+
+		function onSelBigData(obj) {
+			var str = '';
+			bigData = $(obj).find("option:selected").text();
+			if ($(obj).val() != -1) {
+				$('#dealway_id').attr('disabled', false);
+				$('#causeDealInfoId').val('');
+				$client.getRevertDeailWay({
+					id : $(obj).val()
+				}, function(ret, err) {
+					if (ret) {
+						//          api.hideProgress();
+						if (ret.success) {
+							$('#dealway_id').empty();
+							var detailList = ret.list;
+							$('<option>').text('请选择').val('').appendTo('#dealway_id');
+							for (var i = 0, size = detailList.length; i < size; i++) {
+								var per = "";
+								$('<option>').text(detailList[i].deal_name).val(detailList[i].id).appendTo('#dealway_id');
+								if (detailList[i].percent != null && detailList[i].percent != 'null' && detailList[i].percent != '') {
+									per = "(" + detailList[i].percent + "采纳)";
+								} else {
+									per = "";
+								}
+								str += (i + 1) + '、' + detailList[i].deal_name + per + "\n"
+							}
+							$('<option>').text('其他').val('-1').appendTo('#dealway_id');
+							$('#commend_id').html(str);
+						} else {
+							api.toast({
+								msg : ret.data_info
+							});
+						}
+					} else {
+						api.toast({
+							msg : '获取工单详情出错!'
+						});
+					}
+				});
+			} else {
+				$('#dealway_id').empty();
+				$('#dealway_id').attr('disabled', true);
+				$('<option>').text('其他').val('-1').appendTo('#dealway_id');
+				$('#commend_id').html('');
+				$('#causeDealInfoId').val('');
+			}
+			// doJluBill('#wrap')
+		}
+
+		function onSelTower(obj) {
+			var index = $(obj).children(':selected').index();
+			if (index != 0) {
+				var $selCouse = $('select[name=strfield2]:eq(' + (index - 1) + ')');
+				$selCouse.show().addClass('required').val('').siblings().hide().removeClass('required');
+				//              $selFaultCouse.children(':first').attr('selected',true);
+			}
+			// doJluBill('#wrap')
+		}
+
+		//故障类型选择触发事件
+		function onSelCause(obj) {
+			var index = $(obj).children(':selected').index();
+			if (index != 0) {
+				var $selFaultCouse = $('select[name=faultCouse]:eq(' + (index - 1) + ')');
+				$selFaultCouse.show().addClass('required').val('').siblings().hide().removeClass('required');
+				//              $selFaultCouse.children(':first').attr('selected',true);
+			}
+			// doJluBill('#wrap')
+		}
+
+		//故障类型选择触发事件
+		function onSelBigDetail(obj) {
+			//		$("#ddlregtype").find("option:selected").text()
+			var val = $(obj).find("option:selected").text();
+			if (val == '其他') {
+				$('#causeDealInfoId').val('');
+			} else {
+				$('#causeDealInfoId').val('原因细分：' + bigData + '\n具体措施：' + val);
+			}
+			// doJluBill('#wrap')
+		}
+
+		//处理方法
+		function commonDoWith(target) {
+			var val = $(target).val();
+			if (val != '') {
+				var text = $('#causeDealInfoId').val() + val;
+				$('#causeDealInfoId').val(text);
+			}
+			// doJluBill('#wrap')
+		}
+
+		function onSelrefief(self) {
+			var wrapper = $('form [name=reliefType],form [name=reliefCause]').parents('[id^=relief]');
+			$(self).val() == 'Y' ? wrapper.show() : wrapper.hide();
+			// doJluBill('#wrap')
+		}
+
+		function clearData(){
+		$('#realValueId').val('');
+		}
+
+		function getData(){
+		 api.showProgress({
+                msg : '获取中...'
+            });
+		var opts = {
+                fsuId : billModel.fsuid,
+                deviceId : billModel.deviceid,
+                semaphoreId : '0406111001'
+            };
+
+             $client.getMidRealData(opts, function(ret, err) {
+                if (ret) {
+                    if (ret.success) {
+                   $('#realValueId').val(ret.model.measuredval);
+
+                    } else {
+                        api.toast({
+                            msg : ret.data_info,
+                            location : 'bottom'
+                        });
+                    }
+                } else {
+                    api.toast({
+                        msg : '无法获取信号值！',
+                        location : 'bottom'
+                    });
+                }
+                api.hideProgress();
+            });
+		}
+
+		/**
+		 * 添加图片// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		 */
+		function addPic(e) {
+				var permission = 'camera';
+				var resultList = api.hasPermission({
+						list: [permission]
+				});
+				if (resultList[0].granted) {
+						// 已授权，可以继续下一步操作
+				} else {
+						api.confirm({
+								msg: '应用需要您的授权才能访问相机',
+								buttons: ['取消', '去设置']
+						}, function(ret) {
+								if (ret.buttonIndex == 2) {
+										api.requestPermission({
+												list: [permission],
+										}, function(res) {
+												if (res.list[0].granted) {
+														// 已授权，可以继续下一步操作
+												}
+										});
+								}
+						});
+				}
+			var lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			if (!lastLocation || !lastLocation.status) {
+				api.toast({
+					msg : '暂未定位\n无法上传照片！'
+				});
+			}else {
+				////////////////////////////////////////////
+				var curentTime2 = CurentTime2();
+				$api.setStorage('newtime', curentTime2);
+				$api.setStorage('lon1', lon1);
+				$api.setStorage('lat1', lat1);
+				var lon1 = $api.getStorage('lon1');
+				var lat1 = $api.getStorage('lat1');
+				var user=$api.getStorage('user');
+				var newtime = $api.getStorage('newtime');
+				var lon1 = $api.getStorage('lon1');
+				var lat1 = $api.getStorage('lat1');
+				var billModel = $api.getStorage('billModel');
+				////////////////////////////////////////////
+
+
+				imageUtil.add('camera', function(ret, err) {
+
+					var stationname=api.pageParam.stationname;
+					var billId=api.pageParam.billId;
+					var billSn=api.pageParam.billSn;
+					var businessid = billModel.businesstype;
+
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						// var oldret = ret.data.split(".");
+						// var newret = oldret[0]+"_shuiyin;"+user.userid+";"+user.userid+";"+billId+';'+businessid+';'+billSn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+						// console.log(newret);
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						// var filePath = ret.data;
+						var imgModel = {
+								userid : user.userid,
+								billid : api.pageParam.billId,
+								businessid : billModel.businesstype,
+								beiyong:"",
+								stationname : api.pageParam.stationname,
+								billsn : billModel.billsn,
+								imgpath : ret,
+								phototime :(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+								lon : lon1,
+								lat : lat1,
+								photoaddress : lastLocation.photoaddress,
+								state:api.pageParam.billStatus,
+								billstatusname:billModel.billstatusname
+						};
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						// cacheImgArr(imgModel);
+						// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+						console.log(getObj(imgModel));
+						imageUtil.getImageArray().push(imgModel);
+					showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+					var tpl = $api.byId('img-template').text;
+					var tempFn = doT.template(tpl);
+
+							$('#addPic').before(tempFn(imgModel));
+	            $new = $('#addPic').prev();
+	            $new.css('height', $new.css('width'));
+
+				},e,true,false);
+			}
+		}
+
+			/**
+			 *删除图片
+			 */
+			function removeImg(imgPath) {
+				var imageArray = imageUtil.getImageArray();
+				var size = imageArray.length;
+				for (var i = 0; i < size; i++) {
+					var data = imageArray[i];
+					if (data.imgpath == imgPath) {
+						imageArray.remove(i);
+						break;
+					}
+				}
+				$(event.target).parents('.picBox').find('#add').show();
+				$(event.target).parents('li.aui-img').remove();
+				// 删除本地缓存图片其一
+				deleteImgArr(imgPath);
+			}
+
+			// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+	</script>
+</html>

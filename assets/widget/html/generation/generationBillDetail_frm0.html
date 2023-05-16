@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html >
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>转派人员详情信息</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+	</head>
+	<body style="width: 100%">
+		<!-- <div class="darktitle titleinfo" ><h2>出入站申请单信息</h2></div> -->
+		<script id="billDetail-template" type="text/x-dot-template">
+
+		{{
+			var status = it.status;
+			var processflagName = "";
+
+		}}
+			<div class="darktitle titleinfo"><h2>转派人员详情</h2></div>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">姓名</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.user_name != null ? it.user_name:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">省份机构编码</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.p_org_id != null ? it.p_org_id:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">地市机构编码</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.c_org_id != null ? it.c_org_id:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">区域机构编码</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.a_org_id != null ? it.a_org_id :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">省份名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.p_org_name != null ? it.p_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">地市名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.c_org_name != null ? it.c_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">区县名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.a_org_name  != null ? it.a_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">联系电话</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.tel_number != null ? it.tel_number:''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">所属机构名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.dw_org_name  != null ? it.dw_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">所属铁塔组织名称</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.tower_org_name != 'null'? it.tower_org_name :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">所属铁塔组织编码</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.tower_org_id != 'null'? it.tower_org_id :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">登陆账号</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.user_login_code != 'null'? it.user_login_code :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">文化程度</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.culture != 'null'? it.culture :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">民族</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.nation != 'null'? it.nation :''}}</div>
+			</li>
+			<li class="aui-list-view-cell" >
+			<div class="aui-col-xs-4 aui-pull-left">住址</div>
+			<div class="aui-col-xs-7 aui-pull-right">{{=it.homeaddress != 'null'? it.homeaddress :''}}</div>
+			</li>
+
+		</script>
+
+
+
+		<div class="aui-content">
+			<ul class="aui-list-view" id="standBillDetail" style="margin-bottom:0;"></ul>
+			<ul class="aui-list-view" id="standBillDetail2" style="margin-bottom:0;display:none;" ></ul>
+			<ul class="aui-list-view" id="standBillDetail3" style="margin-bottom:0;display:none;" ></ul>
+			<ul class="aui-list-view" id="imagedata" style="margin-bottom:0;display:none;" ></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+
+	<script>
+		apiready = function() {
+			renderTemp('standBillDetail', 'billDetail-template', api.pageParam);
+		};
+
+	</script>
+</html>

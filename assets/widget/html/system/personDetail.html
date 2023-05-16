@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>个人信息</title>
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+        <link rel="stylesheet" href="../../script/app/css/app.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <style>
+            body {
+                background-color:#FFFFFF;
+            }
+            #wrap{
+			    height: 100%;
+			    display: -webkit-box;
+			    display: -webkit-flex;
+			    display: flex;
+			    -webkit-box-orient: vertical;
+			    -webkit-flex-flow: column;
+			           flex-flow: column;
+			}
+            .noPadding-cell {
+                padding: 0px !important;
+            }
+            .itemLeft {
+                width: 33%;
+                margin-right: 10px;
+                margin-top: 11px;
+                margin-bottom: 11px;
+                margin-left: 15px;
+                float: left;
+            }
+            .itemRight {
+            	overflow: hidden;
+                margin-top: 11px;
+                margin-bottom: 11px;
+                margin-right: 20px;
+            }
+            .item-content {
+                margin-top: 0px !important;
+                margin-bottom: 0px !important;
+            }
+            .table-view-cell {
+			  position: relative;
+			  padding: 11px 65px 11px 15px;
+			  overflow: hidden;
+			  border-bottom: 1px solid #ddd;
+			}
+			.table-view-cell:last-child {
+			  border-bottom: 0;
+			}
+			ul,li,dl,dt,dd {
+				margin:0;padding:0;list-style:none;
+			}
+			a {
+			  background: transparent;
+			  text-decoration:none;
+			}
+        </style>
+    <body>
+		<div id="wrap" style="overflow:auto;margin-bottom:1px;">
+			<ul class="table-view">
+        <li class="table-view-cell  noPadding-cell">
+        			<div class="itemLeft">账号</div>
+	        		<div class="itemRight" id="loginname"></div>
+	        	</li>
+            <li class="table-view-cell  noPadding-cell">
+            			<div class="itemLeft">姓名</div>
+    	        		<div class="itemRight" id="username"></div>
+    	        	</li>
+				<li class="table-view-cell  noPadding-cell">
+        			<div class="itemLeft">所在部门</div>
+	        		<div class="itemRight" id="postname"></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell" >
+	        		<div class="itemLeft">领导类型</div>
+	        		<div class="itemRight" id="leadername"></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell" onclick="ringUp(1);">
+	        		<div class="itemLeft">手机号码</div>
+	        		<div class="itemRight" id="mobilephone" style="color:#007AFF"></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell" onclick="ringUp(2);">
+	        		<div class="itemLeft">办公电话</div>
+	        		<div class="itemRight" id="officephone" style="color:#007AFF"></div>
+	        	</li>
+	        	<li class="table-view-cell  noPadding-cell">
+	        		<div class="itemLeft">邮箱</div>
+	        		<div class="itemRight" id="email"></div>
+	        	</li>
+			</ul>
+		</div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/debug.js"></script>
+    <script src='../../script/constant.js'></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+
+
+    <script>
+        apiready = function() {
+            var userInfo = api.pageParam.userInfo;
+            console.log(JSON.stringify(userInfo));
+            if(userInfo!=null){
+	            	if(userInfo.leadername!=null && userInfo.leadername != "null"){
+	            		$("#leadername").text(userInfo.leadername);
+	            	}
+	            	if(userInfo.orgnames!=null && userInfo.orgnames != "null"){
+	                $("#postname").text(userInfo.orgnames);
+	            }
+                if(userInfo.mobilephone!=null && userInfo.mobilephone != "null"){
+                		$("#mobilephone").text(userInfo.mobilephone);
+                }
+                if(userInfo.officephone!=null && userInfo.officephone != "null"){
+                		 $("#officephone").text(userInfo.officephone);
+                }
+                if(userInfo.email!=null && userInfo.email != "null"){
+                		$("#email").text(userInfo.email);
+                }
+                if(userInfo.loginname!=null && userInfo.loginname != "null"){
+                		$("#loginname").text(userInfo.loginname);
+                }
+                if(userInfo.username!=null && userInfo.username != "null"){
+                		$("#username").text(userInfo.username);
+                }
+            }
+        };
+
+        function ringUp(obj) {
+            var phoneNumber = "";
+            if (1 == obj) {
+                phoneNumber = $('#mobilephone').text();
+                if (phoneNumber == null || phoneNumber == "") {
+                } else {
+                    api.call({
+                        type : 'tel_prompt',
+                        number : phoneNumber
+                    });
+                }
+            } else if (2 == obj) {
+                phoneNumber = $('#officephone').text();
+                if (phoneNumber == null || phoneNumber == "") {
+                } else {
+                    api.call({
+                        type : 'tel_prompt',
+                        number : phoneNumber
+                    });
+                }
+            }
+        }
+    </script>
+</html>

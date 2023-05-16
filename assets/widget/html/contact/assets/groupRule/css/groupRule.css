@@ -1,0 +1,35 @@
+body{background: #fff;}
+.auth-list .authitem{font-size: 14px;line-height: 40px;border-bottom: 1px solid #dedede;padding: 0 10px;}
+.authitem.auth1{}
+.authitem.auth2{padding-left: 20px;}
+.authitem.auth3{padding-left: 40px;}
+.authitem.auth4{padding-left: 60px;}
+.authitem.auth5{padding-left: 80px;}
+.auth4{padding:10px;border-bottom: 1px solid #dedede;}
+.auth4 li{padding-left: 76px;line-height: 25px;}
+.icon-right-down{position:absolute;top:0px;right:0px;padding: 0 10px 0 10px;transition: all .2s}
+.icon-select{color:#ff9600;}
+.icon-checkbox{margin-right: 10px; color:#2ab7ff;}
+
+.icon-up{
+  transform:rotate(180deg);
+  -ms-transform:rotate(180deg); 	/* IE 9 */
+  -moz-transform:rotate(180deg); 	/* Firefox */
+  -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
+  -o-transform:rotate(180deg); 	/* Opera */
+}
+.icon-close{
+  transform:rotate(0deg);
+  -ms-transform:rotate(0deg); 	/* IE 9 */
+  -moz-transform:rotate(0deg); 	/* Firefox */
+  -webkit-transform:rotate(0deg); /* Safari 和 Chrome */
+  -o-transform:rotate(0deg); 	/* Opera */
+  color:#2ab7ff;
+}
+.username{
+  display: inline-block;
+  width: 100%;
+}
+.right{
+  position:absolute;top:14px;right:0px;padding: 0 10px 0 10px;transition: all .2s
+}

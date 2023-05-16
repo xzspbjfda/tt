@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>configuration-detail</title>
+    <link rel="stylesheet" href="../module/css/aui.css" />
+    <link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+                class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="realInfo()"><span
+                class="aui-iconfont aui-icon-refresh"></span>
+        </a>
+        <div class="aui-title">
+            配置详情
+        </div>
+    </header>
+    <div class="wrapper">
+        <div id="content">
+            <div class="box-cpn">
+                <h4 class="border-b" style="margin-bottom: 0">
+                    <strong class="text-blue margin-r-10">配置信息</strong>
+                    <!-- <strong class="text" id="name"></strong> -->
+                </h4>
+                <div class="padding-10 text">
+                    <div id="PORT_NO">端口: </div>
+                    <div id="PORT_TYPE">端口类型: </div>
+                    <div id="PROTOCOL">协议: </div>
+                    <div id="DEVTYPE">下挂设备类型: </div>
+                    <div id="name">名称: </div>
+                </div>
+                <div class="hidden-btn" style="text-align: left;margin-bottom: 10px">
+                    <div class="aui-btn aui-btn-danger aui-margin-r-5" onclick="openDetail()">配置变更任务信息</div>
+                </div>
+            </div>
+            <div class="box-cpn">
+                <h4 class="">
+                    <strong class="text-blue margin-r-10">下挂设备信息</strong>
+                </h4>
+                <div class="padding-10 text">
+                    <h4 style="margin: 0">
+                        <div class="point my-point-color"></div>
+                    </h4>
+                    <div class="point my-point-color"></div>
+                    <strong class="my-text-color margin-r-10 margin-l-30" id="registstatusName"></strong></br>
+                    <div id="registtime">信息: </div>
+                    <div id="outlinetime">信息: </div>
+                    <div id="cpu">信息: </div>
+                    <div id="memory">信息: </div>
+                    <div id="beginTimeName">信息: </div>
+                    <div id="costmillseconds">信息: </div>
+                    <div id="statusName">信息: </div>
+                </div>
+            </div>
+            <div class="box-cpn">
+                <h4 class="">
+                    <strong class="text-blue margin-r-10">实际运行信息</strong>
+                </h4>
+                <div class="padding-10 text">
+                    <div id="roomname">信息: </div>
+                    <div id="innerip">信息: </div>
+                    <div id="maintenMan">信息: </div>
+                    <div id="maintenTele">信息: </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../../../script/navigate.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../module/script/aui-dialog.js"></script>
+<script type="text/javascript">
+    const cacheName = 'application-list-detail'
+    apiready = function () {
+        api.parseTapmode()
+        realInfo()
+    }
+    // 初始化页面
+    const param = JSON.parse(handleLocalStorage('get', 'configuration-query-operate'))
+    console.log(JSON.stringify(param)) 
+    const dialog = new auiDialog()
+
+    let data = JSON.parse(param.data)
+    let realData
+    let beat
+
+    /** 
+     * 支持查看FSU的基本信息
+     * FSU的在线线状态、心跳时间等网络状态展示
+     * CPU、内存等FSU实时运行状态信息呈现
+     * 关联展示FSU告警信息
+    */
+    function realInfo() {
+        api.showProgress({
+            title: '加载中',
+            modal: false
+        })
+        request({
+            url: '/app/devicefsu/detail',
+            type: 'post',
+            data: {
+                pageNum: 1,
+                pageSize: 1,
+                fsuid: data.FSUID
+            },
+            success: res => {
+                console.log('详情数据'+JSON.stringify(res))
+                realData = res.data[0]
+                // 更新颜色
+                // const _color = data.registstatusName === '在线' ? '-green' : '-red'
+                // $('.my-point-color').addClass(`point${_color}`)
+                // $('.my-text-color').addClass(`text${_color}`)
+                // 填充数据
+                setDatas(resove(realData))
+                // return fsuBeat()
+            },
+            catch: res => api.hideProgress()
+        })
+    }
+
+    // 查询心跳
+    function fsuBeat() {
+        const now = new Date()
+        const today = now.getFullYear() + '' + (now.getMonth() + 1) + '' + now.getDate()
+        request({
+            url: `/app/fsu/beats?tableName=TW_PW_WEBSERVICE_LOG&fsuId=${realData.fsuid}&rssource=0&method=GET_FSUINFO&date=${today}&offset=0&limit=1`,
+            type: 'get',
+            success: res => {
+                if (res.data && res.data.length > 0 && res.data.logData.length > 0) {
+                    beat = res.data.logData[0]
+                    // 填充数据
+                    setDatas(resove(beat))
+                }
+                return api.hideProgress()
+            },
+            catch: res => api.hideProgress()
+        })
+    }
+
+    // 告警信息
+    function openDetail() {
+        const param = { data: realData.fsuid }
+        handleLocalStorage('remove', cacheName + '-alarm')
+        handleLocalStorage('set', cacheName + '-alarm', JSON.stringify(param))
+        openPage('fsuManagement/fsuDetection/fsu-detail-alarm', '告警信息', '')
+    }
+</script>
+
+</html>

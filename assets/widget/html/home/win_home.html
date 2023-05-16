@@ -1,0 +1,177 @@
+`<!-- HTML5文件 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>首页</title>
+        <link rel="stylesheet" href="../../script/agile/css/agile.layout.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.component.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/flat.color.css">
+        <link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="./css/home.css" />
+    </head>
+    <body>
+      
+        <div id="aside_container">
+            <aside id="left_push_aside" data-position="left" data-transition="push" style="padding-top:30px;">
+               
+                <ul class="menu">
+                    <li style="color:white;text-align:center;padding:8px 0;">
+                        <div class="box box-center">
+                            <div class="photo"></div>
+                        </div>
+                        <p id="disp_username" style="display:block;color:white;font-size:18px;margin:8px;">
+                        </p>
+                        <p id="disp_loginname" style="opacity:0.7;margin:8px;">
+                           
+                        </p>
+                    </li>
+                    <li class="side-list" onclick="openSidePerson();">
+                        <a href="#">
+                        <div class="side-list-round"><img src="../../script/app/img/aside/contact.png" class="wmz-side-img"/>
+                        </div><span>个人信息</span></a>
+                    </li>
+                    <li class="side-list"  onclick="openSideSetting();">
+                        <a href="#">
+                        <div class="side-list-round"><img src="../../image/aside_setting.png" class="wmz-side-img"/>
+                        </div><span>系统设置</span></a>
+                    </li>
+                    <li class="side-list" onclick="logout();">
+                        <a href="#">
+                        <div class="side-list-round"><img src="../../image/aside_logout.png" class="wmz-side-img"/>
+                        </div><span>注销帐号</span></a>
+                    </li>
+                </ul>
+            </aside>
+        </div>
+        <div id="section_container">
+            <section id="aside_section" data-role="section" class="active" data-aside-left="#left_push_aside">
+                <header id="header">
+                    <div class="titlebar">
+                        <a data-toggle="aside" href="#left_push_aside"><i class="iconfont iconline-list"></i></a>
+                        <h1>铁塔运维</h1>
+                    </div>
+                </header>
+                <article data-role="article" id="main_article" data-scroll="verticle" class="active" style="top:44px;bottom:0px;">
+                    <div class="scroller">
+                        <div id="slide" data-role="slider" class="full" style="height: 150px;overflow: hidden;">
+                            <div class="scroller">
+                                <div class="slide">
+                                    <img src="../../image/home_viewpage_01.png" class="full-width" style="height:150px" />
+                                    <div class="slider_label"></div>
+                                </div>
+                                <div class="slide">
+                                    <img src="../../image/home_viewpage_02.png" class="full-width" style="height:150px"/>
+                                    <div class="slider_label"></div>
+                                </div>
+                                <div class="slide">
+                                    <img src="../../image/home_viewpage_03.png" class="full-width" style="height:150px" />
+                                    <div class="slider_label"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="wrapper" style="background-color: #ffffff;" >
+                            <ul id="scroller" class="clearfix">
+                                <li id="noticeLiId" style="position:relative;display:none;" class="home_gv_preread" >
+                                    <a tapmode="active" onclick="openWinList('bulle/bulle_list_win','公告列表','')">公告栏</a>
+                                </li>
+                                <li id="createBillId" style="position:relative;display:none;" class="home_person_create">
+                                    <a tapmode="active" onclick="openWinList('outStation/createBillSelStation_win','选择站址','createBill')">人工派单</a>
+                                </li>
+                                <!--    monitorLiId-->
+                                <li id="monitorLiId" class="home_gv_prework" style="position:relative;display:none;">
+                                    <div id="monitorTip" class="cellTip">0</div>
+                                   <!-- <div id="monitorDivId" style="position:absolute;top:10px;left:0px;z-indent:999;" >
+                                        <span id="monitorSpanId"  style="background-color:red;color:white;font-size:12px;width:20px;border-radius: 5px;">0</span>
+                                    </div>-->
+                                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','监控箱','GET_BILL_MONITOR_LIST')">监控箱</a>
+                                </li>
+                                <li id="preBillLiId" class="home_gv_prework" style="position:relative;display:none;">
+                                 <div id="preBillTip" class="cellTip">0</div>
+                                   <!-- <div id="preBillDivId" style="position:absolute;top:10px;left:0px;z-indent:999;" >
+                                        <span id="preBillSpanId" style="background-color:red;color:white;font-size:12px;width:20px;border-radius: 5px;">0</span>
+                                    </div>-->
+                                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','工单待办','GET_BILL_LIST')">工单待办</a>
+                                </li>
+                                <li id="workerLiId" style="position:relative;display:none;" class="home_gv_worker">
+                                    <a tapmode="active" onclick="openWinList('bill/bill-list_win','工单已办','GET_BILL_FINISH_LIST')">工单已办</a>
+                                </li>
+                                <li id="alarmLiId" style="position:relative;display:none;" class="home_gv_alarm">
+                                    <a tapmode="active" onclick="openWinList('alarm/alarm-list_win','告警列表','ALARMLIST')">告警管理</a>
+                                </li>
+                                <li id="gvFsuLiId" style="position:relative;display:none;" class="home_gv_fsu">
+                                    <a tapmode="active" onclick="openWinList('station/station-list','站址列表','')">动环监控</a>
+                                </li>
+                                <li id="taskLiId" class="home_gv_xunjian" style="position:relative;display:none;">
+                                  <div id="taskTip" class="cellTip">0</div>
+                                   <!-- <div id="taskDivId" style="position:absolute;top:10px;left:0px;z-indent:999;" >
+                                        <span id="taskSpanId" style="background-color:red;color:white;font-size:12px;width:20px;border-radius: 5px;">0</span>
+                                    </div>-->
+                                    <a tapmode="active" onclick="openWinList('xunjian/task_list_win','巡检任务','')">巡检</a>
+                                </li>
+                                <li id="contactLiId" style="position:relative;display:none;" class="home_gv_contactor">
+                                    <a tapmode="active" onclick="openWinList('contact/contact-list','通讯录','')">通讯录</a>
+                                </li>
+                                <li id="standStaBillId" style="position:relative;display:none;" class="home_stand_create">
+                                    <a tapmode="active" onclick="openWinList('outStation/createBillSelStation_win','选择站址','createStandBill')">进站派单</a>
+                                </li>
+                                <li id="standStaPreBillId" class="home_stand_pre" style="position:relative;display:none;">
+                                 <div id="standStaPreBillTip" class="cellTip">0</div>
+                                    <!--<div id="standStaPreBillDivId" style="position:absolute;top:10px;left:0px;z-indent:999;" >
+                                        <span id="standStaPreSpanId" style="background-color:red;color:white;font-size:12px;width:20px;border-radius: 5px;">0</span>
+                                    </div>-->
+                                    <a tapmode="active" onclick="openWinList('standBill/standBillListWin','出入站待办','STATION_BILL_WAITLIST')">出入站待办</a>
+                                </li>
+                                <li id="standStaFinishBillId" class="home_stand_pre" style="position:relative;display:none;">
+                                    <a tapmode="active" onclick="openWinList('standBill/standFinishBillListWin','出入站已办','STATION_BILL_FINISH_LIST')">出入站已办</a>
+                                </li>
+                              	<li id="offlineUploadId" style="position:relative;display:none;" class="home_offline_upload">
+                              		<div id="offlineUploadTip" class="cellTip">0</div>
+                                    <a tapmode="active" onclick="openWinList('offlineUpload/picOfflineUpload','图片上传','')">图片上传</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+        <!-- third -->
+        <script src="../../script/jquery-1.11.3.min.js"></script>
+        <script src="../../script/third/jquery/jquery.mobile.custom.min.js"></script>
+        <script src="../../script/third/iscroll/iscroll-probe.js"></script>
+        <script src="../../script/third/arttemplate/template-native.js"></script>
+        <!-- agile -->
+        <script type="text/javascript" src="../../script/agile/js/agile.js"></script>
+        <!-- bridge -->
+        <script type="text/javascript" src="../../script/bridge/exmobi.js"></script>
+        <script type="text/javascript" src="../../script/bridge/agile.exmobi.js"></script>
+        <!-- app -->
+        <script type="text/javascript" src="../../script/app/js/app.js"></script>
+        
+        
+        
+        <script type="text/javascript" src="../../script/api.js"></script>
+        <script src='../../script/constant.js'></script>
+        <script src="../../script/debug.js"></script>
+        <script type="text/javascript" src="../../script/config.js"></script>
+        <script type="text/javascript" src="../../script/common.js"></script>
+        <script type="text/javascript" src="../../script/navigate.js"></script>
+        <script type="text/javascript" src="../../script/doT.min.js"></script>
+        <script type="text/javascript" src="../../script/client.api.js"></script>
+        <script type="text/javascript" src="../../script/aui-alert.js"></script>
+        <script type="text/javascript" src="../../script/GPS.js"></script>
+        <script type="text/javascript" src="../../script/jpush-api.js"></script>
+        <script type="text/javascript" src="./script/home.js"></script>
+        <script type="text/javascript" src="../../script/xunjian_db.js"></script>
+        <script type="text/javascript">
+            $('#main_article').on('articleload', function() {
+                A.Slider('#slide', {
+                    dots : 'right'
+                });
+            });
+        </script>
+    </body>
+</html>

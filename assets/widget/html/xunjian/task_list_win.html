@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no"/>
+        <title>巡检任务列表</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-pull-left" tapmode onclick="api.closeWin()"> <span class="aui-iconfont aui-icon-left"></span></a>
+            <div id='titTxt' class="aui-title">
+                巡检任务
+            </div>
+            <a class="aui-pull-right" id='lixsearch' tapmode onclick="showPopup()"> <span class="aui-iconfont aui-icon-search"></span> </a>
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="operator">缓存</a>
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" id="history">历史</a>
+        </header>
+        <div id='isshow' class="aui-tab" style="display:none;">
+            <ul id="tabBox" class="aui-tab-nav">
+                <li tabName = 'waitTaskList1' class="active" tapmode>
+                    进行中
+                </li>
+                <li tabName = "waitTaskList2" tapmode>
+                    未开始
+                </li>
+                <li tabName = "finishTaskList" tapmode>
+                    已完成
+                </li>
+            </ul>
+        </div>
+    </body>
+    <script src="../../script/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/constant.js"></script>
+    <script type="text/javascript" src="../../script/debug.js"></script>
+    <script type="text/javascript" src="../../script/doT.min.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/client.api.js"></script>
+    <script type="text/javascript" src="../../script/aui-alert.js"></script>
+    <script type="text/javascript">
+        var flag = 0;
+        apiready = function() {
+          $('#titTxt').html(api.pageParam.title);
+            initHeader();
+            console.log("类型："+api.pageParam.type);
+            $api.setStorage('offline', api.pageParam.offline);
+
+            if(api.pageParam.offline){
+              $('#lixsearch').hide();
+              api.openFrameGroup({
+                  name : 'xunjian_header_tab',
+                  rect : frameRect1(),
+                  preload : 0,
+
+                  frames : [{
+                      name : 'waitTaskList1',
+                      url : 'wait_task_list_frm.html',
+                      pageParam : {
+                          start_status : 'Y',
+                          type:api.pageParam.type,
+                           index_id:'0',
+                           offline:api.pageParam.offline
+                      },
+                      bounces : false
+                  }]
+
+              }, function(ret, err) {
+                  if (ret) {
+
+                  }
+              });
+            }else {
+              if(api.pageParam.type=='RL_XUNJIAN'){
+                $('#lixsearch').hide();
+                $('#operator').hide();
+                $('#history').hide();
+                api.openFrameGroup({
+                    name : 'xunjian_header_tab',
+                    rect : frameRect2(),
+                    preload : 0,
+
+                    frames : [{
+                        name : 'waitTaskList1',
+                        url : 'wait_task_list_frm.html',
+                        pageParam : {
+                            start_status : 'Y',
+                            type:api.pageParam.type,
+                             index_id:'0',
+                             offline:api.pageParam.offline
+                        },
+                        bounces : false
+                    }]
+
+                }, function(ret, err) {
+                    if (ret) {
+                      
+                    }
+                });
+              }else {
+                $('#isshow').show(0);
+                api.openFrameGroup({
+                    name : 'xunjian_header_tab',
+                    rect : frameRect(),
+                    preload : 0,
+
+                    frames : [{
+                        name : 'waitTaskList1',
+                        url : 'wait_task_list_frm.html',
+                        pageParam : {
+                            start_status : 'Y',
+                            type:api.pageParam.type,
+                             index_id:'0',
+                             offline:api.pageParam.offline
+                        },
+                        bounces : false
+                    }, {
+                        name : 'waitTaskList2',
+                        url : 'wait_task_list_frm.html',
+                        pageParam : {
+                            start_status : 'N',
+                             type:api.pageParam.type,
+                              index_id:'1',
+                              offline:api.pageParam.offline
+
+                        },
+                        bounces : false
+                    }, {
+                        name : 'finishTaskList',
+                        url : 'finish_task_list_frm.html',
+                         pageParam : {
+                             type:api.pageParam.type,
+                             index_id:'2',
+                             offline:api.pageParam.offline
+
+                        },
+                        bounces : false
+                    }],
+
+                }, function(ret, err) {
+                    if (ret) {
+                        $('#tabBox li:eq(' + ret.index + ')').addClass('active').siblings().removeClass('active');
+                        if(ret.index==0){
+                          $('#operator').show();
+                        }else {
+                          $('#operator').hide();
+                        }
+                        if(ret.index==0||ret.index==1){
+                          $('#history').hide();
+                        }else if(ret.index==2){
+                          $('#history').show();
+                        }
+                    }
+                });
+              }
+            }
+
+            /*jquery事件:tab切换*/
+            $('#tabBox li').click(function() {
+              if ($('#operator').text() == '取消') {
+                  $('#operator').click();
+              }
+                $(this).addClass('active').siblings().removeClass('active');
+                api.setFrameGroupIndex({
+                    name : 'xunjian_header_tab',
+                    index : $(this).index(),
+                    scroll : true
+                });
+
+              var nindex=$(this).index();
+              if(nindex==0||nindex==1){
+                $('#history').hide();
+              }else if(nindex==2){
+                $('#history').show();
+              }
+              if(nindex==0){
+                $('#operator').show();
+              }else {
+                $('#operator').hide();
+              }
+            });
+        };
+        /*
+        *  dxb 2019/3/19
+        *  decription:在巡检任务已完成页面右上角点击历史，可以查看历史执行任务，再次点击可切换到已完成的巡检任务列表
+        */
+        $('#history').click(function() {
+          if($('#history').text()=="历史"){
+            $('#history').text("全部");
+            api.execScript({
+              winName:'task_list_win',
+              frameName : 'finishTaskList',
+              script : 'reloadlist();'
+            });
+          }else if($('#history').text()=="全部"){
+            $('#history').text("历史");
+            api.execScript({
+              winName:'task_list_win',
+              frameName : 'finishTaskList',
+              script : 'reshuaxin();'
+            });
+          }
+        });
+        function showPopup() {
+            var query_setting = {
+                stationNameOpt : true,
+                stationCodeOpt : true,
+//              isOutdate : true,
+                winName : api.winName,
+                frameName : $('#tabBox li.active').attr('tabName'),
+                callback : 'cb_queryWaitTaskList'
+            };
+            api.openFrame({
+                name : 'popup_query_' + $('#tabBox li.active').attr('tabName'),
+                url : '../dialog/popup_query.html',
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                bounces : false,
+                reload : false,
+                pageParam : query_setting
+            });
+        }
+
+        function refreshList(index) {
+            if (!index) {
+                index = $('#tabBox li.active').index();
+            }
+            api.setFrameGroupIndex({
+                name : 'xunjian_header_tab',
+                index : index,
+                scroll : true,
+                reload : true
+            });
+        }
+
+        /*jQuery事件: 删除按钮点击*/
+        $('#operator').click(function() {
+            api.execScript({
+              name:'task_list_win',
+  						frameName : 'waitTaskList1',
+  						script : 'offline();'
+  					});
+            if ($(this).text() == '缓存') {
+  							$(this).text('取消');
+  					} else {
+
+                $(this).text('缓存');
+
+                api.execScript({
+                  name:'task_list_win',
+      						frameName : 'waitTaskList1',
+      						script : 'resetCheck();'
+      					});
+  					}
+        });
+    </script>
+</html>

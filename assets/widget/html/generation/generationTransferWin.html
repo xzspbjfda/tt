@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>转派</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+    <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+</head>
+<body>
+    <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+        <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        <div class="aui-title">
+            转派
+        </div>
+        <!-- <a class="aui-pull-right" tapmode onclick="showPopup()"> <span class="aui-iconfont aui-icon-search"></span> </a> -->
+    </header>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/constant.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+    refreshFrame = function() {
+        var header = initHeader();
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame({
+            name: 'generationTransferFrm',
+            url: 'generationTransferFrm.html',
+            bounces: false,
+            pageParam: api.pageParam,
+            reload: true,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: headerPos.w,
+                h: 'auto'
+            }
+        });
+    }
+    apiready = function() {
+        refreshFrame();
+        $api.addEvt($api.byId('back'), 'click', function() {
+            api.closeWin();
+        });
+    };
+
+    function showPopup() {
+        var query_setting = {//查询条件显示参数设置
+            user_name:true,//显示姓名搜索框
+            user_tel:true,//显示电话输入框
+            unitOpt:true,//显示区域输入框
+            winName : "generationTransferWin",//搜索关闭后打开的窗口
+            frameName : "generationTransferFrm",//搜索关闭后的frame
+            callback : 'cb_queryWaitTaskList'//搜索关闭后的要执行的回调函数
+        };
+        api.openFrame({//打开搜索条件界面
+            name : 'popup_query_frm',
+            url : '../dialog/popup_query1.html',
+            rect : {
+                x : 0,//距离右边位置
+                y : 0,//距离上边位置
+                w : 'auto',//宽度，自适应
+                h : 'auto'//高度自适应
+            },
+            bounces : false,
+            reload : false,
+            pageParam : query_setting//查询参数设置
+        });
+    }
+</script>
+
+</html>

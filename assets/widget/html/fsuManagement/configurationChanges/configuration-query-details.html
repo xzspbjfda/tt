@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>equip-issu</title>
+	<link rel="stylesheet" href="../../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" href="../css/base.css" />
+	<link rel="stylesheet" href="../module/css/aui.css" />
+</head>
+
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+				class="aui-iconfont aui-icon-left"></span>
+		</a>
+		<div class="aui-title">
+			配置详情
+		</div>
+	</header>
+	<div class="wrapper">
+		<div id="content"></div>
+	</div>
+</body>
+<script src="../../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../module/script/api.js"></script>
+<script type="text/javascript" src="../module/script/aui-tab.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript" src="../../../script/debug.js"></script>
+<script type="text/javascript" src="../../../script/navigate.js"></script>
+<script type="text/javascript" src="../js/fsu-common.js"></script>
+<script type="text/javascript" src="../js/init-list.js"></script>
+<script type="text/javascript">
+	const cacheName = 'configuration-query-details'
+	apiready = () => {
+		api.parseTapmode()
+		pagination.pageNum = 1
+		pagination.pageSize = 10
+		// initType()
+		search()
+	}
+
+	// 查询接口
+	function search() {
+		let data = {}
+		const cacheType = handleLocalStorage('get', 'configuration-query-operate')
+		data.pageNum = pagination.pageNum || 1
+		data.pageSize = pagination.pageSize || 10
+		data.FSUID = cacheType.FSUID
+		// 设置APP记录查询状态 - 远程重启
+		// type ? data.signalType = '遥调' : data.type = '3'
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		console.log('配置详情参数' + JSON.stringify(data))
+		// 区分查询类型 列表/记录
+		request({
+			url: '/app/devicefsu/list',
+			type: 'post',
+			data: data,
+			success: res => {
+				console.log('配置详情数据' + JSON.stringify(res))
+				initTaskDetails(res)
+				return api.hideProgress()
+			},
+			catch: res => api.hideProgress()
+		})
+	}
+
+	/** 初始化任务配置详情 */
+	function initTaskDetails(res) {
+		console.log('initTaskDetails')
+		const dom = $('#content')
+		// 清空content
+		dom.empty()
+		const data = res.data.list
+		// 记录缓存
+		setCache('configuration-query', res)
+		if (!dom || !data || data.length === 0) {
+			console.log(!dom, !data, data.length === 0)
+			dom.append('<div class="more">暂无数据</div>')
+			return
+		}
+		let html = ''
+		// data.forEach(item => {
+		// <strong class="text margin-r-10">${item.devType}2</strong>
+		// <strong class="text">${item.midName}3</strong>
+		// let name = item.name.split('/')[1]
+		// ${item.CITYNAME}  ${item.COUNTRYNAME} | ${item.FSUID}</br>
+		// 下挂设备名称   ${name}
+		console.log('初始化任务配置列表initTaskList' + JSON.stringify(res))
+		html += `<div class="box-cpn cpn">
+        <h4>
+            <strong class="text">配置信息</strong>
+        </h4>
+        <div class="padding-10 text">
+			<strong class="text"><div style="width:50%">端口</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">端口类型</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">协议</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">下挂设备类性</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">名称</div><div>${item.devType}</div></strong></br>
+            <div class="detail aui-label aui-label-danger margin-r-10" style="float: left;">
+                <label>配置变更任务信息><button style="display: none" onclick='openDetail(${JSON.stringify(item)},"operate")'></button></label>
+            </div>
+        </div>
+    </div>`
+		html += `<div class="box-cpn cpn">
+        <h4>
+            <strong class="text">实时运行信息</strong>
+        </h4>
+        <div class="padding-10 text">
+			<strong class="text"><div style="width:50%">端口</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">端口类型</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">协议</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">下挂设备类性</div><div>${item.devType}</div></strong></br>
+			<strong class="text"><div style="width:50%">名称</div><div>${item.devType}</div></strong></br>
+            <div class="detail aui-label aui-label-danger margin-r-10" style="float: left;">
+                <label>配置变更任务信息><button style="display: none" onclick='openDetail(${JSON.stringify(item)},"operate")'></button></label>
+            </div>
+        </div>
+    </div>`
+		// })
+		html += '<div class="more" id="more" onclick="handleMore()">加载更多…</div>'
+		dom.append(html)
+	}
+</script>
+
+</html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>api</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/user.css" />
+		<link rel="stylesheet" href="../script/agile/css/flat/flat.component.css">
+	<link rel="stylesheet" href="../script/agile/css/flat/flat.color.css">
+	</head>
+	<body>
+		<div id="wrap">
+			<header id="header">
+	            <div class="header active titlebar">
+		        	<a class="back-icon" tapmode="" onclick="api.closeWin()"></a>
+		            <h1>个人信息</h1>
+		        </div>
+	        </header>
+			<div id="main">
+				<script id="template" type="text/x-dot-template">
+					<div class="item">
+						<table width="100%" style="opacity: .5; font-size: 15px;">
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+							</td>
+							<td width="70%" style=" text-align: left;">
+							</td>
+						</tr>
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+								加入时间
+							</td>
+							<td width="70%" style=" text-align: left;">
+								{{=it.createdate != null ? it.createdate :""}}
+							</td>
+						</tr>
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+								所在部门
+							</td>
+							<td width="70%" style=" text-align: left;">
+								{{=it.orgnames != null ? it.orgnames :""}}
+							</td>
+						</tr>
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+								登录名称
+							</td>
+							<td width="70%" style=" text-align: left;">
+								{{=it.username != null ? it.username :""}}
+							</td>
+						</tr>
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+								手机号码
+							</td>
+							<td width="70%" style=" text-align: left;" onclick="callPerson('{{=it.mobilephone}}')">
+								{{=it.mobilephone != null ? it.mobilephone :""}}
+							</td>
+						</tr>
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+								办公室电话
+							</td>
+							<td width="70%" style=" text-align: left;" onclick="callPerson('{{=it.mobilephone}}')">
+								{{=it.officephone != null ? it.officephone :""}}
+							</td>
+						</tr>
+						<tr height="30px">
+							<td width="30%" style=" text-align: center;">
+								邮箱地址
+							</td>
+							<td width="70%" style=" text-align: left;">
+								{{=it.email != null ? it.email :""}}
+							</td>
+						</tr>
+					</table>
+					</div>
+				</script>
+				<div id="activity"></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/doT.min.js"></script>
+	<script type="text/javascript" src="../script/config.js"></script>
+	<script type="text/javascript" src="../script/client.api.js"></script>
+	<script type="text/javascript" src="../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../script/common.js"></script>
+
+
+	<script>
+		function callPerson(telno){
+			if(telno != null){
+				api.call({
+			        number:telno
+		        });
+			}
+		}
+//init personal center
+function initPersonalCenter() {
+
+	var btnArray = [{
+		"bgImg" : "",
+		"selectedImg" : ""
+	}];
+	var user = {};
+	var loginUser = $api.getStorage('user');
+	var userId = loginUser.userid;
+	var userQueryUserId = api.pageParam.userQueryUserId;
+	$client.getUserInfo(userId,userQueryUserId, function(ret, err) {
+		if (ret) {
+			//var strs = $api.jsonToStr(ret);
+			//alert(strs);
+			var header = $api.byId('header');
+	    	$api.fixIos7Bar(header);
+	    	var pos = $api.offset(header);
+			user = ret.model;
+			console.log('[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]');
+			console.log(getObj(user));
+			if(user == null){
+				user = {};
+			}
+//			user.imgurl = "http://file.apicloud.com/mcm/A6965066817858/d7d1d308fe165b984c09728e7118e9f1.jpg";
+			var pc = api.require('personalCenter');
+			var headerH = api.pageParam.headerHeight;
+			var photo = "widget://image/personalCenter/mod_normal.png";
+			pc.open({
+				y : pos.h,
+				height : 160,
+				fixed : true,
+				imgPath : photo,
+				placeHoldImg : photo,
+				showLeftBtn : false,
+				showRightBtn : false,
+				username : user.username,
+				count : 0,
+				modButton : {
+					"bgImg" : "widget://image/personalCenter/mod_normal.png",
+					"lightImg" : "widget://image/personalCenter/mod_click.png"
+				},
+				btnArray : btnArray
+			}, function(ret, err) {
+				/* 头像修改按钮. */
+				if (btnArray.length === ret.click) {
+					api.confirm({
+						title : "个人头像",
+						msg : "您想要从哪里选取图片 ?",
+						buttons : ["拍摄", "从相册选择", "取消"]
+					}, function(ret, err) {
+						var sourceType = "album";
+
+						if (3 == ret.buttonIndex) {// 取消
+							return;
+						}
+
+						if (1 == ret.buttonIndex) {// 打开相机
+							sourceType = "camera";
+						}
+
+						api.getPicture({
+							sourceType : sourceType,
+							encodingType : 'png',
+							mediaValue : 'pic'
+						}, function(ret, err) {
+							if (ret) {
+								pc.updateValue({
+									imgPath : ret.data,
+									count : 0
+								});
+							}
+						});
+
+					});
+
+					return;
+				}
+
+				$api.byId('activity').innerHTML = '';
+				getFavData('activity', user);
+			});
+			api.hideProgress();
+			getFavData('activity', user);
+		} else {
+            api.toast({msg: err.msg, location: 'middle'});
+        }
+        api.hideProgress();
+	});
+}
+
+function getFavData(type, ret) {
+	var data = {};
+	data.favType = 'act';
+	data.ret = ret;
+	var content = $api.byId('activity');
+	var tpl = $api.byId('template').text;
+	var tempFn = doT.template(tpl);
+	$api.byId('activity').innerHTML = tempFn(ret);
+}
+
+function init() {
+	initPersonalCenter();
+}
+
+function updateInfo() {
+	var pc = api.require('personalCenter');
+	pc.close();
+	init();
+}
+
+apiready = function() {
+
+	init();
+
+};
+
+
+	</script>
+</html>

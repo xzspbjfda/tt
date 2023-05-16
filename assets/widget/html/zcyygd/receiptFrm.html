@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>title</title>
+        <link rel="stylesheet" href="../../css/api.css"/>
+        <link rel="stylesheet" href="../../css/common.css" />
+        <link rel="stylesheet" href="../../css/vueComponent.css" />
+        <link rel="stylesheet" href="../../css/query.css"/>
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+        <link rel="stylesheet" href="../../css/aui.css"/>
+        <link rel="stylesheet" type="text/css" href="../../css/standBillRevertDetail.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/list-format.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+    </head>
+    <style>
+        html, body {
+            height: auto;
+        }
+        body.active {
+            background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+        }
+        .ccssoft_list li{
+            border-bottom: 2px dashed #00a0c8;
+        }
+        #app{
+            position: relative;
+        }
+
+        #app{
+            position: relative;
+        }
+
+        .main-div {
+            /*position: fixed;*/
+            /*top: 0;*/
+            /*left: 0;*/
+            /*bottom: 50px; !*距离底部的距离为底部盒子的高度，自己也可以设置*!*/
+            /*overflow-y: scroll;*/
+            /*width: 100%;*/
+            /*height: auto;*/
+            /*-webkit-overflow-scrolling: touch;   !*这句是为了滑动更顺畅*!*/
+            padding-bottom: 50px;
+        }
+
+        #footer {
+            position: fixed;
+            bottom: 0;
+            height: 50px;
+            left: 0;
+            zoom: 1;
+            width: 100%;
+            padding: 5px 15px 0px 15px;
+            z-index: 3;
+            /*background-color: #f7f7f7;*/
+            /*box-sizing: border-box;*/
+            /*-webkit-box-sizing: border-box;*/
+            /*box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+            /*-webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+
+        }
+
+        .ios .main-div{
+            padding-bottom: 15vh;
+        }
+        .ios #footer{
+            height: 15vh;
+        }
+
+        /*.cardButtonDiv{*/
+        /*    position: fixed;*/
+        /*    bottom: 0;*/
+        /*    left: 0;*/
+        /*    zoom: 1;*/
+        /*    width: 100%;*/
+        /*    padding: 5px 15px 0px 15px;*/
+        /*    height: 50px;*/
+        /*    z-index: 3;*/
+        /*    background-color: #f7f7f7;*/
+        /*    box-sizing: border-box;*/
+        /*    -webkit-box-sizing: border-box;*/
+        /*    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+        /*    -webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);*/
+        /*}*/
+
+        .aui-list-view-cell{
+            line-height: 35px;
+        }
+
+        .user-name{
+            font-weight: bold;
+        }
+        /*.main-div{*/
+        /*    padding-bottom: 50px;*/
+        /*}*/
+
+
+        .hide{
+            display: none!important;
+        }
+        .cardLabel,
+        .cardTextareaLabel {
+            color: black;
+        }
+
+        .billDetailDivId {
+            margin-left: -8%;
+        }
+
+        .cardCon2 {
+            width: 60%;
+            float: left;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 0;
+            margin-top: 10px;
+        }
+        .cardCon2 .aui-list-view.aui-grid-view{
+            padding: 0;
+        }
+        .removebtn{
+            position: absolute;
+            right: 0;
+            /*top: 10px;*/
+        }
+
+    </style>
+    <body>
+        <div id="app" v-cloak>
+            <yt-confirm-dialog @decided="decidedSubmitAudit" @cancel="submitAuditOper = false" :show.sync="submitAuditOper">
+                <template v-slot:content>
+                    <div class="aui-flex-col" data-type="text" style="margin-top: 5px;">
+                        工单有告警未消除，需要提交审核，是否提交？
+                    </div>
+                </template>
+            </yt-confirm-dialog>
+            <div class="main-div">
+                <div id="wrap" class="auditForm" style="overflow:auto;width: 100%;height: 100%;">
+<!--                    <div class="darktitle">-->
+<!--                        <h2><img class="tit_img" src="../../image/bt_icon2.png" alt="" />申请信息</h2>-->
+<!--                    </div>-->
+                    <div id="billDetailDivId" class="billDetailDivId">
+                        <div class="cardDiv">
+                            <div class="cardLabel">处理人：</div>
+                            <div class="cardCon" style="height: 40px; line-height: 40px; padding-left: 15px">{{userInfo.username}}</div>
+                        </div>
+                        <div class="cardDiv">
+                            <div class="cardLabel">电话：</div>
+                            <div class="cardCon" style="height: 40px; line-height: 40px; padding-left: 15px">{{userInfo.mobilephone}}</div>
+                        </div>
+                        <div class="cardDiv">
+                            <div class="cardLabel">邮箱：</div>
+                            <div class="cardCon" style="height: 40px; line-height: 40px; padding-left: 15px">{{userInfo.email}}</div>
+                        </div>
+
+<!--                        <div class="cardDiv">-->
+<!--                            <div class="cardLabel">派单是否准确：</div>-->
+<!--                            <div class="cardCon">-->
+<!--                                <select v-model="form.isaccuracy" style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;">-->
+<!--                                    <option value="">请选择</option>-->
+<!--                                    <option value="Y">是</option>-->
+<!--                                    <option value="N">否</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="cardDiv">
+                            <div class="cardLabel"><span style="color: red">*</span>核查结果：</div>
+                            <div class="cardCon">
+                                <select v-model="form.causeId" id="cause-select" @change="switchCause" style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;">
+                                    <option value="">请选择</option>
+                                    <option v-for="(item,index) in causeList" :key="index" :value="item.id">{{item.causeName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="cardDiv">
+                            <div class="cardLabel"><span style="color: red">*</span>处理措施：</div>
+                            <div class="cardCon">
+                                <select v-model="form.measureId" id="measure-select" @change="switchMeasure" style="background-color:#FFFFFF;width:80%;height:100%;font-size:14px;">
+                                    <option value="">请选择</option>
+                                    <option v-for="(item,index) in measureList" :key="index" :value="item.measureValue">{{item.measureName}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="cardDiv">
+                            <div class="cardLabel">
+                                上传照片：
+                            </div>
+                            <div class="cardCon2">
+                                <ul class="aui-list-view aui-grid-view">
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4" v-if="base64Data">
+                                        <img class="aui-img-object" :src="base64Data"  @click.stop="showImg">
+                                        <button class="aui-btn aui-btn-danger removebtn" @click.stop="removeImg">×</button>
+                                    </li>
+                                    <li class="aui-list-view-cell aui-img aui-col-xs-4" v-if="!file" @click.stop="selectFile">
+                                        <img class="aui-img-object" src="../../image/icons/png/icon_addpic_focused.png">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="refiefDealInfoDivId"  style="margin-bottom: 20px;" class="cardTextareaDiv">
+                            <div class="cardTextareaLabel"><span style="color: red">*</span>处理说明：</div>
+                            <div class="cardTextareaCon">
+                                <textarea v-model="form.remark" rows="8" class="noborder" style="background-color:white;border:solid 1px green;width:100%;height:100%;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer id="footer">
+                <button style="width: 49%;background-color: #3779d0;color: white;height: 40px;" onclick="api.closeWin({name : 'receiptWin'});">取消</button>
+                <button style="width: 49%;background-color: #DB4537;color: white;height: 40px;" @click="submit">提交</button>
+            </footer>
+        </div>
+    </body>
+    <script type="text/javascript" src="../../script/third/jquery/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/config.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+    <script type="text/javascript" src="../../script/request.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script type="text/javascript" src="../../script/vueComponent.js"></script>
+    <script type="text/javascript" src="../../script/lcApi.js"></script>
+    <script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+<!--    <script type="text/javascript" src="../../script/debug.js"></script>-->
+<!--    <script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.9.1/vconsole.min.js"></script><script >var vConsole = new VConsole();</script>-->
+    <script type="text/javascript">
+        var app,detailInfo,fileBrowser;
+        // 这个方法应该是不用了~
+        request.getMeasuresByTaskTypeName = function (modelName,callback) {
+            service.get({
+                url: "/worderAssetRun/getMeasuresByTaskTypeName.do",
+                data:{modelName:modelName}
+            },callback)
+        }
+
+        request.getCauseListByTaskTypeName = function (taskTypeName,callback) {
+            service.get({
+                url: "/worderAssetRun/getCauseListByTaskTypeName.do",
+                data:{taskTypeName:taskTypeName}
+            },callback)
+        }
+
+        request.getModelMeasureListByCauseId = function (causeId,callback) {
+            service.get({
+                url: "/worderAssetRun/getModelMeasureListByCauseId.do",
+                data:{id:causeId}
+            },callback)
+        }
+
+        apiready = function() {
+            // initHeader();
+            // $api.fixTabBar($api.byId('footer'));
+            // fileBrowser = api.require('fileBrowser');
+            // detailInfo = $api.getStorage("zzyygdDetailInfo");
+            if(window.api){
+                initHeader();
+                fileBrowser = api.require('fileBrowser');
+                detailInfo = $api.getStorage("zzyygdDetailInfo");
+            }
+            // else{
+            //     window.env = {};
+            //     env.lcServerBaseUrl = "http://chntoms.tower0788.cn:8989/";
+            //     window.api = {}
+            //     api.showProgress = function(){};
+            //     api.hideProgress = function(){};
+            // }
+            app = new Vue({
+                el:'#app',
+                data:function (){
+                    return {
+                        userInfo:{},
+                        causeList:[],
+                        measureList:[],
+                        submitAuditOper:false,
+                        file:null,
+                        base64Data:"",
+                        form:{
+                            id:"",
+                            taskTypeName:"",
+                            // isaccuracy:"",
+                            measure:"",
+                            measureId:"",
+                            causeId:"",
+                            causeName:"",
+                            remark:"",
+                            haveFile:false,
+                        },
+                    }
+                },
+                methods:{
+                    submit() {
+                        let _this = this
+                        if(!this.form.id){
+                            return api.toast({msg:"无效的工单！"});
+                        }
+                        // if(!this.form.isaccuracy){
+                        //     return api.toast({msg:"请选择派单是否准确！"});
+                        // }
+                        if(!this.form.causeName){
+                            return api.toast({msg:"请选择核查结果！"});
+                        }
+                        if(!this.form.measure){
+                            return api.toast({msg:"请选择处理措施！"});
+                        }
+                        if(!this.form.remark){
+                            return api.toast({msg:"请填写处理说明！"});
+                        }
+                        // 工单类型为 "疑似设备变动监控" 并且核查结果是 "存在设备变动" 时
+                        if(detailInfo.taskTypeName === "疑似设备变动监控" && this.form.causeName === "存在设备变动"){
+                            request.lcApi.getUserIsManager(this.userInfo.loginname,(res)=>{
+                                // 如果当前用户是客户经理
+                                if(res.isSuccess){
+                                    // 直接触发提交函数
+                                    this._submit();
+                                }else{
+                                    api.toast({msg:"不允许回单，请转派到通发部客户经理！"});
+                                }
+                            })
+                        }else{
+                            // 不是需要拦截的工单类型、核查结果组合，直接触发提交函数
+                            this._submit();
+                        }
+                    },
+                    _submit(){
+                        let _this = this;
+                        request.post({
+                            url:"/worderAssetRun/replySelfTask.do",
+                            data:this.form,
+                            autoCloseProgress:false
+                        },function(ret){
+                            if(ret.success && ret.data){
+                                if(ret.data.isSuccess === true || ret.data.isSuccess === "true"){
+                                    api.toast({msg:"回单成功！"});
+                                    _this.uploadImage(_this.done);
+                                }else{
+                                    api.hideProgress();
+                                    if(ret.data === 1){
+                                        return _this.submitAuditOper = true;
+                                    }else if(ret.data === 2){
+                                        return api.toast({msg:"当前告警未消除,无法关单!"});
+                                    }else if(ret.data === 3){
+                                        return api.toast({msg:"未上传图片附件!"});
+                                    }
+                                    // 有告警，提示提交审核
+                                    if(ret.data.alarm === "1"){
+                                        if(_this.causeAndMeasureCondition()){
+                                            _this.submitAuditOper = true;
+                                        }
+                                    }else{
+                                        api.toast({msg:ret.data.msg});
+                                    }
+                                }
+                            }else{
+                                api.hideProgress();
+                                if(ret.data === 1){
+                                    return _this.submitAuditOper = true;
+                                }else if(ret.data === 2){
+                                    return api.toast({msg:"当前告警未消除,无法关单!"});
+                                }else if(ret.data === 3) {
+                                    return api.toast({msg: "未上传图片附件!"});
+                                }else{
+                                    api.toast({msg:ret.data.msg});
+                                }
+                            }
+                        })
+                    },
+                    decidedSubmitAudit(){
+                        let _this = this;
+                        request.post({
+                            url:"/worderAssetRun/audit.do",
+                            data:this.form,
+                            autoCloseProgress:false
+                        },function(ret){
+                            if(ret.success && ret.data){
+                                if(ret.data.isSuccess === true || ret.data.isSuccess === "true"){
+                                    api.toast({msg:"提交审核成功！"});
+                                    _this.uploadImage(_this.done);
+                                }else{
+                                    api.hideProgress();
+                                    api.toast({msg:ret.data.msg});
+                                }
+                            }else{
+                                api.hideProgress();
+                                api.toast({msg:ret.msg});
+                            }
+                        })
+                    },
+                    switchCause(){
+                        var index = document.getElementById("cause-select").selectedIndex;
+                        if(this.form.causeId){
+                            request.getModelMeasureListByCauseId(this.form.causeId,function(ret){
+                                if(ret.data && ret.data.length > 0){
+                                    app.measureList = ret.data;
+                                }else{
+                                    api.toast({msg:detailInfo.taskTypeName + "分类下没有对应处理措施！"})
+                                }
+                            })
+                        }else{
+                            this.measureList = [];
+                        }
+                        this.form.causeName = this.causeList[index - 1] ? this.causeList[index - 1].causeName : "";
+                        this.form.measureId = "";
+                        this.form.measure = "";
+                    },
+                    switchMeasure(){
+                        var index = document.getElementById("measure-select").selectedIndex;
+                        this.form.measure = this.measureList[index - 1] ? this.measureList[index - 1].measureName : "";
+                    },
+                    selectFile(){
+                        this.$selectPhoto(null,(file)=>{
+                            this.file = file;
+                            this.loadBase64ImgAtFile(this.file,(ret)=>{
+                                this.base64Data = ret;
+                                this.form.haveFile = true;
+                            });
+                        })
+                    },
+                    removeImg(){
+                        this.file = null;
+                        this.base64Data = "";
+                        this.form.haveFile = false;
+                    },
+                    showImg(){
+                        // var photoBrowser = api.require('photoBrowser');
+                        // photoBrowser.open({
+                        //     images: [this.base64Data],
+                        //     placeholderImg: 'widget://res/img/apicloud.png',
+                        //     bgColor: '#000'
+                        // });
+                    },
+                    uploadImage(callback){
+                        if(this.file){
+                            request.lcApi.uploadReceiptImg({
+                                taskid:detailInfo.id,
+                                userCode:this.userInfo.loginname,
+                                file:this.file,
+                            },(ret)=>{
+                                callback && callback(ret);
+                            })
+                        }else{
+                            callback && callback();
+                        }
+                    },
+                    confirmSubmitAudit(){
+                        this.submitAuditOper = true;
+                    },
+                    // 代码由浪潮提供
+                    causeAndMeasureCondition(){
+                        // 2022-01-18浪潮提供
+                        if (this.form.taskTypeName === "疑似设备变动监控") {
+                            if (this.form.measure === "历史已起租，无需处理" ||this.form.measure === "站址核查后无异常") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "疑似拆站监控") {
+                            if (this.form.measure === "站址核查后无异常") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站赔补监控") {
+                            if (this.form.measure === "非现金赔补，实际已等价足额获取赔补"||this.form.measure === "无法获取赔补") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站赔补预警") {
+                            if (this.form.measure === "站址实际均已获取足额赔补"||this.form.measure === "已组织开展赔补获取工作，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站回填监控") {
+                            if (this.form.measure === "主动获取需求后线下完成回填"||this.form.measure === "站址无法回填") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站回填预警") {
+                            if (this.form.measure === "站址实际均已完成回填"||this.form.measure === "已组织开展站址回填工作，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "零收入站址预警") {
+                            if (this.form.measure === "已组织开展保留站址评估和暂停计收站址处理，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "异常站址预警") {
+                            if (this.form.measure === "已组织开展异常站址清理，暂未完成全部站址清理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+
+                        } else if (this.form.taskTypeName === "基站能耗异常监控") {
+                            if (this.form.measure === "现场偷漏电"||this.form.measure === "运营商设备变动，已反馈至通发部协调起租"
+                                ||this.form.measure === "两翼业务新增或拆除设备"||this.form.measure === "经核实，系统数据不准或报账周期变化导致误派单") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        }  else if (this.form.taskTypeName === "电费异常支付-重复报账（同一电表）监控") {
+                            if (this.form.measure === "同一站址运营商用电属性不同，属于正常支付，不重叠"
+                                ||this.form.measure === "转改直后转供电抄表时间滞后或抄表时间填写错误造成的，不重叠"
+                                ||this.form.measure === "缴费电表绑错站址，不重叠，调整站址后人工审批"
+                                ||this.form.measure === "缴费区间重叠，已退款，人工审批。"
+                                ||this.form.measure === "实际生产需要，提供相关材料") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "电费异常出账监控") {
+                            if (this.form.measure === "两翼业务单独引电，无需分摊") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+
+
+                        } else if (this.form.taskTypeName === "电费异常销账监控") {
+                            if (this.form.measure === "已开汇票回款") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租水平异常（权属异常）监控") {
+                            if (this.form.measure === "高场租站址，需进一步协调压降场租"||
+                                this.form.measure === "站址实际非免场租站址"||
+                                this.form.measure === "站址需进一步争取免场租政策"
+                            ) {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租超期未支付监控") {
+                            if (this.form.measure === "纠纷站，暂时无法支付"||this.form.measure === "无纠纷，业主暂时无法开票") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租到期未续签监控") {
+                            if (this.form.measure === "经核实站址场租合同暂时无法续签") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租传导异常监控") {
+                            if (this.form.measure === "暂时无法处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "更新改造合理性监控") {
+                            if (this.form.measure === "特殊情况确需更新改造") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "异常修理监控") {
+                            if (this.form.measure === "照片上传错误已修正"
+                                || this.form.measure === '设备故障导致告警未上传导致，选择两种处理措施'
+                                || this.form.measure === '设备故障导致告警未上传导致') {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                            /*------------------------*以下为历史---------------------------------------**/
+                        } else if (this.form.taskTypeName === "场租超一年未支付监控") {
+                            if (this.form.measure !== "已完成场租支付"&&this.form.measure !== "已终止解除合同，卡片已结转") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+
+                        } else if (this.form.taskTypeName === "传导场租卡片年租金与收入原始值不一致监控") {
+                            //拆站回填监控
+                            if (this.form.measure !== "已正确传导、物业侧年租金与CRM订单场地费原始值一致") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "历史场租合同到期未续签监控") {
+                            if (this.form.measure === "暂时无法续签") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "零收入站址监控") {
+                            if (this.form.measure === "已完成评估及清理" && !this.file) {
+                                api.toast({msg:"未上传图片附件"});
+                            }
+                            if (this.form.measure === "已组织开展保留站址评估和暂停计收站址处理，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+
+                        } else if (this.form.taskTypeName === "异常站址监控") {
+                            if (this.form.measure === "已组织开展异常站址清理，暂未完成全部站址清理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "维系不到位监控") {
+                            if (this.form.measure === "维系失败") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else {
+                            return true;
+                        }
+// 2022-01-12浪潮提供 2022-01-18浪潮声明废弃
+ /*                       if (this.form.taskTypeName === "疑似设备变动监控") {
+                            if (this.form.measure === "其他"||this.form.measure === "历史已起租，无需处理"
+                                ||this.form.measure === "站址核查后无异常") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "疑似拆站监控") {
+                            if (this.form.measure === "站址核查后无异常") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站回填监控") {
+                            if (this.form.measure === "非现金赔补，实际已等价足额获取赔补"||this.form.measure ==="无法获取赔补") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站赔补预警") {
+                            if (this.form.measure === "站址实际均已获取足额赔补"||this.form.measure ==="已组织开展赔补获取工作，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站回填监控") {
+                            if (this.form.measure === "主动获取需求后线下完成回填"||this.form.measure ==="站址无法回填") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "拆站回填预警") {
+                            //拆站回填监控
+                            if (this.form.measure === "站址实际均已完成回填"||this.form.measure ==="已组织开展站址回填工作，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "零收入站址监控") {
+                            var formData = new FormData($("#passForm")[0]);
+                            if (this.form.measure === "已完成评估及清理" && !formData) {
+                                api.toast({msg:"未上传图片附件"})
+                            }
+                            if (this.form.measure === "已组织开展保留站址评估和暂停计收站址处理，暂未完成全部站址处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "异常站址监控") {
+                            //异常站址监控
+                            if (this.form.measure === "已组织开展异常站址清理，暂未完成全部站址清理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "基站能耗异常监控") {
+                            if (this.form.measure === "现场偷漏电"||this.form.measure ==="运营商设备变动，已反馈至通发部协调起租"
+                                ||this.form.measure ==="两翼业务新增或拆除设备"||this.form.measure ==="经核实，系统数据不准或报账周期变化导致误派单") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        }  else if (this.form.taskTypeName === "电费异常支付监控") {
+                            if (this.form.measure === "转改直后转供电抄表时间滞后或抄表时间填写错误造成的，不重叠"
+                                ||this.form.measure === "缴费电表绑错站址，不重叠，调整站址后人工审批"
+                                ||this.form.measure === "缴费区间重叠，已退款，人工审批。"
+                                ||this.form.measure === "实际生产需要，提供相关材料") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "电费异常出账监控") {
+                            if (this.form.measure === "两翼业务单独引电，无需分摊") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "电费异常销账监控") {
+                            if (this.form.measure === "已开汇票回款") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租超一年未支付监控") {
+                            //拆站回填监控
+                            if (this.form.measure !== "已完成场租支付"&&this.form.measure !== "已终止解除合同，卡片已结转") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "传导场租卡片年租金与收入原始值不一致监控") {
+                            //拆站回填监控
+                            if (this.form.measure !== "已正确传导、物业侧年租金与CRM订单场地费原始值一致") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "历史场租合同到期未续签监控") {
+                            if (this.form.measure === "暂时无法续签") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租价格异常监控") {
+                            if (this.form.measure === "站址需进一步争取免场租政策"||this.form.measure === "站址实际非免场租站址"
+                                ||this.form.measure === "高场租站址，需进一步协调压降场租") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租超期未支付监控") {
+                            if (this.form.measure === "纠纷站，暂时无法支付"||this.form.measure === "无纠纷，业主暂时无法开票") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租到期未续签监控") {
+                            if (this.form.measure === "经核实站址场租合同暂时无法续签") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "场租传导异常监控") {
+                            if (this.form.measure === "暂时无法处理") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "更新改造合理性监控") {
+                            if (this.form.measure === "特殊情况确需更新改造") {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else if (this.form.taskTypeName === "异常修理监控") {
+                            if (this.form.measure === "照片上传错误已修正"
+                                || this.form.measure === '设备故障导致告警未上传导致，选择两种处理措施'
+                                || this.form.measure === '设备故障导致告警未上传导致') {
+                                return true;
+                            } else {
+                                api.toast({msg:"当前告警未消除,无法关单!"});
+                            }
+                        } else {
+                            return true;
+                        }*/
+                        return false;
+                    },
+                    done(){
+                        setTimeout(function(){
+                            api.sendEvent({name: 'zcyygdAudit', extra: {state: 'auditOver'}});
+                            api.closeWin({name : 'detailGroupWin'});
+                            api.closeWin({name : 'receiptWin'});
+                            api.hideProgress();
+                        },2000)
+                    }
+                },
+                mounted() {
+                    this.userInfo = $api.getStorage("user") || {};
+                    this.form.id = detailInfo.id;
+                    this.form.taskTypeName = detailInfo.taskTypeName;
+                    this.form.stationName = detailInfo.stationName;
+                    this.form.orderrank = detailInfo.orderrank;
+                    request.getCauseListByTaskTypeName(detailInfo.taskTypeName,function(ret){
+                        if(ret.data && ret.data.length > 0){
+                            app.causeList = ret.data;
+                        }else{
+                            api.toast({msg:detailInfo.taskTypeName + "分类下没有对应核查结果！"})
+                        }
+                    })
+                },
+            });
+        };
+
+    </script>
+</html>

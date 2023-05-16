@@ -1,0 +1,979 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>组织实施</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui-flex.css" />
+		<link rel="stylesheet" type="text/css" href="../bill/css/billRevertDetail.css" />
+		<style>
+			.item-table{
+				width: 100%;
+				border-collapse: collapse;
+				border: 1px solid #ccc;
+				font-size: 12px;
+				background-color: #fff;
+				text-align: center;
+			}
+			.item-table th{
+				border: 1px solid #ccc;
+				background-color: #db4537;
+				color: #fff;
+				height: 28px;
+			}
+			.item-table td{
+				height: 28px;
+				border: 1px solid #ccc;
+			}
+			.addres {
+			background: url("../../image/btn_quickoption_pressed.png");
+			width: 40px;
+			height: 40px;
+			}
+			.cardCon img
+			{
+			max-width:30px;//这是DIV的大小
+			width:expression(this.width > 30 ? "30px" : this.width);//实现按比例缩放
+			}
+			.discountpriceInput{
+				width: 100%!important;
+				padding: 0!important;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div id="main" class="aui-content" >
+			<form>
+				<ul id="list-view" class="aui-list-view" style="padding-bottom: 20px;"></ul>
+			</form>
+		</div>
+		<!--新增资源-->
+		<script id="m-addres" type="text/x-dot-template">
+			<!--<li class="aui-list-view-cell aui-switch-body">-->
+			<div class="cardCon" style="width: 62%;float: right;margin-right: 5px;">
+			<input id="resId"  type="text"  value=""  style="height:35px; line-height:35px;">
+			</div>
+			<!--</li>-->
+		</script>
+		<!--图片模板-->
+		<script id="img-template" type="text/html">
+			<li imgpath="{{=it.imgpath}}" class="aui-list-view-cell aui-img aui-flex-col">
+			<div class="aui-flex-item-2" >
+			<img class="aui-img-object aui-pull-left" src="{{=it.imgpath}}" onclick="imageUtil.show('{{=it.imgpath}}');">
+			</div>
+			<div class="aui-pull-left aui-flex-item-8">
+			{{=(it.phototime!=null && it.phototime!= 'null')?it.phototime:''}}
+			<p class='aui-ellipsis-1'>
+			经度:{{=it.lon}}
+			</p>
+			<p class='aui-ellipsis-1'>
+			纬度: {{=it.lat}}
+			</p>
+			<p >
+			地址:{{=it.photoaddress}}
+			</p>
+			</div>
+			{{?typeof(it.isDel) == 'undefined' || it.isDel}}
+			<div class=" aui-flex-item-2 aui-flex-row aui-flex-middle aui-flex-center" >
+			<button class="aui-btn aui-btn-danger"  onclick="removeImg('{{=it.imgpath}}');">x</button>
+			</div>
+			{{?}}
+			</li>
+		</script>
+		<!--合同单价项目模板-->
+		<script id="item-template" type="text/html">
+			{{
+				for(var i=0, len=it.length; i< len; i++) {
+					var type="" ;
+					var discountprice="";
+					var taxpricetype="";
+					if( "1"==it[i].itemtype){
+						 type="按次";
+					}else if( "2"==it[i].itemtype){
+						 type="按月包干";
+					};
+					discountprice=it[i].taxprice*it[i].amount;
+					taxpricetype=it[i].taxprice*it[i].amount;
+			}}
+			<tr class="tr_box">
+				<td >
+					{{=type}}
+				</td>
+				<td style="text-align:left;">{{=it[i].paytype}}</td>
+				<td class="taxprice">{{=it[i].taxprice}}</td>
+				<td class="calprice">
+					{{=taxpricetype}}
+				</td>
+				<td>
+					<input id="discountprice" name="discountprice"  class="aui-counter-input discountpriceInput" type="number" value='{{=discountprice}}' onchange="discountpriceAction(this);">
+				</td>
+				<td >
+			     <div class="aui-counter aui-info aui-pull-right">
+			     <div id="min_num" class="aui-counter-minus" onclick="minNum(this,'{{=it[i].id}}');"></div>
+			     <input id="numinfo" name="numinfo"  class="aui-counter-input amountInput" type="number" value='{{=it[i].amount}}' onchange="setBudgetTxt(this,'{{=it[i].id}}');">
+			     <div id="add_num" class="aui-counter-plus" onclick="addNum(this);"></div>
+			     </div>
+				</td>
+				<td>
+					<input name="partserial" id='partserial' type="text" class='aui-counter-input partserial' style="float:left;width:60px;height:34px;border:solid 1px #ddd;"/>
+				</td>
+			</tr>
+			{{}}}
+		</script>
+		<!--下拉列表-->
+		<script id="m-template" type="text/x-dot-template">
+			{{ for(var i=0, len=it.length; i < len; i++) {}}
+			<option value="{{=it[i].itemvalue}}">{{=it[i].itemname}}</option>
+			{{ } }}
+		</script>
+		<!--<div id="wrap" >-->
+		<!--普通回单begin-->
+		<!--<form>-->
+		<script id="parol-template" type="text/html">
+			<input id="projectid" name="projectid" type="hidden" value=""/>
+			<input id="contractid" name="contract" type="hidden" value=""/>
+			<input id="partserialList" name="partserialList" type="hidden" value=""/>
+
+			<div id="billRevertDivId" style="overflow:auto;margin-bottom:55px;">
+			<div id="isStandStaHidDivId" class="cardDiv">
+			<div class="cardLabel" style="width: 35%">
+			维修工单号：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="billId" name="billsn" type="text"  value="" disabled="disabled" style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div id="repair_user" class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>维修实施人：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="t_dutyUser" name="dutyUser" type="text" class="required" data-valid="required" data-error="请填写维修实施人！"   value=""  style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>合同名称：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="contractname" name="contractname" type="text" class="required"  data-valid="required" data-error="请填写合同名称！" value="" disabled='disabled' style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>合同编码：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="contractno" name="contractno" type="text" class="required"  data-valid="required" data-error="请填写合同编码！"  value="" disabled='disabled' style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>维修单位：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="companyname" name="companyname" type="text" class="required"  data-valid="required" data-error="请填写维修单位！" disabled='disabled'  style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>维修单位编码：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="companycode" name="companycode" type="text" class="required" data-valid="required" data-error="请填写维修单位编码！"  disabled='disabled' style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<div id="repair_com" class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>联系方式：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<!-- <input id="faultId" name="dutyPhone" type="number" class="required" data-valid="required" data-error="请填写联系方式！"  value=""  style="height:35px; line-height:35px;"> -->
+			<input id="t_dutyPhone" name="dutyPhone" type="number" class="required" data-valid="required" data-error="请填写联系方式！"  value=""  style="height:35px; line-height:35px;">
+
+			</div>
+			</div>
+			<!-- <div id="project_num" class="cardDiv" >
+				<div class="cardLabel" style="width: 35%">
+					配件序列号：
+				</div>
+				<div class="cardCon" style="width: 52%">
+					<input id="partSerialId" type="text"  value=""  style="height:35px; line-height:35px;">
+				</div>
+				<div class="cardCon" style="width: 10%">
+					<img src="../../image/btn_quickoption_pressed.png " onclick="addRes();">
+				</div>
+			</div> -->
+			<ul id="list-addres" class="formtest"></ul>
+			<div id="budget_id" class="cardDiv" >
+			<div class="cardLabel" style="width: 35%">
+			<font color="red" >*</font>实际处理费用：
+			</div>
+			<div class="cardCon" style="width: 62%">
+			<input id="budgetId" name="budget" type="text"  value="0"  disabled="disabled" style="height:35px; line-height:35px;">
+			</div>
+			</div>
+			<!-- <div id="budget_id" class="cardDiv" >
+				<div class="cardLabel" style="width: 35%">
+					<font color="red" >*</font>实际处理成本：
+				</div>
+				<div class="cardCon" style="width: 62%">
+					<input id="freeId" name="dealPrice" type="number"  value="" class="required" data-valid="required" data-error="请填写实际处理成本！"  style="height:35px; line-height:35px;">
+				</div>
+			</div> -->
+			<div id="reliefDealInfoDivId" class="cardTextareaDiv">
+			<div class="cardTextareaLabel" style="width: 35%">
+			<font color="red" >*</font>实施说明：
+			</div>
+			<div class="cardTextareaCon" style="width: 62%">
+			<textarea id="reliefDealInfoId" name="implRemark" rows="4" class="noborder required" data-valid="required" data-error="请填写实施说明！" ></textarea>
+			</div>
+			</div>
+			<li id="title_contract" class="aui-list-view-cell ccssoft-aui-list-view-divider" >
+				合同单价项目信息
+			</li>
+
+			<!-- wxxxxxxxxxxxxxx -->
+			<div id="item_box" >
+				<table class="item-table">
+				<thead>
+					<tr>
+						<th>计费方式</th>
+						<th>维修项目</th>
+						<th>含税价格(元)</th>
+						<th>结算价格(元)</th>
+						<th>折扣价格(元)</th>
+						<th>数量</th>
+						<th>配件序列号</th>
+					</tr>
+				</thead>
+
+				<tbody id="mainid"></tbody>
+			</table>
+				<div style="
+				border-color: #C0C0C0;
+				font-size: 14px;
+				font-family: Arial,Verdana,sans-serif;
+				color: #FFF;
+background-color: #4A75B5;
+ height:30px;padding-right:4px;padding-left:4px;
+ border-radius:2px;line-height:30px;
+ margin:4px auto;text-align:center; width:200px;"	onclick='addItem(this)' id="addItem">增加单价项目</div>
+			</div>
+			<!-- wxxxxxxxxxxxxxx -->
+
+			<!-- <div id="mainid" name="mainname" ></div> -->
+
+			<div id="isshow_img" >
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			施工前照片:
+			</li>
+			<div id="mainqid" name="mainname"></div>
+			<li class="aui-list-view-cell" data-win="list-image"  >
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="select_add(0,this)"/>
+			<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+			<img style='display:none;' class='imgPath'  src=''/>
+			</li>
+			</div>
+			<div  >
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			施工中照片
+			</li>
+			<div id="mainzid" name="mainname"></div>
+			<li class="aui-list-view-cell" data-win="list-image"  >
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="select_add(1,this)"/>
+			<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+			<img style='display:none;' class='imgPath'  src=''/>
+			</li>
+			</div>
+			<div  >
+			<li class="aui-list-view-cell ccssoft-aui-list-view-divider">
+			离站照片
+			</li>
+			<div id="mainhid" name="mainname"></div>
+			<li class="aui-list-view-cell" data-win="list-image"  >
+			<img id="add" src="../../image/icons/png/icon_addpic_focused.png" width="50" height="50" style="float: left;" onclick="select_add(2,this)"/>
+			<canvas style='display:none;'>您的浏览器不支持Canvas</canvas>
+			<img style='display:none;' class='imgPath'  src=''/>
+			</li>
+			</div>
+			</div>
+			<!--</div>-->
+			<!--<div id="hiddenForm" style="display: none">
+			<script id="hiddenParam-template" type="text/x-dot-template">
+			<input name="billsn" type="hidden" value="{{=it.billsn}}"/>
+			<input name="projectid" type="hidden" value="{{=it.projectid}}"/>
+			</script>
+			</div>-->
+			<!--普通回单end-->
+			<!--<footer style="height:50px;">
+			<div class="cardButtonDiv">
+			<button class="billRevertCancelBtn"  onclick="api.closeWin()">
+			取消
+			</button>
+			<button id="submitBtn" class="billRevertOkBtn">
+			确定
+			</button>
+			</div>
+			</footer>-->
+			<!--</form>-->
+			<!--</div>-->
+		</script>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/template-native.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/aui.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script src="../../script/GPS.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src='../../script/constant.js'></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/navigate.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/xunjian_db.js"></script>
+	<script type="text/javascript" src="../../script/utils/ImageUtil.js"></script>
+	<script type="text/javascript" src="../../script/jquery-validate.js"></script>
+	<script type="text/javascript" src="../../script/utils/ListUtil.js"></script>
+	<script type="text/javascript" src="../../script/utils/FormUtil.js"></script>
+	<script>
+	var element;
+	//添加单价项目
+	function addItem(){
+		if($('#contractname').val()!=null && $('#contractname').val()!=''){
+			api.pageParam.winName = 'repairDoOperate_win';
+			api.pageParam.frameName = 'repairDoOperateDetail_frm';
+			api.pageParam.stationid = repairDetail.stationid;
+			api.pageParam.contractno = $('#contractno').val();
+			api.pageParam.contractname  = $('#contractname').val();
+			api.pageParam.consumercode  = $('#companycode').val();
+			api.pageParam.consumername = $('#companyname').val();
+
+			api.openWin({
+				name : 'item-list_win',
+				url : 'item-list_win.html',
+				pageParam : api.pageParam,
+				opaque : true,
+				bounces : false,
+				reload : true,
+				slidBackEnabled : true,
+				vScrollBarEnabled : false
+			});
+		}else {
+			api.toast({
+			    msg: '请先填写合同名称',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+		}
+	}
+		var repairDetail;
+		var idArr = new Array();
+		var resArr = new Array();
+		var shuArr = new Array();
+		var billsn;
+		var projectid;
+		var num;
+		var user;
+		var lastLocation;
+		var dataArr = new Array();
+		apiready = function() {
+			repairDetail = $api.getStorage('repairDetail');
+			lastLocation = $api.getStorage('LAST_GPS_LOCATION');
+			user = $api.getStorage('user');
+
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+			var contractList = $api.getStorage("contractList");
+			console.log("000000000000000000000000000000000000000000000000000");
+			console.log(getObj(contractList[0]));
+			console.log(getObj(contractList[1]));
+			// wxx
+
+			//			var billForm = new BillForm($('form'), $('#submitBtn'), $client.repairOperateBill);
+			//			billForm.init();
+			renderTemp('list-view', 'parol-template', repairDetail, false);
+			$('#billId').val(repairDetail.billsn);
+			$('#projectid').val(repairDetail.projectid);
+			$('#companyname').val(contractList[0].companyname);
+			$('#companycode').val(contractList[0].companycode);
+			$('#contractname').val(contractList[0].contractname);
+			$('#contractno').val(contractList[0].contractno);
+
+			//t_outputObj(user);//zhangzhitao
+			//alert(user.username+" , "+user.mobilephone);
+			$('#t_dutyUser').val(user.username);
+			//$('#t_dutyPhone').val(user.mobilephone);
+			$('#t_dutyPhone').val(user.mobilephone);
+			//$("input[name='dutyUser']").val(user.username);
+
+			refreshList(JSON.stringify(contractList),0);
+			billsn = repairDetail.billsn;
+			projectid=repairDetail.projectid;
+			if (!debug) {
+				db_init();
+			}
+			imageUtil.init({
+				uploadFn : $client.uploadRepairImage,
+				saveFn : db_saveRepairPic
+			});
+			formUtil.init({
+				submitFn : $client.repairOperateBill,
+				btnObj : $('#submitBtn'),
+				callback : function(ret, err) {
+					// alert(getObj(ret))
+					if (ret && ret.success) {
+						// alert(imageUtil.getImageArray().length);
+						if (imageUtil.getImageArray().length) {
+							if (submission == 'ONLY_SUBMIT_TEXT') {
+								saveLocal();
+							} else {
+								// alert('到了')
+								imageUtil.upload(function(count) {
+									api.execScript({
+										name : 'repair/repair-list_win',
+										frameName : 'repair-listCon_frm',
+										script : 'refreshList();'
+									});
+									setTimeout(function() {
+										api.hideProgress();
+										api.closeToWin({
+											name : 'repair/repair-list_win'
+										});
+										api.closeWin({});
+									}, 1100);
+								});
+							}
+						} else {
+							api.toast({
+								msg : '提交成功!'
+							});
+							api.execScript({
+								name : 'repair/repair-list_win',
+								frameName : 'repair-listCon_frm',
+								script : 'refreshList();'
+							});
+							setTimeout(function() {
+								api.hideProgress();
+								api.closeToWin({
+									name : 'repair/repair-list_win'
+								});
+								api.closeWin({});
+							}, 1100);
+						}
+					} else {
+						console.log("=======上传失败=========")
+						console.log(JSON.stringify(ret))
+						showToast("提交失败!"+JSON.stringify(ret));
+						api.hideProgress();
+					}
+				},
+				rules : {
+					//必填验证
+					required : function(value, errorMsg, el) {
+						if (value == '') {
+							if (!formUtil.getHasError()) {
+								formUtil.setHasError(true);
+								return errorMsg;
+							}
+						}
+					},
+					hasImage : function(value, errorMsg, el) {
+						if ($('#isTrueId').val() == 'Y') {
+							if (!imageUtil.getImageArray().length) {
+								if (!formUtil.getHasError()) {
+									formUtil.setHasError(true);
+									return errorMsg;
+								}
+							}
+						}
+					}
+				}
+			});
+		};
+		function addContract(e) {
+			api.pageParam.winName = 'repairDoOperate_win';
+			api.pageParam.frameName = 'repairDoOperateDetail_frm';
+			api.pageParam.stationid = repairDetail.stationid;
+			//api.pageParam.t_modelKind = '1';//带输入框
+			api.openWin({
+				name : 'contract-list_win',
+				url : 'contract-list_win.html',
+				pageParam : api.pageParam,
+				opaque : true,
+				bounces : false,
+				reload : true,
+				slidBackEnabled : true,
+				vScrollBarEnabled : false
+			});
+		}
+
+
+		//zhangzhitao输出对象
+		function t_outputObj(obj) {
+				var description = "";
+				for (var i in obj) {
+						description += i + " = " + obj[i] + "\n";
+				}
+		}
+
+	function saveLocal() {
+			imageUtil.save(function(num) {
+				var length = imageUtil.getImageArray().length;
+				if (num) {
+					//刷新首页的图片上传模块头标
+					api.execScript({
+						name : 'home_win',
+						frameName : 'footer_tab_1',
+						script : 'setofflineUploadCount();'
+					});
+					setTimeout(function() {
+						//刷新单个列表项
+						api.execScript({
+							name : 'repair/repair-list_win',
+							frameName : 'repair-listCon_frm',
+							script : 'refreshList();'
+						});
+						api.hideProgress();
+						api.closeToWin({
+							name : 'repair/repair-list_win'
+						});
+						api.closeWin({});
+					}, 2000);
+				}
+			});
+		}
+		function refreshList(str, num) {
+			//alert("@@@@: "+str);
+			shu = eval('(' + str + ')');
+			//注意json格式
+			if (shu != null && shu.length > 0) {
+				for (var i = 0; i < shu.length; i++) {
+					console.log(JSON.stringify(shu[i]));
+					console.log(JSON.stringify(idArr));
+
+					if (idArr.indexOf(shu[i].id) == -1) {
+						dataArr.push(shu[i]);
+						idArr.push(shu[i].id);
+						shuArr.push(shu[i]);
+						console.log(JSON.stringify(idArr));
+						console.log(JSON.stringify(dataArr));
+						//添加合同
+						renderTemp('mainid', 'item-template', shuArr);
+					} else {
+						for (var j = 0; j < idArr.length; j++) {
+							if (shu[i].id == idArr[j]) {
+								//								alert(idArr[j]);
+								if (num == 0) {//初始化進來執行
+									// alert("4444")
+									shuArr[j].amount = Number(shuArr[j].amount) + Number(shu[i].amount);
+								} else {//从合同返回刷新中执行
+									// alert("999")
+									$($('#mainid').find('amountInput')[j]).val(Number($($('#mainid').find('amountInput')[j]).val()) + 1);
+								}
+							}
+						}
+					}
+				}
+			}
+			setBudgetTxt();
+		}
+
+		function t1_renderTemp(contain, template, dataModel, isAdd) {
+			var content = $api.byId(contain);
+			var tpl = $api.byId(template).text;
+			var tempFn = doT.template(tpl);
+			if (isAdd) {
+				$(content).append(tempFn(dataModel));
+				api.parseTapmode();
+				return;
+			}
+			$(content).empty().append(tempFn(dataModel));
+			api.parseTapmode();
+		}
+
+		function setBudgetTxt(e,id) {
+			var numinfo=$(e).parents('tr').find('#numinfo');
+
+			if(e){
+				var BillingPriceDiv = $(e).parents('tr').find('.calprice');
+				var TaxpriceDiv = $(e).parents('tr').find('.taxprice');
+				var amountDiv = $(e).parents('tr').find('.amountInput');
+				var discountpriceInputDiv = $(e).parents('tr').find('.discountpriceInput');
+				BillingPriceDiv.html(Number(TaxpriceDiv.text())*amountDiv.val());
+				discountpriceInputDiv.val(Number(TaxpriceDiv.text())*amountDiv.val());
+			}
+
+			if (numinfo.val()<=0) {
+				var size = idArr.length;
+
+				for (var i = 0; i < size; i++) {
+						var idA = idArr[i];
+						if (idA == id) {
+							idArr.remove(i);
+							dataArr.remove(i);
+							shuArr.remove(i);
+							break;
+						}
+					}
+					$(event.target).parents('tr').remove();
+			}
+
+			var budget = 0;
+			if (dataArr != null && dataArr.length > 0) {
+
+					for (var i = 0; i < dataArr.length; i++) {
+
+							budget += Number($($('#mainid').find('.discountpriceInput')[i]).val());
+
+					}
+					$('#budgetId').val(budget);
+			}else {
+				$('#budgetId').val('0');
+			}
+		}
+
+		function minNum(e, id) {
+			var size = idArr.length;
+			if (Number($($(e).next('input')).val() == 1)) {
+
+				for (var i = 0; i < size; i++) {
+						var idA = idArr[i];
+						if (idA == id) {
+							idArr.remove(i);
+							dataArr.remove(i);
+							shuArr.remove(i);
+							break;
+						}
+					}
+					$(event.target).parents('tr').remove();
+					setBudgetTxt(e);
+			} else {
+				$($(e).next('input')).val(Number($($(e).next('input')).val()) - 1);
+				setBudgetTxt(e);
+			}
+		}
+
+		function addNum(e) {
+			$($(e).prev('input')).val(Number($($(e).prev('input')).val()) + 1);
+			setBudgetTxt(e);
+		}
+
+		function minNum2(e) {
+			if (Number($($(e).next('input')).val() > 0)) {
+				var num = Number($($(e).next('input')).val())-1;
+				$(e).next('input').val(num);
+				setBudgetTxt();
+			}
+		}
+
+		function addNum2(e) {
+			var pricesib=$(e).parents('tr').find('.calprice').text();
+			console.log(pricesib);
+			console.log(Number(pricesib));
+			if($($(e).prev('input')).val()<Number(pricesib)){
+				$($(e).prev('input')).val(Number($($(e).prev('input')).val()) + 1);
+				setBudgetTxt();
+			}else {
+				api.toast({
+						msg: '折扣价格不得高于结算价格',
+						duration: 2000,
+						location: 'bottom'
+				});
+			}
+
+		}
+
+		function discountpriceAction(e) {
+			var pricesib2=$(e).parents('tr').find('.calprice').text();
+			if($(e).val()>Number(pricesib2)){
+				$(e).val(Number(pricesib2));
+				api.toast({
+						msg: '折扣价格不得高于结算价格',
+						duration: 2000,
+						location: 'bottom'
+				});
+			}
+			var totalCnt = $(e).val();
+			if (totalCnt != parseInt(totalCnt)){
+				api.toast({
+						msg: '请输入正确的正整数',
+						duration: 2000,
+						location: 'bottom'
+				});
+
+				$(e).val(parseInt(totalCnt));
+
+			}
+			setBudgetTxt();
+		}
+
+		function call_validate() {
+			if (formUtil.validate()) {
+				select();
+			}
+		}
+
+		  function call_getPic(result) {
+				console.log(result);
+
+				console.log(element);
+            if (result === '拍照') {
+            	if (!lastLocation || !lastLocation.status) {
+								api.toast({
+									msg : '暂未定位\n无法上传照片！'
+								});
+								window.setTimeout(function() {
+									api.closeWin();
+								}, 2000);
+							}
+                imageUtil.add('camera', addPic,element,true);
+            } else if (result === '从手机相册选择') {
+                imageUtil.add('album', addPic,element,true);
+            }
+        }
+
+		/**
+		 *  选择提交方式：1.提交文本和图片，2. 仅提交文本
+		 */
+		function select() {
+			$aui.dialog({
+				title : '提交确认',
+				text : '是否提交组织实施数据?'
+			}, function(ret) {
+				if (ret.buttonIndex) {
+					var optList = ['提交文本和图片', '仅提交文本'];
+					var cbTarget = {
+						name : api.winName,
+						frameName : 'repairDoOperateDetail_frm',
+						cbFn : 'call_upload'
+					};
+					$api.setStorage('optList', optList);
+					$api.setStorage('cbTarget', cbTarget);
+					api.openFrame({
+						name : 'popup_select_frm',
+						url : '../dialog/popup_select.html',
+						pagePara : api.pageParam,
+						bounces : false
+					});
+				}
+				$aui.hideDialog();
+			});
+		}
+
+		 /**
+         *  选择获取图片方式：1.拍照，2. 从手机相册选择
+         */
+        function select_add(num1,e) {
+//      	alert(num);
+			num=num1;
+				element=e;
+            var optList = ['拍照', '从手机相册选择'];
+            var cbTarget = {
+                name : api.winName,
+                frameName : 'repairDoOperateDetail_frm',
+                cbFn : 'call_getPic'
+            };
+            $api.setStorage('optList', optList);
+						$api.setStorage('cbTarget', cbTarget);
+            api.openFrame({
+                name : 'popup_select_frm',
+                url : '../dialog/popup_select.html',
+                pagePara : api.pageParam,
+                bounces : false
+            });
+        }
+
+		function call_upload(result) {
+			// wxxxxxxxxxxxxxx
+			var partserialList=[];
+			for (var i = 0; i < dataArr.length; i++) {
+				dataArr[i].partserial=$($('#mainid').find('.partserial')[i]).val();
+				partserialList[i] = $($('#mainid').find('.partserial')[i]).val();
+				dataArr[i].discountprice = $($('#mainid').find('.discountpriceInput')[i]).val();
+			}
+			$('#contractid').val(JSON.stringify(dataArr));
+			$('#partserialList').val(JSON.stringify(partserialList));
+
+			console.log($('#contractid').val());
+			console.log($('#partserialList').val());
+			// wxxxxxxxxxxxxxx
+			var info="";
+			var opt = {};
+			if (dataArr != null && dataArr.length > 0) {
+				for (var i = 0; i < dataArr.length; i++) {
+					dataArr[i].amount = $($('#mainid').find('.amountInput')[i]).val();
+				}
+				opt.contract = dataArr;
+			} else {
+				var nullArr = new Array();
+				opt.contract = nullArr;
+			}
+
+
+			for (var i = 0; i < resArr.length; i++) {
+			$($('.formtest')[i]).find("input").each(function() {
+				var val = typeof ($(this).val()) == 'undefined' ? $(this).text() : $(this).val();
+				if(val!=''){
+				info= info + "," + val;
+				}
+			});
+			}
+//			opt.partSerial=partSerial+info;
+//			alert(opt.partSerial);
+				var imageArr = imageUtil.getImageArray();
+				var iscq= 0;
+				var iscz = 0;
+				var isch = 0;
+					if (imageArr.length && imageArr.length > 0) {
+						for (var j = 0; j < imageArr.length; j++) {
+							if (imageArr[j].spare == 0) {
+							++iscq;
+							}else if (imageArr[j].spare == 1) {
+							++iscz;
+							}else if (imageArr[j].spare == 2) {
+							++isch;
+							}
+						}
+						if (iscq == 0 ) {
+							api.toast({
+								msg : '施工前照片不能为空！'
+							});
+							return;
+						}else if (iscz == 0 ) {
+							api.toast({
+								msg : '施工中照片不能为空！'
+							});
+							return;
+						}else if (isch == 0 ) {
+							api.toast({
+								msg : '离站照片不能为空！'
+							});
+							return;
+						}
+					}else{
+					api.toast({
+								msg : '施工前照片不能为空'
+							});
+							return;
+					}
+
+						opt.repair = "Y";
+			if (result == '提交文本和图片') {
+				submission = 'BOTH_SUBMIT_TEXT_IMAGE';
+				formUtil.setQueryOptions(opt);
+				// wxx
+				console.log(getObj(opt));
+				console.log(getObj(opt.contract[0]));
+
+				formUtil.submit();
+			} else if (result == '仅提交文本') {
+				submission = 'ONLY_SUBMIT_TEXT';
+				formUtil.setQueryOptions(opt);
+				formUtil.submit();
+				// wxx
+				console.log(getObj(opt));
+				console.log(getObj(opt.contract[0]));
+
+			}
+		}
+
+		/**
+		 * 添加图片
+		 */
+		function addPic(ret, err) {
+//			alert(num);
+//			if (!lastLocation || !lastLocation.status) {
+//				api.toast({
+//					msg : '暂未定位\n无法上传照片！'
+//				});
+//				window.setTimeout(function() {
+//					api.closeWin();
+//				}, 2000);
+//			}
+//			alert(ret.data);
+			var info="";
+			if(num==0){
+			info="施工前图片:";
+			}else if(num==1){
+			info="施工中图片:";
+			}else if(num==2){
+			info="施工后图片:";
+			}
+
+			var lon1 = displaynum(lastLocation.lon);
+			var lat1 = displaynum(lastLocation.lat);
+			/////////////////////////////
+			var curentTime2 = CurentTime2();
+			$api.setStorage('newtime', curentTime2);
+			$api.setStorage('lon1', lon1);
+			$api.setStorage('lat1', lat1);
+			var lon1 = $api.getStorage('lon1');
+			var lat1 = $api.getStorage('lat1');
+			var user=$api.getStorage('user');
+			var newtime = $api.getStorage('newtime');
+			////////////////////////////
+				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+				var oldret = ret.data.split(".");
+				var newret = oldret[0]+"_shuiyin;4;"+user.userid+";"+projectid+";"+billsn+';'+lon1+";"+lat1+";"+lastLocation.photoaddress+";"+newtime+";."+oldret[1];
+				console.log(newret);
+				// wxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   				if (ret && ret.data && ret.data.length > 0) {
+				var imageInfo = {
+					userid : user.userid,
+					projectid : projectid,
+					projectname : "",
+					imgpath : newret,
+					billsn : billsn,
+					spare : num,
+					lon : lon1,
+					lat : lat1,
+					photoaddress : lastLocation.photoaddress,
+					phototime : info+(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+					action: '4'
+				};
+				imageUtil.getImageArray().push(imageInfo);
+				showlog('添加一张待上传图片,待上传图片数组长度:' + imageUtil.getImageArray().length);
+//				alert(num);
+				if (0 == num) {
+					setTimeout(function(){
+						renderTemp('mainqid', 'img-template', imageInfo, true);
+					}, 2400);
+				} else if (1 == num) {
+					setTimeout(function(){
+						renderTemp('mainzid', 'img-template', imageInfo, true);
+					}, 2400);
+				} else if (2 == num) {
+					setTimeout(function(){
+						renderTemp('mainhid', 'img-template', imageInfo, true);
+					}, 2400);
+				}
+				//				$('#add').parent().insertAfter('#list-view li:last');
+//			});
+	}
+		}
+
+		/**
+		 *删除图片
+		 */
+		function removeImg(imgPath) {
+			var imageArray = imageUtil.getImageArray();
+			var size = imageArray.length;
+			for (var i = 0; i < size; i++) {
+				var data = imageArray[i];
+				if (data.imgpath == imgPath) {
+					imageArray.remove(i);
+					break;
+				}
+			}
+			$(event.target).parents('li').remove();
+		}
+	</script>
+</html>

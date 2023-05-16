@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>处理流程</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+</head>
+<style type="text/css">
+.aui-content {
+    background: #ffffff;
+    overflow: hidden;
+    padding: 15px;
+}
+  .one{
+    float: left;
+  }
+  .winDiv {
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.1);
+    width: 80%;
+    position: fixed;
+    left: 40%;
+    top: 20%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+  .winTitleDiv {
+    text-align: center;
+    font-size: 20px;
+    color: #FFFFFF;
+    background-color: #DB4537;
+    height: 35px;
+    line-height: 35px;
+    -webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+  }
+  .winButtonDiv {
+    background-color: #e0e0e0;
+    height: 50px;
+    -webkit-border-radius: 0 0 10px 10px;
+    -moz-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
+  }
+  .winOkBtn {
+    width: 130px;
+    height: 40px;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 20px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: #DB4537;
+    float: right;
+    margin-top: 5px;
+    margin-right: 5px;
+  }
+  .winCancelBtn {
+    width: 130px;
+    height: 40px;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 20px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: #3779d0;
+    float: left;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+  .allDiv {
+    width: 100%;
+  }
+  .noborder {
+    border: none !important;
+  }
+</style>
+<body style="background-color:#FFFFFF;">
+	<script id="FeedBackFlow-template" type="text/x-dot-template">
+		{{ for(var i=0,j=1; i<=it.length-1; i++,j++) { }}
+			<li>
+				<i class="aui-iconfont aui-icon-mark aui-bg-warning"></i>
+				<div class="aui-timeline-item">
+					<div class="aui-timeline-body">
+						{{=it[i].usernames}}
+						<div style="width:100%;height:auto;text-align:center">
+						{{? it[i].task_status == '1' }}
+							待提交审核
+						{{?}}
+						{{? it[i].task_status == '2' }}
+							待审核
+						{{?}}
+						{{? it[i].task_status == '3' }}
+							待发布
+						{{?}}
+						{{? it[i].task_status == '4' }}
+							审核不通过
+						{{?}}
+						{{? it[i].task_status == '5' }}
+							待领取
+						{{?}}
+						{{? it[i].task_status == '6' }}
+							已领取
+						{{?}}
+						{{? it.task_status == '7' }}
+							超时未领取
+						{{?}}
+						{{? it[i].task_status == '8' }}
+							已完成(待确认)
+						{{?}}
+            {{? it[i].task_status == '9' }}
+							超时未完成
+						{{?}}
+            {{? it[i].task_status == '10' }}
+              未完成
+            {{?}}
+            {{? it[i].task_status == '11' }}
+              已归档
+            {{?}}
+            {{? it[i].task_status == '12' }}
+              放弃工单
+            {{?}}
+            {{? it[i].task_status == '22' }}
+            <div class="aui-timeline-footer" style="text-align:left;margin-left: 1%;">站址名称：{{=it[i].sitename}}</div>
+            <div class="aui-timeline-footer" style="text-align:left;margin-left: 1%;">任务名称：{{=it[i].taskname}}</div>
+            督办内容：
+            {{?}}
+            {{? it[i].task_status == '21' }}
+              督办反馈
+            {{?}}
+						（{{=it[i].remark!= null ? it[i].remark:""}}）
+						</div>
+					</div>
+          {{? it[i].task_status == '22'}}
+          <div class="one"><button style="padding: 10px;font-size: 0.875em;background-color: #00ff00;" onclick="coupleBack('SUPERVICE')">督办反馈</button></div>
+          <div class="aui-timeline-footer" style="text-align:right;">{{=it[i].operateendtime}}</div>
+          {{??}}
+          <div class="aui-timeline-footer" style="text-align:right;">{{=it[i].operateendtime}}</div>
+          {{?}}
+				</div>
+			</li>
+		{{ } }}
+	</script>
+    <div class="aui-content">
+        <ul class="aui-timeline" id="checkBackDetail">
+
+        </ul>
+    </div>
+    <!--反馈begin-->
+  			<div id="SUPERVICE" class="winDiv" style = "text-align:center;margin-top:150px;margin-left:60px">
+  					<div class="winTitleDiv">
+  					督办反馈
+  					</div>
+  				<div id="opinionLabelDiv"class="aui-flex-col" data-type="text" style="margin-top: 10px;margin-right: 10px;">
+  					<div class="cardTextareaCon" style="height: 100px;">
+  								<textarea id="Info" placeholder="请输入督办反馈信息" name="Info" rows="4" class="noborder required" data-valid="required" data-error="请填写处理方法！" ></textarea>
+  					</div>
+  				</div>
+  				<div class="winButtonDiv">
+  					<button class="winCancelBtn"  onclick="closeFrame()">
+  							取消
+  					</button>
+  					<button class="winOkBtn"  onclick="contentSubmit()">
+  							确定
+  					</button>
+  				</div>
+  		</div>
+</body>
+<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/client.api.js"></script>
+<script type="text/javascript" src="../../script/aui-alert.js"></script>
+<script type="text/javascript">
+    document.getElementById('SUPERVICE').style.display="none";
+    apiready = function() {
+        api.setStatusBarStyle({
+            style : 'light'
+        });
+      //查询处理流程
+      var opts = {
+        id : api.pageParam.id,
+        versionid : api.pageParam.version_id
+      }
+      $client.zndwFeedBackProcess(opts,function(ret,err){
+				if(ret.success){
+          console.log(JSON.stringify(ret.processList));
+          renderTemp('checkBackDetail', 'FeedBackFlow-template', ret.processList,true);
+          //页面回调刷新
+          api.addEventListener({
+               name: 'zndwProcess'
+            }, function(ret, err) {
+                if (ret.value.state == 'no') {
+                     refresh();
+                }
+          });
+
+      	}else {
+          api.toast({
+                msg : '暂无处理流程信息',
+                location : 'middle'
+            });
+				}
+			});
+    };
+    //刷新当前页面
+    function refresh() {
+         window.location.reload();
+    };
+
+    //点击督办反馈
+    function coupleBack(){
+      $('#SUPERVICE').show();
+      $api.byId('Info').value = "";
+    }
+
+    //提交反馈内容
+    function contentSubmit(){
+      var Info = $("#Info").val();
+      var user = $api.getStorage('user');
+      var opts = {
+        id : api.pageParam.id,
+        linkinfo : user.mobilephone,    //电话
+        Info : Info  //反馈内容
+      }
+      $client.zndwInfoSubmit(opts,function(ret,err){
+        if(ret.success){
+            api.toast({
+              msg : "反馈成功",
+              duration : 1000,
+              location : 'middle'
+            });
+            window.setTimeout(function() {
+                //刷新页面的list
+                    api.sendEvent({
+                         name: 'zndwProcess',
+                         extra: {
+                             state: 'no'
+                         }
+                     });
+                $("#SUPERVICE").hide();
+            }, 1500);
+          }else {
+            api.toast({
+    					msg : ret.errorMsg,
+    					duration : 1000,
+    					location : 'middle'
+    				});
+          }
+      });
+    }
+
+    //取消按钮
+    function closeFrame() {
+      document.getElementById('SUPERVICE').style.display="none";
+    }
+</script>
+</html>

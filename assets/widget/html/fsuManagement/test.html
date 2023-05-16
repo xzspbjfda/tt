@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	<link rel="stylesheet" href="./css/index.css" />
+	<link rel="stylesheet" href="./css/base.css" />
+	<link rel="stylesheet" href="./module/css/aui.css" />
+</head>
+
+<body>
+	<header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span
+				class="aui-iconfont aui-icon-left"></span>
+		</a>
+		<a class="aui-btn ccssoft-aui-bar-theme aui-pull-right" tapmode="" onclick="openQueryStation()"><span
+				class="aui-iconfont aui-icon-search"></span>
+		</a>
+		<div class="aui-title">
+			测试页面
+		</div>
+	</header>
+	<div class="wrapper" id="info">
+		<div class="box-cpn" id="queryStation" style="display: none">
+			<h4>
+				<div class="title title-aqua"></div>查询条件
+			</h4>
+			<div class="my-form" id="my-form"></div>
+		</div>
+		<div class="box-cpn">
+			<h4>
+				<div class="title title-aqua"></div>描述
+			</h4>
+			<div>此页面为测试页面
+				<input type="checkbox" class="aui-switch" checked="">
+			</div>
+		</div>
+		<div class="box-cpn">
+			<h4>
+				<div class="title title-aqua"></div>饼状图
+			</h4>
+			<div id="bing"></div>
+		</div>
+	</div>
+</body>
+<script src="../../script/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./module/script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/debug.js"></script>
+<script type="text/javascript" src="./js/fsu-common.js"></script>
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+<script type="text/javascript">
+	apiready = function () {
+		api.showProgress({
+			title: '加载中',
+			modal: false
+		})
+		login()
+	}
+
+	function login() {
+		request({
+			url: '/app/test',
+			type: 'post',
+			data: {},
+			success: res => {
+				console.log(JSON.stringify(res))
+				show([{ label: 'log in', value: 'Login successful' }])
+				api.hideProgress()
+			}, catch: res => {
+				show([{ label: 'log in', value: ' Login failed' }])
+				api.hideProgress()
+			}
+		})
+	}
+	// $api.setStorage("elementList", []) 
+	const arr = []
+	arr.push({ label: 'LOGIN_USERNAME', value: $api.getStorage('LOGIN_USERNAME') })
+	arr.push({ label: 'LOGIN_PASSWORD', value: $api.getStorage('LOGIN_PASSWORD') })
+	arr.push({ label: 'pc ip', value: returnCitySN["cip"] + ',' + returnCitySN["cname"] })
+	arr.push({ label: 'time', value: new Date() })
+	arr.push({ label: 'user', value: JSON.stringify($api.getStorage('user')) })
+	arr.push({ label: 'indexModel', value: $api.getStorage('indexModel') })
+	arr.push({ label: 'elementList', value: $api.getStorage('elementList') })
+	arr.push({ label: 'app request ip', value: $api.getStorage('ip') })
+	arr.push({ label: 'indexModel', value: JSON.stringify($api.getStorage('indexModel')) })
+	arr.push({ label: 'elementList', value: JSON.stringify($api.getStorage('elementList')) })
+
+
+
+	show(arr)
+	function show(arr) {
+		if (arr && arr.length > 0) {
+			let htm = ''
+			let o = 0
+			arr.forEach(i => {
+				htm += `<div class="box-cpn"><h4><div class="title title-aqua" style="word-wrap: normal|break-word"></div>${i.label}
+					</h4><div>${i.value}</div></div>`
+			})
+			$('#info').append(htm)
+		}
+	}
+
+	function ping(ip) {
+		let img = new Image()
+		let start = new Date().getTime()
+		let flag = false
+		let isCloseWifi = true
+		let hasFinish = false
+		img.onload = function () {
+			if (!hasFinish) {
+				flag = true
+				hasFinish = true
+				img.src = 'X:\\'
+				show([{ label: 'ping', value: 'Ping ' + ip + ' success. ' }])
+			}
+		}
+		img.onerror = function () {
+			if (!hasFinish) {
+				if (!isCloseWifi) {
+					flag = true;
+					img.src = 'X:\\'
+					show([{ label: 'ping', value: 'Ping ' + ip + ' success. ' }])
+				} else {
+					show([{ label: 'ping', value: 'network is not working!' }])
+				}
+				hasFinish = true
+			}
+		}
+		setTimeout(function () {
+			isCloseWifi = false
+			show([{ label: 'ping', value: 'network is working, start ping...' }])
+		}, 2)
+		img.src = 'http://' + ip + '/' + start
+		let timer = setTimeout(function () {
+			if (!flag) {
+				hasFinish = true
+				img.src = 'X://'
+				flag = false
+				show([{ label: 'ping', value: 'Ping ' + ip + ' fail. ' }])
+			}
+		}, 1500)
+	}
+	ping(fsuUrl)
+</script>
+<script type="text/javascript" src="./js/echarts-all.js"></script>
+<script type="text/javascript">
+	const domName = 'bing'
+	const dom = $(`#${domName}`)
+	dom.height(dom.width())
+	const myChart = echarts.init(document.getElementById(domName))
+	const option = {
+		title: {
+			text: '某站点用户访问来源',
+			subtext: '纯属虚构',
+			left: 'center'
+		},
+		tooltip: {
+			trigger: 'item',
+			formatter: '{a} <br/>{b} : {c} ({d}%)'
+		},
+		legend: {
+			orient: 'vertical',
+			left: 'left',
+			data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+		},
+		series: [
+			{
+				name: '访问来源',
+				type: 'pie',
+				radius: '55%',
+				center: ['50%', '60%'],
+				data: [
+					{ value: 335, name: '直接访问' },
+					{ value: 310, name: '邮件营销' },
+					{ value: 234, name: '联盟广告' },
+					{ value: 135, name: '视频广告' },
+					{ value: 1548, name: '搜索引擎' }
+				],
+				emphasis: {
+					itemStyle: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowColor: 'rgba(0, 0, 0, 0.5)'
+					}
+				}
+			}
+		]
+	}
+	myChart.setOption(option)
+
+	const searchFrom = [
+		{ label: 'FSU名称', type: 'input', name: 'name' },
+		{ label: 'FSUID', type: 'input', name: 'id' },
+		{ label: '厂家', type: 'input', name: 'vendorName' },
+	]
+	initSearchForm(searchFrom)
+	function search() {
+
+	}
+</script>
+
+</html>

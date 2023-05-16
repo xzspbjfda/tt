@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>故障定位</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="css/supportDefineDetail.css" />
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="sddDivId" style="overflow:auto;margin-bottom:55px;">
+				<div  id="transferLabelDivId" class="selectLabelDiv" style="margin-top: 10px;display: none" >
+					<div id="user_name" style="font-size:16px;color:#adadad;">
+						接收人
+					</div>
+				</div>
+				<div id="telId" class="cardDiv" style="display: none;">
+					<div class="cardLabel">
+						联系电话：
+					</div>
+					<div class="cardCon">
+						<input id="contactTelTextId" type="text"  style="background-color:#FFFFFF;width:100%;height:100%;line-height:40px;">
+					</div>
+				</div>
+				<div id="locaId" class="cardTextareaDiv" style="display: none;">
+					<div class="cardTextareaLabel">
+						所在位置：
+					</div>
+					<div class="cardTextareaCon">
+						<textarea id="locationId" rows="8" readonly="readonly" style="overflow:auto;background-color: #FAFAFA "></textarea>
+					</div>
+				</div>
+				<div class="cardTextareaDiv" id="err_cause" style="display:none">
+					<div class="cardTextareaLabel">
+						偏差说明：
+					</div>
+					<div class="cardTextareaCon">
+						<textarea id="otherDealInfoId" rows="4"  style="overflow:auto; "></textarea>
+					</div>
+				</div>
+			</div>
+			<footer id="footId" style="height:50px;display: none;">
+				<div class="cardButtonDiv">
+					<button class="cancelBtn"  onclick="signOptFunc();">
+						确定
+					</button>
+					<button class="okBtn"  onclick="restartLocationFunc();">
+						重新定位
+					</button>
+				</div>
+			</footer>
+		</div>
+	</body>
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript">
+		var idclean = "";
+		var type = "";
+		var distance;
+		var isSuper = "N";
+		var lon;
+		var lat;
+		var stLon;
+		var stLat;
+		apiready = function() {
+			api.addEventListener({
+				name : 'viewappear'
+			}, function(ret, err) {
+				api.closeFrame({
+					name : 'billMenu'
+				});
+			});
+			restartLocationFunc();
+			//			initRelief();
+			//			var gpsmodel = api.require('gpsState');
+			//			gpsmodel.opengps();
+			//	    api.pageParam.supportDefine = true;
+			//status bar style
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+		};
+		function test(){
+			api.execScript({
+				name : 'task_list_win',
+				frameName: 'waitTaskList1',
+				script : 'shuaxin();'
+			});
+			api.execScript({
+				name : 'allBillListWin',
+				frameName: 'waitTaskList2',
+				script : 'xunjianaction();'
+			});
+			api.execScript({
+				name : 'xunjian_projectList',
+				script : 'ref();'
+			});
+			window.setTimeout(function() {
+				api.closeWin();
+			}, 1100);
+		}
+		//初始化故障定位信息
+		function initRelief() {
+			if(api.pageParam.online==8){
+				var businessType="";
+				var alarm_isrecovery="";
+				var user = $api.getStorage('user');
+				$api.byId('transferLabelDivId').style.display = "";
+				$api.byId('telId').style.display = "";
+				$api.byId('locaId').style.display = "";
+				$api.byId('footId').style.display = "";
+				$api.byId('user_name').innerHTML = "操作人：" + user.username;
+				$api.byId('err_cause').style.display = "";
+				$api.byId('contactTelTextId').value = user.mobilephone;
+				type = api.pageParam.operateType;
+				stLon=api.pageParam.lon;
+				stLat=api.pageParam.lat;
+				var location = $api.getStorage('LAST_GPS_LOCATION1');
+				var lon1 = $api.getStorage("lon1");
+				var lat1 = $api.getStorage("lat1");
+				lon = location.lon != null ? location.lon : lon1;
+				lat = location.lat != null ? location.lat : lat1;
+					distance = GetDistance(stLat, stLon,lat, lon);
+					info = "站址经度是：" + stLon + "\n站址纬度是：" + stLat + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + location.time + "\n偏差：" + distance + "米";
+
+				$api.byId('locationId').innerHTML = info;
+			}else {
+				var businessType="";
+				var alarm_isrecovery="";
+				var user = $api.getStorage('user');
+				var billModel = $api.getStorage('billModel');
+				$api.byId('transferLabelDivId').style.display = "";
+				$api.byId('telId').style.display = "";
+				$api.byId('locaId').style.display = "";
+				$api.byId('footId').style.display = "";
+				$api.byId('user_name').innerHTML = "操作人：" + user.username;
+				$api.byId('contactTelTextId').value = user.mobilephone;
+				type = api.pageParam.operateType;
+				if ("UPSTATIONSIGN" == type||"XUNJIAN" == type) {
+					$api.byId('err_cause').style.display = "";
+				}
+				var location = $api.getStorage('LAST_GPS_LOCATION1');
+				var lon1 = $api.getStorage("lon1");
+				var lat1 = $api.getStorage("lat1");
+				lon = location.lon != null ? location.lon : lon1;
+				lat = location.lat != null ? location.lat : lat1;
+				if("XUNJIAN" == type){
+				stLon=api.pageParam.lon;
+				stLat=api.pageParam.lat;
+				}else{
+				 stLon = billModel.st_lon;
+				 stLat = billModel.st_lat;
+				 businessType = billModel.businesstype;
+				 alarm_isrecovery = billModel.alarm_isrecovery;
+				}
+				lon = displaynum(lon);
+				console.log("测试");
+				lat = displaynum(lat);
+				var info = "";
+				distance = GetDistance(stLat, stLon, lat, lon);
+				if (businessType == null || businessType == "" || businessType != "人工受单") {// 故障
+					if ("Y" == alarm_isrecovery) {
+						idclean = "N";
+					} else {
+						idclean = "Y";
+					}
+				} else {
+					idclean = "Y";
+				}
+				if ("N" == idclean && type == "UPSTATIONSIGN") {
+					info = "站址经度是：" + stLon + "\n站址纬度是：" + stLat + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + location.time + "\n偏差：" + distance + "米" + "\n情况描述：由于告警已经恢复，程序判断为不需要上站，已经修改成不需要上站";
+					isSuper = "N";
+				} else {
+					if (distance <= 100) {
+						info = "站址经度是：" + stLon + "\n站址纬度是：" + stLat + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + location.time + "\n偏差：" + distance + "米" + "\n情况描述：偏差在100米范围内，可以进行手机定位";
+						isSuper = "N";
+					} else if (distance > 100) {
+						console.log("时间：" + location.timestamp);
+						info = "站址经度是：" + stLon + "\n站址纬度是：" + stLat + "\n当前经度是：" + lon + "\n当前纬度是：" + lat + "\n当前时间：" + location.time + "\n偏    差：" + distance + "米" + "\n情况描述：偏差已经超过100米，请在空旷的地方进行重新定位或者填写误差过大原因";
+						isSuper = "Y";
+					}
+				}
+				$api.byId('locationId').innerHTML = info;
+			}
+
+		}
+
+		function signOptFunc() {
+			if(api.pageParam.online==8){
+				var location = $api.getStorage('LAST_GPS_LOCATION1');
+				billModel = $api.getStorage('billModel');
+				var user = $api.getStorage('user');
+				var opts={};
+				var userId = user.userid;
+				if("XUNJIAN" != type){
+					var billId = billModel.billid;
+					var billSn = billModel.billsn;
+					var taskId = billModel.taskid;
+				}
+				var linkInfo = $api.byId('contactTelTextId').value;
+				var remark = $api.byId('locationId').value;
+				var causeDealInfo = $api.byId('otherDealInfoId').value;
+
+				// if (causeDealInfo == "" &&( type == "UPSTATIONSIGN"||type == "XUNJIAN") && isSuper == "Y") {
+				// 	api.toast({
+				// 		msg : "偏差说明必填",
+				// 		duration : 1000,
+				// 		location : 'middle'
+				// 	});
+				// 	return;
+				// }
+
+				if("XUNJIAN"==type){
+					opts={
+						taskId : api.pageParam.taskid,
+						linkInfo : linkInfo,
+						signLon : lon,
+						localtype:location.locationType,
+						signLat : lat,
+						remark : remark,
+						cause : causeDealInfo,
+						rangesite:distance,
+						lon:stLon,
+						lat:stLat,
+						signdate:(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+						signtime:(new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+					}
+				}else{
+					opts={
+						taskId : api.pageParam.taskid,
+						linkInfo : linkInfo,
+						signLon : lon,
+						localtype:location.locationType,
+						signLat : lat,
+						remark : remark,
+						rangesite:distance,
+						cause : causeDealInfo,
+						isStand : idclean,
+						billSn : billSn,
+						billId : billId,rangesite:distance,
+						lon:lon,
+						lat:lat,
+						signdate:(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+						signtime:(new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+					}
+				}
+
+				api.showProgress({
+					title : '处理中',
+					modal : true
+				});
+				var	db = api.require('db');
+				db.openDatabase({
+					name: 'xunjian',
+					path: 'fs://xunjian/DB/inspection'
+				}, function(ret, err) {
+					if (ret.status) {
+						db.executeSql({
+							name: 'xunjian',
+							sql: 'UPDATE taskInfoList SET taskstate = "2",signtime ="'+opts.signtime+'",sign_longitude = "'+opts.lon+'",sign_latitude = "'+opts.lat+'",range_site = "'+opts.rangesite+'",sign_cause = "'+opts.cause+'" WHERE taskid = "'+opts.taskId+'"'
+						}, function(ret, err) {
+							if (ret.status) {
+								api.hideProgress();
+
+								api.toast({
+									msg: '签到成功',
+									duration: 2000,
+									location: 'bottom'
+								});
+
+								window.setTimeout(function() {
+									api.execScript({
+										name:'task_list_win0',
+										frameName : 'waitTaskList10',
+										script : 'onlineRefresh();'
+									});
+									api.closeToWin({
+										name : 'task_list_win0'
+									});
+								}, 1000);
+							} else {
+								api.toast({
+										msg: '操作本地数据库失败',
+										duration: 2000,
+										location: 'bottom'
+								});
+								api.hideProgress();
+
+							}
+						});
+					} else {
+						api.toast({
+								msg: '访问本地数据库失败',
+								duration: 2000,
+								location: 'bottom'
+						});
+					}
+				});
+			}else {
+				var location = $api.getStorage('LAST_GPS_LOCATION1');
+				billModel = $api.getStorage('billModel');
+				var user = $api.getStorage('user');
+				var opts={};
+				var userId = user.userid;
+				if("XUNJIAN" != type){
+					var billId = billModel.billid;
+					var billSn = billModel.billsn;
+					var taskId = billModel.taskid;
+				}
+				var linkInfo = $api.byId('contactTelTextId').value;
+				var remark = $api.byId('locationId').value;
+				var causeDealInfo = $api.byId('otherDealInfoId').value;
+
+				if (causeDealInfo == "" &&( type == "UPSTATIONSIGN"||type == "XUNJIAN") && isSuper == "Y") {
+					api.toast({
+						msg : "偏差说明必填",
+						duration : 1000,
+						location : 'middle'
+					});
+					return;
+				}
+
+				if("XUNJIAN"==type){
+					opts={
+						taskId : api.pageParam.taskid,
+						linkInfo : linkInfo,
+						signLon : lon,
+						localtype:location.locationType,
+						signLat : lat,
+						remark : remark,
+						cause : causeDealInfo,
+						rangesite:distance,
+						lon:lon,
+						lat:lat,
+						signdate:(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+						signtime:(new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+					}
+				}else{
+					opts={
+						taskId : taskId,
+						linkInfo : linkInfo,
+						signLon : lon,
+						localtype:location.locationType,
+						signLat : lat,
+						remark : remark,
+						rangesite:distance,
+						cause : causeDealInfo,
+						isStand : idclean,
+						billSn : billSn,
+						billId : billId,rangesite:distance,
+						lon:lon,
+						lat:lat,
+						signdate:(new Date()).pattern("yyyy-MM-dd HH:mm:ss"),
+						signtime:(new Date()).pattern("yyyy-MM-dd HH:mm:ss")
+					}
+				}
+
+				api.showProgress({
+					title : '处理中',
+					modal : true
+				});
+				//		userId, billSn, taskId, '', causeDealInfo
+				console.log(getObj(opts));
+				console.log("type:" + type);
+				$client.upStationSign(opts, type, function(ret, err) {
+					if (ret) {
+						if (ret.success) {
+							api.toast({
+								msg : "签到成功",
+								duration : 1000,
+								location : 'middle'
+							});
+							api.execScript({
+								name : 'task_list_win',
+								frameName: 'waitTaskList1',
+								script : 'shuaxin();'
+							});
+							api.execScript({
+								name : 'allBillListWin',
+								frameName: 'waitTaskList2',
+								script : 'xunjianaction();'
+							});
+							api.execScript({
+								name : 'xunjian_projectList',
+								script : 'ref();'
+							});
+							window.setTimeout(function() {
+								api.closeWin();
+							}, 1100);
+						} else {
+							api.toast({
+								msg : ret.data_info,
+								location : 'middle'
+							});
+						}
+					} else {
+						api.toast({
+							msg : '接口访问失败',
+							location : 'middle'
+						});
+					}
+					api.hideProgress();
+				});
+			}
+
+		}
+
+		function restartLocationFunc() {
+			if(api.pageParam.online!=8){
+				api.showProgress({
+					title : '定位中……',
+					modal : true
+				});
+			}
+
+			getHeartFromGps("upStationSign_win", "upStationSign_frm");
+		}
+
+		function getHeartFromGps(winName, frmName) {
+			var script = "startLocation('" + winName + "','" + frmName + "');";
+			console.log("异步加载" + script);
+			api.execScript({
+				name : "home_win",
+				frameName : 'gps',
+				script : script
+			});
+			     gps_invoke();
+		}
+
+		function gps_invoke() {
+			var lastLocation = $api.getStorage('LAST_GPS_LOCATION1');
+			if (!lastLocation || !lastLocation.status || lastLocation.timestamp == 0 || lastLocation.lon == 0 || lastLocation.lat == 0) {
+				return;
+			}
+			$api.setStorage("lon1", lastLocation.lon);
+			$api.setStorage("lat1", lastLocation.lat);
+				if(api.pageParam.online!=8){
+					api.showProgress({
+						title : '定位中……',
+						modal : true
+					});
+				}
+			window.setTimeout(function() {
+				api.hideProgress();
+				api.execScript({
+					frameName : "upStationSign_frm",
+					script : 'initRelief();'
+				});
+			}, 2000);
+		}
+
+		function closeWin() {
+			api.closeWin({
+				name : 'supportDefine_win'
+			});
+		}
+	</script>
+</html>

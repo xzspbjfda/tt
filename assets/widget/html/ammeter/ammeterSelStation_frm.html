@@ -1,0 +1,370 @@
+<!-- HTML5文件 -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="format-detection" content="telephone=no"/>
+		<title></title>
+		<link rel="stylesheet" href="../../css/api.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/query-list.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+		<link rel="stylesheet" href="../../css/powerbinding.css" type="text/css" />
+		<style>
+		body.active {
+				background: url(../../image/icons/png/page_icon_empty.png) no-repeat center center;
+		}
+		ul, li {
+				margin: 0;
+				padding: 0;
+		}
+		.ccssoft_list {
+				margin-top: 0px;
+		}
+		.ccssoft_list li {
+				list-style: none;
+				padding: 8px;
+				border-bottom: 1px solid #e3e2e2;
+				background: #fff;
+				overflow: hidden;
+				margin-bottom: 10px;
+		}
+		.ccssoft_list li:hover {
+				background: #f9e9df;
+		}
+		.ccssoft_list li.acitve {
+				background: #f9e9df;
+		}
+		.cj-l-title, .cj-f-title {
+				font-size: 14px;
+				font-weight: bold;
+				line-height: 20px;
+				padding: 8px 70px 8px 32px;
+				position: relative;
+		}
+		.cj-f-title {
+				padding: 8px 70px 8px 0px;
+		}
+		.cj-ash{
+			background-color: grey;
+		}
+
+		.cj-l-title .subType {
+				display: block;
+				width: 200px;
+				height: 20px;
+				line-height: 20px;
+				color: #666;
+				text-align: right;
+				position: absolute;
+				top: 8px;
+				right: 0;
+				font-size: 12px;
+				font-weight: bold;
+		}
+		.cj-l-into {
+				font-size: 12px;
+				color: #666;
+				line-height: 20px;
+				padding: 3px 0;
+				position: relative;
+				/*   padding-right: 210px;*/
+		}
+		.cj-l-date {
+				display: block;
+				position: absolute;
+				top: 3px;
+				right: 0;
+				width: 140px;
+				text-align: right;
+		}
+		.cj-l-date span {
+				margin-left: 7px;
+		}
+		.cj-l-level{
+			/*width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			line-height: 18px;
+			text-align: center;
+			color: #fff;*/
+			/*margin: 0 4px;*/
+			/*vertical-align:top;*/
+			position: absolute;
+			left: 10px;
+			top:13px;
+		}
+		.cj-orange{
+			background-color: orange;
+		}
+		.cj-blue{
+			background-color: blue;
+		}
+		.cj-purple{
+			background-color: purple;
+		}
+		.cj-green{
+			background-color: green;
+		}
+		.ccssoft_list_wxx {
+		 background-color: #eff1f0;
+		 overflow: hidden;
+		 margin: 0 auto;
+	 }
+	 .ccssoft_list_wxx li {
+			 list-style: none;
+			 padding:3px 10px 3px 10px;
+			 background: #fff;
+			 overflow: hidden;
+			 position: relative;
+	 }
+
+	 .ccssoft_list_wxx .showBox{
+			 text-align:center;
+			 font-size:12px;
+	 }
+	 .aui-content-wxx{
+		 width: 100%;
+		 margin: 0;
+	 }
+	 .aui-content-wxx ul{
+		 background-color: #fff;
+		 border-radius: 0;
+		 overflow: hidden;
+		 margin-bottom: 10px;
+		 padding: 0 3%;
+	 }
+	 .tit_Label{
+	 	padding: 0 10px;
+		border-radius: 20px;
+		color: #fff;
+		font-weight: normal;
+		margin-left: 10px;
+	 }
+	 .yysIcon{
+	 	width: 28px;
+	 }
+	 .yysText{
+	 	font-size: 12px;
+		display: inline-block;
+		height: 28px;
+		text-align: center;
+		width: 70%;
+	 }
+	 .yysText span{
+	 	color: red;
+	 }
+</style>
+	</head>
+	<body>
+		<!-- <div class='cj-l-level {{=markColorClass}}'>{{=mark}}</div> -->
+		<div class="aui-content aui-content-wxx">
+			<ul class="ccssoft_list_wxx" id="stationList"></ul>
+		</div>
+		<script id="list-template" type="text/x-dot-template"  >
+			{{ for(var i=0, len=it.length; i < len; i++) {
+			var model = it[i];
+			var statusColor="#2d89ef";
+			var typeColor="red";
+			var mark;
+			var markColorClass;
+			if("GJ"==model.basestationlevel){
+					mark='高';
+					markColorClass="cj-orange";
+			}else if ("BZ"==model.basestationlevel) {
+					mark='标';
+					markColorClass="cj-blue";
+			}else if ("GSHD"==model.basestationlevel) {
+					mark='山';
+					markColorClass="cj-purple";
+			}else if ("BKH"==model.basestationlevel) {
+					mark='免';
+					markColorClass="cj-green";
+			}else if ("KONG"==model.basestationlevel){
+					mark='';
+					markColorClass="cj-ash";
+			}
+			if(model.st_status == ""){
+			statusColor="#2d89ef";
+			}else if(model.st_status=="交维"){
+			statusColor="#3598eb";
+			}else if(model.st_status=="退网下线"){
+			statusColor="#d8544d";
+			}else if(model.st_status=="交维(未承载业务)"){
+			statusColor="#5B7A2C";
+			}else if(model.st_status=="交维(承载业务)"){
+			statusColor="#9DE35B";
+			}else if(model.st_status=="测试"){
+			statusColor="#FFCB00";
+			}
+			if(model.st_type==null || model.st_type=="null"){
+			model.st_type="";
+			}
+			else if(model.st_type=="室外站"){
+			typeColor="#0022D9";
+			}else if(model.st_type=="室内宏站"){
+			typeColor="#4F8B8A";
+			}else if(model.st_type=="室分"){
+			typeColor="#EDBD19";
+			}else if(model.st_type=="BBU"){
+			typeColor="#5F3388";
+			}else if(model.st_type=="RRU"){
+			typeColor="#F0D869";
+			}else if(model.st_type=="普通宏站"){
+			typeColor="#7EF0FE";
+			}else if(model.st_type=="拉远站"){
+			typeColor="#FFE493";
+			}else if(model.st_type=="室分系统"){
+			typeColor="#C5AFDA";
+			}
+			}}
+			<li tapmode="active" class="border_b" deviceid="{{=it[i].st_deviceid}}" stationCode="{{=it[i].st_code}}"  lat="{{=it[i].st_lats}}" lon="{{=it[i].st_lons}}" stationName="{{=it[i].st_name}}" stationId="{{=it[i].st_id}}" typeName="{{=it[i].st_type}}" onclick="openCreateBillDetail('{{=it[i].st_id}}','{{=it[i].st_name}}','{{=it[i].st_code}}','{{=it[i].st_lats}}','{{=it[i].st_lons}}','{{=it[i].st_deviceid}}','{{=it[i].st_provinceid}}','{{=it[i].st_cityid}}','{{=it[i].st_countyid}}','{{=it[i].provinceid}}','{{=it[i].cityid}}','{{=it[i].countyid}}');">
+			<img class="tit_img cj-l-level" src="../../image/bt_icon2.png" alt=""/>
+			<div  class="cj-l-title">{{=model.st_name}}
+				<div class="subType">
+					{{?model.st_type}}
+					<span class="tit_Label" style="background-color:{{=typeColor}}">{{=model.st_type}}</span>
+					{{?}}
+					{{?model.st_status}}
+					<span class="tit_Label" style="background-color:{{=statusColor}}">{{=model.st_status}}</span>
+					{{?}}
+				</div>
+			</div>
+			<div class="cj-l-into">运维ID：{{=model.st_code}}  |  {{=model.st_cityid}}</div>
+			<div class="cj-l-into">站址编码：{{=model.st_deviceid != null?model.st_deviceid:'-'}}</div>
+			<div class="aui-list-view">
+				<div class="aui-col-xs-4 aui-pull-left" style="line-height:30px;">
+					<img class="aui-pull-left yysIcon" src="../../image/yd_icon.png" alt=""/>
+					<span class="aui-pull-left yysText" style='background-color:#f3fbff'>移动：
+					{{? model.operators_level =='BZ'}}
+						<span>标准</span>
+					{{?? model.operators_level == 'GJ'}}
+						<span>高级</span>
+					{{??}}
+						<span>无</span>
+					{{?}}
+					</span>
+				</div>
+				<div class="aui-col-xs-4 aui-pull-left" style="line-height:30px;">
+					<img class="aui-pull-left yysIcon" src="../../image/lt_icon.png" alt=""/>
+					<span class="aui-pull-left yysText" style='background-color:#fff4f0'>联通：
+					{{? model.ltoperators_level =='BZ'}}
+						<span>标准</span>
+					{{?? model.ltoperators_level == 'GJ'}}
+						<span>高级</span>
+					{{??}}
+						<span>无</span>
+					{{?}}
+					</span>
+				</div>
+				<div class="aui-col-xs-4 aui-pull-left" style="line-height:30px;">
+					<img class="aui-pull-left yysIcon" src="../../image/dx_icon.png" alt=""/>
+					<span class="aui-pull-left yysText" style='background-color:#f2efff'>电信：
+					{{? model.dxoperators_level =='BZ'}}
+						<span>标准</span>
+					{{?? model.dxoperators_level == 'GJ'}}
+						<span>高级</span>
+					{{??}}
+						<span>无</span>
+					{{?}}
+					</span>
+				</div>
+			</div>
+			</li>
+			{{  } }}
+		</script>
+	</body>
+
+	<script src="../../script/jquery-1.11.3.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script src="../../script/debug.js"></script>
+	<script src="../../script/doT.min.js"></script>
+	<script src="../../script/constant.js"></script>
+	<script src="../../script/config.js"></script>
+	<script src="../../script/common.js"></script>
+	<script src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/GPS.js"></script>
+	<script src="../../script/ccssoft/js/ccssoft-lite.js"></script>
+	<script>
+		var remoteLoading = false;
+		//listView组件
+		var listView = null;
+		var billList;
+		//查询条件
+		var queryOpts = {
+			stationCode : '',
+			stationName : '',
+			status : '',
+			provinceId : '',
+			cityId : '',
+			areaId : '',
+			isroomfault : ''
+		};
+		apiready = function() {
+			var elementList = $api.getStorage('elementList');
+			billList = $api.getStorage("billList");
+
+			listView = new C.ApiListView({
+				listDivId : '#stationList',
+				templateId : '#list-template',
+				listName : 'list',
+				fn : $client.getStationSimpleList,
+				limit:10
+			});
+			listView.refresh();
+
+		};
+
+
+
+		//查询站址
+		function cb_queryStationList(opts) {
+			queryOpts.stationCode = opts.stationCode;
+			queryOpts.stationName = opts.stationname;
+			queryOpts.isroomfault = opts.isroomfault;
+			queryOpts.status = opts.status;
+			queryOpts.provinceId = opts.provId;
+			queryOpts.cityId = opts.cityId;
+			queryOpts.areaId = opts.areaId
+			showlog(getObj(queryOpts));
+			listView.setQueryOptions(queryOpts);
+			listView.refresh();
+			//          openRefreshHeader();
+		}
+	</script>
+	<script type="text/javascript">
+		function openCreateBillDetail(stationId,stationName,stationCode,lat,lon,deviceid,st_provinceid,st_cityid,st_countyid,provinceid,cityid,countyid) {
+
+				var pageParam = {
+					stationId : stationId,
+					stationName : stationName,
+					st_lon:lon,
+					st_lat:lat,
+					stationCode:stationCode,
+					deviceid:deviceid
+			};
+					api.openWin({
+						name : "ammeter-jiaowei_win",
+						url : "ammeter-jiaowei_win.html",
+						opaque : true,
+						bounces : false,
+						reload : true,
+						vScrollBarEnabled : false,
+						pageParam : pageParam,
+						delay : 300,
+						animation : {
+							type : "push",
+							subType : "from_right",
+							duration : 300
+						}
+					});
+
+
+		}
+
+	</script>
+	</body>
+</html>

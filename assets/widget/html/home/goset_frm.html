@@ -1,0 +1,112 @@
+﻿﻿<!doctype html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<title>首页侧滑栏</title>
+
+	<link rel="stylesheet" href="../../script/agile/css/flat/iconline.css">
+	<link rel="stylesheet" href="../../script/agile/css/flat/iconform.css">
+	<link rel="stylesheet" href="../../script/app/css/app.css">
+	<link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+	<style>
+	body {
+			background-color:#FFFFFF;
+	}
+	#wrap{
+height: 100%;
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-orient: vertical;
+-webkit-flex-flow: column;
+			 flex-flow: column;
+}
+	.noPadding-cell {
+			padding: 0px !important;
+	}
+	.itemLeft {
+			width: 33%;
+			margin-right: 10px;
+			margin-top: 11px;
+			margin-bottom: 11px;
+			margin-left: 15px;
+			float: left;
+	}
+	.itemRight {
+		overflow: hidden;
+			margin-top: 11px;
+			margin-bottom: 11px;
+			margin-right: 20px;
+	}
+	.item-content {
+			margin-top: 0px !important;
+			margin-bottom: 0px !important;
+	}
+	.table-view-cell {
+position: relative;
+padding: 11px 65px 11px 15px;
+overflow: hidden;
+border-bottom: 1px solid #ddd;
+}
+.table-view-cell:last-child {
+border-bottom: 0;
+}
+ul,li,dl,dt,dd {
+margin:0;padding:0;list-style:none;
+}
+a {
+background: transparent;
+text-decoration:none;
+}
+	</style>
+	</head>
+	<body>
+			<ul class="table-view" style="margin-top:-20px;">
+							<!--<li class="table-view-cell  noPadding-cell" onclick="openWin('modifyPassword');">
+									<div class="itemLeft">修改密码</div>
+	            </li>-->
+
+							<li class="table-view-cell  noPadding-cell" onclick="openWin('clearCache');">
+								<div class="itemLeft">清理缓存<span id="cacheId" class="uInfoContent" style="color:#007AFF;"></span></div>
+
+	            </li>
+							<li class="table-view-cell  noPadding-cell" onclick="pushsetting();">
+									<div class="itemLeft">推送勿扰设置</div>
+	            </li>
+	        </ul>
+	</body>
+	<script type="text/javascript" src="../../script/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/constant.js"></script>
+	<script type="text/javascript" src="../../script/debug.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/common.js"></script>
+	<script type="text/javascript" src="../../script/config.js"></script>
+	<script type="text/javascript" src="../../script/client.api.js"></script>
+	<script type="text/javascript" src="../../script/aui-alert.js"></script>
+	<script type="text/javascript" src="../../script/swipe.js"></script>
+    <script type="text/javascript" src="../../script/navigate.js"></script>
+    <script type="text/javascript" src="../../script/jpush-api.js"></script>
+	<script type="text/javascript" src="./script/home_fixed.js"></script>
+	<script type="text/javascript" src="../system/setting2.js"></script>
+	<script>
+		function pushsetting(){
+			api.openWin({
+				name : "personalPushSetting_win",
+				url : "../personalPushSetting/personalPushSetting_win.html",
+				bounces : false,
+				vScrollBarEnabled : true,
+				reload : true,
+				slidBackEnabled : true,
+				pageParam : api.pageParam,
+				animation : {
+					type : "push",
+					subType : "from_right",
+					duration : 300
+				}
+			});
+		}
+	</script>
+</html>

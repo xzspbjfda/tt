@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+        <title>协调上站</title>
+        <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <link rel="stylesheet" href="../../script/ccssoft/css/ccssoft-lite.css" />
+    </head>
+    <body>
+        <header class="aui-bar aui-bar-nav ccssoft-aui-bar-theme" id="header">
+            <a class="aui-btn ccssoft-aui-bar-theme aui-pull-left" id="back" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+            <div class="aui-title">
+                协调上站
+            </div>
+        </header>
+        <script src="../../script/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../../script/api.js"></script>
+        <script type="text/javascript" src="../../script/common.js"></script>
+        <script type="text/javascript" src="../../script/debug.js"></script>
+        <script type="text/javascript">
+            var billModel;
+            apiready = function() {
+//              billModel = $api.getStorage('billModel');
+
+				 var header = $api.byId('header');
+                $api.fixIos7Bar(header);
+                var headerPos = $api.offset(header);
+                var body_h = $api.offset($api.dom('body')).h;
+                api.openFrame({
+                    name : 'coordateUpstationDetail_frm',
+                    url : 'coordateUpstationDetail_frm.html',
+                    bounces : false,
+                    pageParam : api.pageParam,
+                    rect : {
+                        x : 0,
+                        y : headerPos.h,
+                        w : headerPos.w,
+                        h : 'auto'
+                    },
+                    reload: false
+                });
+
+
+//              var header = $api.byId('header');
+//              $api.fixIos7Bar(header);
+//              var headerPos = $api.offset(header);
+//              var body_h = $api.offset($api.dom('body')).h;
+//              var frameName = '';
+////              if (billModel.faulttype == "GENERELEC" && billModel.istemperature == "Y") {
+////                  frameName = 'billRevertElectricDetail_frm';
+////              } else {
+//                  frameName = 'coordateUpstationDetail_frm';
+////              }
+//              api.openFrame({
+//                  name : frameName,
+//                  url : frameName + '.html',
+//                  bounces : false,
+//                  pageParam : api.pageParam,
+//                  bgColor : '#f2f2f2',
+//                  rect : {
+//                      x : 0,
+//                      y : headerPos.h,
+//                      w : headerPos.w,
+//                      h : 'auto'
+//                  }
+//              });
+            };
+        </script>
+    </body>
+</html>
